@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="939b4772-ca69-4d3d-b210-05f3eb1ec68e" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/docs/1차화면정의서.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +64,7 @@
     "nodejs_interpreter_path": "/Users/user/.nvm/versions/node/v22.14.0/bin/node",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "settings.nodejs",
-    "ts.external.directory.path": "/Users/user/project/sodam/sodam-frontend/node_modules/typescript/lib",
+    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -123,7 +123,8 @@
       <updated>1740556622712</updated>
       <workItem from="1740556623940" duration="554000" />
       <workItem from="1740557181447" duration="742000" />
-      <workItem from="1740557959141" duration="4911000" />
+      <workItem from="1740557959141" duration="5139000" />
+      <workItem from="1740563138519" duration="90000" />
     </task>
     <servers />
   </component>
