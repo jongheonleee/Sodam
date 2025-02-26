@@ -12,6 +12,8 @@ export default function Home() {
             {/* 베너 */}
             <Carousel  />
 
+            {/* 카테고리 */}
+
             {/* 콘텐츠 */}
 
             {/* 푸터 */}
