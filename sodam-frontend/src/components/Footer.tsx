@@ -7,10 +7,6 @@ import { BsSun, BsMoonFill } from "react-icons/bs";
 export default function Footer() {
     // 컨텍스트 조회하여 다크모드/화이트모드 처리함
     const context = useContext(ThemeContext);
-    console.log(context);
-    console.log(context.theme);
-    console.log(localStorage.theme);
-    context.toggleMode();
 
     return (
         <footer>
@@ -23,18 +19,12 @@ export default function Footer() {
                 {context.theme === 'light' ? (
                     <BsSun
                         className="footer__theme-btn"
-                        onClick={() => {
-                            console.log('Toggle mode clicked');
-                            context.toggleMode();
-                        }}
+                        onClick={context.toggleMode}
                     />
                 ) : (
                     <BsMoonFill
                         className="footer__theme-btn"
-                        onClick={() => {
-                            console.log('Toggle mode clicked');
-                            context.toggleMode();
-                        }}
+                        onClick={context.toggleMode}
                     />
                 )}
             </>
