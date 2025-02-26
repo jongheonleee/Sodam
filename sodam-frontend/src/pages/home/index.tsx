@@ -1,6 +1,8 @@
 import Carousel from "../../components/Carousel";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import Articles from "../../components/Articles";
+import Categories from "../../components/Categories";
 
 
 export default function Home() {
@@ -13,8 +15,10 @@ export default function Home() {
             <Carousel  />
 
             {/* 카테고리 */}
+            <Categories />
 
             {/* 콘텐츠 */}
+            <Articles />
 
             {/* 푸터 */}
             <Footer />
