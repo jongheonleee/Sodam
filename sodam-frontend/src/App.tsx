@@ -3,6 +3,7 @@ import { Route, Routes, Navigate, Link} from "react-router-dom";
 import Footer from './components/Footer';
 import ThemeContext, {ThemeContextProvider} from "./context/ThemeContext";
 import Header from "./components/Header";
+import Home from "./pages/home/index.";
 
 function App() {
     // 다크모드, 화이트 모드 처리
@@ -13,10 +14,10 @@ function App() {
     return (
       <>
           <div className={context.theme === 'light' ? 'white' : 'dark'}>
-              <Header />
+              {/*<Header />*/}
 
               <Routes>
-                  <Route path="/" element={<h1>Home</h1>} />
+                  <Route path="/" element={<Home />} />
                   <Route path="/articles" element={<h1>Articles</h1>} />
                   <Route path="/articles/:id" element={<h1>Articles Detail</h1>} />
                   <Route path="/articles/new" element={<h1>Articles New Page</h1>} />
@@ -29,7 +30,7 @@ function App() {
                   <Route path="*" element={<Navigate replace to="/" />} />
               </Routes>
 
-              <Footer />
+              {/*<Footer />*/}
           </div>
       </>
   );
