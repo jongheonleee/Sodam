@@ -2,6 +2,7 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import Home from "../pages/home";
 import React from "react";
 import Login from "../pages/login";
+import Signup from "../pages/signup";
 
 export default function Router() {
     // 추후에 사용자 인증 여부에 따라서 라우팅 처리 달리 만들기
@@ -10,6 +11,7 @@ export default function Router() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
                 <Route path="/articles" element={<h1>Articles</h1>} />
                 <Route path="/articles/:id" element={<h1>Articles Detail</h1>} />
                 <Route path="/articles/new" element={<h1>Articles New Page</h1>} />

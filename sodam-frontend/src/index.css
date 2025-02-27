@@ -515,3 +515,70 @@ input:checked + .carousel__slide-container .nav label {
   width: 24px; /* 카카오 아이콘 크기 조정 */
   height: 24px;
 }
+
+/* 프로필 이미지 업로드 영역 */
+.form__image-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+/* 기본 input 숨김 */
+.form__input-file {
+  display: none;
+}
+
+/* 커스텀 파일 선택 버튼 */
+.form__custom-file-button {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.form__custom-file-button:hover {
+  background-color: #218838;
+}
+
+/* 이미지 미리보기 */
+.form__image-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.form__image-preview img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+}
+
+/* 이미지 삭제 버튼 */
+.form__image-remove {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form__image-remove:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
