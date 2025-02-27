@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="939b4772-ca69-4d3d-b210-05f3eb1ec68e" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="939b4772-ca69-4d3d-b210-05f3eb1ec68e" name="변경" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,7 +20,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/frontend/components/footer" />
+        <entry key="$PROJECT_DIR$" value="chore/docs/scenario" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -100,6 +98,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.renders learn react link" />
+        <item itemvalue="Jest.App 컴포넌트를 렌더링하면, &quot;Sodam&quot; 이라는 문구가 포함되어야 한다." />
+        <item itemvalue="Jest.renders learn react link" />
         <item itemvalue="Jest.App 컴포넌트를 렌더링하면, &quot;Sodam&quot; 이라는 문구가 포함되어야 한다." />
         <item itemvalue="Jest.renders learn react link" />
       </list>
