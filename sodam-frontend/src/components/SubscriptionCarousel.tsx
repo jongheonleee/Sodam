@@ -1,15 +1,14 @@
-import { useState } from "react";
+import {useState} from "react";
 
 const IMAGE_1_URL =
-    "https://images.unsplash.com/photo-1543069752-7148d755b347?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+    "https://images.unsplash.com/photo-1531496730074-83b638c0a7ac?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 const IMAGE_2_URL =
-    "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+    "https://images.unsplash.com/photo-1580894908361-967195033215?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 const IMAGE_3_URL =
-    "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+    "https://images.unsplash.com/photo-1603575448878-868a20723f5d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
 
-
-export default function Carousel() {
+export default function SubscriptionCarousel() {
     // 화면 사진 슬라이딩 처리
     const [activeImage, setActiveImage] = useState(1);
 

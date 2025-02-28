@@ -1,4 +1,4 @@
-import Carousel from "../../components/Carousel";
+import ArticleCarousel from "../../components/ArticleCarousel";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Articles from "../../components/Articles";
@@ -12,7 +12,7 @@ export default function Home() {
             <Header />
 
             {/* 베너 */}
-            <Carousel  />
+            <ArticleCarousel  />
 
             {/* 카테고리 */}
             <Categories />

@@ -898,3 +898,143 @@ input:checked + .carousel__slide-container .nav label {
   gap: 8px;
   width: 100%;
 }
+
+
+/* dark mode */
+
+.white {
+  transition: all 0.25s linear;
+  background-color: white;
+}
+
+.dark {
+  transition: all 0.25s linear;
+  background-color: #1e2937;
+  min-height: 100vh;
+}
+
+.dark a,
+.dark .form label,
+.dark .profile__logout,
+.dark .form__title,
+.dark .article__navigation--active,
+.dark .article__title,
+.dark .article__author-name,
+.dark .footer__theme-btn,
+.dark .profile__name,
+.dark .comments__list,
+.dark .article__summary,
+.dark .comment__like-box,
+.dark .article__hashtag,
+.dark .profile__introduce {
+  color: white;
+}
+
+.dark a:hover,
+.dark a:focus,
+.dark .article__text,
+.dark .article__text--pre-wrap,
+.dark .profile__email,
+.dark .article__date,
+.dark .article__edit,
+.dark .form__block,
+.dark .article__delete,
+.dark .comment__date,
+.dark .comment__delete {
+  color: lightgray;
+}
+
+.dark .comment__delete:hover,
+.dark .comment__delete:focus,
+.dark .article__delete:hover,
+.dark .article__delete:focus,
+.dark .article__edit:hover,
+.dark .article__edit:focus {
+  color: white;
+}
+
+.dark .form__error {
+  color: #ff6a71;
+}
+
+.dark footer,
+.dark header {
+  background-color: #111827;
+}
+
+/* subscription */
+.subscription__list {
+  min-height: 90vh;
+  padding: 20px;
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: left;
+  line-height: 24px;
+}
+.subscription__box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #ddd;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+.subscription__box img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+.subscription__content {
+  flex: 1;
+}
+.subscription__title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+.subscription__summary {
+  font-size: 16px;
+  color: #555;
+}
+.subscription__info {
+  text-align: left;
+}
+.subscription__price {
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+  text-decoration: line-through; /* 텍스트 중앙에 선 긋기 */
+  color: gray;
+}
+
+.subscription__discount {
+  font-size: 12px;
+  color: red;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.subscription__sale {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.subscription__buy-btn {
+  width: 90%;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.subscription__buy-btn:hover {
+  background-color: #45a049;
+}
