@@ -76,20 +76,21 @@ export default function SignupForm() {
             </div>
 
             <div className="form__block">
-                <label htmlFor="introduce">프로필 이미지</label>
+                <label
+                    htmlFor="image"
+                    className="file-label"
+                >
+                    프로필 이미지 첨부
+                </label>
+                <input
+                    type="file"
+                    name="image"
+                    id="image"
+                    className="file-input"
+                    accept="image/*"
+                    onChange={onChange}
+                />
                 <div className="form__image-upload">
-                    <input
-                        type="file"
-                        id="profileImage"
-                        name="profileImage"
-                        accept="image/*"
-                        onChange={onImageChange}
-                        className="form__input-file"
-                    />
-                    <label htmlFor="profileImage" className="form__custom-file-button">
-                        업로드
-                    </label>
-
                     {profileImage && (
                         <div className="form__image-preview">
                             <img src={profileImage} alt="프로필 미리보기" />

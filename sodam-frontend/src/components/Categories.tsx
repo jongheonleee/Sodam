@@ -20,6 +20,7 @@ export default function Categories({
     } : CategoryProps) {
 
     const [activeCategory, setActiveCategory] = useState<CategoryType>(defaultCategory)
+
     return (
         <>
             {/* 카테고리 영역 */}

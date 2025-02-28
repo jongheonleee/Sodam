@@ -641,3 +641,79 @@ input:checked + .carousel__slide-container .nav label {
 .profile__logout:focus {
   color: black;
 }
+
+/* 게시글 작성 부분 */
+.form__block input[type="file"] {
+  padding: 10px;
+}
+
+/* 파일 입력 숨기기 */
+.file-input {
+  display: none;
+}
+
+/* 파일 버튼 스타일 */
+.file-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #28a745; /* 초록색 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* 파일 버튼에 마우스를 올렸을 때 */
+.file-label:hover {
+  background-color: #218838; /* 마우스 오버 시 어두운 초록색 */
+}
+
+.form__block textarea {
+  height: 120px;
+}
+
+.form__btn--submit {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+}
+
+.form__btn--submit:hover {
+  background-color: #45a049;
+}
+
+.hashtag-list {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.hashtag-item {
+  background-color: #f2f2f2;
+  color: gray;
+  font-size: 12px;
+  padding: 4px 8px;
+  margin: 5px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.hashtag-item button {
+  background-color: transparent;
+  border: none;
+  color: gray;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.hashtag-item button:hover {
+  color: #45a049;
+}
