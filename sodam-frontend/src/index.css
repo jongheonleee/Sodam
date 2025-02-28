@@ -582,3 +582,62 @@ input:checked + .carousel__slide-container .nav label {
 .form__image-remove:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
+
+
+/* profile */
+
+.profile__box {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  font-size: 18px;
+  margin: 0 auto;
+  max-width: 680px;
+  text-align: left;
+  line-height: 24px;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.flex__box-lg {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.profile__image {
+  width: 95px;
+  height: 95px;
+  background-color: #f2f2f2;
+  border-radius: 50%;
+}
+
+.profile__name {
+  margin: 10px auto;
+  font-size: 16px;
+  padding-top: 4px;
+}
+
+.profile__email {
+  margin: 10px auto;
+  font-weight: 500;
+}
+
+.profile__introduce {
+  margin: 10px auto;
+  font-size: 14px;
+  color: gray;
+}
+
+.profile__logout {
+  color: gray;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-bottom: 73px;
+}
+
+.profile__logout:hover,
+.profile__logout:focus {
+  color: black;
+}

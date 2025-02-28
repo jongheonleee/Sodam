@@ -3,6 +3,7 @@ import Home from "../pages/home";
 import React from "react";
 import Login from "../pages/login";
 import Signup from "../pages/signup";
+import ProfilePage from "../pages/profile";
 
 export default function Router() {
     // 추후에 사용자 인증 여부에 따라서 라우팅 처리 달리 만들기
@@ -17,7 +18,7 @@ export default function Router() {
                 <Route path="/articles/new" element={<h1>Articles New Page</h1>} />
                 <Route path="/articles/edit/:id" element={<h1>Articles Edit Page</h1>} />
                 <Route path="/articles/like" element={<h1>Articles Like</h1>} />
-                <Route path="/profile" element={<h1>Profile Page</h1>} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/subscription" element={<h1>Subscription Page</h1>} />
                 <Route path="/secretes" element={<h1>Subscription Articles[secretes]</h1>} />
                 <Route path="/subscription" element={<h1>Subscription Page</h1>} />

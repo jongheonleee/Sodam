@@ -1,9 +1,3 @@
-const random_profiles = [
-    {
-
-    }
-]
-
 const articles = [
     {
         id: 1,
