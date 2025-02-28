@@ -7,6 +7,7 @@ import ProfilePage from "../pages/profile";
 import Article from "../pages/article/new";
 import ArticleDetail from "./ArticleDetail";
 import ArticleDetailPage from "../pages/article/detail";
+import LikePage from "../pages/like";
 
 export default function Router() {
     // 추후에 사용자 인증 여부에 따라서 라우팅 처리 달리 만들기
@@ -20,7 +21,7 @@ export default function Router() {
                 <Route path="/articles/:id" element={<ArticleDetailPage />} />
                 <Route path="/articles/new" element={<Article />} />
                 <Route path="/articles/edit/:id" element={<h1>Articles Edit Page</h1>} />
-                <Route path="/articles/like" element={<h1>Articles Like</h1>} />
+                <Route path="/articles/like" element={<LikePage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/subscription" element={<h1>Subscription Page</h1>} />
                 <Route path="/secretes" element={<h1>Subscription Articles[secretes]</h1>} />

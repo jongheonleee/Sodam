@@ -890,3 +890,11 @@ input:checked + .carousel__slide-container .nav label {
   bottom: 8px;
   right: 12px;
 }
+
+.article__search-box-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
