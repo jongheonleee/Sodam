@@ -966,12 +966,21 @@ input:checked + .carousel__slide-container .nav label {
 .subscription__list {
   min-height: 90vh;
   padding: 20px;
-  text-align: center;
   max-width: 680px;
   margin: 0 auto;
-  text-align: left;
+  text-align: center;
   line-height: 24px;
 }
+
+.subscription__form {
+  min-height: 90vh;
+  padding: 20px;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 24px;
+}
+
 .subscription__box {
   display: flex;
   align-items: center;
@@ -982,9 +991,15 @@ input:checked + .carousel__slide-container .nav label {
   border-radius: 12px;
   margin-bottom: 15px;
 }
+
+.subscription__box a {
+  text-decoration: none; /* 밑줄 제거 */
+  color: black;
+}
+
+
 .subscription__box img {
-  width: 100px;
-  height: 100px;
+  width: 60%;
   object-fit: cover;
   border-radius: 10px;
   margin-right: 20px;
@@ -1002,7 +1017,7 @@ input:checked + .carousel__slide-container .nav label {
   color: #555;
 }
 .subscription__info {
-  text-align: left;
+  text-align: center;
 }
 .subscription__price {
   font-size: 12px;
@@ -1026,7 +1041,7 @@ input:checked + .carousel__slide-container .nav label {
 }
 
 .subscription__buy-btn {
-  width: 90%;
+  width: 80%;
   background-color: #4CAF50;
   color: white;
   font-size: 16px;
@@ -1036,5 +1051,64 @@ input:checked + .carousel__slide-container .nav label {
   transition: 0.3s;
 }
 .subscription__buy-btn:hover {
+  background-color: #45a049;
+}
+
+.subscription__box-order {
+  width: 80%;
+  height: 70%;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+.subscription__box-order-info {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.subscription__box-image {
+  width: 100px;
+  height: 120px;
+  border: 1px solid #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.subscription__box-details h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.subscription__box-details p {
+  color: #666;
+  margin-top: 5px;
+}
+
+.subscription__box-details-pricing {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+
+.order-button {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.order-button:hover {
   background-color: #45a049;
 }
