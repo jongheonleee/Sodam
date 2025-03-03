@@ -27,8 +27,36 @@ export interface ArticleSummary {
     email: string;
     author: string;
     createdAt: string;
-    userImage: Image; // 이미지 타입
+    profileImage: Image; // 이미지 타입
     title: string;
     content: string;
     tags: Tag[]; // 태그 배열
+}
+
+// 댓글 타입 정의
+export interface Comment {
+    id: number;
+    profileImage: Image;
+    email: string;
+    createdAt: string;
+    content: string;
+    likeCnt: number;
+    dislikeCnt: number;
+}
+
+export interface ArticleDetail {
+    id: number;
+    title: string;
+    email: string;
+    author: string;
+    createdAt: string;
+    content: string;
+    profileImage: Image;
+    category: Category;
+    viewCnt: number;
+    likeCnt: number;
+    dislikeCnt: number;
+    images : Image[];
+    tags: Tag[];
+    comments: Comment[];
 }
