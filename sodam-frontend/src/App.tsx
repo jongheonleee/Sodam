@@ -1,6 +1,12 @@
 import React, {useContext} from 'react';
 import ThemeContext from "./context/ThemeContext";
 import Router from "./components/Router";
+import { worker } from "./mocks/browser"; // MSW worker 가져오기
+
+
+if (process.env.NODE_ENV === 'development') {
+    worker.start();
+}
 
 function App() {
     // 다크모드, 화이트 모드 처리

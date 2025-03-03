@@ -1,9 +1,8 @@
 import {useState} from "react";
-import {CategoryType} from "./Categories";
 
 
 
-export const CATEGORIES: CategoryType[] = [
+export const CATEGORIES = [
     "전체",
     "나의 글",
     "커리어",

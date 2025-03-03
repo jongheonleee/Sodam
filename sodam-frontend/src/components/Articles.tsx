@@ -1,72 +1,31 @@
-const articles = [
-    {
-        id: 1,
-        email: "qwefghnm1212@gmail.com",
-        author: "qwefghnm1212",
-        createdAt: "2025. 02. 25 오후 03:35:01",
-        userImage: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        title: "테스트 게시글 제목",
-        summary: "테스트 게시글 요약글",
-        tags : [
-            "태그1",
-            "태그2",
-            "태그3"
-        ],
-    },
-    {
-        id: 2,
-        email: "qwefghnm1212@gmail.com",
-        author: "qwefghnm1212",
-        createdAt: "2025. 02. 25 오후 03:35:01",
-        userImage: "https://images.unsplash.com/photo-1526493356079-3552df24f410?q=80&w=3456&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        title: "테스트 게시글 제목",
-        summary: "테스트 게시글 요약글",
-        tags : [
-            "태그1",
-        ],
-    },
-    {
-        id: 3,
-        email: "qwefghnm1212@gmail.com",
-        author: "qwefghnm1212",
-        createdAt: "2025. 02. 25 오후 03:35:01",
-        userImage: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        title: "테스트 게시글 제목",
-        summary: "테스트 게시글 요약글",
-        tags : [
-        ],
-    },
-    {
-        id: 4,
-        email: "qwefghnm1212@gmail.com",
-        author: "qwefghnm1212",
-        createdAt: "2025. 02. 25 오후 03:35:01",
-        userImage: "https://images.unsplash.com/photo-1499557354967-2b2d8910bcca?q=80&w=3736&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        title: "테스트 게시글 제목",
-        summary: "테스트 게시글 요약글",
-        tags : [
-            "태그1",
-            "태그2",
-            "태그3"
-        ],
-    },
-    {
-        id: 5,
-        email: "qwefghnm1212@gmail.com",
-        author: "qwefghnm1212",
-        createdAt: "2025. 02. 25 오후 03:35:01",
-        userImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZSUyMGljb258ZW58MHx8MHx8fDI%3D",
-        title: "테스트 게시글 제목",
-        summary: "테스트 게시글 요약글",
-        tags : [
-            "태그1",
-            "태그2",
-        ],
-    }
-]
+import { ArticleSummary } from "../types/article";
+import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 
 
 export default function Articles() {
+    // 게시글 요약 리스트 셋업
+    const [articles, setArticles] = useState<ArticleSummary[]>([]);
+
+
+    // 컴포넌트 생성시 호출(현재 목 api 활용)
+    useEffect(() => {
+        setArticles([])
+
+        fetch('/api/articles')
+            .then((res) => res.json())
+            .then((data) => {
+                if (data?.result === 'SUCCESS') {
+                    setArticles(data.data);
+                }}
+            )
+            .catch((error) => {
+                console.log('Error fetching articles', error)
+        })
+    }, []);
+
+
+
     return (
         <>
             <div className="article__list">
@@ -74,32 +33,38 @@ export default function Articles() {
                  articles?.length > 0 ? (
                      articles?.map((article) => (
                          // 각 아티클 단위
-                         <div key={article?.id} className="article__box">
+                         <div className="article__box">
                              {/* 좌측 상단 프로필 영역 */}
-                             <div className="article__profile-box">
-                                 <img className="article__profile" src={article?.userImage} alt="Author Profile" />
-                                 <div className="article__author-name">{article?.email}</div>
-                                 <div className="article__date">{article?.createdAt}</div>
-                             </div>
+                             <Link to={`/profile/${article?.email}`}>
+                                 <div className="article__profile-box">
+                                     <img className="article__profile" src={article.profileImage.url} alt="Author Profile" />
+                                     <div className="article__author-name">{article?.email}</div>
+                                     <div className="article__date">{article?.createdAt}</div>
+                                 </div>
+                             </Link>
 
-                             {/* 우측 상단 태그 영역 */}
-                             <div className="article__tag-box">
-                                 {/* 해당 아티클에 태그가 있는 경우 */}
-                                 {article.tags?.length > 0 && (
-                                     article.tags?.map((tag) => (
-                                         <div className="article__tag">{tag}</div>
-                                     ))
-                                 )}
-                             </div>
+                                 {/* 우측 상단 태그 영역 */}
+                                 <div className="article__tag-box">
+                                     {/* 해당 아티클에 태그가 있는 경우 */}
+                                     {article.tags?.length > 0 && (
+                                         article.tags?.map((tag) => (
+                                             <div className="article__tag">{tag?.name}</div>
+                                         ))
+                                     )}
+                                 </div>
 
-                             {/* 콘텐츠 영역 */}
-                             <div className="article__title">
-                                 {article?.title}
-                             </div>
+                                 {/* 콘텐츠 영역 */}
+                             <Link to={`/articles/${article?.id}`}>
+                                 <div className="article__title">
+                                     {article?.title}
+                                 </div>
 
-                             <div className="article__summary">
-                                 {article?.summary}
-                             </div>
+                                 <div className="article__summary">
+                                     {article?.content}
+                                 </div>
+                             </Link>
+
+
 
                              {/* 삭제/수정 버튼 영역 */}
                              <div className="article__utils-box">
@@ -111,13 +76,11 @@ export default function Articles() {
                                      삭제
                                  </div>
 
-                                 <div
-                                     className="article__edit"
-                                     role="presentation"
-                                     onClick={() => alert('u click this')}
-                                 >
+                                 <Link
+                                     to={`/articles/edit/${article?.id}`}
+                                     className="article__edit">
                                      수정
-                                 </div>
+                                 </Link>
 
                              </div>
 

@@ -1,25 +1,58 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {Category} from "../types/article";
+
+export const defaultCategory : Category = {
+    id : "CT001",
+    topId : "CT000",
+    name : "테스트용 카테고리",
+    ord : 1,
+    validYN : 0,
+};
 
 interface CategoryProps {
-    hasNavigation? : boolean;
-    defaultCategory? : CategoryType;
+    hasNavigation?: boolean;
+    defaultCategoryTap?: Category;
 }
 
-export type CategoryType = "전체" | "나의 글" | "커리어" | "학습법" | "프로젝트 모집";
-export const CATEGORIES: CategoryType[] = [
-    "전체",
-    "나의 글",
-    "커리어",
-    "학습법",
-    "프로젝트 모집"
-]
 
 export default function Categories({
         hasNavigation = true,
-        defaultCategory = "전체"
+        defaultCategoryTap = defaultCategory,
     } : CategoryProps) {
 
-    const [activeCategory, setActiveCategory] = useState<CategoryType>(defaultCategory)
+    // 필드값 선언
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [activeCategory, setActiveCategory] = useState<Category>(defaultCategory);
+
+
+    // 컴포넌트 생성시 호출(현재 목 api 활용)
+    useEffect(() => {
+        // categoires 초기화
+        setCategories([]);
+
+        // API 호출하여 데이터 가져오기
+        fetch("/api/categories")
+            .then((res) => res.json())
+            .then((data) => {
+                if (data?.result === "SUCCESS") {
+                    setCategories(data.data);
+                }
+            })
+            .catch((error) => {
+                console.log('Error fetching categories', error);
+            })
+    }, []);
+
+    const handleCategory = (id : string) => {
+        // 선택 카테고리 변경
+        const activeCategory = categories.find((category) => category.id === id);
+        if (activeCategory !== undefined) {
+            setActiveCategory(activeCategory);
+        }
+
+        // 카테고리 관련 게시글 조회
+    }
+
 
     return (
         <>
@@ -27,16 +60,16 @@ export default function Categories({
             {hasNavigation && (
                 <div className="article__navigation">
                     <div className="article__category-box">
-                        {CATEGORIES?.map((category) => (
+                        {categories?.map((category) => (
                             <div
-                                key={category}
+                                key={category?.id}
                                 role="presentation"
-                                onClick={() => setActiveCategory(category)}
+                                onClick={() => handleCategory(category?.id)}
                                 className={
-                                    activeCategory === category ? "article__navigation--active" : ""
+                                    activeCategory.id === category.id ? "article__navigation--active" : ""
                                 }
                             >
-                                { category }
+                                { category?.name }
                             </div>
                         ))}
                     </div>
@@ -59,7 +92,6 @@ export default function Categories({
                     </div>
                 </div>
             )}
-
         </>
     )
 }

@@ -8,7 +8,7 @@ export default function ProfilePage() {
         <>
             <Header />
             <Profile />
-            <Articles/>
+            <Articles />
             <Footer />
         </>
     );

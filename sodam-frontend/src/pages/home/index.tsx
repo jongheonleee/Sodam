@@ -2,7 +2,7 @@ import ArticleCarousel from "../../components/ArticleCarousel";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Articles from "../../components/Articles";
-import Categories from "../../components/Categories";
+import Categories, {defaultCategory} from "../../components/Categories";
 
 
 export default function Home() {
@@ -14,11 +14,13 @@ export default function Home() {
             {/* 베너 */}
             <ArticleCarousel/>
 
-            {/* 카테고리 */}
-            <Categories/>
+            <Categories
+                hasNavigation={true}
+                defaultCategoryTap={defaultCategory}
+            />
 
             {/* 콘텐츠 */}
-            <Articles/>
+            <Articles />
 
             {/* 푸터 */}
             <Footer/>

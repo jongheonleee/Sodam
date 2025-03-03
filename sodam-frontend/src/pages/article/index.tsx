@@ -1,6 +1,6 @@
 import Header from "../../components/Header";
 import ArticleCarousel from "../../components/ArticleCarousel";
-import Categories from "../../components/Categories";
+import Categories, {defaultCategory} from "../../components/Categories";
 import Articles from "../../components/Articles";
 import Footer from "../../components/Footer";
 
@@ -14,11 +14,14 @@ export default function ArticlesPage() {
             {/* 베너 */}
             <ArticleCarousel/>
 
-            {/* 카테고리 */}
-            <Categories/>
+            <Categories
+                hasNavigation={true}
+                defaultCategoryTap={defaultCategory}
+            />
+
 
             {/* 콘텐츠 */}
-            <Articles/>
+            <Articles />
 
             {/* 푸터 */}
             <Footer/>

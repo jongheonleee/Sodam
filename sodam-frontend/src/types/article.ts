@@ -10,7 +10,7 @@ export interface Image {
 export interface Tag {
     id: number;
     articleId: number; // 연관된 게시글
-    content: string; // 태그 이름
+    name: string; // 태그 이름
 }
 
 export interface Category {
@@ -59,4 +59,9 @@ export interface ArticleDetail {
     images : Image[];
     tags: Tag[];
     comments: Comment[];
+}
+
+export interface ArticlesProps {
+    hasNavigation: boolean;
+    defaultTab : string;
 }
