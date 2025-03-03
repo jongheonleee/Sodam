@@ -39,17 +39,11 @@ export default function ArticlesPage() {
             })
         ])
             .then(([articlesData, categoriesData]) => {
-                if (articlesData?.result !== 'SUCCESS') {
-                    alert("게시글 불러오기 실패");
-                    console.log('Failed fetching articles');
-                } else {
+                if (articlesData?.result === 'SUCCESS') {
                     setArticles(articlesData.data);
                 }
 
                 if (categoriesData?.result !== 'SUCCESS') {
-                    alert("카테고리 불러오기 실패");
-                    console.log('Failed fetching categories');
-                } else {
                     setCategories(categoriesData.data);
                 }
             })

@@ -1,22 +1,25 @@
-import {useState} from "react";
 import {Link} from "react-router-dom";
 
-export default function LoginForm() {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState<string>('');
+interface LoginFormProps {
+    email : string;
+    password : string;
+    error: string;
+    onChangeEmail : (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChangePassword : (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onSubmit : (event: React.FormEvent<HTMLFormElement>) => void;
+    onKakaoLogin : () => void;
+}
 
-    const onChange = () => {
-        alert("u clicked");
-    }
+export default function LoginForm({
+    email,
+    password,
+    onChangeEmail,
+    onChangePassword,
+    onSubmit,
+    onKakaoLogin,
+    error,
+} : LoginFormProps ) {
 
-    const onSubmit = () => {
-        alert("u submitted");
-    }
-
-    const handleKakaoLogin = () => {
-        alert("u clicked kakao login");
-    }
 
     return (
         <form
@@ -31,7 +34,7 @@ export default function LoginForm() {
                     name="email"
                     id="email"
                     required
-                    onChange={onChange}
+                    onChange={(e) => {onChangeEmail(e)}}
                     value={email}
                 />
             </div>
@@ -43,7 +46,7 @@ export default function LoginForm() {
                     name="password"
                     id="password"
                     required
-                    onChange={onChange}
+                    onChange={(e) => onChangePassword(e)}
                     value={password}
                 />
             </div>
@@ -78,7 +81,7 @@ export default function LoginForm() {
             <div className="form__block">
                 <button
                     className="kakao-login-btn"
-                    onClick={handleKakaoLogin}
+                    onClick={onKakaoLogin}
                 >
                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/KakaoTalk_logo.svg" alt="카카오 아이콘"/>
                     카카오톡으로 로그인
