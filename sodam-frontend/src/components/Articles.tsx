@@ -1,30 +1,14 @@
 import { ArticleSummary } from "../types/article";
-import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 
-
-export default function Articles() {
-    // 게시글 요약 리스트 셋업
-    const [articles, setArticles] = useState<ArticleSummary[]>([]);
-
-
-    // 컴포넌트 생성시 호출(현재 목 api 활용)
-    useEffect(() => {
-        setArticles([])
-
-        fetch('/api/articles')
-            .then((res) => res.json())
-            .then((data) => {
-                if (data?.result === 'SUCCESS') {
-                    setArticles(data.data);
-                }}
-            )
-            .catch((error) => {
-                console.log('Error fetching articles', error)
-        })
-    }, []);
+interface ArticlesProps {
+    articles : ArticleSummary[];
+}
 
 
+export default function Articles({
+        articles,
+} : ArticlesProps) {
 
     return (
         <>
