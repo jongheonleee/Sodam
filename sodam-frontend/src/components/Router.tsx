@@ -9,7 +9,6 @@ import ArticleDetailPage from "../pages/article/detail";
 import LikePage from "../pages/like";
 import SubscriptionPage from "../pages/subscription";
 import SubscriptionOrderPage from "../pages/subscription/order";
-import Secretes from "./Secretes";
 import SecretesPage from "../pages/secret";
 import SecretDetailPage from "../pages/secret/defail";
 import ArticlesPage from "../pages/article";
