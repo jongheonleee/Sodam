@@ -65,3 +65,14 @@ export interface ArticlesProps {
     hasNavigation: boolean;
     defaultTab : string;
 }
+
+// 게시글 작성 폼 타입
+// - 제목, 카테고리, 요약, 이미지 여러개, 태그
+export interface ArticleFormProps {
+    title: string;
+    category: Category | null;
+    summary: string;
+    content: string;
+    images : File[] | null;
+    tags : string[];
+}

@@ -47,7 +47,7 @@ export default function Home() {
                 }
             })
             .catch(error => {
-                console.log('Error fetching data', error);
+                console.error('Error fetching data', error);
             });
     }, []);
 
