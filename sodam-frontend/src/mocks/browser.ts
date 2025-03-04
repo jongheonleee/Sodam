@@ -4,10 +4,12 @@ import { articleSummaryHandlers } from "./articleSummary.handlers";// 핸들러 
 import { categoriesHandlers } from "./category.handlers";
 import { authHandlers } from "./auth.handlers";
 import {articleNewHandlers} from "./articleNew.handlers";
+import {articleEditHandlers} from "./articleEdit.handlers";
 
 export const worker = setupWorker(
     ...articleSummaryHandlers,
     ...categoriesHandlers,
     ...authHandlers,
     ...articleNewHandlers,
+    ...articleEditHandlers,
 );

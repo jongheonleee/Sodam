@@ -28,14 +28,8 @@ export default function Home() {
 
         // 카테고리와 게시글 조회
         Promise.all([
-            fetch('/api/articles').then(res => {
-                console.log("[articles]Response Content-Type:", res.headers.get("content-type"));
-                return res.json();
-            }),
-            fetch('/api/categories').then(res => {
-                console.log("[categories]Response Content-Type:", res.headers.get("content-type"));
-                return res.json();
-            })
+            fetch('/api/articles').then(res => res.json()),
+            fetch('/api/categories').then(res => res.json()),
         ])
             .then(([articlesData, categoriesData]) => {
                 if (articlesData?.result === 'SUCCESS') {
@@ -71,7 +65,6 @@ export default function Home() {
 
     // 키워드 검색 시 해당 키워드와 관련된 게시글 조회
     const handleSearchKeyword = (keyword: string) => {
-
         // 검색 키워드로 게시글 조회
         fetch(`/api/articles?category=${activeCategory.id}&keyword=${keyword}`)
             .then((res) => res.json())
@@ -80,16 +73,15 @@ export default function Home() {
                     setArticles(data.data)
                 }
             })
-            .catch((error) => console.error('Error fetching articles:', error));
+            .catch((error) => {
+                console.error('Error fetching articles:', error)
+            });
     }
 
     const handleKeywordChange = (keyword : string) => {
         setKeyword(keyword);
     }
 
-    const handleKeywordSearch = (keyword : string) => {
-        alert(keyword);
-    }
 
     return (
         <>
@@ -106,7 +98,7 @@ export default function Home() {
                 keyword={keyword}
                 onChangeCategory={handleCategoryChange}
                 onChangeKeyword={handleKeywordChange}
-                onSearchKeyword={handleKeywordSearch}
+                onSearchKeyword={handleSearchKeyword}
                 activeCategory={activeCategory}
             />
 

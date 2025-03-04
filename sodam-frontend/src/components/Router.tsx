@@ -23,9 +23,9 @@ export default function Router() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/articles" element={<ArticlesPage />} />
-                <Route path="/articles/:id" element={<ArticleDetailPage />} />
+                <Route path="/articles/:articleId" element={<ArticleDetailPage />} />
                 <Route path="/articles/new" element={<ArticleNewPage />} />
-                <Route path="/articles/edit/:id" element={<ArticleEditPage />} />
+                <Route path="/articles/edit/:articleId" element={<ArticleEditPage />} />
                 <Route path="/articles/like/:email" element={<LikePage />} />
                 <Route path="/profile/:email" element={<ProfilePage />} />
                 <Route path="/subscription" element={<SubscriptionPage />} />

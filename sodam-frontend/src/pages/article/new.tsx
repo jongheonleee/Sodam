@@ -1,4 +1,3 @@
-import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ArticleForm from "../../components/ArticleForm";
 import {useNavigate} from "react-router-dom";
@@ -268,7 +267,6 @@ export default function ArticleNewPage() {
             removeTag = {removeTag}
             setTag = {setTag}
             handleTagEnter = {handleTagEnter}
-
           />
         </>
     )
