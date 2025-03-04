@@ -577,13 +577,14 @@ input:checked + .carousel__slide-container .nav label {
 .form__image-preview {
   position: relative;
   display: flex;
-  align-items: center;
+  justify-content: center; /* 가로 가운데 정렬 */
+  align-items: center;     /* 세로 가운데 정렬 */
   margin-top: 10px;
 }
 
 .form__image-preview img {
-  width: 100px;
-  height: 100px;
+  width: 30%;
+  height: 50%;
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid #ddd;
