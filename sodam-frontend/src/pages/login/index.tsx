@@ -30,16 +30,24 @@ export default function Login() {
         // 에러 메시지 초기화
         setError('');
 
-        // 입력값 유효성 검증
-        // - 이메일 4자 이상
-        if (!(email.length > 4)) {
-            setError('잘못된 형식의 이메일 입력');
-            return
+        // 필드값 유효성 검증
+        // - 이메일 유효성 검증
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(email)) {
+            setError('유효하지 않은 이메일입니다.');
+            return;
         }
 
-        // - 비밀번호 8자 이상
-        if (!(password.length >= 8)) {
-            setError('잘못된 형식의 비밀번호 입력');
+
+        // - 비밀번호 유효성 검증 => (1) 길이 확인(8~20), (2) 숫자, 특수문자 포함 여부
+        if (!(8 <= password.length && password.length <= 20)) {
+            setError('유효하지 않는 비밀번호입니다. 비밀번호의 길이는 최소 8자에서 최대 20자까지 허용합니다.');
+            return;
+        }
+
+        const hasNumberOrSpecialChar = /[0-9!@#$%^&*(),.?":{}|<>]/;
+        if (!(hasNumberOrSpecialChar.test(password))) {
+            setError('유효하지 않은 비밀번호입니다. 비밀번호에는 숫자와 특수문자가 포함되어야 합니다.');
             return;
         }
 
@@ -53,14 +61,11 @@ export default function Login() {
             });
 
             const data = await response.json();
-            console.log(data);
 
             if (data?.result === 'SUCCESS' && data.data) {
                 // 메인 페이지로 이동
                 navigate('/', {replace : true})
             }
-
-            console.log(data?.data);
 
         } catch (error) {
             console.error('로그인 오류:', error);
