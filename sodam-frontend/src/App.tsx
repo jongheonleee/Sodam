@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import ThemeContext from "./context/ThemeContext";
-import Router from "./components/Router";
+import Router from "./route/Router";
 import { worker } from "./mocks/browser"; // MSW worker 가져오기
 
 

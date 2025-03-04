@@ -5,6 +5,7 @@ import { categoriesHandlers } from "./category.handlers";
 import { authHandlers } from "./auth.handlers";
 import {articleNewHandlers} from "./articleNew.handlers";
 import {articleEditHandlers} from "./articleEdit.handlers";
+import {profileHandlers} from "./profile.handlers";
 
 export const worker = setupWorker(
     ...articleSummaryHandlers,
@@ -12,4 +13,5 @@ export const worker = setupWorker(
     ...authHandlers,
     ...articleNewHandlers,
     ...articleEditHandlers,
+    ...profileHandlers,
 );

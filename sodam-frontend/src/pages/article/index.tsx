@@ -43,7 +43,7 @@ export default function ArticlesPage() {
                     setArticles(articlesData.data);
                 }
 
-                if (categoriesData?.result !== 'SUCCESS') {
+                if (categoriesData?.result === 'SUCCESS') {
                     setCategories(categoriesData.data);
                 }
             })

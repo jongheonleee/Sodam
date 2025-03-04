@@ -32,7 +32,7 @@ export default function ProfilePage() {
             .catch(error => {
                 console.log('Error fetching data', error);
             });
-    }, []);
+    }, [user.email]);
 
 
     return (
