@@ -4,7 +4,7 @@ import React from "react";
 import Login from "../pages/login";
 import Signup from "../pages/signup";
 import ProfilePage from "../pages/profile";
-import Article from "../pages/article/new";
+import ArticleNewPage from "../pages/article/new";
 import ArticleDetailPage from "../pages/article/detail";
 import LikePage from "../pages/like";
 import SubscriptionPage from "../pages/subscription";
@@ -24,7 +24,7 @@ export default function Router() {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/articles" element={<ArticlesPage />} />
                 <Route path="/articles/:id" element={<ArticleDetailPage />} />
-                <Route path="/articles/new" element={<Article />} />
+                <Route path="/articles/new" element={<ArticleNewPage />} />
                 <Route path="/articles/edit/:id" element={<ArticleEditPage />} />
                 <Route path="/articles/like/:email" element={<LikePage />} />
                 <Route path="/profile/:email" element={<ProfilePage />} />

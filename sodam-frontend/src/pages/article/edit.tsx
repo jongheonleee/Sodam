@@ -5,7 +5,7 @@ export default function ArticleEditPage() {
     return (
         <>
             <Header />
-            <ArticleForm />
+            {/*<ArticleForm />*/}
         </>
     )
 }

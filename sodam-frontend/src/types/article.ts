@@ -68,7 +68,7 @@ export interface ArticlesProps {
 
 // 게시글 작성 폼 타입
 // - 제목, 카테고리, 요약, 이미지 여러개, 태그
-export interface ArticleFormProps {
+export interface ArticleFormType {
     title: string;
     category: Category | null;
     summary: string;
