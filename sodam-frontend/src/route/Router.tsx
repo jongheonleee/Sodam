@@ -10,7 +10,7 @@ import LikePage from "../pages/like";
 import SubscriptionPage from "../pages/subscription";
 import SubscriptionOrderPage from "../pages/subscription/order";
 import SecretesPage from "../pages/secret";
-import SecretDetailPage from "../pages/secret/defail";
+import SecretDetailPage from "../pages/secret/detail";
 import ArticlesPage from "../pages/article";
 import ArticleEditPage from "../pages/article/edit";
 

@@ -84,6 +84,24 @@ export default function ArticlesPage() {
             .catch((error) => console.error('Error fetching articles:', error));
     }
 
+    // 특정 게시글 삭제 처리 핸들링
+    const handleArticleDelete = (id: number) => {
+        fetch(`/api/articles/${id}`, {
+            method : 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(res => res.json())
+            .then(data => {
+                if (data?.result === 'SUCCESS') {
+                    alert('게시글 성공적으로 삭제')
+                }
+            })
+            .catch(error => {
+                console.error('Error handling delete article');
+            })
+    }
+
     return (
         <>
             {/* 헤더 */}
@@ -106,6 +124,7 @@ export default function ArticlesPage() {
             {/* 콘텐츠 */}
             <Articles
                 articles={articles}
+                handleArticleDelete={handleArticleDelete}
             />
 
             {/* 푸터 */}

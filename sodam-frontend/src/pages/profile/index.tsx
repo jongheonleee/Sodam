@@ -34,6 +34,23 @@ export default function ProfilePage() {
             });
     }, [user.email]);
 
+    // 특정 게시글 삭제 처리 핸들링
+    const handleArticleDelete = (id: number) => {
+        fetch(`/api/articles/${id}`, {
+            method : 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(res => res.json())
+            .then(data => {
+                if (data?.result === 'SUCCESS') {
+                    alert('게시글 성공적으로 삭제')
+                }
+            })
+            .catch(error => {
+                console.error('Error handling delete article');
+            })
+    }
 
     return (
         <>
@@ -41,6 +58,7 @@ export default function ProfilePage() {
             <Profile />
             <Articles
                 articles={articles}
+                handleArticleDelete={handleArticleDelete}
             />
             <Footer />
         </>

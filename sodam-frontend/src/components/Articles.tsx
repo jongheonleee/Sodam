@@ -3,11 +3,12 @@ import {Link} from "react-router-dom";
 
 interface ArticlesProps {
     articles : ArticleSummaryType[];
+    handleArticleDelete : (id: number) => void;
 }
 
-
 export default function Articles({
-        articles,
+    articles,
+    handleArticleDelete,
 } : ArticlesProps) {
 
     return (
@@ -55,7 +56,7 @@ export default function Articles({
                                  <div
                                     className="article__delete"
                                     role="presentation"
-                                    onClick={() => alert('u click this')}
+                                    onClick={() => handleArticleDelete(article?.id)}
                                  >
                                      삭제
                                  </div>

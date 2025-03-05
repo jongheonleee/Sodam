@@ -1,168 +1,109 @@
-import {useContext, useState} from "react";
 import {Link} from "react-router-dom";
 import Comments from "./Comments";
+import {ArticleDetailType, ImageType, TagType} from "../types/article";
 
-interface ImageProps {
-    image: string;
+interface ArticleDetailProps  {
+    user?: { email : string },
+    articleDetail: ArticleDetailType,
+    comment:string;
+    handleChange : (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    handleArticleDelete: () => void,
+    handleArticleLike: () => void,
+    handleArticleDislike: () => void,
+    handleCommentSubmit : (e: React.FormEvent<HTMLFormElement>) => void;
+    handleCommentLike: (id: number) => void,
+    handleCommentDislike: (id: number) => void,
+    handleCommentDelete: (id : number) => void,
+    handleCommentEdit : (id: number) => void,
 }
 
-interface HashtagProps {
-    hashtag: string;
-}
-
-interface CommentProps {
-    commendId: number;
-    profileImage: string;
-    email: string;
-    createdAt: string;
-    content: string;
-    likeCnt: number;
-    dislikeCnt: number;
-}
-
-export interface ArticleProps {
-    articleId: number;
-    title: string;
-    email: string;
-    author: string;
-    createdAt: string;
-    content: string;
-    profileImage: string;
-    category: string;
-    viewCnt: number;
-    likeCnt: number;
-    dislikeCnt: number;
-    images: ImageProps[];
-    hashtags: HashtagProps[];
-    comments: CommentProps[];
-}
-
-export default function ArticleDetail() {
-    const article : ArticleProps = {
-        articleId : 1,
-        title : "테스트용 제목",
-        email : "qwefghnm1212@gmail.com",
-        author : "yeonuel",
-        createdAt : "2025 02. 28. 오후 03:55:31",
-        content : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum..",
-        profileImage : "https://images.unsplash.com/photo-1526493356079-3552df24f410?q=80&w=3456&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        category : "커리어",
-        viewCnt : 100,
-        likeCnt : 50,
-        dislikeCnt : 12,
-        images : [
-            {image : "https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
-            {image : "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
-        ],
-        hashtags : [
-            {hashtag: "커리어"},
-            {hashtag: "자기가발"},
-        ],
-        comments : [
-            {
-                commendId: 1,
-                profileImage : "https://images.unsplash.com/photo-1526493356079-3552df24f410?q=80&w=3456&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                email : "wqewqref@gmail.com",
-                createdAt : "2025 02. 28. 오후 03:55:31",
-                content : "테스트용 댓글 1",
-                likeCnt : 4,
-                dislikeCnt : 1
-            },
-            {
-                commendId: 2,
-                profileImage : "https://images.unsplash.com/photo-1526493356079-3552df24f410?q=80&w=3456&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                email : "wqewqref@gmail.com",
-                createdAt : "2025 02. 28. 오후 03:55:31",
-                content : "테스트용 댓글 2",
-                likeCnt : 30,
-                dislikeCnt : 6
-            },
-            {
-                commendId: 3,
-                profileImage : "https://images.unsplash.com/photo-1526493356079-3552df24f410?q=80&w=3456&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                email : "wqewqref@gmail.com",
-                createdAt : "2025 02. 28. 오후 03:55:31",
-                content : "테스트용 댓글 3",
-                likeCnt : 1,
-                dislikeCnt : 5
-            },
-            {
-                commendId: 4,
-                profileImage : "https://images.unsplash.com/photo-1526493356079-3552df24f410?q=80&w=3456&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                email : "qwefghnm1212@gmail.com",
-                createdAt : "2025 02. 28. 오후 03:55:31",
-                content : "테스트용 댓글 4",
-                likeCnt : 4,
-                dislikeCnt : 0
-            },
-
-        ]
-    }
-
-    const user = {
-        email : "qwefghnm1212@gmail.com"
-    }
-
-    const handleDelete = () => {
-        alert("u clicked!!")
-    }
-
+export default function ArticleDetail({
+    user,
+    articleDetail,
+    comment,
+    handleChange,
+    handleArticleDelete,
+    handleArticleLike,
+    handleArticleDislike,
+    handleCommentSubmit,
+    handleCommentLike,
+    handleCommentDislike,
+    handleCommentDelete,
+    handleCommentEdit,
+}: ArticleDetailProps)  {
     return (
         <>
             <div className="article__detail">
-                {article ? (
+                {articleDetail ? (
                     <>
                         <div className="article__box">
-                            <div className="article__title">{article?.title}</div>
+                            <div className="article__title">{articleDetail?.title}</div>
 
                             <div className="article__profile-box">
-                                <img className="article__profile" src={article?.profileImage} alt="Author Profile" />
-                                <div className="article__author-name">{article?.author}</div>
-                                <div className="article__date">{article?.createdAt}</div>
+                                <img className="article__profile" src={articleDetail?.profileImage.url} alt="Author Profile" />
+                                <div className="article__author-name">{articleDetail?.author}</div>
+                                <div className="article__date">{articleDetail?.createdAt}</div>
                             </div>
 
                             <div className="article__utils-box">
                                 <div className="article__hashtags-box">
-                                    {article.hashtags?.map((hashtag : { hashtag : string }) => (
+                                    {articleDetail.tags?.map((tag : TagType ) => (
                                         <span
+                                            key={tag.id}
                                             className="article__hashtag"
                                         >
-                                            {hashtag.hashtag}
+                                            {tag.name}
                                         </span>
                                     ))}
                                 </div>
 
-                                {article?.email === user?.email && (
+                                {articleDetail?.email === user?.email && (
                                     <>
                                         <div
                                             className="article__delete"
                                             role="presentation"
-                                            onClick={handleDelete}
+                                            onClick={handleArticleDelete}
                                         >
                                             삭제
                                         </div>
                                         <div className="article__edit">
-                                            <Link to={`/article/edit/${article?.articleId}`}>수정</Link>
+                                            <Link to={`/articles/edit/${articleDetail?.id}`}>수정</Link>
                                         </div>
                                     </>
                                 )}
                             </div>
 
-                            {article?.images?.length > 0 && (
+                            {articleDetail?.images?.length > 0 && (
                                 <div className="article__image-box">
-                                    {article.images.map((img, index) => (
-                                        <img key={index} className="article__image" src={img.image} alt={`Article Image ${index}`} />
+                                    {articleDetail.images.map((img : ImageType) => (
+                                        <img className="article__image" src={img.url} alt={img.alt} />
                                     ))}
                                 </div>
                             )}
 
 
                             <div className="article__text article__text--pre-wrap">
-                                {article?.content}
+                                {articleDetail?.content}
                             </div>
+
+                            {/* 좋아요 & 싫어요 버튼 추가 */}
+                            <div className="article__reaction-box">
+                                <button className="article__like-btn" onClick={handleArticleLike}>👍 {articleDetail?.likeCnt || 0}</button>
+                                <button className="article__dislike-btn" onClick={handleArticleDislike}>👎 {articleDetail?.dislikeCnt || 0}</button>
+                            </div>
+
+
                         </div>
                         <Comments
-                            article={article}
+                            user={user}
+                            comments={articleDetail?.comments}
+                            comment={comment}
+                            handleChange={handleChange}
+                            handleCommentSubmit={handleCommentSubmit}
+                            handleCommentLike={handleCommentLike}
+                            handleCommentDislike={handleCommentDislike}
+                            handleCommentDelete={handleCommentDelete}
+                            handleCommentEdit={handleCommentEdit}
                         />
                     </>
                 ) : (

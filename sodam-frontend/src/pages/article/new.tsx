@@ -3,7 +3,6 @@ import ArticleForm from "../../components/ArticleForm";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {ArticleFormType, CategoryType} from "../../types/article";
-import Footer from "../../components/Footer";
 
 export default function ArticleNewPage() {
     // 리다이렉션을 위한 navigate
@@ -103,7 +102,7 @@ export default function ArticleNewPage() {
 
             if (data?.result === 'SUCCESS' && data.data) {
                 // 게시글 등록 성공시 알림
-                alert("게시글 등록 완료되었습니다.");
+                alert("게시글 등록이 완료되었습니다.");
 
                 // 홈으로 리다이렉션
                 navigate('/', {replace : true})

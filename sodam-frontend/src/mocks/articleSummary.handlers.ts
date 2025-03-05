@@ -143,4 +143,13 @@ export const articleSummaryHandlers = [
             }
         );
     }),
+
+    http.delete('/api/articles/1', ({ request, params }) => {
+        return HttpResponse.json({
+            code : 200,
+            result : 'SUCCESS',
+            message : '게시글 성공적으로 삭제',
+            data : null,
+        })
+    })
 ];

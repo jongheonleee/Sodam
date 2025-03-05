@@ -36,6 +36,7 @@ export interface ArticleSummaryType {
 // 댓글 타입 정의
 export interface CommentType {
     id: number;
+    articleId: number;
     profileImage: ImageType;
     email: string;
     createdAt: string;
@@ -72,3 +73,4 @@ export interface ArticleFormType {
     images : File[] | null;
     tags : string[];
 }
+
