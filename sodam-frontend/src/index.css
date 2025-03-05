@@ -913,7 +913,7 @@ input:checked + .carousel__slide-container .nav label {
 .dark {
   transition: all 0.25s linear;
   background-color: #1e2937;
-  min-height: 100vh;
+  min-height: 120vh;
 }
 
 .dark a,

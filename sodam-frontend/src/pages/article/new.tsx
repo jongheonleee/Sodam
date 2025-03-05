@@ -3,6 +3,7 @@ import ArticleForm from "../../components/ArticleForm";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {ArticleFormType, Category} from "../../types/article";
+import Footer from "../../components/Footer";
 
 export default function ArticleNewPage() {
     // 리다이렉션을 위한 navigate
@@ -253,21 +254,21 @@ export default function ArticleNewPage() {
 
     return (
         <>
-          <Header />
-          <ArticleForm
-            categories = {categories}
-            tag = {tag}
-            selectedCategory = {selectedCategory}
-            articleForm = {articleForm}
-            error = {error}
-            handleSubmit = {handleSubmit}
-            handleChange = {handleChange}
-            selectCategory = {selectCategory}
-            handleImageUpload = {handleImageUpload}
-            removeTag = {removeTag}
-            setTag = {setTag}
-            handleTagEnter = {handleTagEnter}
-          />
+            <Header />
+            <ArticleForm
+                categories = {categories}
+                tag = {tag}
+                selectedCategory = {selectedCategory}
+                articleForm = {articleForm}
+                error = {error}
+                handleSubmit = {handleSubmit}
+                handleChange = {handleChange}
+                selectCategory = {selectCategory}
+                handleImageUpload = {handleImageUpload}
+                removeTag = {removeTag}
+                setTag = {setTag}
+                handleTagEnter = {handleTagEnter}
+            />
         </>
     )
 }
