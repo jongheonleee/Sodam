@@ -1,6 +1,6 @@
-import {Category} from "../types/article";
+import {CategoryType} from "../types/article";
 
-export const defaultCategory : Category = {
+export const defaultCategory : CategoryType = {
     id : "CT001",
     topId : "CT000",
     name : "테스트용 카테고리",
@@ -10,13 +10,13 @@ export const defaultCategory : Category = {
 
 interface CategoryProps {
     hasNavigation?: boolean;
-    defaultCategoryTap?: Category;
-    categories?: Category[];
+    defaultCategoryTap?: CategoryType;
+    categories?: CategoryType[];
     keyword?: string;
     onChangeCategory: (id : string) => void;
     onChangeKeyword : (keyword : string) => void;
     onSearchKeyword : (keyword : string) => void;
-    activeCategory : Category;
+    activeCategory : CategoryType;
 }
 
 

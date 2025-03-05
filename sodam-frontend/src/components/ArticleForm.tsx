@@ -1,10 +1,10 @@
 import React from "react";
-import { ArticleFormType, Category} from "../types/article";
+import { ArticleFormType, CategoryType} from "../types/article";
 
 interface ArticleFormProps {
-    categories: Category[];
+    categories: CategoryType[];
     tag: string;
-    selectedCategory: Category;
+    selectedCategory: CategoryType;
     articleForm: ArticleFormType;
     error: string;
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;

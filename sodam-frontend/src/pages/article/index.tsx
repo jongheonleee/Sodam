@@ -4,21 +4,21 @@ import Categories, {defaultCategory} from "../../components/Categories";
 import Articles from "../../components/Articles";
 import Footer from "../../components/Footer";
 import {useEffect, useState} from "react";
-import {ArticleSummary, Category} from "../../types/article";
+import {ArticleSummaryType, CategoryType} from "../../types/article";
 
 
 export default function ArticlesPage() {
     // 게시글
-    const [articles, setArticles] = useState<ArticleSummary[]>([]);
+    const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
 
     // 카테고리
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<CategoryType[]>([]);
 
     // 검색 키워드
     const [keyword, setKeyword] = useState<string>('');
 
     // 기본 선정 카테고리
-    const [activeCategory, setActiveCategory] = useState<Category>(defaultCategory);
+    const [activeCategory, setActiveCategory] = useState<CategoryType>(defaultCategory);
 
 
     // 컴포넌트 생성시 카테고리와 게시글 조회

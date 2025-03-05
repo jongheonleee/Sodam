@@ -1,8 +1,8 @@
-import { ArticleSummary } from "../types/article";
+import { ArticleSummaryType } from "../types/article";
 import {Link} from "react-router-dom";
 
 interface ArticlesProps {
-    articles : ArticleSummary[];
+    articles : ArticleSummaryType[];
 }
 
 

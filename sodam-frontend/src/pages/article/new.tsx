@@ -2,7 +2,7 @@ import Header from "../../components/Header";
 import ArticleForm from "../../components/ArticleForm";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {ArticleFormType, Category} from "../../types/article";
+import {ArticleFormType, CategoryType} from "../../types/article";
 import Footer from "../../components/Footer";
 
 export default function ArticleNewPage() {
@@ -10,13 +10,13 @@ export default function ArticleNewPage() {
     const navigate = useNavigate();
 
     // 해당 컴포넌트 생성시 카테고리 조회해 오기
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<CategoryType[]>([]);
 
     // 입력된 태그 필드 선언
     const [tag, setTag] = useState<string>('');
 
     // 기본으로 선정되어 있는 카테고리 선언
-    const [selectedCategory, setSelectedCategory] = useState<Category>({
+    const [selectedCategory, setSelectedCategory] = useState<CategoryType>({
         id : "CT001",
         topId : "CT000",
         name : "전체",

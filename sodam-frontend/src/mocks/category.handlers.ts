@@ -1,4 +1,4 @@
-import { Category } from "../types/article";
+import { CategoryType } from "../types/article";
 import { http, HttpResponse } from 'msw';
 
 export const categoriesHandlers = [

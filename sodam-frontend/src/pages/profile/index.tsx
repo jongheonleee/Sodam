@@ -3,7 +3,7 @@ import Footer from "../../components/Footer";
 import Profile from "../../components/Profile";
 import Articles from "../../components/Articles";
 import {useEffect, useState} from "react";
-import {ArticleSummary} from "../../types/article";
+import {ArticleSummaryType} from "../../types/article";
 
 
 export default function ProfilePage() {
@@ -13,7 +13,7 @@ export default function ProfilePage() {
     }
 
     // 게시글
-    const [articles, setArticles] = useState<ArticleSummary[]>([]);
+    const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
 
     // 컴포넌트 생성시 특정 유저와 관련된 게시글 정보 조회
     useEffect(() => {
