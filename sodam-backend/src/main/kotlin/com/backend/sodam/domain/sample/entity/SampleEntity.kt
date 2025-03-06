@@ -1,5 +1,6 @@
-package com.backend.sodam.domain.article.entity
+package com.backend.sodam.domain.sample.entity
 
+import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -7,21 +8,31 @@ import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.Getter
 import lombok.NoArgsConstructor
+import java.time.LocalDateTime
 
 @Getter
 @Entity
 @Table(name = "sample")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class SampleEntity (
+class SampleEntity(
     @Id
     @Column(name = "SAMPLE_ID")
     val sampleId: String,
+    sampleName: String,
+    sampleDescription: String
+) : MutableBaseEntity() {
 
     @Column(name = "SAMPLE_NAME")
-    val sampleName: String,
+    var sampleName: String = sampleName
+        protected set
 
-    @Column(name = "SAMPLE_DESC")
-    val sampleDescription: String
-) {
+    @Column(name = "SAMPLE_DESCRIPTION")
+    var sampleDescription: String = sampleDescription
+        protected set
 
+    fun updateName(name: String) {
+        this.sampleName = name
+        this.modifiedAt = LocalDateTime.now()
+        this.modifiedBy = "system"
+    }
 }

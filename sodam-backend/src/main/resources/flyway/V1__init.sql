@@ -1,3 +1,4 @@
+-- 샘플용 추후에 삭제할 예정
 CREATE TABLE sample
 (
     sample_id          VARCHAR(255) NOT NULL,

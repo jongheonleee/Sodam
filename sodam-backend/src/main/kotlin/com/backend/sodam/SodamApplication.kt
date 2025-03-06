@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class SodamApplication
 
 fun main(args: Array<String>) {
-	runApplication<SodamApplication>(*args)
+    runApplication<SodamApplication>(*args)
 }

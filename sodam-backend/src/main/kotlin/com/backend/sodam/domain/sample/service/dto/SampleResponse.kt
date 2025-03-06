@@ -1,5 +1,5 @@
-package com.backend.sodam.domain.article.service.dto
+package com.backend.sodam.domain.sample.service.dto
 
 data class SampleResponse(
-    val name: String,
+    val name: String
 )

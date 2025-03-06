@@ -4,6 +4,11 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.idea
+.gradle/
+infra/db
+infra/redis/data
+*/node_modules
 
 ### STS ###
 .apt_generated
@@ -18,13 +23,17 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.idea
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
 *.iws
 *.iml
 *.ipr
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+
 
 ### NetBeans ###
 /nbproject/private/
@@ -38,3 +47,10 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### Mac OS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+.jqwik-database

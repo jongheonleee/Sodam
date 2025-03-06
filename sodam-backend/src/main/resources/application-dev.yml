@@ -1,0 +1,15 @@
+spring:
+    datasource:
+        # 위에 부분 추후에 AWS 연동하면 바꿔야함(밑에는 예전에 AWS 적용했던 정보)
+        # url: jdbc:mysql://awseb-e-ffdp24xppa-stack-awsebrdsdatabase-gesjqeqz2lxe.cduogm2kmgny.ap-northeast-2.rds.amazonaws.com/board?useSSL=false&serverTimezone=Asia/Seoul
+        # username: donghangcam
+        # password: dlwhdgjs1212
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+

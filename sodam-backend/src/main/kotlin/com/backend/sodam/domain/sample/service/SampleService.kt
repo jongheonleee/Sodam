@@ -1,18 +1,21 @@
-package com.backend.sodam.domain.article.service
+package com.backend.sodam.domain.sample.service
 
-import com.backend.sodam.domain.article.repository.SampleJpaRepository
-import com.backend.sodam.domain.article.repository.SampleRepository
-import com.backend.sodam.domain.article.service.dto.SampleResponse
+import com.backend.sodam.domain.sample.repository.SampleRepository
+import com.backend.sodam.domain.sample.service.dto.SampleResponse
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
 @Service
 @RequiredArgsConstructor
 class SampleService(
-    val sampleRepository: SampleRepository,
+    val sampleRepository: SampleRepository
 ) {
-    fun getSample() : SampleResponse {
-        val sampleName = sampleRepository.getSampleName("1")
+    fun getSample(name: String): SampleResponse {
+        val sampleName = sampleRepository.getSampleName(name)
         return SampleResponse(sampleName)
+    }
+
+    fun createSample(name: String): SampleResponse {
+        return SampleResponse(sampleRepository.createSample(name))
     }
 }
