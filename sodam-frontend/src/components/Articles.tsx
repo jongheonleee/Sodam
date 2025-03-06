@@ -2,7 +2,7 @@ import { ArticleSummaryType } from "../types/article";
 import {Link} from "react-router-dom";
 
 interface ArticlesProps {
-    articles : ArticleSummaryType[];
+    articles: ArticleSummaryType[];
     handleArticleDelete : (id: number) => void;
 }
 

@@ -7,6 +7,7 @@ import {articleNewHandlers} from "./articleNew.handlers";
 import {articleEditHandlers} from "./articleEdit.handlers";
 import {profileHandlers} from "./profile.handlers";
 import {articleDetailHandlers} from "./articleDetail.handlers";
+import {articleLikeHandlers} from "./articleLike.handlers";
 
 export const worker = setupWorker(
     ...articleSummaryHandlers,
@@ -16,4 +17,5 @@ export const worker = setupWorker(
     ...articleEditHandlers,
     ...profileHandlers,
     ...articleDetailHandlers,
+    ...articleLikeHandlers,
 );
