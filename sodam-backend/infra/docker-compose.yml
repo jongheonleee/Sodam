@@ -1,0 +1,15 @@
+services:
+    mysql :
+        image: mysql:8.0.41
+        container_name: sodam-mysql
+        restart: always
+        ports:
+            - '3306:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD : 12341234
+            TZ : Asia/Seoul
+        volumes:
+            - ./db/mysql/data:/var/lib/mysql
+            - ./db/mysql/init:/docker-entrypoint-initdb.d
+        platform: linux/x86_64
+    # 추후에 레디스 적용시 아래에 레디스 설정 정보 작성하기
