@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class SampleService(
-    val sampleRepository: SampleRepository
+    private val sampleRepository: SampleRepository
 ) {
     fun getSample(name: String): SampleResponse {
         val sampleName = sampleRepository.getSampleName(name)

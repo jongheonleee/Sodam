@@ -9,7 +9,7 @@ import java.util.*
 @Repository
 @RequiredArgsConstructor
 class SampleRepository(
-    val sampleJpaRepository: SampleJpaRepository
+    private val sampleJpaRepository: SampleJpaRepository
 ) {
     @Transactional
     fun getSampleName(id: String): String {
