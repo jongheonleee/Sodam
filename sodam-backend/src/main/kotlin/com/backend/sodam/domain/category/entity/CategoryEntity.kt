@@ -9,7 +9,6 @@ import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.util.UUID
 
-
 // 카테고리 필드는 대부분이 불변
 // - categoryOrd, validYN 이외의 필드는 모두 불변
 @Entity
@@ -22,14 +21,14 @@ class CategoryEntity(
     val categoryId: UUID,
 
     @Column(name = "TOP_CATEGORY_ID")
-    val topCategoryId : UUID,
+    val topCategoryId: UUID,
 
     @Column(name = "CATEGORY_NAME")
     val categoryName: String,
 
     // 가변 필드
     categoryOrd: Int,
-    validYN: Int,
+    validYN: Int
 
 ) : MutableBaseEntity() {
 

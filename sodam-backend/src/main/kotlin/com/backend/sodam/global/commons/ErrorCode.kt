@@ -3,7 +3,7 @@ package com.backend.sodam.global.commons
 // 공통 에러 코드 보관 이넘
 enum class ErrorCode(
     val code: String,
-    val desc: String,
+    val desc: String
 ) {
     DEFAULT_ERROR("SDE0000", "에러가 발생했습니다.");
 
@@ -12,5 +12,4 @@ enum class ErrorCode(
     override fun toString(): String {
         return "[$code] $desc"
     }
-
 }

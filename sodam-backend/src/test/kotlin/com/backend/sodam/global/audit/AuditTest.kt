@@ -11,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AuditTest(
-    val sampleJpaRepository: SampleJpaRepository
+    private val sampleJpaRepository: SampleJpaRepository
 ) : FunSpec({
 
     test("1. 샘플 생성 시 createdAt과 modifiedAt이 생성된 시각으로 저장되야 한다.") {

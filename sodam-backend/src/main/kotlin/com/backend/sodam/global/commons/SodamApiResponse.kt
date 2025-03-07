@@ -12,11 +12,11 @@ data class SodamApiResponse<T>(
     companion object {
         private const val CODE_SUCCESS = "success"
 
-        fun <T> ok(data: T) : SodamApiResponse<T> {
+        fun <T> ok(data: T): SodamApiResponse<T> {
             return SodamApiResponse(true, CODE_SUCCESS, null, data)
         }
 
-        fun fail(errorCode: ErrorCode, message: String) : SodamApiResponse<Nothing> {
+        fun fail(errorCode: ErrorCode, message: String): SodamApiResponse<Nothing> {
             return SodamApiResponse(false, errorCode.code, message, null)
         }
     }

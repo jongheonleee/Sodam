@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequiredArgsConstructor
 class SampleController(
-    private val sampleService: SampleService,
+    private val sampleService: SampleService
 ) {
     @GetMapping("/sample")
     fun sampleGet(): SodamApiResponse<String> {
