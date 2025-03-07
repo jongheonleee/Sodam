@@ -8,7 +8,7 @@ class Category(
     val topCategoryId: UUID,
     val categoryName: String,
     private var categoryOrd: Int,
-    private var validYN: Boolean,
+    private var validYN: Boolean
 ) {
 
     fun invalidate() {
@@ -22,7 +22,6 @@ class Category(
     fun isValid(): Boolean {
         return this.validYN
     }
-
 
     companion object {
         fun newCategory(topCategoryId: UUID, categoryName: String, categoryOrd: Int): Category {

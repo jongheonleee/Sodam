@@ -1,6 +1,5 @@
 package com.backend.sodam.domain.category.repository
 
-
 import com.backend.sodam.domain.category.entity.CategoryEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -11,9 +10,9 @@ import java.util.*
 class CategoryCustomRepositoryImplTest(
     private val sut: CategoryCustomRepositoryImpl,
     private val categoryJpaRepository: CategoryJpaRepository
-): DescribeSpec({
+) : DescribeSpec({
 
-    val expected : MutableList<CategoryEntity> = mutableListOf()
+    val expected: MutableList<CategoryEntity> = mutableListOf()
 
     // 테스트 환경 구축
     beforeEach {
@@ -35,11 +34,9 @@ class CategoryCustomRepositoryImplTest(
         }
 
         // validYN 0 이며 categoryOrd에 따라 정렬하기
-        expected.filter   { it.validYN == 0 }
+        expected.filter { it.validYN == 0 }
             .sortedBy { it.validYN }
     }
-
-
 
     describe("카테고리 조회 테스트") {
         it("사용 가능한 카테고리를 순서대로 조회한다") {
@@ -53,7 +50,7 @@ class CategoryCustomRepositoryImplTest(
             // - 내용 비교
             for (idx in 0..4) {
                 // 아이디, 이름, 정렬 순서
-                expected[idx].categoryId shouldBe  actual[idx].categoryId
+                expected[idx].categoryId shouldBe actual[idx].categoryId
                 expected[idx].categoryName shouldBe actual[idx].categoryName
                 expected[idx].categoryOrd shouldBe actual[idx].categoryOrd
             }

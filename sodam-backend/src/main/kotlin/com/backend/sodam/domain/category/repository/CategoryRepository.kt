@@ -1,6 +1,5 @@
 package com.backend.sodam.domain.category.repository
 
-import com.backend.sodam.domain.category.entity.CategoryEntity
 import com.backend.sodam.domain.category.model.Category
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository

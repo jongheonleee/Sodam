@@ -1,0 +1,49 @@
+### 비즈니스에 사용하는 카테고리 조회 - 실행전에 더미 데이터 넣었는지 확인
+GET localhost:8080/api/v1/categories
+Content-Type: application/json
+
+{
+  "success": true,
+  "code": "success",
+  "message": null,
+  "data": {
+    "categories": [
+      {
+        "categoryId": "63617465-5f30-3030-0000-000000000000",
+        "topCategoryId": "63617465-5f30-3030-0000-000000000000",
+        "categoryName": "전체",
+        "isValid": true
+      },
+      {
+        "categoryId": "63617465-5f30-3031-0000-000000000000",
+        "topCategoryId": "63617465-5f30-3030-0000-000000000000",
+        "categoryName": "일상",
+        "isValid": true
+      },
+      {
+        "categoryId": "63617465-5f30-3032-0000-000000000000",
+        "topCategoryId": "63617465-5f30-3030-0000-000000000000",
+        "categoryName": "꿀 팁",
+        "isValid": true
+      },
+      {
+        "categoryId": "63617465-5f30-3033-0000-000000000000",
+        "topCategoryId": "63617465-5f30-3030-0000-000000000000",
+        "categoryName": "IT 커리어",
+        "isValid": true
+      },
+      {
+        "categoryId": "63617465-5f30-3034-0000-000000000000",
+        "topCategoryId": "63617465-5f30-3030-0000-000000000000",
+        "categoryName": "공부",
+        "isValid": true
+      },
+      {
+        "categoryId": "63617465-5f30-3035-0000-000000000000",
+        "topCategoryId": "63617465-5f30-3030-0000-000000000000",
+        "categoryName": "취미",
+        "isValid": true
+      }
+    ]
+  }
+}

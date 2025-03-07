@@ -2,18 +2,17 @@ package com.backend.sodam.domain.category.service
 
 import com.backend.sodam.domain.category.model.Category
 import com.backend.sodam.domain.category.service.dto.CategoriesResponse
-import io.mockk.mockk
-import io.mockk.every
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
+import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 
 class CategoryServiceTest : BehaviorSpec({
 
     // 목 활용
-    val expected = mutableListOf<Category>();
+    val expected = mutableListOf<Category>()
     val sut = mockk<CategoryService>()
 
     // 테스트 환경에서 사용할 더미 데이터 설정
@@ -55,7 +54,6 @@ class CategoryServiceTest : BehaviorSpec({
                 verify {
                     sut.fetchFromClient()
                 }
-
             }
         }
     }
