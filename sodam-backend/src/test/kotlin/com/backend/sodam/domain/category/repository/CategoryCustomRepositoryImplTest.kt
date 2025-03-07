@@ -2,26 +2,21 @@ package com.backend.sodam.domain.category.repository
 
 
 import com.backend.sodam.domain.category.entity.CategoryEntity
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 
 @SpringBootTest
 class CategoryCustomRepositoryImplTest(
-    @Autowired
-    val sut: CategoryCustomRepositoryImpl,
-    @Autowired
-    val categoryJpaRepository: CategoryJpaRepository,
-) {
+    private val sut: CategoryCustomRepositoryImpl,
+    private val categoryJpaRepository: CategoryJpaRepository
+): DescribeSpec({
 
-    private val expected : MutableList<CategoryEntity> = mutableListOf()
+    val expected : MutableList<CategoryEntity> = mutableListOf()
 
-    @BeforeEach
-    fun `테스트_데이터_등록`() {
+    // 테스트 환경 구축
+    beforeEach {
         // 최상위 카테고리 지정
         val topCategoryId = UUID.randomUUID()
 
@@ -41,25 +36,27 @@ class CategoryCustomRepositoryImplTest(
 
         // validYN 0 이며 categoryOrd에 따라 정렬하기
         expected.filter   { it.validYN == 0 }
-                .sortedBy { it.validYN }
+            .sortedBy { it.validYN }
     }
 
-    @Test
-    @DisplayName("사용 가능한 카테고리를 정렬 순서에 의거하여 조회한다.")
-    fun `사용_가능한_카테고리를_정렬_순서에_맞게_조회한다`() {
-        // 실제 조회
-        val actual = sut.fetchValidCategoriesInOrder()
 
-        // 기대값과 같은지 비교
-        // - 사이즈 비교
-        assertEquals(expected.size, actual.size)
 
-        // - 내용 비교
-        for (i in 0..4) {
-            // 아이디, 이름, 정렬 순서
-            assertEquals(expected[i].categoryId, actual[i].categoryId)
-            assertEquals(expected[i].categoryName, actual[i].categoryName)
-            assertEquals(expected[i].categoryOrd, actual[i].categoryOrd)
+    describe("카테고리 조회 테스트") {
+        it("사용 가능한 카테고리를 순서대로 조회한다") {
+            // 실제 조회
+            val actual = sut.fetchValidCategoriesInOrder()
+
+            // 기대값과 같은지 비교
+            // - 사이즈 비교
+            expected.size shouldBe actual.size
+
+            // - 내용 비교
+            for (idx in 0..4) {
+                // 아이디, 이름, 정렬 순서
+                expected[idx].categoryId shouldBe  actual[idx].categoryId
+                expected[idx].categoryName shouldBe actual[idx].categoryName
+                expected[idx].categoryOrd shouldBe actual[idx].categoryOrd
+            }
         }
     }
-}
+})

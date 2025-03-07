@@ -74,6 +74,9 @@ dependencies {
     // flyway 관련 의존성 추가
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-mysql")
+
+    // MockK 의존성 추가
+    testImplementation("io.mockk:mockk:1.13.5") // MockK 라이브러리 추가
 }
 
 kotlin {

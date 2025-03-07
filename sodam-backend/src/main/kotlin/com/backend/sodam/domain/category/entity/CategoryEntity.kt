@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.category.entity
 
+import com.backend.sodam.domain.category.model.Category
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -39,4 +40,15 @@ class CategoryEntity(
     @Column(name = "VALID_YN")
     var validYN: Int = validYN
         protected set
+
+    fun toDomain(): Category {
+        return Category(
+            categoryId = this.categoryId,
+            topCategoryId = this.topCategoryId,
+            categoryName = this.categoryName,
+            categoryOrd = this.categoryOrd,
+            validYN = if (this.validYN == 0) true else false
+        )
+    }
 }
+
