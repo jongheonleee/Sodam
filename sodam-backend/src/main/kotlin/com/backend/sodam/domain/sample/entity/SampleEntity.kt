@@ -10,7 +10,6 @@ import lombok.Getter
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
 
-@Getter
 @Entity
 @Table(name = "sample")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
