@@ -1,7 +1,7 @@
 -- 게시글 관련 테이블
 -- 게시판 카테고리
-DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE `categories` (
     `CATEGORY_ID`	    VARCHAR(255)	NOT NULL   COMMENT '게시글 카테고리 아이디(UUID)(PK)',
     `TOP_CATEGORY_ID`	VARCHAR(255)	NOT NULL   COMMENT '게시글 상위 카테고리 아이디(FK)',
     `CATEGORY_NAME`	    VARCHAR(50)	    NOT NULL   COMMENT '게시글 카테고리 이름',
@@ -18,8 +18,8 @@ CREATE TABLE `category` (
 );
 
 -- 베스트 게시판
-DROP TABLE IF EXISTS `best_article`;
-CREATE TABLE `best_article` (
+DROP TABLE IF EXISTS `best_articles`;
+CREATE TABLE `best_articles` (
     `BEST_ARTICLE_ID`   BIGINT          NOT NULL    AUTO_INCREMENT COMMENT '베스트 게시글 아이디(PK)',
     `ARTICLE_ID`        BIGINT          NOT NULL                   COMMENT '게시글 아이디(FK)',
     `START_AT`          DATETIME        NOT NULL                   COMMENT '베스트 게시글 적용 시작 시간',
@@ -36,8 +36,8 @@ CREATE TABLE `best_article` (
 
 
 -- 회원 싫어요 게시글
-DROP TABLE IF EXISTS `users_dislike_article`;
-CREATE TABLE `users_dislike_article` (
+DROP TABLE IF EXISTS `users_dislike_articles`;
+CREATE TABLE `users_dislike_articles` (
     `USERS_ARTICLE_DISLIKE_ID` BIGINT           NOT NULL    AUTO_INCREMENT    COMMENT '싫어요 게시글 아이디(PK)',
     `ARTICLE_ID`               BIGINT           NOT NULL                      COMMENT '게시글 아이디(FK)',
     `USER_ID`                  VARCHAR(255)	    NOT NULL                      COMMENT '회원 아이디(FK)',
@@ -53,8 +53,8 @@ CREATE TABLE `users_dislike_article` (
 
 
 -- 게시글
-DROP TABLE IF EXISTS `article`;
-CREATE TABLE `article` (
+DROP TABLE IF EXISTS `articles`;
+CREATE TABLE `articles` (
     `ARTICLE_ID`                BIGINT               NOT NULL    AUTO_INCREMENT    COMMENT '게시글 아이디(PK)',
     `CATEGORY_ID`               VARCHAR(255)         NOT NULL                      COMMENT '카테고리 아이디(FK)',
     `USER_ID`                   VARCHAR(255)	     NOT NULL                      COMMENT '회원 아이디(FK)',
@@ -76,8 +76,8 @@ CREATE TABLE `article` (
 );
 
 -- 게시글 이미지
-DROP TABLE IF EXISTS `article_image`;
-CREATE TABLE `article_image` (
+DROP TABLE IF EXISTS `article_images`;
+CREATE TABLE `article_images` (
     `ARTICLE_IMAGE_ID`          VARCHAR(255)         NOT NULL                      COMMENT '게시글 이미지 아이디(UUID)(PK)',
     `ARTICLE_ID`                BIGINT               NOT NULL                      COMMENT '게시글 아이디(FK)',
     `IMAGE_URL`                 VARCHAR(255)         NOT NULL                      COMMENT 'aws s3에 등록된 이미지 url',
@@ -94,8 +94,8 @@ CREATE TABLE `article_image` (
 
 
 -- 회원 좋아요 게시글
-DROP TABLE IF EXISTS `users_like_article`;
-CREATE TABLE `users_like_article` (
+DROP TABLE IF EXISTS `users_like_articles`;
+CREATE TABLE `users_like_articles` (
     `USERS_ARTICLE_LIKE_ID`     BIGINT              NOT NULL    COMMENT '좋아요 게시글 아이디(PK)',
     `ARTICLE_ID`                BIGINT              NOT NULL    COMMENT '좋아요 게시글 아이디(FK)',
     `USER_ID`                   VARCHAR(255)        NOT NULL    COMMENT '회원 아이디(UUID)(FK)',
@@ -165,8 +165,8 @@ CREATE TABLE `social_users` (
 );
 
 -- 회원 이력(접속, 요청 이력 기록)
-DROP TABLE IF EXISTS `users_hist`;
-CREATE TABLE `users_hist` (
+DROP TABLE IF EXISTS `users_history`;
+CREATE TABLE `users_history` (
     `USER_HIST_ID`              BIGINT                  NOT NULL     AUTO_INCREMENT     COMMENT '사용자 이력 아이디(PK)',
     `USER_ID`                   VARCHAR(255)            NOT NULL                        COMMENT '사용자 아이디(FK)',
     `USER_ROLE`                 VARCHAR(255)            NOT NULL                        COMMENT '사용자 역할',
@@ -186,8 +186,8 @@ CREATE TABLE `users_hist` (
 );
 
 -- 회원 토큰
-DROP TABLE IF EXISTS `users_token`;
-CREATE TABLE `users_token` (
+DROP TABLE IF EXISTS `user_tokens`;
+CREATE TABLE `user_tokens` (
     `TOKEN_ID`                  VARCHAR(255)            NOT NULL    COMMENT '토큰 아이디(pk)',
     `USER_ID`                   VARCHAR(255)            NOT NULL    COMMENT '사용자 아이디(FK)',
     `ACCESS_TOKEN`              VARCHAR(255)            NOT NULL    COMMENT '액세스 토큰',
@@ -205,8 +205,8 @@ CREATE TABLE `users_token` (
 );
 
 -- 회원 보유 구독권
-DROP TABLE IF EXISTS `users_subscription`;
-CREATE TABLE `users_subscription` (
+DROP TABLE IF EXISTS `user_subscriptions`;
+CREATE TABLE `user_subscriptions` (
     `USER_SUBSCRIPTION_ID`      VARCHAR(255)            NOT NULL    COMMENT '회원 구독권 아이디(UUID)(pk)',
     `USER_ID`                   VARCHAR(255)            NOT NULL    COMMENT '회원 아이디(FK)',
     `SUBSCRIPTION_ID`           VARCHAR(255)            NOT NULL    COMMENT '구독권 아이디(UUID)(FK)',
@@ -228,8 +228,8 @@ CREATE TABLE `users_subscription` (
 
 -- 댓글 관련 테이블
 -- 댓글
-DROP TABLE IF EXISTS `comment`;
-CREATE TABLE `comment` (
+DROP TABLE IF EXISTS `comments`;
+CREATE TABLE `comments` (
     `COMMENT_ID`                  BIGINT              NOT NULL    AUTO_INCREMENT    COMMENT '댓글 아이디(PK)',
     `ARTICLE_ID`                  BIGINT              NOT NULL                      COMMENT '게시글 아이디(FK)',
     `USER_ID`                     VARCHAR(255)        NOT NULL                      COMMENT '사용자 아이디(FK)',
@@ -248,8 +248,8 @@ CREATE TABLE `comment` (
 );
 
 -- 댓글 좋아요
-DROP TABLE IF EXISTS `users_like_comment`;
-CREATE TABLE `users_like_comment` (
+DROP TABLE IF EXISTS `user_like_comments`;
+CREATE TABLE `user_like_comments` (
     `USERS_LIKE_COMMENT_ID`       BIGINT              NOT NULL    AUTO_INCREMENT    COMMENT '댓글 좋아요 아이디(PK)',
     `COMMENT_ID`                  BIGINT              NOT NULL                      COMMENT '댓글 아이디(FK)',
     `USER_ID`                     VARCHAR(255)        NOT NULL                      COMMENT '사용자 아이디(FK)',
@@ -264,8 +264,8 @@ CREATE TABLE `users_like_comment` (
 );
 
 -- 댓글 싫어요
-DROP TABLE IF EXISTS `users_dislike_comment`;
-CREATE TABLE `users_dislike_comment` (
+DROP TABLE IF EXISTS `user_dislike_comments`;
+CREATE TABLE `user_dislike_comments` (
     `USERS_DISLIKE_COMMENT_ID`    BIGINT              NOT NULL    AUTO_INCREMENT    COMMENT '댓글 싫어요 아이디(PK)',
     `COMMENT_ID`                  BIGINT              NOT NULL                      COMMENT '댓글 아이디(FK)',
     `USER_ID`                     VARCHAR(255)        NOT NULL                      COMMENT '사용자 아이디(FK)',
@@ -281,8 +281,8 @@ CREATE TABLE `users_dislike_comment` (
 
 
 -- 구독권
-DROP TABLE IF EXISTS `subscription`;
-CREATE TABLE `subscription` (
+DROP TABLE IF EXISTS `subscriptions`;
+CREATE TABLE `subscriptions` (
     `SUBSCRIPTION_ID`             VARCHAR(255)        NOT NULL                      COMMENT '구독권 아이디(PK)',
     `SUBSCRIPTION_NAME`           VARCHAR(255)        NOT NULL                      COMMENT '구독권 이름',
     `SUBSCRIPTION_CONTENT`        TEXT                NOT NULL                      COMMENT '구독권 내용',
@@ -315,8 +315,8 @@ CREATE TABLE `download_secrets` (
 );
 
 -- 시크릿(구독자 전용 게시글)
-DROP TABLE IF EXISTS `secrete`;
-CREATE TABLE `secrete` (
+DROP TABLE IF EXISTS `secretes`;
+CREATE TABLE `secretes` (
     `SECRETE_ID`                  BIGINT              NOT NULL    AUTO_INCREMENT              COMMENT '시크릿(구독자 전용 게시글) 아이디(PK)',
     `SECRETE_TITLE`               VARCHAR(255)        NOT NULL                                COMMENT '시크릿 타이틀',
     `SECRETE_CONTENT`             TEXT                NOT NULL                                COMMENT '시크릿 내용',
@@ -333,8 +333,8 @@ CREATE TABLE `secrete` (
 
 -- 주문, 결제 관련 테이블
 -- 결제 이력
-DROP TABLE IF EXISTS `payment_history`;
-CREATE TABLE `payment_history` (
+DROP TABLE IF EXISTS `payments_history`;
+CREATE TABLE `payments_history` (
     `PAYMENT_HISTORY_ID`         VARCHAR(255)          NOT NULL                                COMMENT '결제 이력 아이디(UUID)(PK)',
     `PAYMENT_ID`                 VARCHAR(255)          NOT NULL                                COMMENT '결제 아이디(UUID)(FK)',
     `PAYMENT_STAT`               VARCHAR(255)          NOT NULL                                COMMENT '결제 상태',
