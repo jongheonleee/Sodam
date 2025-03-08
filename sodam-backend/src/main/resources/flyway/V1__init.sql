@@ -167,7 +167,7 @@ CREATE TABLE `social_users` (
 -- 회원 이력(접속, 요청 이력 기록)
 DROP TABLE IF EXISTS `users_history`;
 CREATE TABLE `users_history` (
-    `USER_HIST_ID`              BIGINT                  NOT NULL     AUTO_INCREMENT     COMMENT '사용자 이력 아이디(PK)',
+    `USER_HISTORY_ID`              BIGINT                  NOT NULL     AUTO_INCREMENT     COMMENT '사용자 이력 아이디(PK)',
     `USER_ID`                   VARCHAR(255)            NOT NULL                        COMMENT '사용자 아이디(FK)',
     `USER_ROLE`                 VARCHAR(255)            NOT NULL                        COMMENT '사용자 역할',
     `REQ_IP`                    VARCHAR(255)            NOT NULL                        COMMENT '요청 IP',
@@ -210,7 +210,7 @@ CREATE TABLE `user_subscriptions` (
     `USER_SUBSCRIPTION_ID`      VARCHAR(255)            NOT NULL    COMMENT '회원 구독권 아이디(UUID)(pk)',
     `USER_ID`                   VARCHAR(255)            NOT NULL    COMMENT '회원 아이디(FK)',
     `SUBSCRIPTION_ID`           VARCHAR(255)            NOT NULL    COMMENT '구독권 아이디(UUID)(FK)',
-    `SUB_NAME`                  VARCHAR(255)            NOT NULL    COMMENT '구독권명',
+    `SUBSCRIPTION_NAME`         VARCHAR(255)            NOT NULL    COMMENT '구독권명',
     `START_AT`                  DATETIME                NOT NULL    COMMENT '구독권 적용 시작 시점',
     `END_AT`                    DATETIME                NOT NULL    COMMENT '구독권 적용 종료 시점',
     `VALID_YN`                  TINYINT(1)              NOT NULL    COMMENT '구독권 사용 가능 여부(0: 사용가능, 1: 사용불가능)',
@@ -397,7 +397,7 @@ CREATE TABLE `orders` (
 
 -- 주문 상태
 DROP TABLE IF EXISTS `orders_status`;
-CREATE TABLE orders_status (
+CREATE TABLE `orders_status` (
     `ORDER_STATUS_ID`            VARCHAR(255)          NOT NULL                                COMMENT '주문 상태 아이디(UUID)(PK)',
     `ORDER_ID`                   VARCHAR(255)          NOT NULL                                COMMENT '주문 아이디(UUID)(FK)',
     `ORDER_STATUS`               VARCHAR(255)          NOT NULL                                COMMENT '주문 상태',

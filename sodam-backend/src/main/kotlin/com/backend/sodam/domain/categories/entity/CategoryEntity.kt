@@ -27,6 +27,9 @@ class CategoryEntity(
     @Column(name = "CATEGORY_NAME")
     val categoryName: String,
 
+    // 얀관관계 매핑(양방향)
+    // - 게시글 - 카테고리 = N : 1
+
     // 가변 필드
     categoryOrd: Int,
     validYN: Int
@@ -34,11 +37,11 @@ class CategoryEntity(
 ) : MutableBaseEntity() {
 
     @Column(name = "CATEGORY_ORD")
-    var categoryOrd: Int = categoryOrd
+    var categoryOrd = categoryOrd
         protected set
 
     @Column(name = "VALID_YN")
-    var validYN: Int = validYN
+    var validYN = validYN
         protected set
 
     fun toDomain(): Category {
