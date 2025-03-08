@@ -2,8 +2,8 @@
 -- 게시판 카테고리
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
-    `CATEGORY_ID`	    VARCHAR(255)	NOT NULL   COMMENT '게시글 카테고리 id(UUID)',
-    `TOP_CATEGORY_ID`	VARCHAR(255)	NOT NULL   COMMENT '게시글 상위 카테고리 id(FK)',
+    `CATEGORY_ID`	    VARCHAR(255)	NOT NULL   COMMENT '게시글 카테고리 아이디(UUID)(PK)',
+    `TOP_CATEGORY_ID`	VARCHAR(255)	NOT NULL   COMMENT '게시글 상위 카테고리 아이디(FK)',
     `CATEGORY_NAME`	    VARCHAR(50)	    NOT NULL   COMMENT '게시글 카테고리 이름',
     `CATEGORY_ORD`	    INT	            NOT NULL   COMMENT '게시글 카테고리 정렬순서',
     `VALID_YN`	        TINYINT(1)	    NOT NULL   COMMENT '게시글 카테고리 사용가능 여부, 0 : 사용가능, 1 : 사용불가능',
@@ -20,8 +20,8 @@ CREATE TABLE `category` (
 -- 베스트 게시판
 DROP TABLE IF EXISTS `best_article`;
 CREATE TABLE `best_article` (
-    `BEST_ARTICLE_ID`   BIGINT          NOT NULL    AUTO_INCREMENT COMMENT '베스트 게시글 id',
-    `ARTICLE_ID`        BIGINT          NOT NULL                   COMMENT '게시글 id(FK)',
+    `BEST_ARTICLE_ID`   BIGINT          NOT NULL    AUTO_INCREMENT COMMENT '베스트 게시글 아이디(PK)',
+    `ARTICLE_ID`        BIGINT          NOT NULL                   COMMENT '게시글 아이디(FK)',
     `START_AT`          DATETIME        NOT NULL                   COMMENT '베스트 게시글 적용 시작 시간',
     `END_AT`            DATETIME        NOT NULL                   COMMENT '베스트 게시글 적용 종료 시간',
 
@@ -38,9 +38,9 @@ CREATE TABLE `best_article` (
 -- 회원 싫어요 게시글
 DROP TABLE IF EXISTS `users_dislike_article`;
 CREATE TABLE `users_dislike_article` (
-    `USERS_ARTICLE_DISLIKE_ID` BIGINT           NOT NULL    AUTO_INCREMENT    COMMENT '싫어요 게시글 id',
-    `ARTICLE_ID`               BIGINT           NOT NULL                      COMMENT '게시글 id(FK)',
-    `USER_ID`                  VARCHAR(255)	    NOT NULL                      COMMENT '회원 id(FK)',
+    `USERS_ARTICLE_DISLIKE_ID` BIGINT           NOT NULL    AUTO_INCREMENT    COMMENT '싫어요 게시글 아이디(PK)',
+    `ARTICLE_ID`               BIGINT           NOT NULL                      COMMENT '게시글 아이디(FK)',
+    `USER_ID`                  VARCHAR(255)	    NOT NULL                      COMMENT '회원 아이디(FK)',
 
     -- 시스템 칼럼
     `CREATED_AT`	           DATETIME	        NOT NULL                     COMMENT '생성일자',
@@ -55,9 +55,9 @@ CREATE TABLE `users_dislike_article` (
 -- 게시글
 DROP TABLE IF EXISTS `article`;
 CREATE TABLE `article` (
-    `ARTICLE_ID`                BIGINT               NOT NULL    AUTO_INCREMENT    COMMENT '게시글 id',
+    `ARTICLE_ID`                BIGINT               NOT NULL    AUTO_INCREMENT    COMMENT '게시글 아이디(PK)',
     `CATEGORY_ID`               VARCHAR(255)         NOT NULL                      COMMENT '카테고리 아이디(FK)',
-    `USER_ID`                   VARCHAR(255)	     NOT NULL                      COMMENT '회원 id(FK)',
+    `USER_ID`                   VARCHAR(255)	     NOT NULL                      COMMENT '회원 아이디(FK)',
     `USER_EMAIL`                VARCHAR(255)         NOT NULL                      COMMENT '회원 이메일',
     `ARTICLE_TITLE`             VARCHAR(255)         NOT NULL                      COMMENT '게시글 타이틀',
     `ARTICLE_SUMMARY`           VARCHAR(500)         NOT NULL                      COMMENT '게시글 요약글',
@@ -78,7 +78,7 @@ CREATE TABLE `article` (
 -- 게시글 이미지
 DROP TABLE IF EXISTS `article_image`;
 CREATE TABLE `article_image` (
-    `ARTICLE_IMAGE_ID`          VARCHAR(255)         NOT NULL                      COMMENT '게시글 이미지 아이디(UUID)',
+    `ARTICLE_IMAGE_ID`          VARCHAR(255)         NOT NULL                      COMMENT '게시글 이미지 아이디(UUID)(PK)',
     `ARTICLE_ID`                BIGINT               NOT NULL                      COMMENT '게시글 아이디(FK)',
     `IMAGE_URL`                 VARCHAR(255)         NOT NULL                      COMMENT 'aws s3에 등록된 이미지 url',
 
@@ -96,9 +96,9 @@ CREATE TABLE `article_image` (
 -- 회원 좋아요 게시글
 DROP TABLE IF EXISTS `users_like_article`;
 CREATE TABLE `users_like_article` (
-    `USERS_ARTICLE_LIKE_ID`     BIGINT              NOT NULL    COMMENT '좋아요 게시글 id',
-    `ARTICLE_ID`                BIGINT              NOT NULL    COMMENT '좋아요 게시글 id',
-    `USER_ID`                   VARCHAR(255)        NOT NULL    COMMENT '회원 아이디(UUID)',
+    `USERS_ARTICLE_LIKE_ID`     BIGINT              NOT NULL    COMMENT '좋아요 게시글 아이디(PK)',
+    `ARTICLE_ID`                BIGINT              NOT NULL    COMMENT '좋아요 게시글 아이디(FK)',
+    `USER_ID`                   VARCHAR(255)        NOT NULL    COMMENT '회원 아이디(UUID)(FK)',
 
     -- 시스템 칼럼
     `CREATED_AT`	            DATETIME	        NOT NULL    COMMENT '생성일자',
@@ -113,8 +113,8 @@ CREATE TABLE `users_like_article` (
 -- 게시글 태그
 DROP TABLE IF EXISTS `tags`;
 CREATE TABLE `tags` (
-    `TAG_ID`                    BIGINT              NOT NULL   COMMENT '태그 아이디',
-    `ARTICLE_ID`                BIGINT              NOT NULL   COMMENT '게시글 아이디',
+    `TAG_ID`                    BIGINT              NOT NULL   COMMENT '태그 아이디(PK)',
+    `ARTICLE_ID`                BIGINT              NOT NULL   COMMENT '게시글 아이디(FK)',
     `TAG_NAME`                  VARCHAR(50)         NOT NULL   COMMENT '태그명',
 
     -- 시스템 칼럼
@@ -128,6 +128,318 @@ CREATE TABLE `tags` (
 );
 
 -- 회원 관련 테이블
+-- 회원
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+    `USER_ID`                   VARCHAR(255)        NOT NULL    COMMENT '사용자 아이디(UUID)(PK)',
+    `USER_EMAIL`                VARCHAR(255)        NOT NULL    COMMENT '사용자 이메일',
+    `USER_NAME`                 VARCHAR(50)         NOT NULL    COMMENT '사용자 이름',
+    `USER_INTRODUCE`            TEXT                NULL        COMMENT '사용자 자기소개글',
+    `USER_IMAGE`                VARCHAR(255)        NOT NULL    COMMENT '사용자 프로필 이미지(aws s3에 등록된 url)',
+    `PASSWORD`                  VARCHAR(255)        NOT NULL    COMMENT '사용자 비밀번호(암호화)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`	            DATETIME	        NOT NULL    COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		    NOT NULL    COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	        NOT NULL    COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL    COMMENT '수정자',
+
+    PRIMARY KEY (USER_ID)
+);
+
+-- 소셜 회원(카카오, 구글, ... 등)
+DROP TABLE IF EXISTS `social_users`;
+CREATE TABLE `social_users` (
+    `SOCIAL_USER_ID`            VARCHAR(255)             NOT NULL    COMMENT '소셜 사용자 ID(UUID)(PK)',
+    `USER_NAME`                 VARCHAR(50)              NOT NULL    COMMENT '소셜 사용자 이름',
+    `PROVIDER`                  VARCHAR(255)             NOT NULL    COMMENT '소셜 프로바이더 (구글, 카카오, ... 등)',
+    `PROVIDER_ID`               VARCHAR(255)             NOT NULL    COMMENT '프로바이더 아이디(FK)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`	            DATETIME	             NOT NULL    COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		         NOT NULL    COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	             NOT NULL    COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		         NOT NULL    COMMENT '수정자',
+
+    PRIMARY KEY (SOCIAL_USER_ID)
+);
+
+-- 회원 이력(접속, 요청 이력 기록)
+DROP TABLE IF EXISTS `users_hist`;
+CREATE TABLE `users_hist` (
+    `USER_HIST_ID`              BIGINT                  NOT NULL     AUTO_INCREMENT     COMMENT '사용자 이력 아이디(PK)',
+    `USER_ID`                   VARCHAR(255)            NOT NULL                        COMMENT '사용자 아이디(FK)',
+    `USER_ROLE`                 VARCHAR(255)            NOT NULL                        COMMENT '사용자 역할',
+    `REQ_IP`                    VARCHAR(255)            NOT NULL                        COMMENT '요청 IP',
+    `REQ_METHOD`                VARCHAR(255)            NOT NULL                        COMMENT '요청 메서드',
+    `REQ_URL`                   VARCHAR(255)            NOT NULL                        COMMENT '요청 url',
+    `REQ_HEADER`                TEXT                    NOT NULL                        COMMENT '요청 헤더',
+    `REQ_BODY`                  TEXT                    NOT NULL                        COMMENT '요청 바디',
+
+    -- 시스템 칼럼
+    `CREATED_AT`	            DATETIME	            NOT NULL                        COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		        NOT NULL                        COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	            NOT NULL                        COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		        NOT NULL                        COMMENT '수정자',
+
+    PRIMARY KEY (USER_HIST_ID)
+);
+
+-- 회원 토큰
+DROP TABLE IF EXISTS `users_token`;
+CREATE TABLE `users_token` (
+    `TOKEN_ID`                  VARCHAR(255)            NOT NULL    COMMENT '토큰 아이디(pk)',
+    `USER_ID`                   VARCHAR(255)            NOT NULL    COMMENT '사용자 아이디(FK)',
+    `ACCESS_TOKEN`              VARCHAR(255)            NOT NULL    COMMENT '액세스 토큰',
+    `REFRESH_TOKEN`             VARCHAR(255)            NOT NULL    COMMENT '리프레시 토큰',
+    `ACCESS_TOKEN_EXPIRES_AT`   DATETIME                NOT NULL    COMMENT '액세스 토큰 만료시간',
+    `REFRESH_TOKEN_EXPIRES_AT`  DATETIME                NOT NULL    COMMENT '리프레시 토큰 만료시간',
+
+    -- 시스템 칼럼
+    `CREATED_AT`	            DATETIME	            NOT NULL    COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		        NOT NULL    COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	            NOT NULL    COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		        NOT NULL    COMMENT '수정자',
+
+    PRIMARY KEY (TOKEN_ID)
+);
+
+-- 회원 보유 구독권
+DROP TABLE IF EXISTS `users_subscription`;
+CREATE TABLE `users_subscription` (
+    `USER_SUBSCRIPTION_ID`      VARCHAR(255)            NOT NULL    COMMENT '회원 구독권 아이디(UUID)(pk)',
+    `USER_ID`                   VARCHAR(255)            NOT NULL    COMMENT '회원 아이디(FK)',
+    `SUBSCRIPTION_ID`           VARCHAR(255)            NOT NULL    COMMENT '구독권 아이디(UUID)(FK)',
+    `SUB_NAME`                  VARCHAR(255)            NOT NULL    COMMENT '구독권명',
+    `START_AT`                  DATETIME                NOT NULL    COMMENT '구독권 적용 시작 시점',
+    `END_AT`                    DATETIME                NOT NULL    COMMENT '구독권 적용 종료 시점',
+    `VALID_YN`                  TINYINT(1)              NOT NULL    COMMENT '구독권 사용 가능 여부(0: 사용가능, 1: 사용불가능)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`	            DATETIME	            NOT NULL    COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		        NOT NULL    COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	            NOT NULL    COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		        NOT NULL    COMMENT '수정자',
+
+
+    PRIMARY KEY (USER_SUBSCRIPTION_ID)
+);
+
+
+-- 댓글 관련 테이블
+-- 댓글
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+    `COMMENT_ID`                  BIGINT              NOT NULL    AUTO_INCREMENT    COMMENT '댓글 아이디(PK)',
+    `ARTICLE_ID`                  BIGINT              NOT NULL                      COMMENT '게시글 아이디(FK)',
+    `USER_ID`                     VARCHAR(255)        NOT NULL                      COMMENT '사용자 아이디(FK)',
+    `USER_IMAGE`                  VARCHAR(255)        NOT NULL                      COMMENT '사용자 프로필 이미지(aws s3에 등록된 url)',
+    `COMMENT_CONTENT`             TEXT                NOT NULL                      COMMENT '댓글 내용',
+    `COMMENT_LIKE_CNT`            INT                 NOT NULL    DEFAULT 0         COMMENT '댓글 좋아요 수',
+    `COMMENT_DISLIKE_CNT`         INT                 NOT NULL    DEFAULT 0         COMMENT '댓글 싫어요 수',
+
+    -- 시스템 칼럼
+    `CREATED_AT`	            DATETIME	        NOT NULL                      COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	        NOT NULL                      COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '수정자',
+
+    PRIMARY KEY (COMMENT_ID)
+);
+
+-- 댓글 좋아요
+DROP TABLE IF EXISTS `users_like_comment`;
+CREATE TABLE `users_like_comment` (
+    `USERS_LIKE_COMMENT_ID`       BIGINT              NOT NULL    AUTO_INCREMENT    COMMENT '댓글 좋아요 아이디(PK)',
+    `COMMENT_ID`                  BIGINT              NOT NULL                      COMMENT '댓글 아이디(FK)',
+    `USER_ID`                     VARCHAR(255)        NOT NULL                      COMMENT '사용자 아이디(FK)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`	            DATETIME	        NOT NULL                      COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	        NOT NULL                      COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '수정자',
+
+    PRIMARY KEY (USERS_LIKE_COMMENT_ID)
+);
+
+-- 댓글 싫어요
+DROP TABLE IF EXISTS `users_dislike_comment`;
+CREATE TABLE `users_dislike_comment` (
+    `USERS_DISLIKE_COMMENT_ID`    BIGINT              NOT NULL    AUTO_INCREMENT    COMMENT '댓글 싫어요 아이디(PK)',
+    `COMMENT_ID`                  BIGINT              NOT NULL                      COMMENT '댓글 아이디(FK)',
+    `USER_ID`                     VARCHAR(255)        NOT NULL                      COMMENT '사용자 아이디(FK)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`	            DATETIME	        NOT NULL                      COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	        NOT NULL                      COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '수정자',
+
+    PRIMARY KEY (USERS_DISLIKE_COMMENT_ID)
+);
+
+
+-- 구독권
+DROP TABLE IF EXISTS `subscription`;
+CREATE TABLE `subscription` (
+    `SUBSCRIPTION_ID`             VARCHAR(255)        NOT NULL                      COMMENT '구독권 아이디(PK)',
+    `SUBSCRIPTION_NAME`           VARCHAR(255)        NOT NULL                      COMMENT '구독권 이름',
+    `SUBSCRIPTION_CONTENT`        TEXT                NOT NULL                      COMMENT '구독권 내용',
+    `VIEW_CNT`                    INT                 NOT NULL    DEFAULT 0         COMMENT '구독자 전용 게시글 최대 조회 가능 횟수',
+    `DOWN_CNT`                    INT                 NOT NULL    DEFAULT 0         COMMENT '구독자 전용 게시글 최대 다운로드 가능 횟수',
+
+    -- 시스템 칼럼
+    `CREATED_AT`                  DATETIME            NOT NULL                      COMMENT '생성일자',
+    `CREATED_BY`                  VARCHAR(50)         NOT NULL                      COMMENT '생성자',
+    `MODIFIED_AT`                 DATETIME            NOT NULL                      COMMENT '수정일자',
+    `MODIFIED_BY`                 VARCHAR(50)         NOT NULL                      COMMENT '수정자',
+
+    PRIMARY KEY (SUBSCRIPTION_ID)
+);
+
+-- 시크릿(구독자 전용 게시글) 다운로드
+DROP TABLE IF EXISTS `download_secrets`;
+CREATE TABLE `download_secrets` (
+    `USER_DOWN_ID`                VARCHAR(255)        NOT NULL                    COMMENT '회원 구독자 전용 게시글 다운로드 아이디(PK)',
+    `USER_ID`                     VARCHAR(255)        NOT NULL                    COMMENT '회원 아이디(FK)',
+    `SECRETE_ID`                  BIGINT              NOT NULL                    COMMENT '구독자 전용 게시글 아이디(FK)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`                  DATETIME            NOT NULL                    COMMENT '생성일자',
+    `CREATED_BY`                  VARCHAR(50)         NOT NULL                    COMMENT '생성자',
+    `MODIFIED_AT`                 DATETIME            NOT NULL                    COMMENT '수정일자',
+    `MODIFIED_BY`                 VARCHAR(50)         NOT NULL                    COMMENT '수정자',
+
+    PRIMARY KEY (USER_DOWN_ID)
+);
+
+-- 시크릿(구독자 전용 게시글)
+DROP TABLE IF EXISTS `secrete`;
+CREATE TABLE `secrete` (
+    `SECRETE_ID`                  BIGINT              NOT NULL    AUTO_INCREMENT              COMMENT '시크릿(구독자 전용 게시글) 아이디(PK)',
+    `SECRETE_TITLE`               VARCHAR(255)        NOT NULL                                COMMENT '시크릿 타이틀',
+    `SECRETE_CONTENT`             TEXT                NOT NULL                                COMMENT '시크릿 내용',
+    `SECRETE_AUTHOR`              VARCHAR(255)        NOT NULL                                COMMENT '시크릿 작성자',
+
+    -- 시스템 칼럼
+    `CREATED_AT`                  DATETIME            NOT NULL                                COMMENT '생성일자',
+    `CREATED_BY`                  VARCHAR(50)         NOT NULL                                COMMENT '생성자',
+    `MODIFIED_AT`                 DATETIME            NOT NULL                                COMMENT '수정일자',
+    `MODIFIED_BY`                 VARCHAR(50)         NOT NULL                                COMMENT '수정자',
+
+    PRIMARY KEY (SECRETE_ID)
+);
+
+-- 주문, 결제 관련 테이블
+-- 결제 이력
+DROP TABLE IF EXISTS `payment_history`;
+CREATE TABLE `payment_history` (
+    `PAYMENT_HISTORY_ID`         VARCHAR(255)          NOT NULL                                COMMENT '결제 이력 아이디(UUID)(PK)',
+    `PAYMENT_ID`                 VARCHAR(255)          NOT NULL                                COMMENT '결제 아이디(UUID)(FK)',
+    `PAYMENT_STAT`               VARCHAR(255)          NOT NULL                                COMMENT '결제 상태',
+    `PAYMENT_AMOUNT`             INT                   NOT NULL         DEFAULT 0              COMMENT '결제 금액',
+    `PAYMENT_CODE`               VARCHAR(255)          NOT NULL                                COMMENT '결제 코드',
+    `CARD_APPR_CODE`             VARCHAR(255)          NOT NULL                                COMMENT '카드 결제 승인 코드',
+    `CARD_CANC_CODE`             VARCHAR(255)          NOT NULL                                COMMENT '카드 결제 취소 코드',
+    `PAID_AT`                    VARCHAR(255)          NOT NULL                                COMMENT '결제일자',
+
+    -- 시스템 칼럼
+    `CREATED_AT`                 DATETIME              NOT NULL                                COMMENT '생성일자',
+    `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
+    `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
+    `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
+
+    PRIMARY KEY (PAYMENT_HISTORY_ID)
+);
+
+-- 결제
+DROP TABLE IF EXISTS `payments`;
+CREATE TABLE `payments` (
+    `PAYMENT_ID`                 VARCHAR(255)          NOT NULL                                COMMENT '결제 아이디(UUID)(PK)',
+    `USER_ID`                    VARCHAR(255)          NOT NULL                                COMMENT '사용자 아이디(UUID)(FK)',
+    `ORDER_ID`                   VARCHAR(255)          NOT NULL                                COMMENT '주문 아이디(UUID)(FK)',
+    `PAYMENT_AMOUNT`             INT                   NOT NULL         DEFAULT 0              COMMENT '결제 금액',
+    `PAYMENT_CODE`               VARCHAR(255)          NOT NULL                                COMMENT '결제 코드',
+    `CARD_APPR_CODE`             VARCHAR(255)          NOT NULL                                COMMENT '카드 결제 승인 코드',
+    `CARD_CANC_CODE`             VARCHAR(255)          NOT NULL                                COMMENT '카드 결제 취소 코드',
+    `PAID_AT`                    DATETIME              NOT NULL                                COMMENT '결제일자',
+    `PAID_STAT`                  VARCHAR(255)          NOT NULL                                COMMENT '결제 상태 코드',
+
+    -- 시스템 칼럼
+    `CREATED_AT`                 DATETIME              NOT NULL                                COMMENT '생성일자',
+    `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
+    `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
+    `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
+
+    PRIMARY KEY (PAYMENT_ID)
+);
+
+-- 주문
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders` (
+    `ORDER_ID`                   VARCHAR(255)          NOT NULL                                COMMENT '주문 아이디(UUID)(PK)',
+    `USER_ID`                    VARCHAR(255)          NOT NULL                                COMMENT '회원 아이디(UUID)(FK)',
+    `SUBSCRIPTION_ID`            VARCHAR(255)          NOT NULL                                COMMENT '구독 아이디(UUID)(FK)',
+    `ORDER_TOT_AMOUNT`           INT                   NOT NULL         DEFAULT 0              COMMENT '총 주문 금액',
+    `DISC_TOT_AMOUNT`            INT                   NOT NULL         DEFAULT 0              COMMENT '총 할인 금액',
+    `PAID_TOT_AMOUNT`            INT                   NOT NULL         DEFAULT 0              COMMENT '총 결제 금액',
+    `ORDERED_AT`                 DATETIME              NOT NULL                                COMMENT '주문일자',
+
+    -- 시스템 칼럼
+    `CREATED_AT`                 DATETIME              NOT NULL                                COMMENT '생성일자',
+    `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
+    `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
+    `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
+
+    PRIMARY KEY (ORDER_ID)
+);
+
+-- 주문 상태
+DROP TABLE IF EXISTS `orders_status`;
+CREATE TABLE orders_status (
+    `ORDER_STATUS_ID`            VARCHAR(255)          NOT NULL                                COMMENT '주문 상태 아이디(UUID)(PK)',
+    `ORDER_ID`                   VARCHAR(255)          NOT NULL                                COMMENT '주문 아이디(UUID)(FK)',
+    `ORDER_STATUS`               VARCHAR(255)          NOT NULL                                COMMENT '주문 상태',
+    `SUBSCRIPTION_ID`            VARCHAR(255)          NOT NULL                                COMMENT '구독권 아이디(UUID)(FK)',
+    `ORDER_TOT_AMOUNT`           INT                   NOT NULL        DEFAULT 0               COMMENT '총 주문 금액',
+    `DISC_TOT_AMOUNT`            INT                   NOT NULL        DEFAULT 0               COMMENT '총 할인 금액',
+    `PAID_TOT_AMOUNT`            INT                   NOT NULL        DEFAULT 0               COMMENT '총 결제 금액',
+    `ORDERED_AT`                 DATETIME              NOT NULL                                COMMENT '주문일자',
+
+
+    -- 시스템 칼럼
+    `CREATED_AT`                 DATETIME              NOT NULL                                COMMENT '생성일자',
+    `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
+    `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
+    `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
+
+    PRIMARY KEY (ORDER_STATUS_ID)
+);
+
+-- 주문 이력
+DROP TABLE IF EXISTS `orders_history`;
+CREATE TABLE `orders_history` (
+    `ORDER_HISTORY_ID`           VARCHAR(255)          NOT NULL                                COMMENT '주문 이력 아이디(UUID)(PK)',
+    `ORDER_ID`                   VARCHAR(255)          NOT NULL                                COMMENT '주문 아이디(UUID)(FK)',
+    `SUBSCRIPTION_ID`            VARCHAR(255)          NOT NULL                                COMMENT '구독권 아이디(UUID)(FK)',
+    `FIN_ORDER_STATUS`           VARCHAR(255)          NOT NULL                                COMMENT '주문 최종 상태',
+    `ORD_TOT_AMOUNT`             INT                   NOT NULL        DEFAULT 0               COMMENT '최종 주문 금액',
+    `DISC_TOT_AMOUNT`            INT                   NOT NULL        DEFAULT 0               COMMENT '최종 할인 금액',
+    `PAID_TOT_AMOUNT`            INT                   NOT NULL        DEFAULT 0               COMMENT '최종 결제 금액',
+    `ORDERED_AT`                 DATETIME              NOT NULL                                COMMENT '주문일자',
+
+    -- 시스템 칼럼
+    `CREATED_AT`                 DATETIME              NOT NULL                                COMMENT '생성일자',
+    `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
+    `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
+    `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
+
+    PRIMARY KEY (ORDER_HISTORY_ID)
+);
+
+
+
 
 
 
