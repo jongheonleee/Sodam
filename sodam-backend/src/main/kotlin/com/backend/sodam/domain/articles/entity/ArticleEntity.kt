@@ -13,7 +13,7 @@ class ArticleEntity(
 
     // PK 및 불변 필드
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ARTICLE_ID")
     val articleId: Long,
 

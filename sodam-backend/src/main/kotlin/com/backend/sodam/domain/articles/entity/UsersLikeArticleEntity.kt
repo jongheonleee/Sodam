@@ -2,23 +2,17 @@ package com.backend.sodam.domain.articles.entity
 
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
 @Entity
-@Table(name = "users_dislike_articles")
+@Table(name = "users_like_articles")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 class UsersLikeArticleEntity(
     // PK 및 불변 필드
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USERS_ARTICLE_LIKE_ID")
     val articleLikeId: Long,
 

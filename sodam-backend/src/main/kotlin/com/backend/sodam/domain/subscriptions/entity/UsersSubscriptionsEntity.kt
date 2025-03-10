@@ -15,7 +15,7 @@ class UsersSubscriptionsEntity(
     // pk 및 불변 필드
     @Id
     @Column(name = "USER_SUBSCRIPTION_ID")
-    val userSubscriptionId: UUID,
+    val userSubscriptionId: String,
 
     // FK(추후에 연관관계 매핑)s
     // - 회원 아이디 : 회원 보유 구독권 - 회원 = N : 1

@@ -16,7 +16,7 @@ class PaymentsEntity(
     // pk 및 불변 필드
     @Id
     @Column(name = "PAYMENT_ID")
-    val paymentId: UUID,
+    val paymentId: String,
 
     // FK(추후에 연관관계 매핑)
     // - 주문 아이디 : 주문 히스토리 - 주문 = N : 1 ✅

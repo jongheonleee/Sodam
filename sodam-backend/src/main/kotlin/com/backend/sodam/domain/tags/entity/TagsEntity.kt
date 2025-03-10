@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor
 class TagsEntity(
     // PK 및 불변 필드
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TAG_ID")
     val tagId: Long,
 

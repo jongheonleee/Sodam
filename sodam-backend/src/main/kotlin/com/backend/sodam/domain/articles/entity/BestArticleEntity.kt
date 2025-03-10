@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "article_images")
+@Table(name = "best_articles")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 class BestArticleEntity(
     // PK 및 불변 필드
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BEST_ARTICLE_ID")
     val bestArticleId: Long,
 

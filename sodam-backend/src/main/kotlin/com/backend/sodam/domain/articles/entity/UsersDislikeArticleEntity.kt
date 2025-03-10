@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor
 class UsersDislikeArticleEntity(
     // PK 및 불변 필드
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USERS_ARTICLE_DISLIKE_ID")
     val articleDislikeId: Long,
 

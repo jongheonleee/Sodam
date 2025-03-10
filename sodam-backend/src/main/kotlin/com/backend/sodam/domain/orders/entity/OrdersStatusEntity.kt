@@ -16,10 +16,10 @@ class OrdersStatusEntity(
     // pk 및 불변 필드
     @Id
     @Column(name = "ORDER_STATUS_ID")
-    val orderStatusId: UUID,
+    val orderStatusId: String,
 
     @Column(name = "ORDER_ID")
-    val orderId: UUID,
+    val orderId: String,
 
     // FK(추후에 연관관계 매핑)
     // - 주문 아이디 : 주문 히스토리 - 주문 = N : 1 ✅

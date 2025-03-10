@@ -16,7 +16,7 @@ class SubscriptionsEntity(
     // pk 및 불변 필드
     @Id
     @Column(name = "SUBSCRIPTION_ID")
-    val subscriptionId: UUID,
+    val subscriptionId: String,
 
     // 가변 필드
     subscriptionName: String,

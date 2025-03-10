@@ -1,10 +1,7 @@
 package com.backend.sodam.domain.secrets.entity
 
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.util.UUID
@@ -15,8 +12,9 @@ import java.util.UUID
 class SecretsEntity(
     // pk 및 불변 필드
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SECRETE_ID")
-    val secretId: UUID,
+    val secretId: Long,
 
     @Column(name = "SECRETE_AUTHOR")
     val secretAuthor: String,

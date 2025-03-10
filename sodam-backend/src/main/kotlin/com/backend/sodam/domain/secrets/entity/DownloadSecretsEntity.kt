@@ -14,7 +14,7 @@ class DownloadSecretsEntity(
     // pk 및 불변 필드
     @Id
     @Column(name = "USER_DOWN_ID")
-    val userDownId: UUID,
+    val userDownId: String,
 
     // FK(추후에 연관관계 처리)
     // - 회원 아이디 : 다운로드 - 회원  = N : 1

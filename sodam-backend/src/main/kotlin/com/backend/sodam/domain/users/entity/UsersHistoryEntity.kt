@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor
 class UsersHistoryEntity(
     // pk 및 불변 필드
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_HISTORY_ID")
     val userHistoryId: Long,
 

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor
 class CommentEntity(
     // PK 및 불변 필드
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMMENT_ID")
     val commentId: Long,
 

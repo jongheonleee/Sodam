@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor
 class UsersLikeCommentEntity(
     // PK 및 불변 필드
     @Id
-    @GeneratedValue
-    @Column(name = "USERS_DISLIKE_COMMENT_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USERS_LIKE_COMMENT_ID")
     val likeCommentId: Long,
 
     // FK(추후에 연관관계 매핑)

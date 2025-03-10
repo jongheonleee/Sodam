@@ -16,9 +16,8 @@ class UsersEntity(
     // pk 및 불변 필드
     @Id
     @Column(name = "USER_ID")
-    val userId: UUID,
+    val userId: String,
 
-    // FK(추후에 연관관계 처리)
 
     // 가변필드
     userEmail: String,

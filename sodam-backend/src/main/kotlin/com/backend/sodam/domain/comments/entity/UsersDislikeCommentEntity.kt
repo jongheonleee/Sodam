@@ -1,6 +1,5 @@
 package com.backend.sodam.domain.comments.entity
 
-import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.*
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor
 class UsersDislikeCommentEntity(
     // PK 및 불변 필드
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USERS_DISLIKE_COMMENT_ID")
     val dislikeCommentId: Long,
 

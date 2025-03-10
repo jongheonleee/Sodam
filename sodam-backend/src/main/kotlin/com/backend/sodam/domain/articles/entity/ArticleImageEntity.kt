@@ -14,7 +14,7 @@ class ArticleImageEntity(
     // pk 및 불변 필드
     @Id
     @Column(name = "ARTICLE_IMAGE_ID")
-    val articleImageId: UUID,
+    val articleImageId: String,
 
     // FK(추후에 연관관계 매핑)
     // - 게시글 아이디 : 게시글 : 게시글 이미지 = 1 : N ✅

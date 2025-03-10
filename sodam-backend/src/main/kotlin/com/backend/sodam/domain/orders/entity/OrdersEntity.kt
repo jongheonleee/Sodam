@@ -16,7 +16,7 @@ class OrdersEntity(
     // pk 및 불변 필드
     @Id
     @Column(name = "ORDER_ID")
-    val orderId: UUID,
+    val orderId: String,
 
     // FK(추후에 연관관계 매핑)
     // - 회원 아이디 : 주문 - 회원 = N : 1 ✅

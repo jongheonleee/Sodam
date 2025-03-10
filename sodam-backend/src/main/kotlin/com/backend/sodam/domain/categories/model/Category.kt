@@ -4,8 +4,8 @@ import java.util.*
 
 // 도메인 모델
 class Category(
-    val categoryId: UUID,
-    val topCategoryId: UUID,
+    val categoryId: String,
+    val topCategoryId: String,
     val categoryName: String,
     private var categoryOrd: Int,
     private var validYN: Boolean
@@ -24,9 +24,9 @@ class Category(
     }
 
     companion object {
-        fun newCategory(topCategoryId: UUID, categoryName: String, categoryOrd: Int): Category {
+        fun newCategory(topCategoryId: String, categoryName: String, categoryOrd: Int): Category {
             return Category(
-                categoryId = UUID.randomUUID(),
+                categoryId = UUID.randomUUID().toString(),
                 topCategoryId = topCategoryId,
                 categoryName = categoryName,
                 categoryOrd = categoryOrd,

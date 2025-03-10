@@ -19,10 +19,10 @@ class CategoryEntity(
     // 불변 필드
     @Id
     @Column(name = "CATEGORY_ID")
-    val categoryId: UUID,
+    val categoryId: String,
 
     @Column(name = "TOP_CATEGORY_ID")
-    val topCategoryId: UUID,
+    val topCategoryId: String,
 
     @Column(name = "CATEGORY_NAME")
     val categoryName: String,

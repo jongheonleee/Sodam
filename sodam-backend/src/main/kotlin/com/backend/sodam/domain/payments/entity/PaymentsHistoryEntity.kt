@@ -8,13 +8,13 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Entity
-@Table(name = "payments")
+@Table(name = "payments_history")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 class PaymentsHistoryEntity(
     // pk 및 불변 필드
     @Id
     @Column(name = "PAYMENT_HISTORY_ID")
-    val paymentHistoryId: UUID,
+    val paymentHistoryId: String,
 
     // FK(추후에 연관관계 처리)
     // - 결제 아이디 : 결제 이력 - 결제 = N : 1

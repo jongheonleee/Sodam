@@ -16,13 +16,13 @@ class SocialUsersEntity(
     // PK 및 불변 필드
     @Id
     @Column(name = "SOCIAL_USER_ID")
-    val socialUserId: UUID,
+    val socialUserId: String,
 
     @Column(name = "PROVIDER")
     val provider: String,
 
     @Column(name = "PROVIDER_ID")
-    val providerId: UUID,
+    val providerId: String,
 
     // FK(추후에 연관관계 매핑)
 
