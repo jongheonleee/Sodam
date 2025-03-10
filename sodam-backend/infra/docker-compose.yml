@@ -13,3 +13,12 @@ services:
             - ./db/mysql/init:/docker-entrypoint-initdb.d
         platform: linux/x86_64
     # 추후에 레디스 적용시 아래에 레디스 설정 정보 작성하기
+    redis:
+        image: redis:alpine
+        container_name: sodam-redis
+        restart: always
+        command: redis-server
+        hostname: redis
+        ports:
+            - 6379:6379
+
