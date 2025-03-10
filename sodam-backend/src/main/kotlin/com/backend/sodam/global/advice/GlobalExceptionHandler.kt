@@ -1,5 +1,7 @@
-package com.backend.sodam.global.commons
+package com.backend.sodam.global.advice
 
+import com.backend.sodam.global.commons.ErrorCode
+import com.backend.sodam.global.commons.SodamApiResponse
 import lombok.extern.slf4j.Slf4j
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
