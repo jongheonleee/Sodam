@@ -21,9 +21,9 @@ class UsersLikeCommentEntity(
     // - 회원 아이디 : 회원 싫어요 댓글 - 회원 = N : 1 ✅
     @ManyToOne
     @JoinColumn(name = "COMMENT_ID")
-    var comment : CommentEntity,
+    val comment : CommentEntity,
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    var user : UsersEntity,
+    val user : UsersEntity,
 ) : MutableBaseEntity()

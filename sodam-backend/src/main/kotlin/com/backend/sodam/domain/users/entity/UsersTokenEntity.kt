@@ -1,10 +1,7 @@
 package com.backend.sodam.domain.users.entity
 
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
@@ -22,6 +19,9 @@ class UsersTokenEntity(
 
     // FK(추후에 연관관계 처리)
     // - 회원 아이디 : 회원 토큰 - 회원 : N : 1
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    val user : UsersEntity,
 
     // 가변 필드
     accessToken: String,

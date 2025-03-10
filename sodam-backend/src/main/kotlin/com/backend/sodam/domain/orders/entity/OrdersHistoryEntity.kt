@@ -22,7 +22,7 @@ class OrdersHistoryEntity(
     // - 구독권 아이디 : 주문 히스토리 - 구독권 : N : 1 [이거 FK 가지말고 하드코딩으로 밖아버리자] ✅
     @ManyToOne
     @JoinColumn(name = "ORDER_ID")
-    var order: OrdersEntity,
+    val order: OrdersEntity,
 
     @ManyToOne
     @JoinColumn(name = "SUBSCRIPTION_ID")

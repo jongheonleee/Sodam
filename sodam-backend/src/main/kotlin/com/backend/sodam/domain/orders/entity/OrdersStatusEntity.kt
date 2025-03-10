@@ -26,7 +26,7 @@ class OrdersStatusEntity(
     // - 구독권 아이디 : 주문 히스토리 - 구독권 = N : 1 [이거 FK 가지말고 하드코딩으로 밖아버리자] ✅
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    var user : UsersEntity,
+    val user : UsersEntity,
 
     @ManyToOne
     @JoinColumn(name = "SUBSCRIPTION_ID")

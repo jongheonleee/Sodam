@@ -27,10 +27,10 @@ class UsersLikeArticleEntity(
     // - 회원 아이디 : 회원 싫어요 게시글 - 회원 = 1 : N ✅
     @ManyToOne
     @JoinColumn(name = "ARTICLE_ID")
-    var article : ArticleEntity,
+    val article : ArticleEntity,
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    var user : UsersEntity,
+    val user : UsersEntity,
 
 ) : MutableBaseEntity()

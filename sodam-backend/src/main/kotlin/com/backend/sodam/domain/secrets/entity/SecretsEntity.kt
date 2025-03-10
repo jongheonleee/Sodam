@@ -21,18 +21,16 @@ class SecretsEntity(
     @Column(name = "SECRETE_AUTHOR")
     val secretAuthor: String,
 
-    // FK(추후에 연관관계 처리)
-
     // 가변 필드
     secretTitle: String,
     secretContent: String
 ) : MutableBaseEntity() {
 
-    @Column(name = "SECRET_TITLE")
+    @Column(name = "SECRETE_TITLE")
     var secretTitle = secretTitle
         protected set
 
-    @Column(name = "SECRET_CONTENT")
+    @Column(name = "SECRETE_CONTENT")
     var secretContent = secretContent
         protected set
 }

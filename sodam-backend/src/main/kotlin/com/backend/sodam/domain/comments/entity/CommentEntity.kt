@@ -25,11 +25,11 @@ class CommentEntity(
     // - 회원 아이디 : 댓글 - 회원 = N : 1 ✅
     @ManyToOne
     @JoinColumn(name = "ARTICLE_ID")
-    var article : ArticleEntity,
+    val article : ArticleEntity,
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    var user : UsersEntity,
+    val user : UsersEntity,
 
 
     // 가변 필드

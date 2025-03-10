@@ -18,8 +18,6 @@ class SubscriptionsEntity(
     @Column(name = "SUBSCRIPTION_ID")
     val subscriptionId: UUID,
 
-    // FK(추후에 연관관계 처리)
-
     // 가변 필드
     subscriptionName: String,
     subscriptionContent: String,

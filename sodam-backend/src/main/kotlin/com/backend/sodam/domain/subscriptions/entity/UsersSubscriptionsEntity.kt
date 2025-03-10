@@ -1,10 +1,8 @@
 package com.backend.sodam.domain.subscriptions.entity
 
+import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
@@ -19,9 +17,16 @@ class UsersSubscriptionsEntity(
     @Column(name = "USER_SUBSCRIPTION_ID")
     val userSubscriptionId: UUID,
 
-    // FK(추후에 연관관계 매핑)
+    // FK(추후에 연관관계 매핑)s
     // - 회원 아이디 : 회원 보유 구독권 - 회원 = N : 1
     // - 구독권 아이디 : 회원 보유 구독권 - 구독권 = N : 1
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    val user : UsersEntity,
+
+    @ManyToOne
+    @JoinColumn(name = "SUBSCRIPTION_ID")
+    val subscriptionId: SubscriptionsEntity,
 
     // 가변 필드
     startAt: LocalDateTime,

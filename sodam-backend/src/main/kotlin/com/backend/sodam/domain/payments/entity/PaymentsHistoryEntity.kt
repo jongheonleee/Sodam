@@ -20,7 +20,7 @@ class PaymentsHistoryEntity(
     // - 결제 아이디 : 결제 이력 - 결제 = N : 1
     @ManyToOne
     @JoinColumn(name = "PAYMENT_ID")
-    var payment : PaymentsEntity,
+    val payment : PaymentsEntity,
 
     // 가변 필드
     paymentStat: String,

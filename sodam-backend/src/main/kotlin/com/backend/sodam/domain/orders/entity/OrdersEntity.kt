@@ -23,7 +23,7 @@ class OrdersEntity(
     // - 구독권 아이디 : 주문 - 구독권 = 1 : 1 ✅
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    var user : UsersEntity,
+    val user : UsersEntity,
 
     @ManyToOne
     @JoinColumn(name = "SUBSCRIPTION_ID")

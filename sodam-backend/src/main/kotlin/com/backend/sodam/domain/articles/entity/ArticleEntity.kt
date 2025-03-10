@@ -25,11 +25,11 @@ class ArticleEntity(
     // - 회원 아이디 : 회원 - 게시글 = 1 : N ✅
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID")
-    var category: CategoryEntity,
+    var category: CategoryEntity, // 카테고리는 가변
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    var user : UsersEntity,
+    val user : UsersEntity, // 회원은 불변
 
     // 가변 필드
     articleTitle: String,

@@ -20,7 +20,7 @@ class BestArticleEntity(
     // - 게시글 아이디 : 게시글 : 베스트 게시글 = 1 : N ✅
     @ManyToOne
     @JoinColumn(name = "ARTICLE_ID")
-    var article : ArticleEntity,
+    val article : ArticleEntity, // 게시글은 불변
 
     // 가변 필드
     startAt: LocalDateTime,
