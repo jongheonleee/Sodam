@@ -31,9 +31,11 @@ CREATE TABLE `best_articles` (
     `MODIFIED_AT`	    DATETIME	    NOT NULL                   COMMENT '수정일자',
     `MODIFIED_BY`	    VARCHAR(50)		NOT NULL                   COMMENT '수정자',
 
+    -- FK 참조 : 게시글
+    CONSTRAINT `FK_BEST_ARTICLE_ID` FOREIGN KEY (`ARTICLE_ID`) REFERENCES `articles`(`ARTICLE_ID`) ON DELETE CASCADE,
+
     PRIMARY KEY (BEST_ARTICLE_ID)
 );
-
 
 -- 회원 싫어요 게시글
 DROP TABLE IF EXISTS `users_dislike_articles`;
@@ -48,9 +50,12 @@ CREATE TABLE `users_dislike_articles` (
     `MODIFIED_AT`	           DATETIME	        NOT NULL                     COMMENT '수정일자',
     `MODIFIED_BY`	           VARCHAR(50)		NOT NULL                     COMMENT '수정자',
 
+    -- FK 참조 : 게시글, 회원
+    CONSTRAINT `FK_DISLIKE_ARTICLE_ID` FOREIGN KEY (`ARTICLE_ID`) REFERENCES `articles`(`ARTICLE_ID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_USER_ID` FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+
     PRIMARY KEY (USERS_ARTICLE_DISLIKE_ID)
 );
-
 
 -- 게시글
 DROP TABLE IF EXISTS `articles`;
@@ -72,6 +77,10 @@ CREATE TABLE `articles` (
     `MODIFIED_AT`	            DATETIME	         NOT NULL                      COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		     NOT NULL                      COMMENT '수정자',
 
+    -- FK 참조 : 카테고리, 회원
+    CONSTRAINT `FK_CATEGORY_ID` FOREIGN KEY (`CATEGORY_ID`) REFERENCES `categories`(`CATEGORY_ID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_USER_ID` FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+
     PRIMARY KEY (ARTICLE_ID)
 );
 
@@ -88,10 +97,12 @@ CREATE TABLE `article_images` (
     `MODIFIED_AT`	            DATETIME	         NOT NULL                      COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		     NOT NULL                      COMMENT '수정자',
 
+    -- FK 참조 : 게시글
+    -- FK 참조 : 게시글 (ARTICLE_ID 참조: articles.ARTICLE_ID)
+    CONSTRAINT `FK_ARTICLE_ID` FOREIGN KEY (`ARTICLE_ID`) REFERENCES `articles`(`ARTICLE_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (ARTICLE_IMAGE_ID)
 );
-
 
 -- 회원 좋아요 게시글
 DROP TABLE IF EXISTS `users_like_articles`;
@@ -106,6 +117,11 @@ CREATE TABLE `users_like_articles` (
     `MODIFIED_AT`	            DATETIME	        NOT NULL    COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL    COMMENT '수정자',
 
+    -- FK 참조 : 게시글, 회원
+    -- FK 참조 : 게시글 (ARTICLE_ID 참조: articles.ARTICLE_ID)
+    -- FK 참조 : 회원 (USER_ID 참조: users.USER_ID)
+    CONSTRAINT `FK_LIKE_ARTICLE_ID` FOREIGN KEY (`ARTICLE_ID`) REFERENCES `articles`(`ARTICLE_ID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_USER_ID` FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (USERS_ARTICLE_LIKE_ID)
 );
@@ -123,9 +139,13 @@ CREATE TABLE `tags` (
     `MODIFIED_AT`	            DATETIME	        NOT NULL   COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL   COMMENT '수정자',
 
+    -- FK 참조 : 게시글
+    -- FK 참조 : 게시글 (ARTICLE_ID 참조: articles.ARTICLE_ID)
+    CONSTRAINT `FK_TAG_ARTICLE_ID` FOREIGN KEY (`ARTICLE_ID`) REFERENCES `articles`(`ARTICLE_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (TAG_ID)
 );
+
 
 -- 회원 관련 테이블
 -- 회원
@@ -160,8 +180,6 @@ CREATE TABLE `social_users` (
     `CREATED_BY`	            VARCHAR(50)		         NOT NULL    COMMENT '생성자',
     `MODIFIED_AT`	            DATETIME	             NOT NULL    COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		         NOT NULL    COMMENT '수정자',
-
-    PRIMARY KEY (SOCIAL_USER_ID)
 );
 
 -- 회원 이력(접속, 요청 이력 기록)
@@ -182,7 +200,10 @@ CREATE TABLE `users_history` (
     `MODIFIED_AT`	            DATETIME	            NOT NULL                        COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		        NOT NULL                        COMMENT '수정자',
 
-    PRIMARY KEY (USER_HIST_ID)
+    -- FK 참조 : 회원
+    CONSTRAINT FK_USER_ID FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+
+    PRIMARY KEY (USER_HISTORY_ID),
 );
 
 -- 회원 토큰
@@ -201,7 +222,10 @@ CREATE TABLE `user_tokens` (
     `MODIFIED_AT`	            DATETIME	            NOT NULL    COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		        NOT NULL    COMMENT '수정자',
 
-    PRIMARY KEY (TOKEN_ID)
+    -- FK 참조 : 회원
+    CONSTRAINT FK_USER_ID_TOKENS FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+
+    PRIMARY KEY (TOKEN_ID),
 );
 
 -- 회원 보유 구독권
@@ -221,8 +245,12 @@ CREATE TABLE `user_subscriptions` (
     `MODIFIED_AT`	            DATETIME	            NOT NULL    COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		        NOT NULL    COMMENT '수정자',
 
+    -- FK 참조 : 회원, 구독
 
-    PRIMARY KEY (USER_SUBSCRIPTION_ID)
+    CONSTRAINT FK_USER_ID_SUBSCRIPTION FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+    CONSTRAINT FK_SUBSCRIPTION_ID FOREIGN KEY (SUBSCRIPTION_ID) REFERENCES `subscriptions`(SUBSCRIPTION_ID), -- FK 참조 : 구독
+
+    PRIMARY KEY (USER_SUBSCRIPTION_ID),
 );
 
 
@@ -244,7 +272,11 @@ CREATE TABLE `comments` (
     `MODIFIED_AT`	            DATETIME	        NOT NULL                      COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '수정자',
 
-    PRIMARY KEY (COMMENT_ID)
+    -- FK 참조 : 게시글, 사용자
+    CONSTRAINT FK_ARTICLE_ID FOREIGN KEY (ARTICLE_ID) REFERENCES `articles`(ARTICLE_ID), -- FK 참조 : 게시글
+    CONSTRAINT FK_USER_ID_COMMENTS FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 사용자
+
+    PRIMARY KEY (COMMENT_ID),
 );
 
 -- 댓글 좋아요
@@ -260,7 +292,11 @@ CREATE TABLE `user_like_comments` (
     `MODIFIED_AT`	            DATETIME	        NOT NULL                      COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '수정자',
 
-    PRIMARY KEY (USERS_LIKE_COMMENT_ID)
+    -- FK 참조 : 댓글, 회원
+    CONSTRAINT FK_COMMENT_ID_LIKE FOREIGN KEY (COMMENT_ID) REFERENCES `comments`(COMMENT_ID), -- FK 참조 : 댓글
+    CONSTRAINT FK_USER_ID_LIKE FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+
+    PRIMARY KEY (USERS_LIKE_COMMENT_ID),
 );
 
 -- 댓글 싫어요
@@ -276,7 +312,12 @@ CREATE TABLE `user_dislike_comments` (
     `MODIFIED_AT`	            DATETIME	        NOT NULL                      COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '수정자',
 
-    PRIMARY KEY (USERS_DISLIKE_COMMENT_ID)
+    -- FK 참조 : 댓글, 회원
+
+    CONSTRAINT FK_COMMENT_ID_DISLIKE FOREIGN KEY (COMMENT_ID) REFERENCES `comments`(COMMENT_ID), -- FK 참조 : 댓글
+    CONSTRAINT FK_USER_ID_DISLIKE FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+
+    PRIMARY KEY (USERS_DISLIKE_COMMENT_ID),
 );
 
 
@@ -311,6 +352,10 @@ CREATE TABLE `download_secrets` (
     `MODIFIED_AT`                 DATETIME            NOT NULL                    COMMENT '수정일자',
     `MODIFIED_BY`                 VARCHAR(50)         NOT NULL                    COMMENT '수정자',
 
+    -- FK 참조 : 시크릿, 사용자
+    CONSTRAINT `fk_download_secrets_user_id` FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_download_secrets_secrete_id` FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
+
     PRIMARY KEY (USER_DOWN_ID)
 );
 
@@ -328,7 +373,7 @@ CREATE TABLE `secretes` (
     `MODIFIED_AT`                 DATETIME            NOT NULL                                COMMENT '수정일자',
     `MODIFIED_BY`                 VARCHAR(50)         NOT NULL                                COMMENT '수정자',
 
-    PRIMARY KEY (SECRETE_ID)
+     PRIMARY KEY (SECRETE_ID)
 );
 
 -- 주문, 결제 관련 테이블
@@ -349,6 +394,9 @@ CREATE TABLE `payments_history` (
     `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
     `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
     `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
+
+    -- FK 참조 : 결제
+    CONSTRAINT `fk_payments_history_payment_id` FOREIGN KEY (`PAYMENT_ID`) REFERENCES `payments`(`PAYMENT_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (PAYMENT_HISTORY_ID)
 );
@@ -372,6 +420,10 @@ CREATE TABLE `payments` (
     `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
     `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
 
+    -- FK 참조 : 회원, 주문
+    CONSTRAINT `fk_payments_user_id` FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_payments_order_id` FOREIGN KEY (`ORDER_ID`) REFERENCES `orders`(`ORDER_ID`) ON DELETE CASCADE,
+
     PRIMARY KEY (PAYMENT_ID)
 );
 
@@ -392,6 +444,10 @@ CREATE TABLE `orders` (
     `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
     `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
 
+    -- FK 참조 : 사용자, 구독
+    CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_orders_subscription_id` FOREIGN KEY (`SUBSCRIPTION_ID`) REFERENCES `subscriptions`(`SUBSCRIPTION_ID`) ON DELETE CASCADE,
+
     PRIMARY KEY (ORDER_ID)
 );
 
@@ -407,12 +463,15 @@ CREATE TABLE `orders_status` (
     `PAID_TOT_AMOUNT`            INT                   NOT NULL        DEFAULT 0               COMMENT '총 결제 금액',
     `ORDERED_AT`                 DATETIME              NOT NULL                                COMMENT '주문일자',
 
-
     -- 시스템 칼럼
     `CREATED_AT`                 DATETIME              NOT NULL                                COMMENT '생성일자',
     `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
     `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
     `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
+
+    -- FK 참조 : 주문, 구독
+    CONSTRAINT `fk_orders_status_order_id` FOREIGN KEY (`ORDER_ID`) REFERENCES `orders`(`ORDER_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_orders_status_subscription_id` FOREIGN KEY (`SUBSCRIPTION_ID`) REFERENCES `subscriptions`(`SUBSCRIPTION_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (ORDER_STATUS_ID)
 );
@@ -435,9 +494,12 @@ CREATE TABLE `orders_history` (
     `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
     `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
 
+    -- FK 참조 : 주문, 구독
+    CONSTRAINT `fk_orders_history_order_id` FOREIGN KEY (`ORDER_ID`) REFERENCES `orders`(`ORDER_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_orders_history_subscription_id` FOREIGN KEY (`SUBSCRIPTION_ID`) REFERENCES `subscriptions`(`SUBSCRIPTION_ID`) ON DELETE CASCADE,
+
     PRIMARY KEY (ORDER_HISTORY_ID)
 );
-
 
 
 
