@@ -1,10 +1,9 @@
 package com.backend.sodam.domain.orders.entity
 
+import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
+import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
@@ -20,8 +19,15 @@ class OrdersEntity(
     val orderId: UUID,
 
     // FK(추후에 연관관계 매핑)
-    // - 회원 아이디 : 주문 - 회원 = N : 1
-    // - 구독권 아이디 : 주문 - 구독권 = 1 : 1
+    // - 회원 아이디 : 주문 - 회원 = N : 1 ✅
+    // - 구독권 아이디 : 주문 - 구독권 = 1 : 1 ✅
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    var user : UsersEntity,
+
+    @ManyToOne
+    @JoinColumn(name = "SUBSCRIPTION_ID")
+    val subscriptionId: SubscriptionsEntity,
 
     // 가변 필드
     orderTotAmount: Int,
