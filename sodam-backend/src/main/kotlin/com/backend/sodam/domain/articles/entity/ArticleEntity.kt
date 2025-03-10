@@ -1,10 +1,8 @@
 package com.backend.sodam.domain.articles.entity
+import com.backend.sodam.domain.categories.entity.CategoryEntity
+import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
@@ -23,8 +21,15 @@ class ArticleEntity(
     val userEmail: String,
 
     // FK(추후에 연관관계 매핑)
-    // - 카테고리 아이디 : 게시글 - 카테고리 = N : 1
-    // - 회원 아이디 : 회원 - 게시글 = 1 : N
+    // - 카테고리 아이디 : 게시글 - 카테고리 = 1 : N ✅
+    // - 회원 아이디 : 회원 - 게시글 = 1 : N ✅
+    @ManyToOne
+    @JoinColumn(name = "CATEGORY_ID")
+    var category: CategoryEntity,
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    var user : UsersEntity,
 
     // 가변 필드
     articleTitle: String,
