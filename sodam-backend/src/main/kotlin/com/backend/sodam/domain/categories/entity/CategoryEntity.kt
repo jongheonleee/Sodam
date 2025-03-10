@@ -27,9 +27,6 @@ class CategoryEntity(
     @Column(name = "CATEGORY_NAME")
     val categoryName: String,
 
-    // 얀관관계 매핑(양방향)
-    // - 게시글 - 카테고리 = N : 1
-
     // 가변 필드
     categoryOrd: Int,
     validYN: Int

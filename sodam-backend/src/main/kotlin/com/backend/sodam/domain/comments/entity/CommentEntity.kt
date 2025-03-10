@@ -1,11 +1,9 @@
 package com.backend.sodam.domain.comments.entity
 
+import com.backend.sodam.domain.articles.entity.ArticleEntity
+import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
@@ -23,8 +21,16 @@ class CommentEntity(
     val userImage: String,
 
     // FK(추후에 연관관계 매핑)
-    // - 게시글 아이디 : 댓글 - 게시글 = N : 1
-    // - 회원 아이디 : 댓글 - 회원 = N : 1
+    // - 게시글 아이디 : 댓글 - 게시글 = N : 1 ✅
+    // - 회원 아이디 : 댓글 - 회원 = N : 1 ✅
+    @ManyToOne
+    @JoinColumn(name = "ARTICLE_ID")
+    var article : ArticleEntity,
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    var user : UsersEntity,
+
 
     // 가변 필드
     commentContent: String,

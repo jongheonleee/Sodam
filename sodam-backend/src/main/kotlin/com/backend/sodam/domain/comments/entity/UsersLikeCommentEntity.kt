@@ -1,11 +1,8 @@
 package com.backend.sodam.domain.comments.entity
 
+import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
@@ -17,9 +14,16 @@ class UsersLikeCommentEntity(
     @Id
     @GeneratedValue
     @Column(name = "USERS_DISLIKE_COMMENT_ID")
-    val likeCommentId: Long
+    val likeCommentId: Long,
 
     // FK(추후에 연관관계 매핑)
-    // - 댓글 아이디 : 회원 좋아요 댓글 - 댓글 = N : 1
-    // - 회원 아이디 : 회원 좋아요 댓글 - 회원 = N : 1
+    // - 댓글 아이디 : 회원 싫어요 댓글 - 댓글 = N : 1 ✅
+    // - 회원 아이디 : 회원 싫어요 댓글 - 회원 = N : 1 ✅
+    @ManyToOne
+    @JoinColumn(name = "COMMENT_ID")
+    var comment : CommentEntity,
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    var user : UsersEntity,
 ) : MutableBaseEntity()
