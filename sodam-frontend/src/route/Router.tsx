@@ -13,6 +13,7 @@ import SecretesPage from "../pages/secret";
 import SecretDetailPage from "../pages/secret/detail";
 import ArticlesPage from "../pages/article";
 import ArticleEditPage from "../pages/article/edit";
+import Test from "../components/Test";
 
 export default function Router() {
     // 추후에 사용자 인증 여부에 따라서 라우팅 처리 달리 만들기
@@ -32,6 +33,7 @@ export default function Router() {
                 <Route path="/secretes" element={<SecretesPage />} />
                 <Route path="/secretes/:id" element={<SecretDetailPage />} />
                 <Route path="/subscription/order/:id" element={<SubscriptionOrderPage />} />
+                <Route path="/test" element={<Test />}></Route>
                 <Route path="*" element={<Navigate replace to="/" />} />
             </Routes>
         </>
