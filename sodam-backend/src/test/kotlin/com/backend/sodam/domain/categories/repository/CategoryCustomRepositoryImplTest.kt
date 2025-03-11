@@ -17,12 +17,12 @@ class CategoryCustomRepositoryImplTest(
     // 테스트 환경 구축
     beforeEach {
         // 최상위 카테고리 지정
-        val topCategoryId = UUID.randomUUID()
+        val topCategoryId = UUID.randomUUID().toString()
 
         // 총 5 가지 카테고리 데이터 등록
         for (i in 1..5) {
             val categoryEntity = CategoryEntity(
-                categoryId = UUID.randomUUID(),
+                categoryId = UUID.randomUUID().toString(),
                 topCategoryId = topCategoryId,
                 categoryName = "테스트용 카테고리 $i",
                 categoryOrd = i,

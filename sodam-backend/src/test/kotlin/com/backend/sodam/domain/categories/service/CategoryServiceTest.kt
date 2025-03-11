@@ -21,8 +21,8 @@ class CategoryServiceTest : BehaviorSpec({
 
         for (i in 1..5) {
             val category = Category(
-                categoryId = UUID.randomUUID(),
-                topCategoryId = topCategoryId,
+                categoryId = UUID.randomUUID().toString(),
+                topCategoryId = topCategoryId.toString(),
                 categoryName = "테스트용 카테고리 $i",
                 categoryOrd = i,
                 validYN = true

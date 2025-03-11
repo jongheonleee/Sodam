@@ -5,9 +5,11 @@ enum class ErrorCode(
     val code: String,
     val desc: String
 ) {
-    DEFAULT_ERROR("SDE0000", "에러가 발생했습니다.");
+    DEFAULT_ERROR("SDE0000", "에러가 발생했습니다."),
 
     // 밑에 각 도메인에서 발생 가능한 에러 내용 정의할 예정
+    // 회원
+    USER_ALREADY_EXISTS("SDE0001", "이미 존재하는 회원입니다.");
 
     override fun toString(): String {
         return "[$code] $desc"
