@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.users.controller
 
+import com.backend.sodam.domain.users.controller.dto.LoginRequest
 import com.backend.sodam.domain.users.controller.dto.SignupRequest
 import com.backend.sodam.domain.users.controller.dto.toDto
 import com.backend.sodam.domain.users.service.UserService
@@ -19,8 +20,16 @@ class AuthController(
 
     @PostMapping("/api/v1/auth/signup")
     fun signup(
-        @RequestBody @Valid signupRequest : SignupRequest
+        @RequestBody @Valid signupRequest : SignupRequest,
     ) : SodamApiResponse<SignupResponse> {
         return SodamApiResponse.ok(userService.signupUser(signupRequest.toDto()))
+    }
+
+    @PostMapping("/api/v1/auth/login")
+    fun login(
+        @RequestBody loginRequest : LoginRequest,
+    ) : SodamApiResponse<String> {
+        println(loginRequest)
+        return SodamApiResponse.ok("dede")
     }
 }

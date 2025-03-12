@@ -2,6 +2,7 @@ import LoginForm from "../../components/LoginForm";
 import Header from "../../components/Header";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {login} from "../../api/login";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -51,26 +52,16 @@ export default function Login() {
             return;
         }
 
-        try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (data?.result === 'SUCCESS' && data.data) {
-                // 메인 페이지로 이동
-                navigate('/', {replace : true})
-            }
-
-        } catch (error) {
-            console.error('로그인 오류:', error);
-            setError('로그인 오류: ' + error)
-        }
+        login({ email, password})
+            .then((res) => {
+                if (res.status === 200) {
+                    alert('로그인 성공')
+                    navigate('/')
+                }
+            })
+            .catch(error => {
+                console.error('[Error] 에러 발생 : ' + error);
+            })
 
     }
 

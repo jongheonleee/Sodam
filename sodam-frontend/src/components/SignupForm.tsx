@@ -71,10 +71,10 @@ export default function SignupForm() {
             .then((res) => {
                 if (res.status === 200) {
                     alert('회원가입 성공')
-                    navigate('/');}
+                    navigate('/')}
             })
             .catch(error => {
-                console.error('[Error] 에러 발생 : ' + error);
+                console.error('[Error] 에러 발생 : ' + error)
             })
     };
 

@@ -26,7 +26,10 @@ class UsersSubscriptionsEntity(
 
     @ManyToOne
     @JoinColumn(name = "SUBSCRIPTION_ID")
-    val subscriptionId: SubscriptionsEntity,
+    val subscription: SubscriptionsEntity,
+
+    @Column(name = "SUBSCRIPTION_NAME")
+    val subscriptionName : String,
 
     // 가변 필드
     startAt: LocalDateTime,

@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.users.service
 
+import com.backend.sodam.domain.subscriptions.exception.SubscriptionException
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.service.dto.SignupRequestDto
 import com.backend.sodam.domain.users.service.dto.SignupResponse
@@ -67,6 +68,27 @@ class AuthServiceTest : BehaviorSpec({
 
             then("UserAlreadyExistsException 예외가 발생해야 한다.") {
                 assertThrows<UserException.UserAlreadyExistsException> {
+                    sut.signupUser(dto)
+                }
+            }
+        }
+
+        `when`("3. 회원 무료 구독권 발급과정에서 무료 구독권을 조회하지 못하면") {
+            // 전달 받은 데이터, 반환할 데이터 세팅
+            val dto = SignupRequestDto(
+                email = "asdf1234@gmail.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                profileImage = "aws에 등록된 프로필 이미지",
+                introduce = "테스트 자기소개글"
+            )
+
+            val expected = SubscriptionException.SubscriptionNotFoundException()
+
+            every { sut.signupUser(dto) } throws expected
+
+            then("SubscriptionNotFoundException 예외가 발생해야 한다.") {
+                assertThrows<SubscriptionException.SubscriptionNotFoundException> {
                     sut.signupUser(dto)
                 }
             }

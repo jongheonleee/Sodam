@@ -4,13 +4,11 @@ const client = axios.create({
     baseURL : 'http://localhost:8080', // 백엔드 현재 로컬에서 돌아가고 있음
 });
 
-interface SignupRequestProps{
-    name : string,
+interface LoginRequestProps{
     email : string,
     password : string,
-    introduce : string
 }
 
-export const signup = (request : SignupRequestProps) => {
-    return client.post("/api/v1/auth/signup", request);
+export const login = (request : LoginRequestProps) => {
+    return client.post("/api/v1/auth/login", request);
 }

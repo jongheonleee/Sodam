@@ -3,7 +3,7 @@ POST localhost:8080/api/v1/auth/signup
 Content-Type: application/json
 
 {
-  "email": "asdf1234@gmail",
+  "email": "asdf2322@gmail.com",
   "name": "테스트 유저",
   "password": "asdf1234",
   "introduce": "안녕하새요 테스트 유저입니다.",
