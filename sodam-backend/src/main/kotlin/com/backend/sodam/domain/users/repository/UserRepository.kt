@@ -20,7 +20,8 @@ class UserRepository(
     @Transactional
     fun findByUserEmail(email: String) : Optional<UserResponse> {
         val foundByUserEmail = userJpaRepository.findByUserEmail(email)
-        return foundByUserEmail.map { UserResponse( email = it.userEmail,
+        return foundByUserEmail.map { UserResponse( userId = it.userId,
+                                                    email = it.userEmail,
                                                     name = it.userName,
                                                     password = it.password,
                                                     profileImage = it.userImage,

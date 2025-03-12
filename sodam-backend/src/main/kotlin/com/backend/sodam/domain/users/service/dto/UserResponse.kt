@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.users.service.dto
 
 data class UserResponse(
+    val userId: String,
     val email: String,
     val name: String,
     val password: String,
