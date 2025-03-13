@@ -36,7 +36,8 @@ header a {
   color: gray;
 }
 
-header button {
+header button,
+.profile__logout {
   font-size: 16px;
   background: none;
   border: none;
@@ -49,7 +50,9 @@ header button {
 header a:focus,
 header a:hover,
 header button:focus,
-header button:hover {
+header button:hover,
+.profile__logout:focus,
+.profile__logout:hover{
   color: black;
 }
 
@@ -708,13 +711,13 @@ input:checked + .carousel__slide-container .nav label {
   color: gray;
 }
 
-.profile__logout {
-  color: gray;
-  font-size: 14px;
-  cursor: pointer;
-  text-decoration: underline;
-  margin-bottom: 73px;
-}
+/*.profile__logout {*/
+/*  color: gray;*/
+/*  font-size: 14px;*/
+/*  cursor: pointer;*/
+/*  text-decoration: underline;*/
+/*  margin-bottom: 73px;*/
+/*}*/
 
 .profile__logout:hover,
 .profile__logout:focus {

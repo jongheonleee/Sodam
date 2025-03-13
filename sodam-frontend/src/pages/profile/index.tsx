@@ -63,7 +63,9 @@ export default function ProfilePage({
             <Header
                 handleLogout={handleLogout}
             />
-            <Profile />
+            <Profile
+                handleLogout={handleLogout}
+            />
             <Articles
                 articles={articles}
                 handleArticleDelete={handleArticleDelete}

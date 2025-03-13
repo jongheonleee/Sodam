@@ -7,7 +7,6 @@ interface LoginProps {
     setIsAuthenticated: (isAuthenticated: boolean) => void;
 }
 
-
 export default function Login({
     setIsAuthenticated,
 }: LoginProps) {
