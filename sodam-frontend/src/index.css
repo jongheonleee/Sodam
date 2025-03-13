@@ -31,13 +31,25 @@ header .header__logo {
 }
 
 header a {
-  margin: 0px 10px;
+  margin: 0 10px;
+  text-decoration: none;
+  color: gray;
+}
+
+header button {
+  font-size: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 1px;
   text-decoration: none;
   color: gray;
 }
 
 header a:focus,
-header a:hover {
+header a:hover,
+header button:focus,
+header button:hover {
   color: black;
 }
 

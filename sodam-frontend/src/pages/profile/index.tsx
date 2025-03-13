@@ -2,11 +2,17 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Profile from "../../components/Profile";
 import Articles from "../../components/Articles";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ArticleSummaryType} from "../../types/article";
 
 
-export default function ProfilePage() {
+interface ProfilePageProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
+
+export default function ProfilePage({
+    handleLogout,
+} : ProfilePageProps ) {
     // 회원 정보
     const user = {
         email : "qwefghnm1212@gmail.com"
@@ -54,7 +60,9 @@ export default function ProfilePage() {
 
     return (
         <>
-            <Header />
+            <Header
+                handleLogout={handleLogout}
+            />
             <Profile />
             <Articles
                 articles={articles}

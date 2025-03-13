@@ -3,11 +3,16 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Articles from "../../components/Articles";
 import Categories, {defaultCategory} from "../../components/Categories";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ArticleSummaryType, CategoryType} from "../../types/article";
 
+interface HomeProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
 
-export default function Home() {
+export default function Home({
+    handleLogout,
+} : HomeProps) {
     // 게시글
     const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
 
@@ -104,7 +109,9 @@ export default function Home() {
     return (
         <>
             {/* 헤더 */}
-            <Header />
+            <Header
+                handleLogout={handleLogout}
+            />
 
             {/* 베너 */}
             <ArticleCarousel />

@@ -3,11 +3,21 @@ import SubscriptionCarousel from "../../components/SubscriptionCarousel";
 import Subscriptions from "../../components/Subscriptions";
 import Footer from "../../components/Footer";
 import SubscriptionOrderForm from "../../components/SubscriptionOrderForm";
+import React from "react";
 
-export default function SubscriptionOrderPage() {
+interface SubscriptionOrderPageProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
+
+
+export default function SubscriptionOrderPage({
+    handleLogout,
+}: SubscriptionOrderPageProps) {
     return (
         <>
-            <Header />
+            <Header
+                handleLogout={handleLogout}
+            />
             <SubscriptionOrderForm />
             <Footer />
         </>

@@ -2,11 +2,20 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Subscriptions from "../../components/Subscriptions";
 import SubscriptionCarousel from "../../components/SubscriptionCarousel";
+import React from "react";
 
-export default function SubscriptionPage() {
+interface SubscriptionPageProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
+
+export default function SubscriptionPage({
+    handleLogout
+}: SubscriptionPageProps) {
     return (
         <>
-            <Header />
+            <Header
+                handleLogout={handleLogout}
+            />
             <SubscriptionCarousel />
             <Subscriptions/>
             <Footer />

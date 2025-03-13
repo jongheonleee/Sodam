@@ -1,10 +1,16 @@
 import Header from "../../components/Header";
 import ArticleForm from "../../components/ArticleForm";
 import {useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ArticleFormType, CategoryType} from "../../types/article";
 
-export default function ArticleNewPage() {
+interface ArticleNewPageProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
+
+export default function ArticleNewPage({
+    handleLogout,
+}: ArticleNewPageProps) {
     // 리다이렉션을 위한 navigate
     const navigate = useNavigate();
 
@@ -253,7 +259,9 @@ export default function ArticleNewPage() {
 
     return (
         <>
-            <Header />
+            <Header
+                handleLogout={handleLogout}
+            />
             <ArticleForm
                 categories = {categories}
                 tag = {tag}

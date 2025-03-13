@@ -1,12 +1,20 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-// import SecretDetail from "../../components/SecretDetail";
+import React from "react";
+
+interface SecretDetailPageProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
 
 
-export default function SecretDetailPage() {
+export default function SecretDetailPage({
+    handleLogout,
+} : SecretDetailPageProps) {
     return (
         <>
-            <Header />
+            <Header
+                handleLogout={handleLogout}
+            />
             {/*<SecretDetail />*/}
             <Footer />
         </>

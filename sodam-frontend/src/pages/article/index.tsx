@@ -3,11 +3,16 @@ import ArticleCarousel from "../../components/ArticleCarousel";
 import Categories, {defaultCategory} from "../../components/Categories";
 import Articles from "../../components/Articles";
 import Footer from "../../components/Footer";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ArticleSummaryType, CategoryType} from "../../types/article";
 
+interface ArticlesPageProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
 
-export default function ArticlesPage() {
+export default function ArticlesPage({
+    handleLogout,
+} : ArticlesPageProps) {
     // 게시글
     const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
 
@@ -105,7 +110,9 @@ export default function ArticlesPage() {
     return (
         <>
             {/* 헤더 */}
-            <Header/>
+            <Header
+                handleLogout={handleLogout}
+            />
 
             {/* 베너 */}
             <ArticleCarousel/>

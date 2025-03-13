@@ -21,7 +21,7 @@ class AuthIntegrationTest @Autowired constructor(
 //            "name" to "무료 구독권",
 //            "content" to "모든 회원에게 제공되는 무료 구독권, 구독 서비스 이용 혜택 없음",
 //            "viewCnt" to 0,
-//            "downCnt" to 1,
+//            "downCnt" to 0,
 //        )
 //
 //        restTemplate.postForEntity(

@@ -1,12 +1,21 @@
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ArticleLikes from "../../components/ArticleLikes";
+import React from "react";
 
-export default function LikePage() {
+interface LikePageProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
+
+export default function LikePage({
+    handleLogout
+} : LikePageProps) {
 
     return (
         <>
-            <Header />
+            <Header
+                handleLogout={handleLogout}
+            />
             <ArticleLikes/>
             <Footer />
         </>

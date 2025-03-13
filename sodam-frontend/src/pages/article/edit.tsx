@@ -1,10 +1,16 @@
 import Header from "../../components/Header";
 import ArticleForm from "../../components/ArticleForm";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ArticleFormType, CategoryType} from "../../types/article";
 
-export default function ArticleEditPage() {
+interface ArticleEditPageProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
+
+export default function ArticleEditPage({
+    handleLogout
+} : ArticleEditPageProps) {
     // url에 있는 articleId 조회
     const { articleId } = useParams();
 
@@ -272,7 +278,9 @@ export default function ArticleEditPage() {
 
     return (
         <>
-            <Header />
+            <Header
+                handleLogout={handleLogout}
+            />
             <ArticleForm
                 categories = {categories}
                 tag = {tag}

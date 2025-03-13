@@ -1,10 +1,16 @@
 import LoginForm from "../../components/LoginForm";
-import Header from "../../components/Header";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {login} from "../../api/login";
 
-export default function Login() {
+interface LoginProps {
+    setIsAuthenticated: (isAuthenticated: boolean) => void;
+}
+
+
+export default function Login({
+    setIsAuthenticated,
+}: LoginProps) {
     const navigate = useNavigate();
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -55,7 +61,12 @@ export default function Login() {
         login({ email, password})
             .then((res) => {
                 if (res.status === 200) {
-                    alert('로그인 성공')
+                    // 로그인 성공하면 로컬 스토리지에 백엔드에서 발급된 토큰을 저장함
+                    localStorage.setItem('token', res.data.data)
+                    // 잘 발급되었는지 확인해보기
+                    console.log(localStorage.getItem('token'))
+                    // 인증 여부 확인 및 홈으로 리다이렉션
+                    setIsAuthenticated(true)
                     navigate('/')
                 }
             })
@@ -77,7 +88,13 @@ export default function Login() {
 
     return (
         <>
-            <Header />
+            <header className="header">
+                <Link to="/" className="header__logo">Sodam 🍃</Link>
+                <div>
+                    <Link to="/signup">회원가입</Link>
+                    <Link to="/login">로그인</Link>
+                </div>
+            </header>
             <LoginForm
                 email={email}
                 password={password}

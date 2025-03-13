@@ -1,11 +1,18 @@
 import {ArticleDetailType} from "../../types/article";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Header from "../../components/Header";
 import ArticleDetail from "../../components/ArticleDetail";
 import Footer from "../../components/Footer";
 
-export default function ArticleDetailPage() {
+interface ArticleDetailPageProps {
+    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+}
+
+
+export default function ArticleDetailPage({
+    handleLogout
+} : ArticleDetailPageProps) {
     // url에 있는 articleId 조회
     const { articleId } = useParams();
 
@@ -256,7 +263,9 @@ export default function ArticleDetailPage() {
 
     return (
         <>
-            <Header />
+            <Header
+                handleLogout={handleLogout}
+            />
                 { articleDetail ?
                     <ArticleDetail
                         user={user}
