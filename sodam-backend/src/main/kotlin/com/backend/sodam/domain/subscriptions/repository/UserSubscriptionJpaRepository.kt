@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
 interface UserSubscriptionJpaRepository : JpaRepository<UsersSubscriptionsEntity, String> {
-    fun findByUser(user: UsersEntity) : Optional<UsersSubscriptionsEntity>;
+    fun findByUser(user: UsersEntity): Optional<UsersSubscriptionsEntity>
 }

@@ -2,11 +2,15 @@ package com.backend.sodam.domain.orders.entity
 
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
-import java.util.UUID
 
 @Entity
 @Table(name = "orders_history")

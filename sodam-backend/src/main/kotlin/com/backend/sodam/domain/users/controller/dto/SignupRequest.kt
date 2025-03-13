@@ -32,5 +32,5 @@ fun SignupRequest.toDto() = SignupRequestDto(
     name = name,
     password = password,
     profileImage = "추후에 개발할 예정",
-    introduce = introduce,
+    introduce = introduce
 )

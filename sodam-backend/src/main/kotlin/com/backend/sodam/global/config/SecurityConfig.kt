@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -19,7 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource
 @EnableMethodSecurity
 @RequiredArgsConstructor
 class SecurityConfig(
-    private val sodamUserDetailsService: SodamUserDetailsService,
+    private val sodamUserDetailsService: SodamUserDetailsService
 ) {
 
     @Bean
@@ -31,18 +30,19 @@ class SecurityConfig(
         httpSecurity.cors { it.configurationSource(corsConfigurationSource()) }
 
         // 개발 단계 이므로 모든 요청 열어두기
-        httpSecurity.authorizeHttpRequests { it.requestMatchers(
-                                                                "/api/v1/auth/signup", // 회원가입
-                                                                "/api/v1/auth/login", // 로그인
-                                                                "/api/v1/auth/callback" // oauth2 로그인 요청
-                                            )
-                                            .permitAll()
-                                            .anyRequest()
-                                            .authenticated()
+        httpSecurity.authorizeHttpRequests {
+            it.requestMatchers(
+                "/api/v1/auth/signup", // 회원가입
+                "/api/v1/auth/login", // 로그인
+                "/api/v1/auth/callback" // oauth2 로그인 요청
+            )
+                .permitAll()
+                .anyRequest()
+                .authenticated()
         }
 
         // oauth 관련 설정 -> 추후에 oauth2 적용할 때 활용할 예정
-         httpSecurity.oauth2Login { it.failureUrl("/login?error=true")}
+        httpSecurity.oauth2Login { it.failureUrl("/login?error=true") }
 
         httpSecurity.userDetailsService(sodamUserDetailsService)
         return httpSecurity.build()

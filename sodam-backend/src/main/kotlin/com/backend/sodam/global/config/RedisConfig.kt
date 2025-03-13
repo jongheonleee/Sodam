@@ -1,6 +1,5 @@
 package com.backend.sodam.global.config
 
-
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,7 +13,7 @@ class RedisConfig(
     val host: String,
 
     @Value("\${spring.data.redis.port}")
-    val port: Int,
+    val port: Int
 ) {
 
     @Bean

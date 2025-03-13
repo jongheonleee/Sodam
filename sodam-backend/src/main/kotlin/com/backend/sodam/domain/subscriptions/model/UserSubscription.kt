@@ -1,6 +1,7 @@
+package com.backend.sodam.domain.subscriptions.model
+
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.entity.UsersSubscriptionsEntity
-import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
 import com.backend.sodam.domain.users.entity.UsersEntity
 import java.time.LocalDateTime
 import java.util.*
@@ -53,8 +54,7 @@ data class UserSubscription(
     }
 }
 
-
-fun UserSubscription.toEntity(user : UsersEntity, subscription: SubscriptionsEntity) : UsersSubscriptionsEntity {
+fun UserSubscription.toEntity(user: UsersEntity, subscription: SubscriptionsEntity): UsersSubscriptionsEntity {
     return UsersSubscriptionsEntity(
         userSubscriptionId = UUID.randomUUID().toString(),
         user = user,

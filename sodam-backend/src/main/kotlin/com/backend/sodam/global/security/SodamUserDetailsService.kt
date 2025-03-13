@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class SodamUserDetailsService(
-    private val userRepository: UserRepository,
+    private val userRepository: UserRepository
 ) : UserDetailsService {
     override fun loadUserByUsername(email: String): SodamAuthUser {
         // 이메일로 회원을 조회함
         val foundUserByEmail = userRepository.findByUserEmail(email)
-                                             .orElseThrow { UserException.UserNotFoundException() }
+            .orElseThrow { UserException.UserNotFoundException() }
 
         println("foundUserByEmail의 비밀번호 : ${foundUserByEmail.password}")
         // 조회 성공하면 인증 객체 반환

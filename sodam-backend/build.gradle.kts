@@ -79,6 +79,11 @@ dependencies {
     // oauth2 의존성 추가
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.security:spring-security-oauth2-client")
+
+    // 토큰 관련 의존성 추가
+    implementation("io.jsonwebtoken:jjwt-api:0.12.3")
+    implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
 }
 
 kotlin {

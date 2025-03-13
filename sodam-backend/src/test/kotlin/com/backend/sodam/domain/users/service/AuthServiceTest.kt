@@ -13,7 +13,7 @@ import org.junit.jupiter.api.assertThrows
 
 class AuthServiceTest : BehaviorSpec({
 
-    val sut = mockk<UserService>();
+    val sut = mockk<UserService>()
 
     given("클라이언트로부터 회원가입 요청을 받았을 때") {
         `when`("1. 중복되는 이메일이 없다면") {
@@ -94,5 +94,4 @@ class AuthServiceTest : BehaviorSpec({
             }
         }
     }
-
 })

@@ -8,7 +8,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
-import java.util.UUID
 
 // 카테고리 필드는 대부분이 불변
 // - categoryOrd, validYN 이외의 필드는 모두 불변

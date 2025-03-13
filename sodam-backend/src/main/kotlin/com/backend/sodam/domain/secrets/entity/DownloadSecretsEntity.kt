@@ -2,10 +2,14 @@ package com.backend.sodam.domain.secrets.entity
 
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
-import java.util.UUID
 
 @Entity
 @Table(name = "download_secrets")
@@ -21,11 +25,11 @@ class DownloadSecretsEntity(
     // - 시크릿 아이디 : 다운로드 - 시크릿 = N : 1
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    val user : UsersEntity,
+    val user: UsersEntity,
 
     @ManyToOne
     @JoinColumn(name = "SECRETE_ID")
-    val secret : SecretsEntity,
+    val secret: SecretsEntity
 
     // 가변 필드
 ) : MutableBaseEntity()

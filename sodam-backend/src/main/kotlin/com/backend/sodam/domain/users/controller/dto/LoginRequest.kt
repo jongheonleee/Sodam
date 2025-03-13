@@ -11,5 +11,5 @@ data class LoginRequest(
 
     @field:NotBlank(message = "비밀번호를 입력해주세요.")
     @field:Size(min = 8, max = 30, message = "비밀번호는 8자 이상 30자 이하로 입력해주세요.")
-    val password: String,
+    val password: String
 )

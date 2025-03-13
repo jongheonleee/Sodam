@@ -1,11 +1,15 @@
 package com.backend.sodam.domain.payments.entity
 
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
-import java.util.UUID
 
 @Entity
 @Table(name = "payments_history")
@@ -20,7 +24,7 @@ class PaymentsHistoryEntity(
     // - 결제 아이디 : 결제 이력 - 결제 = N : 1
     @ManyToOne
     @JoinColumn(name = "PAYMENT_ID")
-    val payment : PaymentsEntity,
+    val payment: PaymentsEntity,
 
     // 가변 필드
     paymentStat: String,

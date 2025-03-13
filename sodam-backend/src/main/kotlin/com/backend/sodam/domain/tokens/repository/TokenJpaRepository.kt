@@ -1,0 +1,5 @@
+package com.backend.sodam.domain.tokens.repository
+import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface TokenJpaRepository : JpaRepository<UsersTokenEntity, String>, TokenCustomRepository

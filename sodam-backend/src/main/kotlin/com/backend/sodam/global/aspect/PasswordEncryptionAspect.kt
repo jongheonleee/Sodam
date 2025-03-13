@@ -16,12 +16,12 @@ import java.util.*
 @Component
 @RequiredArgsConstructor
 class PasswordEncryptionAspect(
-    private val passwordEncoder: PasswordEncoder,
-){
+    private val passwordEncoder: PasswordEncoder
+) {
     @Around("execution(* com.backend.sodam.domain.users.controller..*..*(..))")
     fun passwordEncryptionAspect(pjp: ProceedingJoinPoint): Any {
         Arrays.stream(pjp.args)
-              .forEach { fieldEncryption(it) }
+            .forEach { fieldEncryption(it) }
         return pjp.proceed()
     }
 

@@ -8,7 +8,7 @@ import java.time.Duration
 @Repository
 @RequiredArgsConstructor
 class RedisRepository(
-    private val redisTemplate: RedisTemplate<String, String>,
+    private val redisTemplate: RedisTemplate<String, String>
 ) {
 
     fun getValue(key: String): String? {

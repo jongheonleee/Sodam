@@ -9,6 +9,4 @@ class SodamAuthUser(
     username: String,
     password: String,
     authorities: Collection<GrantedAuthority>
-) : User(username, password, authorities) {
-    // 추가 메서드나 필드를 여기에 추가할 수 있습니다.
-}
+) : User(username, password, authorities)

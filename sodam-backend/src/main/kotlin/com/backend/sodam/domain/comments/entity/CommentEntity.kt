@@ -3,7 +3,14 @@ package com.backend.sodam.domain.comments.entity
 import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
@@ -25,12 +32,11 @@ class CommentEntity(
     // - 회원 아이디 : 댓글 - 회원 = N : 1 ✅
     @ManyToOne
     @JoinColumn(name = "ARTICLE_ID")
-    val article : ArticleEntity,
+    val article: ArticleEntity,
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    val user : UsersEntity,
-
+    val user: UsersEntity,
 
     // 가변 필드
     commentContent: String,

@@ -1,0 +1,23 @@
+package com.backend.sodam.domain.tokens.repository
+
+import com.backend.sodam.domain.tokens.entity.QUsersTokenEntity.usersTokenEntity
+import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
+import com.querydsl.jpa.impl.JPAQueryFactory
+import lombok.RequiredArgsConstructor
+import org.springframework.stereotype.Repository
+import java.util.*
+
+@Repository
+@RequiredArgsConstructor
+class TokenCustomRepositoryImpl(
+    private val jpaQueryFactory: JPAQueryFactory
+) : TokenCustomRepository {
+
+    override fun findByUserId(userId: String): Optional<UsersTokenEntity> {
+        return jpaQueryFactory.selectFrom(usersTokenEntity)
+            .where(usersTokenEntity.user.userId.eq(userId))
+            .fetch()
+            .stream()
+            .findFirst()
+    }
+}

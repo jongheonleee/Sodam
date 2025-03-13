@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 class TestController {
 
     @GetMapping("/api/v1/hello")
-    fun hello() : SodamApiResponse<String> {
+    fun hello(): SodamApiResponse<String> {
         return SodamApiResponse.ok("연결되었습니다.")
     }
 }

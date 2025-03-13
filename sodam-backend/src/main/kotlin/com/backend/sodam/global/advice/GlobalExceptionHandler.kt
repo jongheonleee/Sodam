@@ -2,16 +2,13 @@ package com.backend.sodam.global.advice
 
 import com.backend.sodam.global.commons.ErrorCode
 import com.backend.sodam.global.commons.SodamApiResponse
-import lombok.extern.slf4j.Slf4j
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
-
 // 참고 : https://cheese10yun.github.io/spring-guide-exception/
-@Slf4j
 @RestControllerAdvice
 class GlobalExceptionHandler {
 

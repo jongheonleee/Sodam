@@ -2,7 +2,14 @@ package com.backend.sodam.domain.articles.entity
 import com.backend.sodam.domain.categories.entity.CategoryEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
@@ -29,7 +36,7 @@ class ArticleEntity(
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    val user : UsersEntity, // 회원은 불변
+    val user: UsersEntity, // 회원은 불변
 
     // 가변 필드
     articleTitle: String,

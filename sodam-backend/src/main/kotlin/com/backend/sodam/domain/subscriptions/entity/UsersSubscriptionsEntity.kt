@@ -2,11 +2,15 @@ package com.backend.sodam.domain.subscriptions.entity
 
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
-import java.util.UUID
 
 @Entity
 @Table(name = "user_subscriptions")
@@ -22,14 +26,14 @@ class UsersSubscriptionsEntity(
     // - 구독권 아이디 : 회원 보유 구독권 - 구독권 = N : 1
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    val user : UsersEntity,
+    val user: UsersEntity,
 
     @ManyToOne
     @JoinColumn(name = "SUBSCRIPTION_ID")
     val subscription: SubscriptionsEntity,
 
     @Column(name = "SUBSCRIPTION_NAME")
-    val subscriptionName : String,
+    val subscriptionName: String,
 
     // 가변 필드
     startAt: LocalDateTime,
