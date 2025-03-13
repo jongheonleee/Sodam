@@ -1,5 +1,5 @@
 import LoginForm from "../../components/LoginForm";
-import { useState } from "react";
+import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {login} from "../../api/login";
 
@@ -75,12 +75,12 @@ export default function Login({
 
     }
 
-    const KAKAO_CLIENT_ID = "카카오 REST API 키";
-    const REDIRECT_URI = "http://localhost:3000/auth/kakao/callback";
+    // const KAKAO_CLIENT_ID = "8fb1e8921f2ee60c0e7990d9c5386e26";
+    // const REDIRECT_URI = "http://localhost:3000/login/oauth2/code/kakao";
 
+    // `http://localhost:8080/oauth2/authorization/kakao`
     const handleKakaoLogin = () => {
-        const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-        window.location.href = kakaoAuthUrl;
+        window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;  // 카카오 로그인 페이지로 리디렉션
     };
 
 

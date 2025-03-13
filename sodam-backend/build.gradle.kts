@@ -67,8 +67,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-    implementation("org.springframework.security:spring-security-oauth2-client")
     testImplementation("org.springframework.security:spring-security-test")
 
     // flyway 관련 의존성 추가
@@ -77,6 +75,10 @@ dependencies {
 
     // MockK 의존성 추가
     testImplementation("io.mockk:mockk:1.13.5") // MockK 라이브러리 추가
+
+    // oauth2 의존성 추가
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.security:spring-security-oauth2-client")
 }
 
 kotlin {

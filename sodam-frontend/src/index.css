@@ -573,6 +573,7 @@ input:checked + .carousel__slide-container .nav label {
 
 /* 카카오 로그인 버튼 */
 .kakao-login-btn {
+  margin-top: 80px;
   width: 100%;
   height: 48px;
   background-color: #fee500;

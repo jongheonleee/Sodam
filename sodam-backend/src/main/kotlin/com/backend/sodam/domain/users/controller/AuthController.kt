@@ -42,4 +42,14 @@ class AuthController(
         val principal = authenticate.principal as SodamAuthUser
         return SodamApiResponse.ok("access-token")
     }
+
+    // ouath2 로그인 처리(kakao)
+    @PostMapping("/api/v1/auth/callback")
+    fun oauthCallback(
+        @RequestBody request : Map<String, String>
+    ) : SodamApiResponse<String> {
+        val code = request.get("code")
+        println("code: $code")
+        return SodamApiResponse.ok("access-token")
+    }
 }

@@ -33,7 +33,8 @@ class SecurityConfig(
         // 개발 단계 이므로 모든 요청 열어두기
         httpSecurity.authorizeHttpRequests { it.requestMatchers(
                                                                 "/api/v1/auth/signup", // 회원가입
-                                                                "/api/v1/auth/login" // 로그인
+                                                                "/api/v1/auth/login", // 로그인
+                                                                "/api/v1/auth/callback" // oauth2 로그인 요청
                                             )
                                             .permitAll()
                                             .anyRequest()
@@ -41,7 +42,7 @@ class SecurityConfig(
         }
 
         // oauth 관련 설정 -> 추후에 oauth2 적용할 때 활용할 예정
-        // httpSecurity.oauth2Login { it.failureUrl("/login?error=true")}
+         httpSecurity.oauth2Login { it.failureUrl("/login?error=true")}
 
         httpSecurity.userDetailsService(sodamUserDetailsService)
         return httpSecurity.build()

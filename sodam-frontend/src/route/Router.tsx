@@ -13,6 +13,7 @@ import SecretesPage from "../pages/secret";
 import SecretDetailPage from "../pages/secret/detail";
 import ArticlesPage from "../pages/article";
 import ArticleEditPage from "../pages/article/edit";
+import KakaoAuthRedirect from "../pages/login/kakaoAuthRedirect";
 
 interface RouterProps {
     isAuthenticated : boolean,
@@ -49,6 +50,7 @@ export default function Router({
                     <>
                         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated}/>}></Route>
                         <Route path="/signup" element={<Signup />}></Route>
+                        <Route path="/login/oauth2/code/kakao" element={<KakaoAuthRedirect />}></Route>
                         <Route path="*" element={<Login setIsAuthenticated={setIsAuthenticated}/>}></Route>
                     </>
                 )}
