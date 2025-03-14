@@ -49,7 +49,7 @@ class AuthController(
 
     // ouath2 로그인 처리(kakao)
     @PostMapping("/api/v1/auth/callback")
-    fun oauthCallback(
+    fun oauth2Callback(
         @RequestBody request: Map<String, String>
     ): SodamApiResponse<String> {
         // 코드를 통해 accesstoken을 조회한다.
@@ -59,6 +59,8 @@ class AuthController(
         }
         val accessTokenFromKakao = tokenService.getTokenFromKakao(code)
         val findKakaoUser = userService.findKakaoUser(accessTokenFromKakao)
+        println("findKakaoUser: $findKakaoUser")
+        println("accessTokenFromKakao: $accessTokenFromKakao")
         return SodamApiResponse.ok(accessTokenFromKakao)
     }
 }
