@@ -18,7 +18,8 @@ enum class ErrorCode(
     SUBSCRIPTION_NOT_FOUND("SDE1000", "존재하지 않는 구독권입니다."),
 
     // 토큰
-    USER_ID_NOT_FOUND_ON_TOKEN("SDE2000", "토큰에 회원 아이디가 존재하지 않습니다.");
+    USER_ID_NOT_FOUND_ON_TOKEN("SDE2000", "토큰에 회원 아이디가 존재하지 않습니다."),
+    USER_TOKEN_NOT_FOUND("SDE2001", "해당 회원의 토큰을 찾을 수 없습니다.");
 
     override fun toString(): String {
         return "[$code] $desc"

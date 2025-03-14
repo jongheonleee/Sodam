@@ -79,49 +79,41 @@ class TokenService(
         return tokenRepository.createTokenForSocialUser(userId, accessToken, refreshToken)
     }
 
-    fun upsertTokenForSocialUser(providerId: String) : String {
+    fun upsertTokenForSocialUser(providerId: String) : TokenResponse {
         val foundTokenBySocialUserId = tokenRepository.findTokenBySocialUserId(providerId)
+        return when {
+            foundTokenBySocialUserId.isPresent -> updateTokenForSocialUser(providerId)
+            else -> createNewTokenForSocialUser(providerId)
+        }
+    }
 
+    fun updateTokenForSocialUser(providerId: String): TokenResponse {
         // 토큰 생성
         val accessToken = getToken(providerId, Duration.ofHours(5))
         val refreshToken = getToken(providerId, Duration.ofHours(24))
-
-
-        when {
-            foundTokenBySocialUserId.isEmpty -> {
-                // 토큰 등록
-                tokenRepository.createTokenForSocialUser(providerId, accessToken, refreshToken)
-            }
-            foundTokenBySocialUserId.isPresent -> {
-                // 토큰 업데이트
-                tokenRepository.updateToken(providerId, accessToken, refreshToken)
-
-            }
-        }
-
-        return accessToken
+        tokenRepository.updateTokenForSocialUser(providerId, accessToken, refreshToken)
+        return TokenResponse(
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+        )
     }
 
-    fun upsertTokenForUser(email: String) : String {
+    fun upsertTokenForUser(email: String) : TokenResponse {
         val foundTokenByUserId = tokenRepository.findTokenByUserId(email)
+        return when {
+            foundTokenByUserId.isPresent -> updateTokenForUser(email)
+            else -> createNewTokenForUser(email)
+        }
+    }
 
-        // 토큰 생성
+    fun updateTokenForUser(email: String) : TokenResponse {
         val accessToken = getToken(email, Duration.ofHours(5))
         val refreshToken = getToken(email, Duration.ofHours(24))
-
-        when {
-            foundTokenByUserId.isEmpty -> {
-                // 토큰 등록
-                tokenRepository.createTokenForUser(email, accessToken, refreshToken)
-            }
-            foundTokenByUserId.isPresent -> {
-                // 토큰 업데이트
-                tokenRepository.updateToken(email, accessToken, refreshToken)
-
-            }
-        }
-
-        return accessToken
+        tokenRepository.updateTokenForUser(email, accessToken, refreshToken)
+        return TokenResponse(
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+        )
     }
 
     private fun getToken(userId: String, expiredAt: Duration): String {

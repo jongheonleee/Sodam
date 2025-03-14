@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.tokens.repository
 
 import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
+import com.backend.sodam.domain.tokens.exception.TokenException
 import com.backend.sodam.domain.tokens.service.dto.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
@@ -73,9 +74,17 @@ class TokenRepository(
     }
 
     @Transactional
-    fun updateToken(userId: String, accessToken: String, refreshToken: String) {
-        val foundTokenByUserId = tokenJpaRepository.findByUserId(userId).orElseThrow { throw RuntimeException() } // 추후에 예외 정의하기
-        foundTokenByUserId.updateToken(accessToken, refreshToken)
-        tokenJpaRepository.save(foundTokenByUserId)
+    fun updateTokenForUser(email: String, accessToken: String, refreshToken: String) {
+        val foundTokenByEmail = tokenJpaRepository.findByUserId(email).orElseThrow{ TokenException.UserTokenNotFoundException() }
+        foundTokenByEmail.updateToken(accessToken, refreshToken)
+        tokenJpaRepository.save(foundTokenByEmail)
     }
+
+    @Transactional
+    fun updateTokenForSocialUser(providerId: String, accessToken: String, refreshToken: String) {
+        val foundTokenByProviderId = tokenJpaRepository.findBySocialUserId(providerId).orElseThrow { TokenException.UserTokenNotFoundException()  } // 추후에 예외 정의하기
+        foundTokenByProviderId.updateToken(accessToken, refreshToken)
+        tokenJpaRepository.save(foundTokenByProviderId)
+    }
+
 }
