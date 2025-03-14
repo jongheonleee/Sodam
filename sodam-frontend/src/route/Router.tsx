@@ -26,7 +26,6 @@ export default function Router({
     setIsAuthenticated,
     handleLogout,
 } : RouterProps) {
-    // 추후에 사용자 인증 여부에 따라서 라우팅 처리 달리 만들기
     return (
         <>
             <Routes>
@@ -50,7 +49,7 @@ export default function Router({
                     <>
                         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated}/>}></Route>
                         <Route path="/signup" element={<Signup />}></Route>
-                        <Route path="/login/oauth2/code/kakao" element={<KakaoAuthRedirect />}></Route>
+                        <Route path="/login/oauth2/code/kakao" element={<KakaoAuthRedirect setIsAuthenticated={setIsAuthenticated} />}></Route>
                         <Route path="*" element={<Login setIsAuthenticated={setIsAuthenticated}/>}></Route>
                     </>
                 )}

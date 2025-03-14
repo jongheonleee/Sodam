@@ -2,8 +2,13 @@ import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import axios from "axios";
 
+interface KakaoAuthRedirectProps {
+    setIsAuthenticated: (isAuthenticated: boolean) => void;
+}
 
-export default function KakaoAuthRedirect() {
+export default function KakaoAuthRedirect({
+    setIsAuthenticated,
+}: KakaoAuthRedirectProps) {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -16,8 +21,10 @@ export default function KakaoAuthRedirect() {
             axios.post('http://localhost:8080/api/v1/auth/callback', { code })
                 .then(response => {
                     console.log(response)
-                    const token = response.data.data.accessToken  // 백엔드에서 받은 JWT 토큰
+                    const token = response.data.data  // 백엔드에서 받은 JWT 토큰
+                    console.log(token)
                     localStorage.setItem('token', token)  // 토큰을 localStorage에 저장
+                    setIsAuthenticated(true)
                     navigate('/')  // 로그인 후 홈화면으로 리다이렉트
                 })
                 .catch(error => {

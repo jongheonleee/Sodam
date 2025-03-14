@@ -1,4 +1,3 @@
-import Header from "../../components/Header";
 import SignupForm from "../../components/SignupForm";
 import {Link} from "react-router-dom";
 
