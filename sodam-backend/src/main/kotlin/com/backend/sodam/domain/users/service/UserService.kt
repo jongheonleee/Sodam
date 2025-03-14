@@ -39,12 +39,9 @@ class UserService(
         )
     }
 
-    fun signupSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse? {
-        val foundOptionalUserByProviderId = userRepository.findByProviderId(socialUserSignupCommand.providerId)
-
-        if (foundOptionalUserByProviderId.isPresent) {
-            return null
-        }
+    fun signupSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse {
+        userRepository.findByProviderId(socialUserSignupCommand.providerId)
+            .ifPresent { throw UserException.SocialUserAlreadyExistsException() }
 
         val sodamUser = userRepository.createSocialUser(
             name = socialUserSignupCommand.username,
