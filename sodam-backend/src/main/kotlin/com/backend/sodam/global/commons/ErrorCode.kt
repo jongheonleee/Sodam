@@ -13,8 +13,12 @@ enum class ErrorCode(
     USER_NOT_FOUND("SDE0002", "존재하지 않는 회원입니다."),
     SOCIAL_USER_ALREADY_EXISTS("SDE0003", "이미 소셜 회원이 존재합니다."),
 
+
     // 구독권
-    SUBSCRIPTION_NOT_FOUND("SDE1000", "존재하지 않는 구독권입니다.");
+    SUBSCRIPTION_NOT_FOUND("SDE1000", "존재하지 않는 구독권입니다."),
+
+    // 토큰
+    USER_ID_NOT_FOUND_ON_TOKEN("SDE2000", "토큰에 회원 아이디가 존재하지 않습니다.");
 
     override fun toString(): String {
         return "[$code] $desc"

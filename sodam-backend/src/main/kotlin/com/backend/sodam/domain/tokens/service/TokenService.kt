@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.tokens.service
 
+import com.backend.sodam.domain.tokens.exception.TokenException
 import com.backend.sodam.domain.tokens.repository.TokenRepository
 import com.backend.sodam.domain.tokens.service.dto.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
@@ -8,13 +9,13 @@ import com.backend.sodam.domain.users.service.response.UserResponse
 import com.backend.sodam.global.port.KakaoTokenPort
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import org.springframework.util.ObjectUtils
 import java.time.Duration
 import java.util.*
 import javax.crypto.SecretKey
@@ -34,11 +35,7 @@ class TokenService(
     // - DB, redis 활용
     fun findUserByAccessToken(token: String): UserResponse {
         val claims = parseClaims(token)
-        val userId = claims["userId"]
-
-        if (ObjectUtils.isEmpty(userId)) {
-            throw RuntimeException()
-        }
+        val userId = claims["userId"] ?: throw TokenException.UserIdNotFoundOnTokenException()
 
         return userRepository.findByProviderId(userId.toString())
             .map { UserResponse.toUserResponse(it) }
@@ -52,16 +49,28 @@ class TokenService(
     }
 
     // 해당 토큰이 유효한지 판별 - 별도에 에러가 발생하지 않으면 성공
-    fun validateToken(accessToken: String): Boolean {
+    fun validateToken(accessToken: String): Boolean = try {
         Jwts.parser()
             .setSigningKey(secretKey)
             .build()
             .parseClaimsJws(accessToken)
-        return true
+        true
+    } catch (e: JwtException) {
+        false
     }
 
+
     // 새로운 토큰 생성
-    fun createNewToken(userId: String): TokenResponse {
+    fun createNewTokenForUser(email: String): TokenResponse {
+        // 회원 아이디 기반으로 토큰 발급
+        val accessToken = getToken(email, Duration.ofHours(5))
+        val refreshToken = getToken(email, Duration.ofHours(24))
+
+        // 발급된 토큰을 생성함
+        return tokenRepository.createTokenForUser(email, accessToken, refreshToken)
+    }
+
+    fun createNewTokenForSocialUser(userId: String) : TokenResponse {
         // 회원 아이디 기반으로 토큰 발급
         val accessToken = getToken(userId, Duration.ofHours(5))
         val refreshToken = getToken(userId, Duration.ofHours(24))

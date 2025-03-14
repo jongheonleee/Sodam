@@ -55,8 +55,7 @@ class UserServiceTest : BehaviorSpec({
                 val actual = sut.signupUser(command)
 
                 // 내용 비교
-                actual.email shouldBe expected.email
-                actual.username shouldBe expected.username
+                actual shouldBe expected
 
                 // 호출 검증
                 verify {
