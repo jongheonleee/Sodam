@@ -1,9 +1,9 @@
-package com.backend.sodam.domain.users.service.dto
+package com.backend.sodam.domain.users.service.command
 
 import com.backend.sodam.domain.users.entity.UsersEntity
 import java.util.*
 
-data class SignupRequestDto(
+data class UserSignupCommand(
     val email: String,
     val name: String,
     val password: String,
@@ -11,11 +11,11 @@ data class SignupRequestDto(
     val introduce: String
 )
 
-fun SignupRequestDto.toEntity() = UsersEntity(
+fun UserSignupCommand.toEntity() = UsersEntity(
     userId = UUID.randomUUID().toString(),
     userEmail = email,
     userName = name,
-    userIntroduce = introduce,
-    userImage = profileImage,
+    introduce = introduce,
+    profileImageUrl = profileImage,
     password = password
 )

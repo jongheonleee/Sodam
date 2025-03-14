@@ -3,6 +3,7 @@ package com.backend.sodam.domain.tokens.repository
 import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
 import com.backend.sodam.domain.tokens.service.dto.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
+import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.UserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
@@ -13,20 +14,21 @@ import java.util.*
 @RequiredArgsConstructor
 class TokenRepository(
     private val userJpaRepository: UserJpaRepository,
-    private val tokenJpaRepository: TokenJpaRepository
+    private val tokenJpaRepository: TokenJpaRepository,
+    private val socialUserJpaRepository: SocialUserJpaRepository,
 ) {
 
-    // 유저 조회
+    // 소셜 유저 조회
     // 해당 유저와 전달받은 토큰값을 기반으로 토큰 엔티티 생성
     // 생성된 토큰 엔티티를 저장함
     // 토큰 정보를 반환함
     @Transactional
-    fun create(userId: String, accessToken: String, refreshToken: String): TokenResponse {
-        val foundUserByUserId = userJpaRepository.findByUserId(userId)
+    fun createTokenForSocialUser(userId: String, accessToken: String, refreshToken: String): TokenResponse {
+        val foundSocialUserByProviderId = socialUserJpaRepository.findByProviderId(userId) // socialUserId != userId, userId == providerId
             .orElseThrow { UserException.UserNotFoundException() }
 
         val tokenEntity = UsersTokenEntity.newTokenEntity(
-            foundUserByUserId,
+            foundSocialUserByProviderId,
             accessToken,
             refreshToken
         )
@@ -40,10 +42,34 @@ class TokenRepository(
     }
 
     @Transactional
-    fun findTokenByUserId(userId: String): TokenResponse {
+    fun createTokenForUser(email: String, accessToken: String, refreshToken: String): TokenResponse {
+        val foundUserByEmail = userJpaRepository.findByUserEmail(email)
+            .orElseThrow { UserException.UserNotFoundException() }
+
+        val tokenEntity = UsersTokenEntity.newTokenEntity(
+            foundUserByEmail,
+            accessToken,
+            refreshToken
+        )
+
+        tokenJpaRepository.save(tokenEntity)
+
+        return TokenResponse(
+            accessToken,
+            refreshToken
+        )
+    }
+
+    @Transactional
+    fun findTokenBySocialUserId(socialUserId: String): Optional<TokenResponse> {
+        return tokenJpaRepository.findBySocialUserId(socialUserId)
+            .map { TokenResponse(it.accessToken, it.refreshToken) }
+    }
+
+    @Transactional
+    fun findTokenByUserId(userId: String): Optional<TokenResponse> {
         return tokenJpaRepository.findByUserId(userId)
             .map { TokenResponse(it.accessToken, it.refreshToken) }
-            .orElseThrow { RuntimeException() } // 추후에 예외 추가
     }
 
     @Transactional

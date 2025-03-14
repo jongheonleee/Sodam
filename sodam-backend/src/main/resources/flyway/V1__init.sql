@@ -83,7 +83,8 @@ CREATE TABLE `users_history` (
 DROP TABLE IF EXISTS `user_tokens`;
 CREATE TABLE `user_tokens` (
     `TOKEN_ID`                  VARCHAR(255)            NOT NULL    COMMENT '토큰 아이디(pk)',
-    `USER_ID`                   VARCHAR(255)            NOT NULL    COMMENT '사용자 아이디(FK)',
+    `USER_ID`                   VARCHAR(255)                        COMMENT '사용자 아이디(FK)',
+    `SOCIAL_USER_ID`            VARCHAR(255)                        COMMENT '소숄 사용자 아이디(FK)',
     `ACCESS_TOKEN`              VARCHAR(255)            NOT NULL    COMMENT '액세스 토큰',
     `REFRESH_TOKEN`             VARCHAR(255)            NOT NULL    COMMENT '리프레시 토큰',
     `ACCESS_TOKEN_EXPIRES_AT`   DATETIME                NOT NULL    COMMENT '액세스 토큰 만료시간',
@@ -97,6 +98,7 @@ CREATE TABLE `user_tokens` (
 
     -- FK 참조 : 회원
     CONSTRAINT FK_USER_TOKENS_USER_ID FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+    CONSTRAINT FK_USER_TOKENS_SOCIAL_USER_ID FOREIGN KEY (SOCIAL_USER_ID) REFERENCES `social_users`(SOCIAL_USER_ID),
 
     PRIMARY KEY (TOKEN_ID)
 );

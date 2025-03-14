@@ -20,4 +20,12 @@ class TokenCustomRepositoryImpl(
             .stream()
             .findFirst()
     }
+
+    override fun findBySocialUserId(socialUserId: String): Optional<UsersTokenEntity> {
+        return jpaQueryFactory.selectFrom(usersTokenEntity)
+            .where(usersTokenEntity.socialUser.socialUserId.eq(socialUserId))
+            .fetch()
+            .stream()
+            .findFirst()
+    }
 }

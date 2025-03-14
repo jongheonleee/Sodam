@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.users.entity
 
+import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -20,8 +21,8 @@ class UsersEntity(
     // 가변필드
     userEmail: String,
     userName: String,
-    userIntroduce: String,
-    userImage: String,
+    introduce: String,
+    profileImageUrl: String,
     password: String
 ) : MutableBaseEntity() {
 
@@ -34,14 +35,25 @@ class UsersEntity(
         protected set
 
     @Column(name = "USER_INTRODUCE")
-    var userIntroduce = userIntroduce
+    var userIntroduce = introduce
         protected set
 
     @Column(name = "USER_IMAGE")
-    var userImage = userImage
+    var userImage = profileImageUrl
         protected set
 
     @Column(name = "PASSWORD")
     var password = password
         protected set
+
+    fun toDomain() : SodamUser {
+        return SodamUser(
+            userId = this.userId,
+            username = this.userName,
+            encryptedPassword = this.password,
+            email = this.userEmail,
+            introduce = this.userIntroduce,
+            profileImageUrl = this.userImage,
+        )
+    }
 }

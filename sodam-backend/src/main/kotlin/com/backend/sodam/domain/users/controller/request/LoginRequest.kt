@@ -1,4 +1,4 @@
-package com.backend.sodam.domain.users.controller.dto
+package com.backend.sodam.domain.users.controller.request
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank

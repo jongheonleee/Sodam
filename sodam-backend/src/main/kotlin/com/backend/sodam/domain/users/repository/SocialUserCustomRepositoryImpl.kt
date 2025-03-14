@@ -18,6 +18,7 @@ class SocialUserCustomRepositoryImpl(
         return jpaQueryFactory.selectFrom(socialUsersEntity)
             .where(socialUsersEntity.providerId.eq(providerId))
             .fetch()
-            .stream().findFirst();
+            .stream()
+            .findFirst();
     }
 }

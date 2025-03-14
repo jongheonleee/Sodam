@@ -3,10 +3,11 @@ package com.backend.sodam.domain.users.service
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.UserRepository
-import com.backend.sodam.domain.users.service.dto.SignupRequestDto
-import com.backend.sodam.domain.users.service.dto.SignupResponse
-import com.backend.sodam.domain.users.service.dto.SocialUserResponse
-import com.backend.sodam.domain.users.service.dto.UserResponse
+import com.backend.sodam.domain.users.service.command.*
+import com.backend.sodam.domain.users.service.response.SimpleUserResponse
+import com.backend.sodam.domain.users.service.response.SocialUserResponse
+import com.backend.sodam.domain.users.service.response.UserResponse
+import com.backend.sodam.domain.users.service.response.UserSignupResponse
 import com.backend.sodam.global.port.KakaoUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
@@ -23,18 +24,51 @@ class UserService(
     //    - 중복된 이메일이 존재하는 경우, 알림 메시지 반환
     // - 회원가입 처리를 한다.
     // - 무료 구독권을 생성한다.
-    fun signupUser(signupRequestDto: SignupRequestDto): SignupResponse {
-        userRepository.findByUserEmail(signupRequestDto.email)
+    fun signupUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
+        userRepository.findByUserEmail(userSignupCommand.email)
             .ifPresent { throw UserException.UserAlreadyExistsException() }
 
-        val savedUserResponse = userRepository.create(signupRequestDto)
-        userSubscriptionRepository.create(savedUserResponse.userId)
-        return savedUserResponse
+        val sodamUser = userRepository.create(userSignupCommand)
+        userSubscriptionRepository.create(sodamUser.userId)
+
+        return UserSignupResponse(
+            username = sodamUser.username,
+            encryptedPassword = sodamUser.encryptedPassword,
+            email = sodamUser.email,
+            introduce = sodamUser.introduce,
+        )
     }
 
-    fun findByUserEmail(email: String): UserResponse {
-        return userRepository.findByUserEmail(email)
-            .orElseThrow { UserException.UserAlreadyExistsException() }
+    fun signupSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse? {
+        val foundOptionalUserByProviderId = userRepository.findByProviderId(socialUserSignupCommand.providerId)
+
+        if (foundOptionalUserByProviderId.isPresent) {
+            return null
+        }
+
+        val sodamUser = userRepository.createSocialUser(
+            name = socialUserSignupCommand.username,
+            provider = socialUserSignupCommand.provider,
+            providerId = socialUserSignupCommand.providerId,
+        )
+
+        return UserSignupResponse(
+            username = sodamUser.username
+        )
+    }
+
+    fun findByUserEmail(email: String): SimpleUserResponse {
+        val foundOptionalSodamUserByEmail = userRepository.findByUserEmail(email)
+        if (foundOptionalSodamUserByEmail.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val sodamUser = foundOptionalSodamUserByEmail.get()
+
+        return SimpleUserResponse(
+            username = sodamUser.username,
+            email = sodamUser.email,
+        )
     }
 
     fun findKakaoUser(accessToken: String): SocialUserResponse {
@@ -45,4 +79,11 @@ class UserService(
                 providerId = foundUserFromKakao.providerId,
         )
     }
+
+    fun findByProviderId(providerId: String): UserResponse? {
+        return userRepository.findByProviderId(providerId).map {
+                UserResponse.toUserResponse(it)
+        }.orElse(null)
+    }
+
 }

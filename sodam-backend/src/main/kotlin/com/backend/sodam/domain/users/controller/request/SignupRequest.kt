@@ -1,6 +1,6 @@
-package com.backend.sodam.domain.users.controller.dto
+package com.backend.sodam.domain.users.controller.request
 
-import com.backend.sodam.domain.users.service.dto.SignupRequestDto
+import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.global.annottion.PasswordEncryption
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
@@ -27,7 +27,7 @@ data class SignupRequest(
     val introduce: String
 )
 
-fun SignupRequest.toDto() = SignupRequestDto(
+fun SignupRequest.toCommand() = UserSignupCommand(
     email = email,
     name = name,
     password = password,

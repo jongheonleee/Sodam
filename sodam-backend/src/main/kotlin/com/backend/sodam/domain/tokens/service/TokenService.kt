@@ -2,8 +2,9 @@ package com.backend.sodam.domain.tokens.service
 
 import com.backend.sodam.domain.tokens.repository.TokenRepository
 import com.backend.sodam.domain.tokens.service.dto.TokenResponse
+import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.UserRepository
-import com.backend.sodam.domain.users.service.dto.UserResponse
+import com.backend.sodam.domain.users.service.response.UserResponse
 import com.backend.sodam.global.port.KakaoTokenPort
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.util.ObjectUtils
 import java.time.Duration
-import java.time.temporal.TemporalAmount
 import java.util.*
 import javax.crypto.SecretKey
 
@@ -25,6 +25,7 @@ class TokenService(
     private val tokenRepository: TokenRepository,
     private val userRepository: UserRepository,
     private val kakaoTokenPort : KakaoTokenPort,
+
     @Value("\${jwt.secret}")
     val secretKey: String,
 ) {
@@ -33,13 +34,15 @@ class TokenService(
     // - DB, redis 활용
     fun findUserByAccessToken(token: String): UserResponse {
         val claims = parseClaims(token)
-        val userId = claims["user_id"]
+        val userId = claims["userId"]
 
         if (ObjectUtils.isEmpty(userId)) {
             throw RuntimeException()
         }
 
-        return userRepository.findByProviderId(userId.toString()).orElseThrow { RuntimeException() }
+        return userRepository.findByProviderId(userId.toString())
+            .map { UserResponse.toUserResponse(it) }
+            .orElseThrow { UserException.UserNotFoundException() }
     }
 
     // 카카오로부터 토큰을 받을 수 있음
@@ -60,11 +63,56 @@ class TokenService(
     // 새로운 토큰 생성
     fun createNewToken(userId: String): TokenResponse {
         // 회원 아이디 기반으로 토큰 발급
-        var accessToken = getToken(userId, Duration.ofHours(5))
-        var refreshToken = getToken(userId, Duration.ofHours(24))
+        val accessToken = getToken(userId, Duration.ofHours(5))
+        val refreshToken = getToken(userId, Duration.ofHours(24))
 
         // 발급된 토큰을 생성함
-        return tokenRepository.create(userId, accessToken, refreshToken)
+        return tokenRepository.createTokenForSocialUser(userId, accessToken, refreshToken)
+    }
+
+    fun upsertTokenForSocialUser(providerId: String) : String {
+        val foundTokenBySocialUserId = tokenRepository.findTokenBySocialUserId(providerId)
+
+        // 토큰 생성
+        val accessToken = getToken(providerId, Duration.ofHours(5))
+        val refreshToken = getToken(providerId, Duration.ofHours(24))
+
+
+        when {
+            foundTokenBySocialUserId.isEmpty -> {
+                // 토큰 등록
+                tokenRepository.createTokenForSocialUser(providerId, accessToken, refreshToken)
+            }
+            foundTokenBySocialUserId.isPresent -> {
+                // 토큰 업데이트
+                tokenRepository.updateToken(providerId, accessToken, refreshToken)
+
+            }
+        }
+
+        return accessToken
+    }
+
+    fun upsertTokenForUser(email: String) : String {
+        val foundTokenByUserId = tokenRepository.findTokenByUserId(email)
+
+        // 토큰 생성
+        val accessToken = getToken(email, Duration.ofHours(5))
+        val refreshToken = getToken(email, Duration.ofHours(24))
+
+        when {
+            foundTokenByUserId.isEmpty -> {
+                // 토큰 등록
+                tokenRepository.createTokenForUser(email, accessToken, refreshToken)
+            }
+            foundTokenByUserId.isPresent -> {
+                // 토큰 업데이트
+                tokenRepository.updateToken(email, accessToken, refreshToken)
+
+            }
+        }
+
+        return accessToken
     }
 
     private fun getToken(userId: String, expiredAt: Duration): String {

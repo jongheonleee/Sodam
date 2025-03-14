@@ -1,16 +1,13 @@
 package com.backend.sodam.global.http.kako
 
 import com.backend.sodam.domain.users.model.SodamUser
-import com.backend.sodam.domain.users.service.dto.UserResponse
 import com.backend.sodam.global.port.KakaoUserPort
-import com.backend.sodam.global.security.SodamAuthUser
 import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.exchange
 
 @Component
 @RequiredArgsConstructor

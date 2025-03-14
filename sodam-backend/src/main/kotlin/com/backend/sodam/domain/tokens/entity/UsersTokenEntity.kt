@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.tokens.entity
 
+import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
@@ -26,8 +27,13 @@ class UsersTokenEntity(
     // FK(추후에 연관관계 처리)
     // - 회원 아이디 : 회원 토큰 - 회원 : N : 1
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    val user: UsersEntity,
+    @JoinColumn(name = "USER_ID", nullable = true)
+    val user: UsersEntity? = null,
+
+    // - 소셜 회원 :회원 토큰 - 소셜 화원 : N : 1
+    @ManyToOne
+    @JoinColumn(name = "SOCIAL_USER_ID", nullable = true)
+    val socialUser: SocialUsersEntity? = null,
 
     // 가변 필드
     accessToken: String,
@@ -75,6 +81,18 @@ class UsersTokenEntity(
             return UsersTokenEntity(
                 tokenId = UUID.randomUUID().toString(),
                 user = userEntity,
+                accessToken = accessToken,
+                refreshToken = refreshToken,
+                accessTokenExpiresAt = getAccessTokenExpireAt(now),
+                refreshTokenExpiresAt = getRefreshTokenExpireAt(now)
+            )
+        }
+
+        fun newTokenEntity(socialUsersEntity: SocialUsersEntity, accessToken: String, refreshToken: String): UsersTokenEntity {
+            val now = LocalDateTime.now()
+            return UsersTokenEntity(
+                tokenId = UUID.randomUUID().toString(),
+                socialUser = socialUsersEntity,
                 accessToken = accessToken,
                 refreshToken = refreshToken,
                 accessTokenExpiresAt = getAccessTokenExpireAt(now),
