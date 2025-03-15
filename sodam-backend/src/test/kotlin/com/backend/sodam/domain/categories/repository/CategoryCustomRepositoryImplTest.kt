@@ -39,20 +39,22 @@ class CategoryCustomRepositoryImplTest(
     }
 
     describe("카테고리 조회 테스트") {
-        it("사용 가능한 카테고리를 순서대로 조회한다") {
-            // 실제 조회
-            val actual = sut.fetchValidCategoriesInOrder()
+        context("여러 카테고리 조회 요청을 받으면") {
+            it("사용 가능한 카테고리를 순서대로 조회한다") {
+                // 실제 조회
+                val actual = sut.fetchValidCategoriesInOrder()
 
-            // 기대값과 같은지 비교
-            // - 사이즈 비교
-            expected.size shouldBe actual.size
+                // 기대값과 같은지 비교
+                // - 사이즈 비교
+                expected.size shouldBe actual.size
 
-            // - 내용 비교
-            for (idx in 0..4) {
-                // 아이디, 이름, 정렬 순서
-                expected[idx].categoryId shouldBe actual[idx].categoryId
-                expected[idx].categoryName shouldBe actual[idx].categoryName
-                expected[idx].categoryOrd shouldBe actual[idx].categoryOrd
+                // - 내용 비교
+                for (idx in 0..4) {
+                    // 아이디, 이름, 정렬 순서
+                    expected[idx].categoryId shouldBe actual[idx].categoryId
+                    expected[idx].categoryName shouldBe actual[idx].categoryName
+                    expected[idx].categoryOrd shouldBe actual[idx].categoryOrd
+                }
             }
         }
     }

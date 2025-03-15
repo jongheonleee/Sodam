@@ -1,5 +1,6 @@
 package com.backend.sodam.global.config
 
+import com.backend.sodam.global.filter.JwtAuthenticationFilter
 import com.backend.sodam.global.security.SodamUserDetailsService
 import lombok.RequiredArgsConstructor
 import org.springframework.context.annotation.Bean
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 
@@ -18,7 +20,8 @@ import org.springframework.web.cors.CorsConfigurationSource
 @EnableMethodSecurity
 @RequiredArgsConstructor
 class SecurityConfig(
-    private val sodamUserDetailsService: SodamUserDetailsService
+    private val sodamUserDetailsService: SodamUserDetailsService,
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
 ) {
 
     @Bean
@@ -44,7 +47,12 @@ class SecurityConfig(
         // oauth 관련 설정 -> 추후에 oauth2 적용할 때 활용할 예정
         httpSecurity.oauth2Login { it.failureUrl("/login?error=true") }
 
+        // userDetails 조회 빈 등록
         httpSecurity.userDetailsService(sodamUserDetailsService)
+
+        // jwt 토큰 필터 추가(해당 필터 앞단에 추가함)
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+
         return httpSecurity.build()
     }
 

@@ -11,7 +11,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.assertThrows
 
-class TokenServiceTest : BehaviorSpec({
+class TokenServiceUnitTest : BehaviorSpec({
 
     // 제공되는 기능
     // - 1. accessToken으로 회원 조회
@@ -185,7 +185,10 @@ class TokenServiceTest : BehaviorSpec({
 
         `when`("토큰을 성공적으로 upsert하면") {
             val providerId = "테스트 프로바이더 아이디"
-            val expected = "테스트 access token"
+            val expected = TokenResponse(
+                accessToken = "테스트 발급 토큰",
+                refreshToken = "테스트 리프레쉬 토큰",
+            )
 
             every { sut.upsertTokenForSocialUser(providerId) } returns expected
 
@@ -206,7 +209,10 @@ class TokenServiceTest : BehaviorSpec({
 
         `when`("토큰을 성공적으로 upsert하면") {
             val email = "test@test.com"
-            val expected = "테스트 access token"
+            val expected = TokenResponse(
+                accessToken = "테스트 발급 토큰",
+                refreshToken = "테스트 리프레쉬 토큰",
+            )
 
             every { sut.upsertTokenForUser(email) } returns expected
 

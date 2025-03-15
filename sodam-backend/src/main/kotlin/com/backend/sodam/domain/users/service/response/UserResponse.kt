@@ -8,7 +8,8 @@ data class UserResponse(
     val name: String,
     val password: String = "",
     val profileImage: String = "", // 추후에 파일 형식으로 바꾸기
-    val introduce: String = ""
+    val introduce: String = "",
+    val role : String = "",
 ) {
     companion object{
         fun toUserResponse(sodamUser: SodamUser) : UserResponse{
@@ -18,7 +19,8 @@ data class UserResponse(
                 name = sodamUser.username,
                 password = sodamUser.encryptedPassword,
                 profileImage = sodamUser.profileImageUrl,
-                introduce = sodamUser.introduce
+                introduce = sodamUser.introduce,
+                role = sodamUser.role,
             )
         }
     }

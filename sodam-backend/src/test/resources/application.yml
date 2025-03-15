@@ -35,3 +35,9 @@ spring:
                         token-uri: https://kauth.kakao.com/oauth/token
                         user-info-uri: https://kapi.kakao.com/v2/user/me
                         user-name-attribute: id
+
+jwt:
+    secret: 9fbda65e0628c06a000725a771bd2676f5bd744c7b044ce4496e852c8903997e # oppenssl rand -hex 32 명령어로 생성된 토큰값
+    expire:
+        access-token: 1
+        refresh-token: 24

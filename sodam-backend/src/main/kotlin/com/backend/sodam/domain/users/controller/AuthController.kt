@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.users.controller
 
 import com.backend.sodam.domain.tokens.service.TokenService
+import com.backend.sodam.domain.tokens.service.dto.TokenResponse
 import com.backend.sodam.domain.users.controller.request.LoginRequest
 import com.backend.sodam.domain.users.controller.request.SignupRequest
 import com.backend.sodam.domain.users.controller.request.toCommand
@@ -25,7 +26,6 @@ class AuthController(
     private val authenticationManagerBuilder: AuthenticationManagerBuilder,
     private val tokenService: TokenService,
 ) {
-
     @PostMapping("/api/v1/auth/signup")
     fun signup(
         @RequestBody @Valid
@@ -43,10 +43,11 @@ class AuthController(
     fun login(
         @RequestBody @Valid
         loginRequest: LoginRequest
-    ): SodamApiResponse<String> {
+    ): SodamApiResponse<TokenResponse> {
         val token = UsernamePasswordAuthenticationToken(loginRequest.email, loginRequest.password)
         val authenticate = authenticationManagerBuilder.`object`.authenticate(token)
         val principal = authenticate.principal as SodamAuthUser
+
         return SodamApiResponse.ok(tokenService.upsertTokenForUser(principal.email))
     }
 
@@ -58,7 +59,7 @@ class AuthController(
     @PostMapping("/api/v1/auth/callback")
     fun oauth2Callback(
         @RequestBody request: Map<String, String>
-    ): SodamApiResponse<String> {
+    ): SodamApiResponse<TokenResponse> {
         val code = request["code"] ?: throw RuntimeException()
         val accessTokenFromKakao = tokenService.getTokenFromKakao(code)
         val foundKakaoUser = userService.findKakaoUser(accessTokenFromKakao)
@@ -72,6 +73,7 @@ class AuthController(
                 )
             )
         }
+
         return SodamApiResponse.ok(tokenService.upsertTokenForSocialUser(foundKakaoUser.providerId))
     }
 }

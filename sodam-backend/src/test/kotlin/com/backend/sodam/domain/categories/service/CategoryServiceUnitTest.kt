@@ -9,7 +9,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 
-class CategoryServiceTest : BehaviorSpec({
+class CategoryServiceUnitTest : BehaviorSpec({
 
     // 목 활용
     val expected = mutableListOf<Category>()

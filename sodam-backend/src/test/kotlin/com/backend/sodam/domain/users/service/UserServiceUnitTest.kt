@@ -15,7 +15,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.assertThrows
 
-class UserServiceTest : BehaviorSpec({
+class UserServiceUnitTest : BehaviorSpec({
 
     // 제공되는 기능
     // - 1. 회원가입
