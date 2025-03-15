@@ -33,6 +33,7 @@ class JwtAuthenticationFilter(
 
     private fun resolveToken(request: HttpServletRequest): String {
         val bearerToken = request.getHeader("Authorization")
+        println("Bearer $bearerToken")
         return bearerToken.takeIf { StringUtils.hasText(it) && it.startsWith("Bearer ") }?.substring(7) ?: ""
     }
 }

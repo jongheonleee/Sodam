@@ -16,7 +16,7 @@ class TokenCustomRepositoryImplTest(
     private val sut : TokenCustomRepositoryImpl,
     private val tokenJpaRepository: TokenJpaRepository,
     private val userJpaRepository : UserJpaRepository,
-    private val socailUserJpaRepository: SocialUserJpaRepository,
+    private val socialUserJpaRepository: SocialUserJpaRepository,
 ) : DescribeSpec({
 
     val userId = UUID.randomUUID().toString()
@@ -29,7 +29,7 @@ class TokenCustomRepositoryImplTest(
         // 테스트에서 사용할 DB 초기화
         tokenJpaRepository.deleteAll()
         userJpaRepository.deleteAll()
-        socailUserJpaRepository.deleteAll()
+        socialUserJpaRepository.deleteAll()
 
         // 1. 회원 생성 및 해당 회원의 토큰 저장
         val usersEntity = UsersEntity(
@@ -60,7 +60,7 @@ class TokenCustomRepositoryImplTest(
             providerId = "프로바이더 아이디",
             userName = "테스트 유저"
         )
-        val savedSocialUserEntity = socailUserJpaRepository.save(socialUserEntity)
+        val savedSocialUserEntity = socialUserJpaRepository.save(socialUserEntity)
 
         val socialUserTokenEntity = UsersTokenEntity(
             tokenId = UUID.randomUUID().toString(),

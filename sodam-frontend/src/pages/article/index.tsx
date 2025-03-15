@@ -5,6 +5,7 @@ import Articles from "../../components/Articles";
 import Footer from "../../components/Footer";
 import React, {useEffect, useState} from "react";
 import {ArticleSummaryType, CategoryType} from "../../types/article";
+import {getArticles} from "../../api/article";
 
 interface ArticlesPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -32,29 +33,35 @@ export default function ArticlesPage({
         setArticles([]);
         setCategories([]);
 
-        // 필요한 데이터 조회
-        Promise.all([
-            fetch('/api/articles').then(res => {
-                console.log("[articles]Response Content-Type:", res.headers.get("content-type"));
-                return res.json();
-            }),
-            fetch('/api/categories').then(res => {
-                console.log("[categories]Response Content-Type:", res.headers.get("content-type"));
-                return res.json();
-            })
-        ])
-            .then(([articlesData, categoriesData]) => {
-                if (articlesData?.result === 'SUCCESS') {
-                    setArticles(articlesData.data);
-                }
-
-                if (categoriesData?.result === 'SUCCESS') {
-                    setCategories(categoriesData.data);
-                }
-            })
-            .catch(error => {
-                console.log('Error fetching data', error);
-            });
+        getArticles().then((res) => {
+            if (res.status === 200) {
+                alert("성공")
+            }
+        })
+        //
+        // // 필요한 데이터 조회
+        // Promise.all([
+        //     fetch('/api/articles').then(res => {
+        //         console.log("[articles]Response Content-Type:", res.headers.get("content-type"));
+        //         return res.json();
+        //     }),
+        //     fetch('/api/categories').then(res => {
+        //         console.log("[categories]Response Content-Type:", res.headers.get("content-type"));
+        //         return res.json();
+        //     })
+        // ])
+        //     .then(([articlesData, categoriesData]) => {
+        //         if (articlesData?.result === 'SUCCESS') {
+        //             setArticles(articlesData.data);
+        //         }
+        //
+        //         if (categoriesData?.result === 'SUCCESS') {
+        //             setCategories(categoriesData.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.log('Error fetching data', error);
+        //     });
     }, []);
 
     // 카테고리 변경 시 해당 카테고리와 연관있는 게시글 조회

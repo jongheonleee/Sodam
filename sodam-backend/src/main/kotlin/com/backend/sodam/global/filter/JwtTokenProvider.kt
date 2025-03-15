@@ -17,6 +17,8 @@ class JwtTokenProvider(
     fun getAuthentication(accessToken: String): Authentication {
         val foundUserByAccessToken = tokenService.findUserByAccessToken(accessToken)
 
+        // 여기서 role이 제대로 등록되어 있지 않아서 예외 발생함
+        // - java.lang.IllegalArgumentException: A granted authority textual representation is required
         val authorities = listOf<SimpleGrantedAuthority>(
             SimpleGrantedAuthority(foundUserByAccessToken.role)
         )

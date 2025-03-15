@@ -61,9 +61,7 @@ export default function Login({
             .then((res) => {
                 if (res.status === 200) {
                     // 로그인 성공하면 로컬 스토리지에 백엔드에서 발급된 토큰을 저장함
-                    localStorage.setItem('token', res.data.data)
-                    // 잘 발급되었는지 확인해보기
-                    console.log(localStorage.getItem('token'))
+                    localStorage.setItem('token', res.data.data.accessToken)
                     // 인증 여부 확인 및 홈으로 리다이렉션
                     setIsAuthenticated(true)
                     navigate('/')

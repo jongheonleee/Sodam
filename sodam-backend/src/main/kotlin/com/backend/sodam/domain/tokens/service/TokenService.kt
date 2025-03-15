@@ -35,9 +35,9 @@ class TokenService(
     // - DB, redis 활용
     fun findUserByAccessToken(token: String): UserResponse {
         val claims = parseClaims(token)
-        val userId = claims["userId"] ?: throw TokenException.UserIdNotFoundOnTokenException()
+        val userId = claims["userId"] ?: throw TokenException.UserIdNotFoundOnTokenException() // 여기서 사용하는 userId는 email을 의미함
 
-        return userRepository.findByProviderId(userId.toString())
+        return userRepository.findByUserEmail(userId.toString())
             .map { UserResponse.toUserResponse(it) }
             .orElseThrow { UserException.UserNotFoundException() }
     }
