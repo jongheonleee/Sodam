@@ -58,7 +58,7 @@ CREATE TABLE `social_users` (
 -- 회원 이력(접속, 요청 이력 기록)
 DROP TABLE IF EXISTS `users_history`;
 CREATE TABLE `users_history` (
-    `USER_HISTORY_ID`              BIGINT                  NOT NULL     AUTO_INCREMENT     COMMENT '사용자 이력 아이디(PK)',
+    `USER_HISTORY_ID`           BIGINT                  NOT NULL     AUTO_INCREMENT     COMMENT '사용자 이력 아이디(PK)',
     `USER_ID`                   VARCHAR(255)            NOT NULL                        COMMENT '사용자 아이디(FK)',
     `USER_ROLE`                 VARCHAR(255)            NOT NULL                        COMMENT '사용자 역할',
     `REQ_IP`                    VARCHAR(255)            NOT NULL                        COMMENT '요청 IP',
@@ -72,9 +72,6 @@ CREATE TABLE `users_history` (
     `CREATED_BY`	            VARCHAR(50)		        NOT NULL                        COMMENT '생성자',
     `MODIFIED_AT`	            DATETIME	            NOT NULL                        COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		        NOT NULL                        COMMENT '수정자',
-
-    -- FK 참조 : 회원
-    CONSTRAINT FK_USERS_HISTORY_USER_ID FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
 
     PRIMARY KEY (USER_HISTORY_ID)
 );

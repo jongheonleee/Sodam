@@ -20,17 +20,14 @@ class UsersHistoryEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_HISTORY_ID")
-    val userHistoryId: Long,
+    val userHistoryId: Long? = null,
 
-    // FK(추후에 연관관계 처리)
-    // - 회원 아이디 : 회원 히스토리 - 회원 : N : 1
-    @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    val user: UsersEntity,
+    @Column(name = "USER_ID")
+    val userId: String,
 
     // 가변 필드
     userRole: String,
-    reqIp: String,
+    clientIp: String,
     reqMethod: String,
     reqUrl: String,
     reqHeader: String,
@@ -42,7 +39,7 @@ class UsersHistoryEntity(
         protected set
 
     @Column(name = "REQ_IP")
-    var reqIp = reqIp
+    var clientIp = clientIp
         protected set
 
     @Column(name = "REQ_METHOD")
@@ -53,11 +50,11 @@ class UsersHistoryEntity(
     var reqUrl = reqUrl
         protected set
 
-    @Column(name = "REQ_HEADER")
+    @Column(name = "REQ_HEADER", columnDefinition = "TEXT")
     var reqHeader = reqHeader
         protected set
 
-    @Column(name = "REQ_BODY")
+    @Column(name = "REQ_BODY", columnDefinition = "TEXT")
     var reqBody = reqBody
         protected set
 }

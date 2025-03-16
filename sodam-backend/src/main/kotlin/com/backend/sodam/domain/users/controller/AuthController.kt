@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.users.controller
 
 import com.backend.sodam.domain.tokens.service.TokenService
-import com.backend.sodam.domain.tokens.service.dto.TokenResponse
+import com.backend.sodam.domain.tokens.service.response.TokenResponse
 import com.backend.sodam.domain.users.controller.request.LoginRequest
 import com.backend.sodam.domain.users.controller.request.SignupRequest
 import com.backend.sodam.domain.users.controller.request.toCommand

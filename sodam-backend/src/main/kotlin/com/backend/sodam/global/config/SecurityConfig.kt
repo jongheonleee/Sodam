@@ -1,6 +1,7 @@
 package com.backend.sodam.global.config
 
 import com.backend.sodam.global.filter.JwtAuthenticationFilter
+import com.backend.sodam.global.filter.UserHistoryLoggingFilter
 import com.backend.sodam.global.security.SodamUserDetailsService
 import lombok.RequiredArgsConstructor
 import org.springframework.context.annotation.Bean
@@ -22,6 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource
 class SecurityConfig(
     private val sodamUserDetailsService: SodamUserDetailsService,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val userHistoryLoggingFilter: UserHistoryLoggingFilter,
 ) {
 
     @Bean
@@ -32,7 +34,7 @@ class SecurityConfig(
         httpSecurity.csrf { it.disable() }
         httpSecurity.cors { it.configurationSource(corsConfigurationSource()) }
 
-        // 개발 단계 이므로 모든 요청 열어두기
+        // 로그인, 회원가입, 이외의 모든 요청 인증 요구
         httpSecurity.authorizeHttpRequests {
             it.requestMatchers(
                 "/api/v1/auth/signup", // 회원가입
@@ -50,8 +52,10 @@ class SecurityConfig(
         // userDetails 조회 빈 등록
         httpSecurity.userDetailsService(sodamUserDetailsService)
 
-        // jwt 토큰 필터 추가(해당 필터 앞단에 추가함)
+        // jwt 토큰 필터 추가(해당 필터 앞단에 추가함) -> 인증 이전에 처리해야함
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+        // 회원 이력 처리 필터 추가 -> 인증 이후에 처리해야함
+        httpSecurity.addFilterAfter(userHistoryLoggingFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return httpSecurity.build()
     }

@@ -20,10 +20,6 @@ class UserService(
     private val kakaoUserPort: KakaoUserPort,
 ) {
 
-    // - 중복 이메일을 확인한다.
-    //    - 중복된 이메일이 존재하는 경우, 알림 메시지 반환
-    // - 회원가입 처리를 한다.
-    // - 무료 구독권을 생성한다.
     fun signupUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
         userRepository.findByUserEmail(userSignupCommand.email)
             .ifPresent { throw UserException.UserAlreadyExistsException() }

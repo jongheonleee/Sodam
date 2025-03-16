@@ -55,7 +55,7 @@ class ArticleEntity(
     var articleSummary = articleSummary
         protected set
 
-    @Column(name = "ARTICLE_CONTENT")
+    @Column(name = "ARTICLE_CONTENT", columnDefinition = "TEXT")
     var articleContent = articleContent
         protected set
 

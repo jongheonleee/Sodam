@@ -1,4 +1,4 @@
-package com.backend.sodam.domain.tokens.service.dto
+package com.backend.sodam.domain.tokens.service.response
 
 data class TokenResponse(
     val accessToken: String,
