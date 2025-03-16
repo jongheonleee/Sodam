@@ -29,11 +29,10 @@ export default function ArticleEditPage({
 
     // 기본으로 선정되어 있는 카테고리 선언
     const [selectedCategory, setSelectedCategory] = useState<CategoryType>({
-        id : "CT001",
-        topId : "CT000",
-        name : "전체",
-        ord : 1,
-        validYN : 0,
+        categoryId : "CT001",
+        topCategoryId : "CT000",
+        categoryName : "전체",
+        isValid : 0,
     })
 
     // 게시글 생성 폼 필드 선언
@@ -85,7 +84,7 @@ export default function ArticleEditPage({
         formData.append('title', articleForm.title);
         formData.append('summary', articleForm.summary);
         formData.append('content', articleForm.content);
-        formData.append('category', articleForm.category.id);
+        formData.append('category', articleForm.category.categoryId);
 
         // 태그 추가
         if (articleForm.tags) {
@@ -142,7 +141,7 @@ export default function ArticleEditPage({
     // 카테고리 선택시 핸들링 함수
     const selectCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
         // 선택한 카테고리 조회
-        const selectedCategory = categories.find(category => category.id === e.target.value);
+        const selectedCategory = categories.find(category => category.categoryId === e.target.value);
 
         // 만약 카테고리가 없으면 에러로 알림
         if (!selectedCategory) {

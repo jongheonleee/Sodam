@@ -50,16 +50,16 @@ export default function ArticleForm({
                 <select
                     name="categories"
                     id="categories"
-                    value={selectedCategory.id}  // 선택된 카테고리 값 바인딩
+                    value={selectedCategory.categoryId}  // 선택된 카테고리 값 바인딩
                     onChange={e => selectCategory(e)}  // onChange 핸들러
                 >
                     <option value="">카테고리를 선택해주세요</option>
                     {categories.map((category) => (
                         <option
-                            key={category?.id}
-                            value={category?.id}  // 카테고리 ID를 value로 설정
+                            key={category?.categoryId}
+                            value={category?.categoryId}  // 카테고리 ID를 value로 설정
                         >
-                            {category?.name}
+                            {category?.categoryName}
                         </option>
                     ))}
                 </select>

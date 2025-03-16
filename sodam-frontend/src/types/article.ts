@@ -14,11 +14,10 @@ export interface TagType {
 }
 
 export interface CategoryType {
-    id: string;
-    topId: string; // 상위 카테고리 id
-    name: string;
-    ord: number; // 정렬 순서
-    validYN: number; // 사용 가능 여부(0, 1)
+    categoryId: string;
+    topCategoryId: string; // 상위 카테고리 id
+    categoryName: string;
+    isValid: number; // 사용 가능 여부(0, 1)
 }
 
 export interface ArticleSummaryType {

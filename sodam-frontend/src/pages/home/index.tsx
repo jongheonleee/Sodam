@@ -52,13 +52,13 @@ export default function Home({
 
     // 카테고리 변경 시 해당 카테고리와 연관있는 게시글 조회
     const handleCategoryChange = (id: string) => {
-        const selectedCategory = categories.find((category) => id === category.id);
+        const selectedCategory = categories.find((category) => id === category.categoryId);
         if (selectedCategory) {
             setActiveCategory(selectedCategory);
         }
 
         // 선택된 카테고리에 맞는 게시글 조회
-        fetch(`/api/articles?category=${activeCategory.id}`)
+        fetch(`/api/articles?category=${activeCategory.categoryId}`)
             .then((res) => res.json())
             .then((data) => {
                 if (data?.result === 'SUCCESS') {
@@ -71,7 +71,7 @@ export default function Home({
     // 키워드 검색 시 해당 키워드와 관련된 게시글 조회
     const handleSearchKeyword = (keyword: string) => {
         // 검색 키워드로 게시글 조회
-        fetch(`/api/articles?category=${activeCategory.id}&keyword=${keyword}`)
+        fetch(`/api/articles?category=${activeCategory.categoryId}&keyword=${keyword}`)
             .then((res) => res.json())
             .then((data) => {
                 if (data?.result === 'SUCCESS') {

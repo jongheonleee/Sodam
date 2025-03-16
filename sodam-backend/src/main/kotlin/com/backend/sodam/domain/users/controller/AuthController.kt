@@ -26,6 +26,7 @@ class AuthController(
     private val authenticationManagerBuilder: AuthenticationManagerBuilder,
     private val tokenService: TokenService,
 ) {
+
     @PostMapping("/api/v1/auth/signup")
     fun signup(
         @RequestBody @Valid
@@ -35,10 +36,7 @@ class AuthController(
         return SodamApiResponse.ok(userService.signupUser(command))
     }
 
-    // Authentication 토큰생성
-    // SecurityContext에서 인증 정보 조회
-    // 토큰값 조회 및 반환 -> 프론트엔드에서 토큰 활용
-    // 추후에 토큰 발급해야함
+
     @PostMapping("/api/v1/auth/login")
     fun login(
         @RequestBody @Valid
@@ -51,11 +49,6 @@ class AuthController(
         return SodamApiResponse.ok(tokenService.upsertTokenForUser(principal.email))
     }
 
-    // ouath2 로그인 처리(kakao)
-    // 코드를 통해 accesstoken을 조회한다.
-    // 소셜 사용자가 이미 존재하는지 확인
-    // 만약 존재하지 않으면 회원가입 처리
-    // 토큰 발급해서 반환
     @PostMapping("/api/v1/auth/callback")
     fun oauth2Callback(
         @RequestBody request: Map<String, String>

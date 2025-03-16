@@ -3,6 +3,7 @@ import ArticleForm from "../../components/ArticleForm";
 import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {ArticleFormType, CategoryType} from "../../types/article";
+import {getCategories} from "../../api/category";
 
 interface ArticleNewPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -22,11 +23,10 @@ export default function ArticleNewPage({
 
     // 기본으로 선정되어 있는 카테고리 선언
     const [selectedCategory, setSelectedCategory] = useState<CategoryType>({
-        id : "CT001",
-        topId : "CT000",
-        name : "전체",
-        ord : 1,
-        validYN : 0,
+        categoryId : "CT001",
+        topCategoryId : "CT000",
+        categoryName : "전체",
+        isValid : 0,
     })
 
     // 게시글 생성 폼 필드 선언
@@ -81,7 +81,7 @@ export default function ArticleNewPage({
         formData.append('title', articleForm.title);
         formData.append('summary', articleForm.summary);
         formData.append('content', articleForm.content);
-        formData.append('category', articleForm.category.id);
+        formData.append('category', articleForm.category.categoryId);
 
         // 태그 추가
         if (articleForm.tags) {
@@ -140,7 +140,7 @@ export default function ArticleNewPage({
     // 카테고리 선택시 핸들링 함수
     const selectCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
         // 선택한 카테고리 조회
-        const selectedCategory = categories.find(category => category.id === e.target.value);
+        const selectedCategory = categories.find(category => category.categoryId === e.target.value);
 
         // 만약 카테고리가 없으면 에러로 알림
         if (!selectedCategory) {
@@ -242,17 +242,12 @@ export default function ArticleNewPage({
         setCategories([]);
 
         // 카레고리 데이터 요청 받아오기
-        fetch('/api/categories')
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    setCategories(data.data);
+        getCategories()
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log(res.data.data.categories)
+                    setCategories(res.data.data.categories)
                 }
-
-                console.log(data.data);
-            })
-            .catch(error => {
-                console.error('Error fetching data', error);
             })
     }, []);
 

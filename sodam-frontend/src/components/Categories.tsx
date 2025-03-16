@@ -1,11 +1,10 @@
 import {CategoryType} from "../types/article";
 
 export const defaultCategory : CategoryType = {
-    id : "CT001",
-    topId : "CT000",
-    name : "테스트용 카테고리",
-    ord : 1,
-    validYN : 0,
+    categoryId : "CT001",
+    topCategoryId : "CT000",
+    categoryName : "테스트용 카테고리",
+    isValid : 0,
 };
 
 interface CategoryProps {
@@ -40,14 +39,14 @@ export default function Categories({
                     <div className="article__category-box">
                         {categories?.map((category) => (
                             <div
-                                key={category?.id}
+                                key={category?.categoryId}
                                 role="presentation"
-                                onClick={() => onChangeCategory(category?.id)}
+                                onClick={() => onChangeCategory(category?.categoryId)}
                                 className={
-                                    activeCategory.id === category.id ? "article__navigation--active" : ""
+                                    activeCategory.categoryId === category.categoryId ? "article__navigation--active" : ""
                                 }
                             >
-                                { category?.name }
+                                { category?.categoryName }
                             </div>
                         ))}
                     </div>
