@@ -5,6 +5,7 @@ import com.backend.sodam.domain.tokens.repository.TokenRepository
 import com.backend.sodam.domain.tokens.service.dto.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.UserRepository
+import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.service.response.UserResponse
 import com.backend.sodam.global.port.KakaoTokenPort
 import io.jsonwebtoken.Claims
@@ -16,6 +17,7 @@ import io.jsonwebtoken.security.Keys
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.springframework.util.ObjectUtils
 import java.time.Duration
 import java.util.*
 import javax.crypto.SecretKey
@@ -26,6 +28,7 @@ class TokenService(
     private val tokenRepository: TokenRepository,
     private val userRepository: UserRepository,
     private val kakaoTokenPort : KakaoTokenPort,
+    private val userService: UserService,
 
     @Value("\${jwt.secret}")
     val secretKey: String,
@@ -35,11 +38,17 @@ class TokenService(
     // - DB, redis 활용
     fun findUserByAccessToken(token: String): UserResponse {
         val claims = parseClaims(token)
-        val userId = claims["userId"] ?: throw TokenException.UserIdNotFoundOnTokenException() // 여기서 사용하는 userId는 email을 의미함
+        val userId = claims["userId"] ?: throw TokenException.InvalidTokenException() // 여기서 사용하는 userId는 email을 의미함
+        println("userId: $userId")
 
-        return userRepository.findByUserEmail(userId.toString())
-            .map { UserResponse.toUserResponse(it) }
-            .orElseThrow { UserException.UserNotFoundException() }
+        val foundUserByProviderId = userService.findByProviderId(userId.toString())
+        if (ObjectUtils.isEmpty(foundUserByProviderId)) {
+            throw UserException.UserNotFoundException()
+        }
+
+        return foundUserByProviderId!!
+
+    // 소셜 회원인지 그냥 회원인지 구분해서 달리 처리해야함
     }
 
     // 카카오로부터 토큰을 받을 수 있음

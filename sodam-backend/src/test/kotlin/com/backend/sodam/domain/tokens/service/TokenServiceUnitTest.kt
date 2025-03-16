@@ -53,12 +53,12 @@ class TokenServiceUnitTest : BehaviorSpec({
 
         `when`("토큰에서 회원 아이디를 조회하지 못한 경우") {
             val token = "테스트 토큰"
-            val expected = TokenException.UserIdNotFoundOnTokenException()
+            val expected = TokenException.InvalidTokenException()
 
             every { sut.findUserByAccessToken(token) }.throws(expected)
 
             then("UserIdNotFoundOnTokenException 예외가 발생한다.") {
-                assertThrows<TokenException.UserIdNotFoundOnTokenException> {
+                assertThrows<TokenException.InvalidTokenException> {
                     sut.findUserByAccessToken(token)
                 }
 

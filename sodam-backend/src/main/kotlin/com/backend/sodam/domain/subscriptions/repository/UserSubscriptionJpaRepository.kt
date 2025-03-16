@@ -5,6 +5,6 @@ import com.backend.sodam.domain.users.entity.UsersEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
-interface UserSubscriptionJpaRepository : JpaRepository<UsersSubscriptionsEntity, String> {
+interface UserSubscriptionJpaRepository : JpaRepository<UsersSubscriptionsEntity, String>, UserSubscriptionCustomRepository {
     fun findByUser(user: UsersEntity): Optional<UsersSubscriptionsEntity>
 }

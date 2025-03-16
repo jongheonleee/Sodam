@@ -326,7 +326,8 @@ CREATE TABLE `subscriptions` (
 DROP TABLE IF EXISTS `user_subscriptions`;
 CREATE TABLE `user_subscriptions` (
     `USER_SUBSCRIPTION_ID`      VARCHAR(255)            NOT NULL    COMMENT '회원 구독권 아이디(UUID)(pk)',
-    `USER_ID`                   VARCHAR(255)            NOT NULL    COMMENT '회원 아이디(FK)',
+    `USER_ID`                   VARCHAR(255)                        COMMENT '회원 아이디(FK)',
+    `SOCIAL_USER_ID`            VARCHAR(255)                        COMMENT '소셜 회원 아이디(FK)',
     `SUBSCRIPTION_ID`           VARCHAR(255)            NOT NULL    COMMENT '구독권 아이디(UUID)(FK)',
     `SUBSCRIPTION_NAME`         VARCHAR(255)            NOT NULL    COMMENT '구독권명',
     `START_AT`                  DATETIME                NOT NULL    COMMENT '구독권 적용 시작 시점',

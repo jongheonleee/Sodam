@@ -64,6 +64,7 @@ class AuthController(
         val accessTokenFromKakao = tokenService.getTokenFromKakao(code)
         val foundKakaoUser = userService.findKakaoUser(accessTokenFromKakao)
         val foundUserByProviderId = userService.findByProviderId(foundKakaoUser.providerId)
+
         if (ObjectUtils.isEmpty(foundUserByProviderId)) {
             userService.signupSocialUser(
                 SocialUserSignupCommand(

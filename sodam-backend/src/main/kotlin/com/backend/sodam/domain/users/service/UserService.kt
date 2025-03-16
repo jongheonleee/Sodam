@@ -29,7 +29,7 @@ class UserService(
             .ifPresent { throw UserException.UserAlreadyExistsException() }
 
         val sodamUser = userRepository.create(userSignupCommand)
-        userSubscriptionRepository.create(sodamUser.userId)
+        userSubscriptionRepository.createSubscriptionForUser(sodamUser.userId)
 
         return UserSignupResponse(
             username = sodamUser.username,
@@ -48,6 +48,8 @@ class UserService(
             provider = socialUserSignupCommand.provider,
             providerId = socialUserSignupCommand.providerId,
         )
+
+        userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
 
         return UserSignupResponse(
             username = sodamUser.username
@@ -78,9 +80,9 @@ class UserService(
     }
 
     fun findByProviderId(providerId: String): UserResponse? {
-        return userRepository.findByProviderId(providerId).map {
-                UserResponse.toUserResponse(it)
-        }.orElse(null)
+        return userRepository.findByProviderId(providerId)
+                             .map { UserResponse.toUserResponse(it) }
+                             .orElse(null)
     }
 
 }

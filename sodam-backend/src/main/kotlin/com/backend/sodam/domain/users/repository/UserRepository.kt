@@ -1,5 +1,7 @@
 package com.backend.sodam.domain.users.repository
 
+import com.backend.sodam.domain.subscriptions.model.UserSubscription
+import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.service.command.*
@@ -13,6 +15,7 @@ import java.util.*
 class UserRepository(
     private val userJpaRepository: UserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
+    private val userSubscriptionRepository: UserSubscriptionRepository,
 ) {
 
     @Transactional(readOnly = true)
@@ -23,9 +26,9 @@ class UserRepository(
 
     @Transactional
     fun create(userSignupCommand: UserSignupCommand): SodamUser {
-        // 회원가입 진행
         val signupRequestUserEntity = userSignupCommand.toEntity()
-        return userJpaRepository.save(signupRequestUserEntity).toDomain()
+        return userJpaRepository.save(signupRequestUserEntity)
+                                .toDomain()
     }
 
     @Transactional(readOnly = true)
@@ -35,7 +38,20 @@ class UserRepository(
             return Optional.empty()
         }
 
-        return foundSocialUsersEntityOptionalByProviderId.map { it.toDomain() }
+        val socialUserEntity = foundSocialUsersEntityOptionalByProviderId.get()
+        val foundUserSubscriptionOptionalByProviderId = userSubscriptionRepository.findByUserId(providerId)
+
+        return Optional.of(
+            SodamUser(
+                userId = socialUserEntity.socialUserId,
+                username = socialUserEntity.userName,
+                provider = socialUserEntity.provider,
+                providerId = socialUserEntity.providerId,
+                role = if (foundUserSubscriptionOptionalByProviderId.isPresent)
+                            foundUserSubscriptionOptionalByProviderId.get().subscriptionType.toRole()
+                       else UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole()
+            )
+        )
     }
 
     @Transactional
@@ -49,7 +65,8 @@ class UserRepository(
             provider = provider,
             providerId = providerId,
         )
-        return socialUserJpaRepository.save(socialUsersEntity).toDomain()
+        return socialUserJpaRepository.save(socialUsersEntity)
+                                      .toDomain()
     }
 
 

@@ -2,6 +2,7 @@ package com.backend.sodam.domain.subscriptions.model
 
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.entity.UsersSubscriptionsEntity
+import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import java.time.LocalDateTime
 import java.util.*
@@ -62,6 +63,18 @@ fun UserSubscription.toEntity(user: UsersEntity, subscription: SubscriptionsEnti
         startAt = this.startAt,
         endAt = this.endAt,
         validYN = if (this.validYn) 0 else 1,
-        subscriptionName = this.subscriptionType.desc
+        subscriptionName = this.subscriptionType
+    )
+}
+
+fun UserSubscription.toEntity(socialUser : SocialUsersEntity, subscription: SubscriptionsEntity) : UsersSubscriptionsEntity {
+    return UsersSubscriptionsEntity(
+        userSubscriptionId = UUID.randomUUID().toString(),
+        socialUser = socialUser,
+        subscription = subscription,
+        startAt = this.startAt,
+        endAt = this.endAt,
+        validYN = if (this.validYn) 0 else 1,
+        subscriptionName = this.subscriptionType
     )
 }
