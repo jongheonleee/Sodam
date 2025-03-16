@@ -13,6 +13,7 @@ class ArticleController {
     // -
     @GetMapping("/api/v1/articles")
     fun getArticles() : String {
+        println("Get Articles")
         return "테스트"
     }
 }

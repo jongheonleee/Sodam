@@ -30,6 +30,7 @@ class UserSubscriptionRepository(
         println(userSubscription.subscriptionType)
 
         val foundUserOptionalEntity = userJpaRepository.findByUserId(userId)
+
         if (foundUserOptionalEntity.isEmpty) {
             throw UserException.UserNotFoundException()
         }

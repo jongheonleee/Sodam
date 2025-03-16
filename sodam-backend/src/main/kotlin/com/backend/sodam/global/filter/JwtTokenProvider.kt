@@ -15,6 +15,7 @@ class JwtTokenProvider(
 ) {
 
     fun getAuthentication(accessToken: String): Authentication {
+        println("여기 호출됨")
         val foundUserByAccessToken = tokenService.findUserByAccessToken(accessToken)
 
         // 여기서 role이 제대로 등록되어 있지 않아서 예외 발생함

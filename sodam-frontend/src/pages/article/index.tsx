@@ -18,7 +18,7 @@ export default function ArticlesPage({
     const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
 
     // 카테고리
-    const [categories, setCategories] = useState<CategoryType[]>([]);
+    // const [categories, setCategories] = useState<CategoryType[]>([]);
 
     // 검색 키워드
     const [keyword, setKeyword] = useState<string>('');
@@ -31,7 +31,7 @@ export default function ArticlesPage({
     useEffect(() => {
         // 초기화
         setArticles([]);
-        setCategories([]);
+        // setCategories([]);
 
         getArticles().then((res) => {
             if (res.status === 200) {
@@ -65,36 +65,36 @@ export default function ArticlesPage({
     }, []);
 
     // 카테고리 변경 시 해당 카테고리와 연관있는 게시글 조회
-    const handleCategoryChange = (id: string) => {
-        const selectedCategory = categories.find((category) => id === category.id);
-        if (selectedCategory) {
-            setActiveCategory(selectedCategory);
-        }
-
-        // 선택된 카테고리에 맞는 게시글 조회
-        fetch(`/api/articles?category=${activeCategory.id}`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data?.result === 'SUCCESS') {
-                    setArticles(data.data);
-                }
-            })
-            .catch((error) => console.error('Error fetching articles:', error));
-    }
-
-
-    // 키워드 검색 시 해당 키워드와 관련된 게시글 조회
-    const handleKeywordSearch = (keyword : string) => {
-        // 검색 키워드로 게시글 조회
-        fetch(`/api/articles?category=${activeCategory.id}&keyword=${keyword}`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data?.result === 'SUCCESS') {
-                    setArticles(data.data)
-                }
-            })
-            .catch((error) => console.error('Error fetching articles:', error));
-    }
+    // const handleCategoryChange = (id: string) => {
+    //     // const selectedCategory = categories.find((category) => id === category.id);
+    //     if (selectedCategory) {
+    //         setActiveCategory(selectedCategory);
+    //     }
+    //
+    //     // 선택된 카테고리에 맞는 게시글 조회
+    //     fetch(`/api/articles?category=${activeCategory.id}`)
+    //         .then((res) => res.json())
+    //         .then((data) => {
+    //             if (data?.result === 'SUCCESS') {
+    //                 setArticles(data.data);
+    //             }
+    //         })
+    //         .catch((error) => console.error('Error fetching articles:', error));
+    // }
+    //
+    //
+    // // 키워드 검색 시 해당 키워드와 관련된 게시글 조회
+    // const handleKeywordSearch = (keyword : string) => {
+    //     // 검색 키워드로 게시글 조회
+    //     fetch(`/api/articles?category=${activeCategory.id}&keyword=${keyword}`)
+    //         .then((res) => res.json())
+    //         .then((data) => {
+    //             if (data?.result === 'SUCCESS') {
+    //                 setArticles(data.data)
+    //             }
+    //         })
+    //         .catch((error) => console.error('Error fetching articles:', error));
+    // }
 
     // 특정 게시글 삭제 처리 핸들링
     const handleArticleDelete = (id: number) => {
@@ -124,16 +124,16 @@ export default function ArticlesPage({
             {/* 베너 */}
             <ArticleCarousel/>
 
-            <Categories
-                hasNavigation={true}
-                defaultCategoryTap={defaultCategory}
-                categories={categories}
-                keyword={keyword}
-                onChangeCategory={handleCategoryChange}
-                onChangeKeyword={setKeyword}
-                onSearchKeyword={handleKeywordSearch}
-                activeCategory={activeCategory}
-            />
+            {/*<Categories*/}
+            {/*    hasNavigation={true}*/}
+            {/*    defaultCategoryTap={defaultCategory}*/}
+            {/*    categories={categories}*/}
+            {/*    keyword={keyword}*/}
+            {/*    onChangeCategory={handleCategoryChange}*/}
+            {/*    onChangeKeyword={setKeyword}*/}
+            {/*    onSearchKeyword={handleKeywordSearch}*/}
+            {/*    activeCategory={activeCategory}*/}
+            {/*/>*/}
 
             {/* 콘텐츠 */}
             <Articles
