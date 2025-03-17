@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.users.entity
 
 import com.backend.sodam.domain.users.model.SodamUser
+import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -38,6 +39,7 @@ class SocialUsersEntity(
             username = this.userName,
             provider = this.provider,
             providerId = this.providerId,
+            userType = UserType.SOCIAL,
         )
     }
 

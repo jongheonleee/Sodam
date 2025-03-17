@@ -1,4 +1,6 @@
 package com.backend.sodam.domain.articles.repository
 
-interface ArticleJpaRepository {
-}
+import com.backend.sodam.domain.articles.entity.ArticleEntity
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface ArticleJpaRepository : JpaRepository<ArticleEntity, Long>

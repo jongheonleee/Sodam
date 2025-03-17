@@ -11,6 +11,7 @@ data class SodamUser(
     val providerId: String = "",
     val role: String = "",
     val introduce: String = "",
-    val profileImageUrl: String = ""
+    val profileImageUrl: String = "",
+    val userType: UserType? = null
 )
 

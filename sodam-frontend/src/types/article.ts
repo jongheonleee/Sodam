@@ -73,3 +73,12 @@ export interface ArticleFormType {
     tags : string[];
 }
 
+// 게시글 생성 요청
+export interface ArticleCreateRequest {
+    categoryId: string
+    title: string
+    summary: string
+    content: string
+    tags: String[]
+}
+

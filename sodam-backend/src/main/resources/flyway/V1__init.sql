@@ -100,14 +100,14 @@ CREATE TABLE `user_tokens` (
     PRIMARY KEY (TOKEN_ID)
 );
 
-
 -- 게시글
 DROP TABLE IF EXISTS `articles`;
 CREATE TABLE `articles` (
     `ARTICLE_ID`                BIGINT               NOT NULL    AUTO_INCREMENT    COMMENT '게시글 아이디(PK)',
     `CATEGORY_ID`               VARCHAR(255)         NOT NULL                      COMMENT '카테고리 아이디(FK)',
-    `USER_ID`                   VARCHAR(255)	     NOT NULL                      COMMENT '회원 아이디(FK)',
-    `USER_EMAIL`                VARCHAR(255)         NOT NULL                      COMMENT '회원 이메일',
+    `USER_ID`                   VARCHAR(255)	                                   COMMENT '회원 아이디(FK)',
+    `SOCIAL_USER_ID`            VARCHAR(255)                                       COMMENT '소셜 회원 아이디(FK)',
+    `USER_NAME`                 VARCHAR(255)         NOT NULL                      COMMENT '회원 이메일',
     `ARTICLE_TITLE`             VARCHAR(255)         NOT NULL                      COMMENT '게시글 타이틀',
     `ARTICLE_SUMMARY`           VARCHAR(500)         NOT NULL                      COMMENT '게시글 요약글',
     `ARTICLE_CONTENT`           TEXT                 NOT NULL                      COMMENT '게시글 내용',

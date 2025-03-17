@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
 
@@ -15,11 +16,8 @@ class JwtTokenProvider(
 ) {
 
     fun getAuthentication(accessToken: String): Authentication {
-        println("여기 호출됨")
         val foundUserByAccessToken = tokenService.findUserByAccessToken(accessToken)
 
-        // 여기서 role이 제대로 등록되어 있지 않아서 예외 발생함
-        // - java.lang.IllegalArgumentException: A granted authority textual representation is required
         val authorities = listOf<SimpleGrantedAuthority>(
             SimpleGrantedAuthority(foundUserByAccessToken.role)
         )
@@ -36,4 +34,15 @@ class JwtTokenProvider(
             authorities
         )
     }
+
+    fun getUserId(): String {
+        val authentication = SecurityContextHolder.getContext().authentication
+        return authentication.credentials.toString()
+    }
+
+    fun getRole(): String {
+        val authentication = SecurityContextHolder.getContext().authentication
+        return authentication.authorities.toString()
+    }
+
 }

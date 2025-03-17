@@ -76,9 +76,15 @@ class UserService(
     }
 
     fun findByProviderId(providerId: String): UserResponse? {
-        return userRepository.findByProviderId(providerId)
+        return userRepository.findByProviderId(providerId) // socialUser
                              .map { UserResponse.toUserResponse(it) }
                              .orElse(null)
+    }
+
+    fun findByEmail(email: String): UserResponse? {
+        return userRepository.findByUserEmail(email)
+            .map { UserResponse.toUserResponse(it) }
+            .orElse(null)
     }
 
 }

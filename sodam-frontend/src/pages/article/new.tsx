@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {ArticleFormType, CategoryType} from "../../types/article";
 import {getCategories} from "../../api/category";
+import {postArticle} from "../../api/article";
 
 interface ArticleNewPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -94,25 +95,33 @@ export default function ArticleNewPage({
         }
 
         try {
-            const response = await fetch('/api/articles', {
-                method: 'POST',
-                body: formData,
-            });
+            postArticle({
+                'categoryId' : articleForm.category.categoryId,
+                'title' : articleForm.title,
+                'summary' : articleForm.summary,
+                'content' : articleForm.content,
+                'tags' : articleForm.tags
+            }).then((res) => {
+                if (res.status === 200) {
+                    alert("성공")
+                }
+                console.log(res.data.data)
+            })
 
-            if (!response.ok) {
-                throw new Error("게시글 등록에 실패했습니다.");
-            }
-
-            const data = await response.json();
-            console.log(data);
-
-            if (data?.result === 'SUCCESS' && data.data) {
-                // 게시글 등록 성공시 알림
-                alert("게시글 등록이 완료되었습니다.");
-
-                // 홈으로 리다이렉션
-                navigate('/', {replace : true})
-            }
+            // if (!response.ok) {
+            //     throw new Error("게시글 등록에 실패했습니다.");
+            // }
+            //
+            // const data = await response.json();
+            // console.log(data);
+            //
+            // if (data?.result === 'SUCCESS' && data.data) {
+            //     // 게시글 등록 성공시 알림
+            //     alert("게시글 등록이 완료되었습니다.");
+            //
+            //     // 홈으로 리다이렉션
+            //     navigate('/', {replace : true})
+            // }
 
         } catch (error) {
             console.error('게시글 등록 오류 : ', error);

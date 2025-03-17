@@ -4,7 +4,6 @@ import com.backend.sodam.domain.tokens.exception.TokenException
 import com.backend.sodam.domain.tokens.repository.TokenRepository
 import com.backend.sodam.domain.tokens.service.response.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
-import com.backend.sodam.domain.users.repository.UserRepository
 import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.service.response.UserResponse
 import com.backend.sodam.global.port.KakaoTokenPort
@@ -26,7 +25,6 @@ import javax.crypto.SecretKey
 @RequiredArgsConstructor
 class TokenService(
     private val tokenRepository: TokenRepository,
-    private val userRepository: UserRepository,
     private val kakaoTokenPort : KakaoTokenPort,
     private val userService: UserService,
 
@@ -39,16 +37,11 @@ class TokenService(
     fun findUserByAccessToken(token: String): UserResponse {
         val claims = parseClaims(token)
         val userId = claims["userId"] ?: throw TokenException.InvalidTokenException() // 여기서 사용하는 userId는 email을 의미함
-        println("userId: $userId")
 
-        val foundUserByProviderId = userService.findByProviderId(userId.toString())
-        if (ObjectUtils.isEmpty(foundUserByProviderId)) {
-            throw UserException.UserNotFoundException()
-        }
-
-        return foundUserByProviderId!!
-
-    // 소셜 회원인지 그냥 회원인지 구분해서 달리 처리해야함
+        // 소셜 회원 먼저 조회, 없으면 일반 회원 조회. 그래도 없으면 예외 발생
+        return userService.findByProviderId(userId.toString())
+            ?: userService.findByEmail(userId.toString())
+            ?: throw UserException.UserNotFoundException()
     }
 
     // 카카오로부터 토큰을 받을 수 있음
@@ -141,8 +134,7 @@ class TokenService(
         return Keys.hmacShaKeyFor(keyBytes)
     }
 
-    private fun parseClaims(accessToken: String): Claims {
-        return try {
+    private fun parseClaims(accessToken: String): Claims = try {
             Jwts.parser()
                 .setSigningKey(secretKey)
                 .build()
@@ -151,5 +143,6 @@ class TokenService(
         } catch (e : ExpiredJwtException) {
             e.claims
         }
-    }
 }
+
+

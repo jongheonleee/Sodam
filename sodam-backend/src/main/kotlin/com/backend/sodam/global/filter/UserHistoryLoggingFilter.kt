@@ -32,6 +32,7 @@ class UserHistoryLoggingFilter(
         CompletableFuture.runAsync {
             log(authentication, request)
         }
+
         filterChain.doFilter(request, response)
     }
 
