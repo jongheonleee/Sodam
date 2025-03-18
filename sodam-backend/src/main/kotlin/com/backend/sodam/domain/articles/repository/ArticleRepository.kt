@@ -1,11 +1,16 @@
 package com.backend.sodam.domain.articles.repository
 
+import com.backend.sodam.domain.articles.controller.request.ArticleSearchRequest
 import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
+import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
+import com.backend.sodam.domain.tags.entity.TagsEntity
+import com.backend.sodam.domain.tags.repository.TagJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.SocialUserRepository
 import com.backend.sodam.domain.users.repository.UserJpaRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -15,6 +20,7 @@ class ArticleRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userJpaRepository: UserJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
+    private val tagJpaRepository: TagJpaRepository,
 ) {
 
     @Transactional
@@ -27,8 +33,13 @@ class ArticleRepository(
             categoryEntity = foundCategoryEntity,
         )
 
+        articleCreateCommand.tags.map {
+            val tagEntity = TagsEntity(tagName = it)
+            articleCreateRequestEntity.addTag(tagEntity)
+        }
+
         return articleJpaRepository.save(articleCreateRequestEntity)
-                                   .toDomain();
+                                   .toDomain()
     }
 
     @Transactional
@@ -41,7 +52,20 @@ class ArticleRepository(
             categoryEntity = foundCategoryEntity,
         )
 
+        articleCreateCommand.tags.map {
+            val tagEntity = TagsEntity(tagName = it)
+            articleCreateRequestEntity.addTag(tagEntity)
+        }
+
         return articleJpaRepository.save(articleCreateRequestEntity)
-            .toDomain();
+                                   .toDomain()
+    }
+
+    @Transactional(readOnly = true)
+    fun findByPageBy(pageRequest: Pageable, articleSearchCommand: ArticleSearchCommand): Page<SodamArticle> {
+        return articleJpaRepository.findByPageBy(
+            pageRequest = pageRequest,
+            articleSearchCommand = articleSearchCommand
+        )
     }
 }

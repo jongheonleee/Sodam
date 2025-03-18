@@ -1,17 +1,11 @@
 package com.backend.sodam.domain.articles.entity
 import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.categories.entity.CategoryEntity
+import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
@@ -45,6 +39,8 @@ class ArticleEntity(
     @JoinColumn(name = "SOCIAL_USER_ID", nullable = true)
     val socialUser: SocialUsersEntity? = null,
 
+    @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val tags : MutableList<TagsEntity> = mutableListOf(),
 
     // 가변 필드
     articleTitle: String,
@@ -90,6 +86,12 @@ class ArticleEntity(
             viewCnt = articleViewCnt,
             likeCnt = articleLikeCnt,
             dislikeCnt = articleDislikeCnt,
+            createdAt = createdAt.toString(),
         )
+    }
+
+    fun addTag(tag: TagsEntity) {
+        tags.add(tag)
+        tag.article = this
     }
 }

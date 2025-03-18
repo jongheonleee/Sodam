@@ -220,7 +220,6 @@ input:checked + .carousel__slide-container .nav label {
 .article__detail {
   min-height: 90vh;
   padding: 20px;
-  text-align: center;
   max-width: 680px;
   margin: 0 auto;
   text-align: left;
@@ -1173,4 +1172,15 @@ input:checked + .carousel__slide-container .nav label {
 
 .order-button:hover {
   background-color: #45a049;
+}
+
+.article__pagination {
+  min-height: 40px;
+  padding: 20px 40px;
+  font-size: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 }

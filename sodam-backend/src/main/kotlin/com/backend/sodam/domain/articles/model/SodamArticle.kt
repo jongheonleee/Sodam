@@ -10,5 +10,6 @@ class SodamArticle(
     var viewCnt: Int,
     var likeCnt: Int,
     var dislikeCnt: Int,
+    val createdAt: String,
 ) {
 }

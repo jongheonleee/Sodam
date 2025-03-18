@@ -107,22 +107,6 @@ export default function ArticleNewPage({
                 }
                 console.log(res.data.data)
             })
-
-            // if (!response.ok) {
-            //     throw new Error("게시글 등록에 실패했습니다.");
-            // }
-            //
-            // const data = await response.json();
-            // console.log(data);
-            //
-            // if (data?.result === 'SUCCESS' && data.data) {
-            //     // 게시글 등록 성공시 알림
-            //     alert("게시글 등록이 완료되었습니다.");
-            //
-            //     // 홈으로 리다이렉션
-            //     navigate('/', {replace : true})
-            // }
-
         } catch (error) {
             console.error('게시글 등록 오류 : ', error);
             setError("게시글 등록 오류 : " + error);

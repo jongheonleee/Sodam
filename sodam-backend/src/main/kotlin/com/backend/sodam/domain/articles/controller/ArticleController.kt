@@ -1,14 +1,18 @@
 package com.backend.sodam.domain.articles.controller
 
 import com.backend.sodam.domain.articles.controller.request.ArticleCreateRequest
+import com.backend.sodam.domain.articles.controller.request.ArticleSearchRequest
 import com.backend.sodam.domain.articles.controller.request.ArticleUpdateRequest
 import com.backend.sodam.domain.articles.service.ArticleService
 import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import jakarta.validation.Valid
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
@@ -36,10 +40,11 @@ class ArticleController(
     // 게시글 여러개 조회
     @GetMapping("/api/v1/articles")
     fun getArticles(
-        @AuthenticationPrincipal authenticatedUser: User,
-    ) : SodamApiResponse<String> {
+        pageable: Pageable,
+        articleSearchRequest: ArticleSearchRequest,
+    ) : SodamApiResponse<Page<ArticleSummaryResponse>> {
         return SodamApiResponse.ok(
-            "성공"
+            articleService.fetchFromClient(pageable, articleSearchRequest.toCommand())
         )
     }
 

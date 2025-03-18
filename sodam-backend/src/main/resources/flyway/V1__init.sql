@@ -214,15 +214,15 @@ CREATE TABLE `users_like_articles` (
 -- 게시글 태그
 DROP TABLE IF EXISTS `tags`;
 CREATE TABLE `tags` (
-    `TAG_ID`                    BIGINT              NOT NULL   COMMENT '태그 아이디(PK)',
-    `ARTICLE_ID`                BIGINT              NOT NULL   COMMENT '게시글 아이디(FK)',
-    `TAG_NAME`                  VARCHAR(50)         NOT NULL   COMMENT '태그명',
+    `TAG_ID`                    BIGINT              NOT NULL   AUTO_INCREMENT       COMMENT '태그 아이디(PK)',
+    `ARTICLE_ID`                BIGINT              NOT NULL                        COMMENT '게시글 아이디(FK)',
+    `TAG_NAME`                  VARCHAR(50)         NOT NULL                        COMMENT '태그명',
 
     -- 시스템 칼럼
-    `CREATED_AT`	            DATETIME	        NOT NULL   COMMENT '생성일자',
-    `CREATED_BY`	            VARCHAR(50)		    NOT NULL   COMMENT '생성자',
-    `MODIFIED_AT`	            DATETIME	        NOT NULL   COMMENT '수정일자',
-    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL   COMMENT '수정자',
+    `CREATED_AT`	            DATETIME	        NOT NULL                        COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	        NOT NULL                        COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '수정자',
 
     -- FK 참조 : 게시글
     -- FK 참조 : 게시글 (ARTICLE_ID 참조: articles.ARTICLE_ID)

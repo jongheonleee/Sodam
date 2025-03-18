@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.articles.controller.request
 
 data class ArticleUpdateRequest(
+    val categoryId: String,
     val title: String,
     val summary: String,
     val content: String,

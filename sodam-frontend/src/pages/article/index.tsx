@@ -6,6 +6,7 @@ import Footer from "../../components/Footer";
 import React, {useEffect, useState} from "react";
 import {ArticleSummaryType, CategoryType} from "../../types/article";
 import {getArticles} from "../../api/article";
+import ArticlePagination from "../../components/ArticlePagination";
 
 interface ArticlesPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -14,8 +15,10 @@ interface ArticlesPageProps {
 export default function ArticlesPage({
     handleLogout,
 } : ArticlesPageProps) {
-    // 게시글
+    // 게시글 및 페이징 정보
     const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
+    const [page, setPage] = useState<number>(1)
+    const [totalPages, setTotalPages] = useState<number>(1)
 
     // 카테고리
     // const [categories, setCategories] = useState<CategoryType[]>([]);
@@ -36,6 +39,10 @@ export default function ArticlesPage({
         getArticles().then((res) => {
             if (res.status === 200) {
                 alert("성공")
+                setArticles(res.data.data.content)
+                setPage(res.data.data.pageNumber)
+                setTotalPages(res.data.data.totalPages)
+                console.log(res.data.data)
             }
         })
         //
@@ -96,6 +103,19 @@ export default function ArticlesPage({
     //         .catch((error) => console.error('Error fetching articles:', error));
     // }
 
+    const handlePageChange : (event: unknown, value: number) => void = (event, value) => {
+        setPage(value) // 바로 page를 사용할 수 없음
+
+        getArticles(value).then((res) => {
+            if (res.status === 200) {
+                setArticles(res.data.data.content)
+                setPage(res.data.data.pageNumber)
+                setTotalPages(res.data.data.totalPages)
+                console.log(res.data.data)
+            }
+        })
+    }
+
     // 특정 게시글 삭제 처리 핸들링
     const handleArticleDelete = (id: number) => {
         fetch(`/api/articles/${id}`, {
@@ -139,6 +159,12 @@ export default function ArticlesPage({
             <Articles
                 articles={articles}
                 handleArticleDelete={handleArticleDelete}
+            />
+
+            <ArticlePagination
+                page={page}
+                totalPages={totalPages}
+                handlePageChange={handlePageChange}
             />
 
             {/* 푸터 */}

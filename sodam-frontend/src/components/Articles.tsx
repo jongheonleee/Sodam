@@ -20,10 +20,10 @@ export default function Articles({
                          // 각 아티클 단위
                          <div className="article__box">
                              {/* 좌측 상단 프로필 영역 */}
-                             <Link to={`/profile/${article?.email}`}>
+                             <Link to={`/profile/${article?.username}`}>
                                  <div className="article__profile-box">
-                                     <img className="article__profile" src={article.profileImage.url} alt="Author Profile" />
-                                     <div className="article__author-name">{article?.email}</div>
+                                     <img className="article__profile" src={article.profileImageUrl} alt="Author Profile" />
+                                     <div className="article__author-name">{article?.username}</div>
                                      <div className="article__date">{article?.createdAt}</div>
                                  </div>
                              </Link>
@@ -33,19 +33,19 @@ export default function Articles({
                                      {/* 해당 아티클에 태그가 있는 경우 */}
                                      {article.tags?.length > 0 && (
                                          article.tags?.map((tag) => (
-                                             <div className="article__tag">{tag?.name}</div>
+                                             <div className="article__tag">{tag}</div>
                                          ))
                                      )}
                                  </div>
 
                                  {/* 콘텐츠 영역 */}
-                             <Link to={`/articles/${article?.id}`}>
+                             <Link to={`/articles/${article?.articleId}`}>
                                  <div className="article__title">
                                      {article?.title}
                                  </div>
 
                                  <div className="article__summary">
-                                     {article?.content}
+                                     {article?.summary}
                                  </div>
                              </Link>
 
@@ -56,13 +56,13 @@ export default function Articles({
                                  <div
                                     className="article__delete"
                                     role="presentation"
-                                    onClick={() => handleArticleDelete(article?.id)}
+                                    onClick={() => handleArticleDelete(article?.articleId)}
                                  >
                                      삭제
                                  </div>
 
                                  <Link
-                                     to={`/articles/edit/${article?.id}`}
+                                     to={`/articles/edit/${article?.articleId}`}
                                      className="article__edit">
                                      수정
                                  </Link>

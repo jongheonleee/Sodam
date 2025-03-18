@@ -21,13 +21,13 @@ class TagsEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TAG_ID")
-    val tagId: Long,
+    val tagId: Long? = null,
 
     // FK(추후에 연관관계 매핑)
     // - 게시글 아이디 : 태그 - 게시글 = N : 1
     @ManyToOne
     @JoinColumn(name = "ARTICLE_ID")
-    val article: ArticleEntity,
+    var article: ArticleEntity? = null,
 
     // 가변 필드
     tagName: String

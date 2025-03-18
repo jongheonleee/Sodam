@@ -2,13 +2,17 @@ package com.backend.sodam.domain.articles.service
 
 import com.backend.sodam.domain.articles.repository.ArticleRepository
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
+import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
-import com.backend.sodam.domain.categories.repository.CategoryRepository
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.SocialUserRepository
 import com.backend.sodam.domain.users.repository.UserRepository
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -47,7 +51,24 @@ class ArticleService(
             summary = sodamArticle.summary,
             content = sodamArticle.content,
             tags = sodamArticle.tags,
+            createdAt = sodamArticle.createdAt,
         )
+    }
+
+    fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand) : Page<ArticleSummaryResponse> {
+        return articleRepository.findByPageBy(
+            pageRequest = pageable,
+            articleSearchCommand = articleSearchCommand
+        ).map {
+            ArticleSummaryResponse(
+                articleId = it.articleId,
+                title = it.title,
+                username = it.author,
+                summary = it.summary,
+                createdAt = it.createdAt,
+                tags = it.tags,
+            )
+        }
     }
 
 }

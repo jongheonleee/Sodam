@@ -14,22 +14,20 @@ export interface TagType {
 }
 
 export interface CategoryType {
-    categoryId: string;
-    topCategoryId: string; // 상위 카테고리 id
-    categoryName: string;
-    isValid: number; // 사용 가능 여부(0, 1)
+    categoryId: string
+    topCategoryId: string // 상위 카테고리 id
+    categoryName: string
+    isValid: number // 사용 가능 여부(0, 1)
 }
 
 export interface ArticleSummaryType {
-    id: number;
-    category: CategoryType; // category 타입 정의 해야함
-    email: string;
-    author: string;
-    createdAt: string;
-    profileImage: ImageType; // 이미지 타입
-    title: string;
-    content: string;
-    tags: TagType[]; // 태그 배열
+    articleId: number
+    username: string
+    profileImageUrl: string
+    title: string,
+    summary: string,
+    createdAt: string,
+    tags: string[],
 }
 
 // 댓글 타입 정의

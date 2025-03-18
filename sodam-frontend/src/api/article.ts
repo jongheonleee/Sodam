@@ -5,8 +5,9 @@ const client = axios.create({
     baseURL : 'http://localhost:8080', // 백엔드 현재 로컬에서 돌아가고 있음
 });
 
-export const getArticles = () => {
-    return client.get("/api/v1/articles", {
+
+export const getArticles = (pageNumber : number = 1) => {
+    return client.get(`/api/v1/articles?page=${pageNumber-1}`, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
