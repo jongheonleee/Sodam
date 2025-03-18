@@ -6,11 +6,13 @@ export interface ImageType {
     url: string; // aws s3 저장된 url 경로
     alt?: string; // 비고란
 }
-
+//     val articleId: Long,
+//     val tagId: Long,
+//     val tagName: String,
 export interface TagType {
-    id: number;
+    tagId: number;
     articleId: number; // 연관된 게시글
-    name: string; // 태그 이름
+    tagName: string; // 태그 이름
 }
 
 export interface CategoryType {
@@ -31,32 +33,51 @@ export interface ArticleSummaryType {
 }
 
 // 댓글 타입 정의
+//     val commentId: Long,
+//     val articleId: Long,
+//     val profileImageUrl: String,
+//     val userName: String,
+//     val createdAt: String,
+//     val content: String,
+//     val commentLikeCnt: Long,
+//     val commentDislikeCnt: Long,
 export interface CommentType {
-    id: number;
-    articleId: number;
-    profileImage: ImageType;
-    email: string;
+    commentId: number
+    articleId: number
+    profileImageUrl: string
+    userName: string
     createdAt: string;
     content: string;
-    likeCnt: number;
-    dislikeCnt: number;
+    commentLikeCnt: number;
+    commentDislikeCnt: number;
 }
-
+//     val userId: String,
+//     val articleId: Long,
+//     val title: String,
+//     val profileImageUrl: String,
+//     val author: String,
+//     val content: String,
+//     val createdAt: String,
+//     val tags: List<TagResponse>,
+//     val comments : List<CommentResponse>,
+//     val images: List<String>, // 추후에 ImageResponse로 처리
+//     val articleLikeCnt: Long,
+//     val articleDislikeCnt: Long,
+//     val articleViewCnt: Long,
 export interface ArticleDetailType {
-    id: number;
-    title: string;
-    email: string;
-    author: string;
-    createdAt: string;
-    content: string;
-    profileImage: ImageType;
-    category: CategoryType;
-    viewCnt: number;
-    likeCnt: number;
-    dislikeCnt: number;
-    images : ImageType[];
-    tags: TagType[];
-    comments: CommentType[];
+    userId: string
+    articleId: number
+    title: string
+    profileImageUrl: string
+    author: string
+    content: string
+    createdAt: string
+    tags: TagType[]
+    comments: CommentType[]
+    images: string[] //
+    articleLikeCnt: number
+    articleDislikeCnt: number
+    articleViewCnt: number
 }
 
 // 게시글 작성 폼 타입

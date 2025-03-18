@@ -14,6 +14,14 @@ export const getArticles = (pageNumber : number = 1) => {
     })
 }
 
+export const getDetailArticle = (articleId : string) => {
+    return client.get(`/api/v1/articles/${articleId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}
+
 
 
 export const postArticle = (articleCreateRequest: ArticleCreateRequest) => {

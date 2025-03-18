@@ -4,6 +4,7 @@ import com.backend.sodam.domain.articles.repository.ArticleRepository
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
+import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
 import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.users.exception.UserException
@@ -69,6 +70,33 @@ class ArticleService(
                 tags = it.tags,
             )
         }
+    }
+
+    fun getArticleDetail(articleId: Long) : ArticleDetailResponse {
+        // 조회수 증가 시키기
+        articleRepository.increaseViewCnt(articleId)
+        val sodamDetailArticle = articleRepository.findDetailByArticleId(articleId)
+        return ArticleDetailResponse(
+            userId = sodamDetailArticle.userId,
+            articleId = sodamDetailArticle.articleId,
+            title = sodamDetailArticle.title,
+            profileImageUrl = sodamDetailArticle.profileImageUrl,
+            author = sodamDetailArticle.author,
+            content = sodamDetailArticle.content,
+            createdAt = sodamDetailArticle.createdAt,
+            tags = sodamDetailArticle.tags,
+            comments = sodamDetailArticle.comments,
+            images = sodamDetailArticle.images,
+            articleLikeCnt = sodamDetailArticle.articleLikeCnt,
+            articleDislikeCnt = sodamDetailArticle.articleDislikeCnt,
+            articleViewCnt = sodamDetailArticle.articleViewCnt,
+        )
+    }
+
+    fun delete(userId: String, articleId: Long) {
+        // userId 가 작성한 글이 맞는지 확인
+        // 맞다면 삭제 처리
+            // - 연관되어 있는 테이블부터 지움(태그, 좋아요, 싫어요, 댓글)
     }
 
 }

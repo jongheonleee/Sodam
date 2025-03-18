@@ -24,21 +24,21 @@ export default function CommentList({
                 .map((comment : CommentType) => (
                     <div key={comment.createdAt} className="comment__box">
                         <div className="comment__profile-box">
-                            <img className="article__profile" src={comment?.profileImage.url} alt="Commentor Profile" />
-                            <div className="comment__email">{comment?.email}</div>
+                            <img className="article__profile" src={comment?.profileImageUrl} alt="Commentor Profile" />
+                            <div className="comment__email">{comment?.userName}</div>
                             <div className="comment__date">{comment?.createdAt}</div>
-                            {comment.email === user?.email && (
+                            {comment.userName === user?.email && ( // 추후에 변경해야함
                                 <>
                                     <div
                                         className="comment__delete"
-                                        onClick={() => handleCommentDelete(comment.id)}
+                                        onClick={() => handleCommentDelete(comment.commentId)}
                                     >
                                         삭제
                                     </div>
 
                                     <div
                                         className="comment__delete"
-                                        onClick={() => handleCommentEdit(comment.id)}
+                                        onClick={() => handleCommentEdit(comment.commentId)}
                                     >
                                         수정
                                     </div>
@@ -47,8 +47,8 @@ export default function CommentList({
                         </div>
                         <div className="comment__text">{comment?.content}</div>
                         <div className="comment__like-box">
-                            <button className="comment__like-btn" onClick={() => handleCommentLike(comment.id)}>👍 {comment?.likeCnt || 0}</button>
-                            <button className="comment__dislike-btn" onClick={() => handleCommentDislike(comment.id)}>👎 {comment?.dislikeCnt || 0}</button>
+                            <button className="comment__like-btn" onClick={() => handleCommentLike(comment.commentId)}>👍 {comment?.commentLikeCnt || 0}</button>
+                            <button className="comment__dislike-btn" onClick={() => handleCommentDislike(comment.commentId)}>👎 {comment?.commentDislikeCnt || 0}</button>
                         </div>
                     </div>
                 ))}

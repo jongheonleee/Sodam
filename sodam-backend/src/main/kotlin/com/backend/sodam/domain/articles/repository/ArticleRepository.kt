@@ -1,7 +1,9 @@
 package com.backend.sodam.domain.articles.repository
 
 import com.backend.sodam.domain.articles.controller.request.ArticleSearchRequest
+import com.backend.sodam.domain.articles.exception.ArticleException
 import com.backend.sodam.domain.articles.model.SodamArticle
+import com.backend.sodam.domain.articles.model.SodamDetailArticle
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
@@ -62,10 +64,22 @@ class ArticleRepository(
     }
 
     @Transactional(readOnly = true)
-    fun findByPageBy(pageRequest: Pageable, articleSearchCommand: ArticleSearchCommand): Page<SodamArticle> {
-        return articleJpaRepository.findByPageBy(
+    fun findByPageBy(pageRequest: Pageable, articleSearchCommand: ArticleSearchCommand): Page<SodamArticle> = articleJpaRepository.findByPageBy(
             pageRequest = pageRequest,
             articleSearchCommand = articleSearchCommand
-        )
+    )
+
+    @Transactional
+    fun increaseViewCnt(articleId: Long) {
+        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
+
+        if (foundArticleOptionalByArticleId.isEmpty) {
+            throw ArticleException.ArticleNotFoundException()
+        }
+        val foundArticleEntity = foundArticleOptionalByArticleId.get()
+        foundArticleEntity.increaseViewCnt()
     }
+
+    @Transactional(readOnly = true)
+    fun findDetailByArticleId(articleId: Long) : SodamDetailArticle = articleJpaRepository.findDetailByArticleId(articleId)
 }

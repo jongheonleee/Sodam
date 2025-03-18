@@ -19,7 +19,10 @@ enum class ErrorCode(
 
     // 토큰
     INVALID_TOKEN("SDE2000", "권한 정보가 없는 토큰입니다.."),
-    USER_TOKEN_NOT_FOUND("SDE2001", "해당 회원의 토큰을 찾을 수 없습니다.");
+    USER_TOKEN_NOT_FOUND("SDE2001", "해당 회원의 토큰을 찾을 수 없습니다."),
+
+    // 게시글
+    ARTICLE_NOT_FOUND("SDE3000", "해당 게시글을 찾을 수 없습니다.");
 
     override fun toString(): String {
         return "[$code] $desc"

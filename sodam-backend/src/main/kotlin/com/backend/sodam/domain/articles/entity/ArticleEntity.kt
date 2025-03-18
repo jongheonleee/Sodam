@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.articles.entity
 import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.categories.entity.CategoryEntity
+import com.backend.sodam.domain.comments.entity.CommentEntity
 import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
@@ -39,16 +40,20 @@ class ArticleEntity(
     @JoinColumn(name = "SOCIAL_USER_ID", nullable = true)
     val socialUser: SocialUsersEntity? = null,
 
+    // 양방향 매핑 처리
     @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
     val tags : MutableList<TagsEntity> = mutableListOf(),
+
+    @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val comments : MutableList<CommentEntity> = mutableListOf(),
 
     // 가변 필드
     articleTitle: String,
     articleSummary: String,
     articleContent: String,
-    articleViewCnt: Int,
-    articleLikeCnt: Int,
-    articleDislikeCnt: Int
+    articleViewCnt: Long,
+    articleLikeCnt: Long,
+    articleDislikeCnt: Long
 ) : MutableBaseEntity() {
 
     @Column(name = "ARTICLE_TITLE")
@@ -94,4 +99,9 @@ class ArticleEntity(
         tags.add(tag)
         tag.article = this
     }
+
+    fun increaseViewCnt() {
+        this.articleViewCnt++
+    }
+    
 }

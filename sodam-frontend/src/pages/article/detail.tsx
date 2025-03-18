@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import Header from "../../components/Header";
 import ArticleDetail from "../../components/ArticleDetail";
 import Footer from "../../components/Footer";
+import {getDetailArticle} from "../../api/article";
 
 interface ArticleDetailPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -42,18 +43,14 @@ export default function ArticleDetailPage({
         // 게시글 상세 필드 초기화
         setArticleDetail(null);
 
-        fetch(`/api/articles/${articleId}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    setArticleDetail(data.data);
+        if (articleId) { // undefined 체크
+            getDetailArticle(articleId).then((res) => {
+                if (res.status === 200) {
+                    setArticleDetail(res.data.data);
                 }
-
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Error fetching data', error);
-            })
+                console.log(res.data.data);
+            });
+        }
     }, [articleId]);
 
 

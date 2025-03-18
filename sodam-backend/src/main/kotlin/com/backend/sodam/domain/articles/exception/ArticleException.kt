@@ -1,4 +1,7 @@
 package com.backend.sodam.domain.articles.exception
 
-sealed class ArticleException {
+import com.backend.sodam.global.commons.ErrorCode
+
+sealed class ArticleException(val errorCode: ErrorCode) : RuntimeException() {
+    class ArticleNotFoundException : ArticleException(ErrorCode.ARTICLE_NOT_FOUND)
 }

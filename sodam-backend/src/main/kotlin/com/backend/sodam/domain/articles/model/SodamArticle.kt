@@ -7,9 +7,9 @@ class SodamArticle(
     val summary: String,
     val content: String,
     var tags: List<String>,
-    var viewCnt: Int,
-    var likeCnt: Int,
-    var dislikeCnt: Int,
+    var viewCnt: Long,
+    var likeCnt: Long,
+    var dislikeCnt: Long,
     val createdAt: String,
 ) {
 }

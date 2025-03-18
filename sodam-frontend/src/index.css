@@ -267,7 +267,8 @@ input:checked + .carousel__slide-container .nav label {
 }
 
 .article__date,
-.article__author-name {
+.article__author-name,
+.article__view-cnt {
   color: gray;
 }
 

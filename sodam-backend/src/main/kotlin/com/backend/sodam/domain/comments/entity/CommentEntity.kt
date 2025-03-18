@@ -32,16 +32,16 @@ class CommentEntity(
     // - 회원 아이디 : 댓글 - 회원 = N : 1 ✅
     @ManyToOne
     @JoinColumn(name = "ARTICLE_ID")
-    val article: ArticleEntity,
+    var article: ArticleEntity? = null,
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    val user: UsersEntity,
+    var user: UsersEntity? = null,
 
     // 가변 필드
     commentContent: String,
-    commentLikeCnt: Int,
-    commentDislikeCnt: Int
+    commentLikeCnt: Long,
+    commentDislikeCnt: Long
 ) : MutableBaseEntity() {
 
     @Column(name = "COMMENT_CONTENT")

@@ -40,24 +40,25 @@ export default function ArticleDetail({
                             <div className="article__title">{articleDetail?.title}</div>
 
                             <div className="article__profile-box">
-                                <img className="article__profile" src={articleDetail?.profileImage.url} alt="Author Profile" />
+                                <img className="article__profile" src={articleDetail?.profileImageUrl} alt="Author Profile" />
                                 <div className="article__author-name">{articleDetail?.author}</div>
                                 <div className="article__date">{articleDetail?.createdAt}</div>
+                                <div className="article__view-cnt"> 조회수 : {articleDetail?.articleViewCnt}</div>
                             </div>
 
                             <div className="article__utils-box">
                                 <div className="article__hashtags-box">
                                     {articleDetail.tags?.map((tag : TagType ) => (
                                         <span
-                                            key={tag.id}
+                                            key={tag.tagId}
                                             className="article__hashtag"
                                         >
-                                            {tag.name}
+                                            {tag.tagName}
                                         </span>
                                     ))}
                                 </div>
 
-                                {articleDetail?.email === user?.email && (
+                                {articleDetail?.userId === user?.email && (
                                     <>
                                         <div
                                             className="article__delete"
@@ -67,7 +68,7 @@ export default function ArticleDetail({
                                             삭제
                                         </div>
                                         <div className="article__edit">
-                                            <Link to={`/articles/edit/${articleDetail?.id}`}>수정</Link>
+                                            <Link to={`/articles/edit/${articleDetail?.articleId}`}>수정</Link>
                                         </div>
                                     </>
                                 )}
@@ -75,8 +76,8 @@ export default function ArticleDetail({
 
                             {articleDetail?.images?.length > 0 && (
                                 <div className="article__image-box">
-                                    {articleDetail.images.map((img : ImageType) => (
-                                        <img className="article__image" src={img.url} alt={img.alt} />
+                                    {articleDetail.images.map((img) => (
+                                        <img className="article__image" src={img}  />
                                     ))}
                                 </div>
                             )}
@@ -88,8 +89,8 @@ export default function ArticleDetail({
 
                             {/* 좋아요 & 싫어요 버튼 추가 */}
                             <div className="article__reaction-box">
-                                <button className="article__like-btn" onClick={handleArticleLike}>👍 {articleDetail?.likeCnt || 0}</button>
-                                <button className="article__dislike-btn" onClick={handleArticleDislike}>👎 {articleDetail?.dislikeCnt || 0}</button>
+                                <button className="article__like-btn" onClick={handleArticleLike}>👍 {articleDetail?.articleLikeCnt || 0}</button>
+                                <button className="article__dislike-btn" onClick={handleArticleDislike}>👎 {articleDetail?.articleDislikeCnt || 0}</button>
                             </div>
 
 
