@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import Header from "../../components/Header";
 import ArticleDetail from "../../components/ArticleDetail";
 import Footer from "../../components/Footer";
-import {getDetailArticle} from "../../api/article";
+import {deleteArticle, getDetailArticle} from "../../api/article";
 import {postComment} from "../../api/comment";
 
 interface ArticleDetailPageProps {
@@ -72,6 +72,17 @@ export default function ArticleDetailPage({
                     navigate('/', { replace : true })
                 }
             })
+
+        if (articleId) {
+            deleteArticle(articleId)
+                .then(res => {
+                    if (res.status === 200) {
+                        alert("게시글이 삭제되었습니다.")
+                        navigate("/")
+                    }
+                })
+        }
+
     }
 
     // 게시글 좋아요 핸들링

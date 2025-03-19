@@ -45,8 +45,9 @@ class ArticleController(
         pageable: Pageable,
         articleSearchRequest: ArticleSearchRequest,
     ) : SodamApiResponse<Page<ArticleSummaryResponse>> {
+        val command = articleSearchRequest.toCommand()
         return SodamApiResponse.ok(
-            articleService.fetchFromClient(pageable, articleSearchRequest.toCommand())
+            articleService.fetchFromClient(pageable, command)
         )
     }
 
@@ -73,10 +74,10 @@ class ArticleController(
 
     // 게시글 삭제
     @DeleteMapping("/api/v1/articles/{articleId}")
-    fun deleteArticle(@PathVariable("articleId") articleId : Long) : SodamApiResponse<String> {
+    fun deleteArticle(@PathVariable("articleId") articleId : Long) : SodamApiResponse<Unit> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
-            "성공"
+            articleService.delete(userId, articleId)
         )
     }
 }

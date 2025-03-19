@@ -81,22 +81,6 @@ export default function ArticleEditPage({
         // 에러 필드 초기화
         setError('');
 
-        const formData = new FormData();
-
-        formData.append('title', articleForm.title);
-        formData.append('summary', articleForm.summary);
-        formData.append('content', articleForm.content);
-        formData.append('category', articleForm.category.categoryId);
-
-        // 태그 추가
-        if (articleForm.tags) {
-            articleForm.tags.forEach((tag : string) => formData.append('tags', tag));
-        }
-
-        // 이미지 추가
-        if (articleForm.images) {
-            articleForm.images.forEach((image : File) => formData.append('images', image));
-        }
 
         if (articleId) {
             updateArticle(
@@ -110,6 +94,7 @@ export default function ArticleEditPage({
                 }
             ).then(res => {
                 console.log(res.data.data)
+                navigate("/")
             })
         }
 

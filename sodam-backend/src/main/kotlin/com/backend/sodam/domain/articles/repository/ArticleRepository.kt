@@ -24,7 +24,6 @@ class ArticleRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userJpaRepository: UserJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
-    private val tagJpaRepository: TagJpaRepository,
 ) {
 
     @Transactional
@@ -111,6 +110,18 @@ class ArticleRepository(
 
         return articleJpaRepository.save(foundArticleEntity)
                                    .toDomain() // 도메인 모델로 반환한다.
+    }
+
+    @Transactional
+    fun delete(articleId: Long) {
+        val foundArticleEntityOptional = articleJpaRepository.findByArticleId(articleId)
+        if (foundArticleEntityOptional.isEmpty) {
+            throw ArticleException.ArticleNotFoundException()
+        }
+
+        val foundArticleEntity = foundArticleEntityOptional.get()
+        foundArticleEntity.tags.clear()
+        articleJpaRepository.delete(foundArticleEntity)
     }
 
 

@@ -9,7 +9,6 @@ import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
 import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
 import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
-import com.backend.sodam.domain.categories.repository.CategoryRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.SocialUserRepository
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class ArticleService(
-    private val categoryRepository: CategoryRepository,
     private val userRepository: UserRepository,
     private val socialUserRepository: SocialUserRepository,
     private val articleRepository: ArticleRepository,
@@ -99,13 +97,13 @@ class ArticleService(
 
     fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): ArticleUpdateResponse {
         val sodamArticle = articleRepository.findArticleByArticleId(articleId)
-        if (!sodamArticle.canAccess(articleUpdateCommand.userId)) {
+        if (!sodamArticle.canAccess(articleUpdateCommand.userId)) { // 수정 권한이 있는지 확인한다.
             throw ArticleException.ArticleAccessDeniedException()
         }
 
-        val sodamUpdatedArticle = articleRepository.update(articleId, articleUpdateCommand)
+        val sodamUpdatedArticle = articleRepository.update(articleId, articleUpdateCommand) // 해당 게시글을 수정한다.
 
-        return ArticleUpdateResponse(
+        return ArticleUpdateResponse( // 수정된 결과를 반환한다.
             articleId = sodamUpdatedArticle.articleId,
             title = sodamUpdatedArticle.title,
             author = sodamUpdatedArticle.author,
@@ -120,8 +118,14 @@ class ArticleService(
 
     fun delete(userId: String, articleId: Long) {
         // userId 가 작성한 글이 맞는지 확인
+        val sodamArticle = articleRepository.findArticleByArticleId(articleId)
+        if (!sodamArticle.canAccess(userId)) {
+            throw ArticleException.ArticleAccessDeniedException()
+        }
+
         // 맞다면 삭제 처리
             // - 연관되어 있는 테이블부터 지움(태그, 좋아요, 싫어요, 댓글)
+        articleRepository.delete(articleId)
     }
 
 }

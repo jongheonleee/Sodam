@@ -42,3 +42,13 @@ export const updateArticle = (
         }
     })
 }
+
+export const deleteArticle = (
+    articleId: string,
+) => {
+    return client.delete(`/api/v1/articles/${articleId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}
