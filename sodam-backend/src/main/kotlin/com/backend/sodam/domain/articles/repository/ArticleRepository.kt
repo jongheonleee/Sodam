@@ -6,6 +6,8 @@ import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.articles.model.SodamDetailArticle
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
+import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
+import com.backend.sodam.domain.categories.exception.CategoryException
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
 import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.tags.repository.TagJpaRepository
@@ -22,6 +24,7 @@ class ArticleRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userJpaRepository: UserJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
+    private val tagJpaRepository: TagJpaRepository,
 ) {
 
     @Transactional
@@ -79,9 +82,52 @@ class ArticleRepository(
         foundArticleEntity.increaseViewCnt()
     }
 
+    @Transactional
+    fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand) : SodamArticle {
+        val foundArticleEntityOptional = articleJpaRepository.findByArticleId(articleId)
+        if (foundArticleEntityOptional.isEmpty) {
+            throw ArticleException.ArticleNotFoundException()
+        }
+
+        val foundArticleEntity = foundArticleEntityOptional.get()
+        foundArticleEntity.tags.clear() // 연관된 모든 태그 삭제
+
+
+        val foundCategoryEntityOptionalByCategoryId = categoryJpaRepository.findByCategoryId(articleUpdateCommand.categoryId)
+        if (foundCategoryEntityOptionalByCategoryId.isEmpty) {
+            throw CategoryException.CategoryNotFoundException()
+        } // 카테고리를 조회한다. 없으면 예외 발생
+
+
+        articleUpdateCommand.tags.map {
+            val tagEntity = TagsEntity(tagName = it)
+            foundArticleEntity.addTag(tagEntity)
+        } // 태그를 다시 생성하고 추가한다.
+
+        foundArticleEntity.update(
+            articleUpdateCommand = articleUpdateCommand,
+            categoryEntity = foundCategoryEntityOptionalByCategoryId.get()
+        ) // 해당 게시글을 업데이트한다.
+
+        return articleJpaRepository.save(foundArticleEntity)
+                                   .toDomain() // 도메인 모델로 반환한다.
+    }
+
+
     @Transactional(readOnly = true)
     fun findDetailByArticleId(articleId: Long) : SodamDetailArticle = articleJpaRepository.findDetailByArticleId(articleId)
 
     @Transactional(readOnly = true)
     fun isExistsByArticleId(articleId: Long) : Boolean = articleJpaRepository.findByArticleId(articleId).isPresent
+
+    @Transactional(readOnly = true)
+    fun findArticleByArticleId(articleId: Long) : SodamArticle {
+        val foundArticleOptionalEntityByArticleId = articleJpaRepository.findByArticleId(articleId)
+        if (foundArticleOptionalEntityByArticleId.isEmpty) {
+            throw ArticleException.ArticleNotFoundException()
+        }
+
+        return foundArticleOptionalEntityByArticleId.get()
+                                                    .toDomain()
+    }
 }

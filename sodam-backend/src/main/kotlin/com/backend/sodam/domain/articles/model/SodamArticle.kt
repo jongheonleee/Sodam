@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.articles.model
 
 class SodamArticle(
+    val userId: String,
     val articleId: Long,
     val title: String,
     val author: String,
@@ -12,4 +13,6 @@ class SodamArticle(
     var dislikeCnt: Long,
     val createdAt: String,
 ) {
+
+    fun canAccess(userId: String) : Boolean = this.userId == userId
 }

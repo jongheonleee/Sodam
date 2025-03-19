@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.articles.controller.request
 
-import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
+import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 
 data class ArticleUpdateRequest(
     val categoryId: String,
@@ -11,7 +11,12 @@ data class ArticleUpdateRequest(
 ) {
     fun toCommand(userId: String) : ArticleUpdateCommand {
         return ArticleUpdateCommand(
-
+            userId = userId,
+            categoryId = categoryId,
+            articleTitle = title,
+            articleSummary = summary,
+            articleContent = content,
+            tags = tags
         )
     }
 }

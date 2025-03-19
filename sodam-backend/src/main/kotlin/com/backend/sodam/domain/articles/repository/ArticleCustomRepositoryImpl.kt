@@ -64,6 +64,8 @@ class ArticleCustomRepositoryImpl(
                                                   .fetch()
                                                   .map {
                                                         SodamArticle(
+                                                            userId = if (it.user != null) it.user!!.userId
+                                                                     else it.socialUser!!.socialUserId,
                                                             articleId = it.articleId!!,
                                                             title = it.articleTitle,
                                                             author = it.name,

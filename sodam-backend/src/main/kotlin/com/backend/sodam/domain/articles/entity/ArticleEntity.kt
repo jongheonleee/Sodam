@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.articles.entity
 import com.backend.sodam.domain.articles.model.SodamArticle
+import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 import com.backend.sodam.domain.categories.entity.CategoryEntity
 import com.backend.sodam.domain.comments.entity.CommentEntity
 import com.backend.sodam.domain.tags.entity.TagsEntity
@@ -28,7 +29,7 @@ class ArticleEntity(
     // - 회원 아이디 : 회원 - 게시글 = 1 : N ✅
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID")
-    val category: CategoryEntity, // 카테고리는 가변
+    var category: CategoryEntity, // 카테고리는 가변
 
 
     // 소셜 유저, 일반 유저
@@ -42,10 +43,10 @@ class ArticleEntity(
 
     // 양방향 매핑 처리
     @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val tags : MutableList<TagsEntity> = mutableListOf(),
+    var tags : MutableList<TagsEntity> = mutableListOf(),
 
     @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val comments : MutableList<CommentEntity> = mutableListOf(),
+    var comments : MutableList<CommentEntity> = mutableListOf(),
 
     // 가변 필드
     articleTitle: String,
@@ -82,12 +83,14 @@ class ArticleEntity(
 
     fun toDomain() : SodamArticle {
         return SodamArticle(
+            userId = if (user != null) user!!.userId
+                     else socialUser!!.socialUserId,
             articleId = articleId!!,
             title = articleTitle,
             author = name,
             summary = articleSummary,
             content = articleContent,
-            tags = listOf(), // 추후에 개선
+            tags = tags.map { it.tagName },
             viewCnt = articleViewCnt,
             likeCnt = articleLikeCnt,
             dislikeCnt = articleDislikeCnt,
@@ -98,6 +101,13 @@ class ArticleEntity(
     fun addTag(tag: TagsEntity) {
         tags.add(tag)
         tag.article = this
+    }
+
+    fun update(articleUpdateCommand: ArticleUpdateCommand, categoryEntity: CategoryEntity) {
+        this.category = categoryEntity
+        this.articleTitle = articleUpdateCommand.articleTitle
+        this.articleSummary = articleUpdateCommand.articleSummary
+        this.articleContent = articleUpdateCommand.articleContent
     }
 
     fun increaseViewCnt() {

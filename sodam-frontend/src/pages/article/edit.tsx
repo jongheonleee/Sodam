@@ -3,6 +3,8 @@ import ArticleForm from "../../components/ArticleForm";
 import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {ArticleFormType, CategoryType} from "../../types/article";
+import {getCategories} from "../../api/category";
+import {updateArticle} from "../../api/article";
 
 interface ArticleEditPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -96,27 +98,19 @@ export default function ArticleEditPage({
             articleForm.images.forEach((image : File) => formData.append('images', image));
         }
 
-        try {
-            const response = await fetch(`/api/articles/${articleId}`, {
-                method: 'PUT',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error("게시글 수정에 실패했습니다.");
-            }
-
-            const data = await response.json();
-            console.log(data);
-
-            if (data?.result === 'SUCCESS' && data.data) {
-                alert("게시글 수정이 완료되었습니다.");
-                navigate('/', { replace: true });
-            }
-
-        } catch (error) {
-            console.error('게시글 수정 오류:', error);
-            setError("게시글 수정 오류: " + error);
+        if (articleId) {
+            updateArticle(
+                articleId,
+                {
+                    categoryId: articleForm.category.categoryId,
+                    title: articleForm.title,
+                    summary: articleForm.summary,
+                    content: articleForm.content,
+                    tags: articleForm.tags
+                }
+            ).then(res => {
+                console.log(res.data.data)
+            })
         }
 
     };
@@ -243,34 +237,35 @@ export default function ArticleEditPage({
     useEffect(() => {
         // 카테고리와 게시글 폼 초기화
         setCategories([]);
-        setArticleForm({
-            id : 0,
-            title : '',
-            category : null,
-            summary : '',
-            content : '',
-            images : null,
-            tags : []
-        })
+
+
+        // 카테고리 데이터 용청 받아오기
+        getCategories()
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log(res.data.data.categories)
+                    setCategories(res.data.data.categories)
+                }
+            })
 
         // api 요청 -> 카테고리, 게시글
-        Promise.all([
-            fetch('/api/categories').then(res => res.json()),
-            fetch(`/api/articles/edit/${articleId}`).then(res => res.json())
-        ]).then(([categoriesData, articleData]) => {
-            if (categoriesData?.result === 'SUCCESS') {
-                setCategories(categoriesData.data);
-            }
-
-            if (articleData?.result === 'SUCCESS') {
-                setArticleForm(articleData.data);
-            }
-
-            console.log(articleData);
-            console.log(categoriesData);
-        }).catch(error => {
-            console.error('Error fetching data', error);
-        })
+        // Promise.all([
+        //     fetch('/api/categories').then(res => res.json()),
+        //     fetch(`/api/articles/edit/${articleId}`).then(res => res.json())
+        // ]).then(([categoriesData, articleData]) => {
+        //     if (categoriesData?.result === 'SUCCESS') {
+        //         setCategories(categoriesData.data);
+        //     }
+        //
+        //     if (articleData?.result === 'SUCCESS') {
+        //         setArticleForm(articleData.data);
+        //     }
+        //
+        //     console.log(articleData);
+        //     console.log(categoriesData);
+        // }).catch(error => {
+        //     console.error('Error fetching data', error);
+        // })
 
     }, [articleId]);
 

@@ -22,7 +22,11 @@ enum class ErrorCode(
     USER_TOKEN_NOT_FOUND("SDE2001", "해당 회원의 토큰을 찾을 수 없습니다."),
 
     // 게시글
-    ARTICLE_NOT_FOUND("SDE3000", "해당 게시글을 찾을 수 없습니다.");
+    ARTICLE_NOT_FOUND("SDE3000", "해당 게시글을 찾을 수 없습니다."),
+    ARTICLE_ACCESS_DENIAL("SDE3001", "해당 게시글의 권한이 없습니다."),
+
+    // 카테고리
+    CATEGORY_NOT_FOUND("SDE4001", "해당 카테고리를 찾을 수 없습니다.");
 
     override fun toString(): String {
         return "[$code] $desc"

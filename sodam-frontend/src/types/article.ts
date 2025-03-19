@@ -79,3 +79,12 @@ export interface ArticleCreateRequest {
     tags: String[]
 }
 
+// 게시글 수정 요청
+export interface ArticleUpdateRequest {
+    categoryId: string
+    title: string
+    summary: string
+    content: string
+    tags: String[]
+}
+

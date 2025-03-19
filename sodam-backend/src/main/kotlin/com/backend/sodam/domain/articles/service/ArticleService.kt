@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.articles.service
 
+import com.backend.sodam.domain.articles.exception.ArticleException
 import com.backend.sodam.domain.articles.repository.ArticleRepository
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
@@ -8,6 +9,7 @@ import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
 import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
 import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
+import com.backend.sodam.domain.categories.repository.CategoryRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.SocialUserRepository
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class ArticleService(
+    private val categoryRepository: CategoryRepository,
     private val userRepository: UserRepository,
     private val socialUserRepository: SocialUserRepository,
     private val articleRepository: ArticleRepository,
@@ -95,11 +98,25 @@ class ArticleService(
     }
 
     fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): ArticleUpdateResponse {
+        val sodamArticle = articleRepository.findArticleByArticleId(articleId)
+        if (!sodamArticle.canAccess(articleUpdateCommand.userId)) {
+            throw ArticleException.ArticleAccessDeniedException()
+        }
+
+        val sodamUpdatedArticle = articleRepository.update(articleId, articleUpdateCommand)
 
         return ArticleUpdateResponse(
-            articleId = articleId,
+            articleId = sodamUpdatedArticle.articleId,
+            title = sodamUpdatedArticle.title,
+            author = sodamUpdatedArticle.author,
+            summary = sodamUpdatedArticle.summary,
+            content = sodamUpdatedArticle.content,
+            tags = sodamUpdatedArticle.tags,
+            createdAt = sodamUpdatedArticle.createdAt,
         )
     }
+
+
 
     fun delete(userId: String, articleId: Long) {
         // userId 가 작성한 글이 맞는지 확인
