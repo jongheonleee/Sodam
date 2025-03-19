@@ -58,20 +58,19 @@ export default function ArticleDetail({
                                     ))}
                                 </div>
 
-                                {articleDetail?.userId === user?.email && (
-                                    <>
-                                        <div
-                                            className="article__delete"
-                                            role="presentation"
-                                            onClick={handleArticleDelete}
-                                        >
-                                            삭제
-                                        </div>
-                                        <div className="article__edit">
-                                            <Link to={`/articles/edit/${articleDetail?.articleId}`}>수정</Link>
-                                        </div>
-                                    </>
-                                )}
+                                    {/*일단 모든 유저에게 삭제, 수정 버튼 보여주기. 인가 처리는 백엔드에서 처리하기 */}
+                                <>
+                                    <div
+                                        className="article__delete"
+                                        role="presentation"
+                                        onClick={handleArticleDelete}
+                                    >
+                                        삭제
+                                    </div>
+                                    <div className="article__edit">
+                                        <Link to={`/articles/edit/${articleDetail?.articleId}`}>수정</Link>
+                                    </div>
+                                </>
                             </div>
 
                             {articleDetail?.images?.length > 0 && (

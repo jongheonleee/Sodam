@@ -6,9 +6,7 @@ export interface ImageType {
     url: string; // aws s3 저장된 url 경로
     alt?: string; // 비고란
 }
-//     val articleId: Long,
-//     val tagId: Long,
-//     val tagName: String,
+
 export interface TagType {
     tagId: number;
     articleId: number; // 연관된 게시글
@@ -32,15 +30,7 @@ export interface ArticleSummaryType {
     tags: string[],
 }
 
-// 댓글 타입 정의
-//     val commentId: Long,
-//     val articleId: Long,
-//     val profileImageUrl: String,
-//     val userName: String,
-//     val createdAt: String,
-//     val content: String,
-//     val commentLikeCnt: Long,
-//     val commentDislikeCnt: Long,
+
 export interface CommentType {
     commentId: number
     articleId: number
@@ -51,19 +41,7 @@ export interface CommentType {
     commentLikeCnt: number;
     commentDislikeCnt: number;
 }
-//     val userId: String,
-//     val articleId: Long,
-//     val title: String,
-//     val profileImageUrl: String,
-//     val author: String,
-//     val content: String,
-//     val createdAt: String,
-//     val tags: List<TagResponse>,
-//     val comments : List<CommentResponse>,
-//     val images: List<String>, // 추후에 ImageResponse로 처리
-//     val articleLikeCnt: Long,
-//     val articleDislikeCnt: Long,
-//     val articleViewCnt: Long,
+
 export interface ArticleDetailType {
     userId: string
     articleId: number

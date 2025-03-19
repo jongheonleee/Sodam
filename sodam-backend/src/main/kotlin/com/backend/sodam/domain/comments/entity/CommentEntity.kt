@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.comments.entity
 
 import com.backend.sodam.domain.articles.entity.ArticleEntity
+import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
@@ -22,21 +23,25 @@ class CommentEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMMENT_ID")
-    val commentId: Long,
+    val commentId: Long? = null,
 
     @Column(name = "USER_IMAGE")
-    val userImage: String,
+    val userImage: String? = null,
 
     // FK(추후에 연관관계 매핑)
     // - 게시글 아이디 : 댓글 - 게시글 = N : 1 ✅
     // - 회원 아이디 : 댓글 - 회원 = N : 1 ✅
     @ManyToOne
     @JoinColumn(name = "ARTICLE_ID")
-    var article: ArticleEntity? = null,
+    val article: ArticleEntity? = null,
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    var user: UsersEntity? = null,
+    val user: UsersEntity? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "SOCIAL_USER_ID")
+    val socialUser: SocialUsersEntity? = null,
 
     // 가변 필드
     commentContent: String,

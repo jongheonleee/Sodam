@@ -3,6 +3,7 @@ package com.backend.sodam.domain.users.repository
 import com.backend.sodam.domain.subscriptions.model.UserSubscription
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
+import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.*
@@ -53,8 +54,9 @@ class UserRepository(
                                 .toDomain()
     }
 
+
     @Transactional(readOnly = true)
-    fun findByProviderId(providerId: String): Optional<SodamUser> {
+    fun findSocialUserByProviderId(providerId: String): Optional<SodamUser> {
         val foundSocialUsersEntityOptionalByProviderId = socialUserJpaRepository.findByProviderId(providerId)
         if (foundSocialUsersEntityOptionalByProviderId.isEmpty) {
             return Optional.empty()
@@ -70,12 +72,13 @@ class UserRepository(
                 provider = socialUserEntity.provider,
                 providerId = socialUserEntity.providerId,
                 role = if (foundUserSubscriptionOptionalByProviderId.isPresent)
-                            foundUserSubscriptionOptionalByProviderId.get().subscriptionType.toRole()
-                       else UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole(),
+                    foundUserSubscriptionOptionalByProviderId.get().subscriptionType.toRole()
+                else UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole(),
                 userType = UserType.SOCIAL,
             )
         )
     }
+
 
 
     @Transactional
@@ -93,8 +96,9 @@ class UserRepository(
                                       .toDomain()
     }
 
+
     @Transactional(readOnly = true)
-    fun findByUserId(userId: String): Optional<SodamUser> {
+    fun findUserByUserId(userId: String): Optional<SodamUser> {
         val foundUserOptionalByUserId = userJpaRepository.findByUserId(userId)
 
         if (foundUserOptionalByUserId.isEmpty) {
@@ -120,7 +124,38 @@ class UserRepository(
         )
     }
 
+    @Transactional(readOnly = true)
+    fun findSocialUserBySocialUserId(userId: String): Optional<SodamUser> {
+        val socialUserEntity = socialUserJpaRepository.findBySocialUserId(userId).get()
+        val foundUserSubscriptionOptionalBySocialUserId = userSubscriptionRepository.findByUserId(socialUserEntity.providerId)
 
+        return Optional.of(
+            SodamUser(
+                userId = socialUserEntity.socialUserId,
+                username = socialUserEntity.userName,
+                provider = socialUserEntity.provider,
+                providerId = socialUserEntity.providerId,
+                role = if (foundUserSubscriptionOptionalBySocialUserId.isPresent) foundUserSubscriptionOptionalBySocialUserId.get().subscriptionType.toRole()
+                else UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole(),
+                userType = UserType.SOCIAL,
+            )
+        )
+    }
+
+    @Transactional(readOnly = true)
+    fun findByUserId(userId: String) : Optional<SodamUser> {
+        val existsUserByUserId = userJpaRepository.existsByUserId(userId)
+        if (existsUserByUserId) {
+            return findUserByUserId(userId)
+        }
+
+        val existsSocialUserBySocialUserId = socialUserJpaRepository.existsBySocialUserId(userId)
+        if (existsSocialUserBySocialUserId) {
+            return findSocialUserBySocialUserId(userId)
+        }
+
+        throw UserException.UserNotFoundException()
+    }
 
 
 }

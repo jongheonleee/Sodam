@@ -5,6 +5,7 @@ import Header from "../../components/Header";
 import ArticleDetail from "../../components/ArticleDetail";
 import Footer from "../../components/Footer";
 import {getDetailArticle} from "../../api/article";
+import {postComment} from "../../api/comment";
 
 interface ArticleDetailPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -184,76 +185,62 @@ export default function ArticleDetailPage({
         // 1차 제출 방지
         e.preventDefault();
 
-        // articleId 존재하는지 확인
-        if (!articleId) {
-            setError('게시글 아이디가 조회되지 않습니다.');
-            return;
+        if (articleId) {
+            postComment(articleId, {
+                'comment' : comment
+            })
+                .then((res) => {
+                    if (res.status === 200) {
+                        alert("댓글 등록 성공")
+                    }
+
+                    console.log(res.data.data)
+                })
         }
 
-        // 유효성 검증
-        if (!(1 <= comment.length)) {
-            setError('댓글의 최소 길이는 1글자입니다.');
-            return;
-        }
 
-        if (commentId !== 0 && articleId) { // 댓글 수정
-            // 요청 전송
-            const formData = new FormData();
-
-            formData.append('comment', comment);
-            formData.append('articleId', articleId);
-
-            try {
-                const response = await fetch(`/api/comments/${commentId}`, {
-                    method: 'PUT',
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    throw new Error("댓글 수정에 실패했습니다.");
-                }
-
-                const data = await response.json();
-                console.log(data);
-
-                if (data?.result === 'SUCCESS' && data.data) {
-                    // 댓글 등록 알림
-                    alert('댓글 수정이 완료되었습니다.');
-                }
-            } catch (error) {
-                console.error('댓글 수정 오류 : ', error);
-                setError("댓글 수정 오류 : " + error);
-            }
-        } else if (articleId) { // 댓글 등록
-            // 요청 전송
-            const formData = new FormData();
-
-            formData.append('comment', comment);
-            formData.append('articleId', articleId);
-
-            // 응답 내용 처리
-            try {
-                const response = await fetch('/api/comments', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    throw new Error("댓글 등록에 실패했습니다.");
-                }
-
-                const data = await response.json();
-                console.log(data);
-
-                if (data?.result === 'SUCCESS' && data.data) {
-                    // 댓글 등록 알림
-                    alert('댓글 등록이 완료되었습니다.');
-                }
-            } catch (error) {
-                console.error('댓글 등록 오류 : ', error);
-                setError("댓글 등록 오류 : " + error);
-            }
-        }
+        // // articleId 존재하는지 확인
+        // if (!articleId) {
+        //     setError('게시글 아이디가 조회되지 않습니다.');
+        //     return;
+        // }
+        //
+        // // 유효성 검증
+        // if (!(1 <= comment.length)) {
+        //     setError('댓글의 최소 길이는 1글자입니다.');
+        //     return;
+        // }
+        //
+        // if (commentId !== 0 && articleId) { // 댓글 수정
+        //     // 요청 전송
+        //     const formData = new FormData();
+        //
+        //     formData.append('comment', comment);
+        //     formData.append('articleId', articleId);
+        //
+        //     try {
+        //
+        //         const response = await postComment(articleId, { 'content' : comment} )
+        //             .then((res) => {
+        //                 if (res.status === 200) {
+        //                     alert("댓글 등록 성공")
+        //                     console.log(res.data.data)
+        //                 }
+        //             })
+        //
+        //
+        //     } catch (error) {
+        //         console.error('댓글 수정 오류 : ', error);
+        //         setError("댓글 수정 오류 : " + error);
+        //     }
+        // } else if (articleId) { // 댓글 등록
+        //     postComment(articleId, {'content': comment})
+        //         .then((res) => {
+        //             if (res.status === 200) {
+        //                 alert("댓글 등록 성공")
+        //                 console.log(res.data.data)
+        //             }
+        //         })
     }
 
 

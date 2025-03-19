@@ -22,7 +22,6 @@ class ArticleRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userJpaRepository: UserJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
-    private val tagJpaRepository: TagJpaRepository,
 ) {
 
     @Transactional
@@ -82,4 +81,7 @@ class ArticleRepository(
 
     @Transactional(readOnly = true)
     fun findDetailByArticleId(articleId: Long) : SodamDetailArticle = articleJpaRepository.findDetailByArticleId(articleId)
+
+    @Transactional(readOnly = true)
+    fun isExistsByArticleId(articleId: Long) : Boolean = articleJpaRepository.findByArticleId(articleId).isPresent
 }

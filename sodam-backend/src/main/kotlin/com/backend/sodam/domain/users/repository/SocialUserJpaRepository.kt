@@ -6,4 +6,6 @@ import java.util.*
 
 interface SocialUserJpaRepository : JpaRepository<SocialUsersEntity, String>, SocialUserCustomRepository {
     fun findBySocialUserId(socialUserId: String): Optional<SocialUsersEntity>
+    fun existsByProviderId(providerId: String): Boolean
+    fun existsBySocialUserId(socialId: String): Boolean
 }

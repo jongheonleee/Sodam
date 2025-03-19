@@ -112,10 +112,10 @@ class ArticleCustomRepositoryImpl(
                     articleViewCnt = it.articleViewCnt,
                     comments = it.comments.map { comment ->
                         CommentResponse(
-                            commentId = comment.commentId,
+                            commentId = comment.commentId!!,
                             articleId = it.articleId!!,
-                            profileImageUrl = comment.userImage,
-                            userName = comment.user!!.userName,
+                            profileImageUrl = comment.userImage!!,
+                            userName = comment.user?.userName ?: comment.socialUser!!.userName,
                             createdAt = formatter.timeFormat(comment.createdAt),
                             content = comment.commentContent,
                             commentLikeCnt = comment.commentLikeCnt,

@@ -240,21 +240,23 @@ DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
     `COMMENT_ID`                  BIGINT              NOT NULL    AUTO_INCREMENT    COMMENT '댓글 아이디(PK)',
     `ARTICLE_ID`                  BIGINT              NOT NULL                      COMMENT '게시글 아이디(FK)',
-    `USER_ID`                     VARCHAR(255)        NOT NULL                      COMMENT '사용자 아이디(FK)',
+    `USER_ID`                     VARCHAR(255)                                      COMMENT '사용자 아이디(FK)',
+    `SOCIAL_USER_ID`              VARCHAR(255)                                      COMMENT '소셜 사용자 아이디(FK)',
     `USER_IMAGE`                  VARCHAR(255)        NOT NULL                      COMMENT '사용자 프로필 이미지(aws s3에 등록된 url)',
     `COMMENT_CONTENT`             TEXT                NOT NULL                      COMMENT '댓글 내용',
     `COMMENT_LIKE_CNT`            INT                 NOT NULL    DEFAULT 0         COMMENT '댓글 좋아요 수',
     `COMMENT_DISLIKE_CNT`         INT                 NOT NULL    DEFAULT 0         COMMENT '댓글 싫어요 수',
 
     -- 시스템 칼럼
-    `CREATED_AT`	            DATETIME	        NOT NULL                      COMMENT '생성일자',
-    `CREATED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '생성자',
-    `MODIFIED_AT`	            DATETIME	        NOT NULL                      COMMENT '수정일자',
-    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                      COMMENT '수정자',
+    `CREATED_AT`	            DATETIME	        NOT NULL                        COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	        NOT NULL                        COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '수정자',
 
     -- FK 참조 : 게시글, 사용자
     CONSTRAINT FK_COMMENTS_ARTICLE_ID FOREIGN KEY (ARTICLE_ID) REFERENCES `articles`(ARTICLE_ID), -- FK 참조 : 게시글
     CONSTRAINT FK_COMMENTS_USER_ID_COMMENTS FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 사용자
+    CONSTRAINT FK_COMMENTS_SOCIAL_USER_ID_COMMENTS FOREIGN KEY (SOCIAL_USER_ID) REFERENCES `social_users`(SOCIAL_USER_ID), -- FK 참조 : 사용자
 
     PRIMARY KEY (COMMENT_ID)
 );

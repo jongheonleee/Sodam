@@ -7,6 +7,7 @@ import com.backend.sodam.domain.articles.service.ArticleService
 import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
 import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
 import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
@@ -50,7 +51,6 @@ class ArticleController(
     }
 
     // 게시글 상세 조회
-    // 아직 밑에 완벽하게 구현 x(댓글 개발 먼저 진행하기 위해 일부만 구현 해놓고 진행)
     @GetMapping("/api/v1/articles/{articleId}")
     fun getArticle(@PathVariable("articleId") articleId : Long) : SodamApiResponse<ArticleDetailResponse> {
         return SodamApiResponse.ok(
@@ -60,9 +60,14 @@ class ArticleController(
 
     // 게시글 수정
     @PutMapping("/api/v1/articles/{articleId}")
-    fun putArticle(@RequestBody @Valid request : ArticleUpdateRequest, @PathVariable articleId: String) : SodamApiResponse<String> {
+    fun putArticle(
+        @PathVariable("articleId") articleId: Long,
+        @RequestBody @Valid request : ArticleUpdateRequest
+    ) : SodamApiResponse<ArticleUpdateResponse> {
+        val userId = tokenProvider.getUserId()
+        val command = request.toCommand(userId)
         return SodamApiResponse.ok(
-            "성공"
+            articleService.update(articleId, command)
         )
     }
 

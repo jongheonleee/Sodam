@@ -27,23 +27,22 @@ export default function CommentList({
                             <img className="article__profile" src={comment?.profileImageUrl} alt="Commentor Profile" />
                             <div className="comment__email">{comment?.userName}</div>
                             <div className="comment__date">{comment?.createdAt}</div>
-                            {comment.userName === user?.email && ( // 추후에 변경해야함
-                                <>
-                                    <div
-                                        className="comment__delete"
-                                        onClick={() => handleCommentDelete(comment.commentId)}
-                                    >
-                                        삭제
-                                    </div>
+                            {/*일단 모든 유저에게 삭제, 수정 버튼 보여주기. 인가 처리는 백엔드에서 처리하기 */}
+                            <>
+                                <div
+                                    className="comment__delete"
+                                    onClick={() => handleCommentDelete(comment.commentId)}
+                                >
+                                    삭제
+                                </div>
 
-                                    <div
-                                        className="comment__delete"
-                                        onClick={() => handleCommentEdit(comment.commentId)}
-                                    >
-                                        수정
-                                    </div>
-                                </>
-                            )}
+                                <div
+                                    className="comment__delete"
+                                    onClick={() => handleCommentEdit(comment.commentId)}
+                                >
+                                    수정
+                                </div>
+                            </>
                         </div>
                         <div className="comment__text">{comment?.content}</div>
                         <div className="comment__like-box">
