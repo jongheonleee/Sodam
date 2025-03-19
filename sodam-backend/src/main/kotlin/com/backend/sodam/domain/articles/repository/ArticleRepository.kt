@@ -82,6 +82,30 @@ class ArticleRepository(
     }
 
     @Transactional
+    fun decreaseLikeCnt(articleId: Long) {
+        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
+
+        if (foundArticleOptionalByArticleId.isEmpty) {
+            throw ArticleException.ArticleNotFoundException()
+        }
+
+        val foundArticleEntity = foundArticleOptionalByArticleId.get()
+        foundArticleEntity.decreaseLikeCnt()
+    }
+
+    @Transactional
+    fun increaseLikeCnt(articleId: Long) {
+        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
+
+        if (foundArticleOptionalByArticleId.isEmpty) {
+            throw ArticleException.ArticleNotFoundException()
+        }
+
+        val foundArticleEntity = foundArticleOptionalByArticleId.get()
+        foundArticleEntity.increaseLikeCnt()
+    }
+
+    @Transactional
     fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand) : SodamArticle {
         val foundArticleEntityOptional = articleJpaRepository.findByArticleId(articleId)
         if (foundArticleEntityOptional.isEmpty) {
@@ -140,5 +164,29 @@ class ArticleRepository(
 
         return foundArticleOptionalEntityByArticleId.get()
                                                     .toDomain()
+    }
+
+    @Transactional
+    fun decreaseDislikeCnt(articleId: Long) {
+        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
+
+        if (foundArticleOptionalByArticleId.isEmpty) {
+            throw ArticleException.ArticleNotFoundException()
+        }
+
+        val foundArticleEntity = foundArticleOptionalByArticleId.get()
+        foundArticleEntity.decreaseDislikeCnt()
+    }
+
+    @Transactional
+    fun increaseDislikeCnt(articleId: Long) {
+        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
+
+        if (foundArticleOptionalByArticleId.isEmpty) {
+            throw ArticleException.ArticleNotFoundException()
+        }
+
+        val foundArticleEntity = foundArticleOptionalByArticleId.get()
+        foundArticleEntity.increaseDislikeCnt()
     }
 }

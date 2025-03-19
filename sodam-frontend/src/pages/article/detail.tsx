@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import Header from "../../components/Header";
 import ArticleDetail from "../../components/ArticleDetail";
 import Footer from "../../components/Footer";
-import {deleteArticle, getDetailArticle} from "../../api/article";
+import {deleteArticle, dislikeArticle, getDetailArticle, likeArticle} from "../../api/article";
 import {postComment} from "../../api/comment";
 
 interface ArticleDetailPageProps {
@@ -88,33 +88,30 @@ export default function ArticleDetailPage({
     // 게시글 좋아요 핸들링
     async function handleArticleLike() {
         // 좋아요 처리 비동기로 api를 호출함
-        await fetch(`/api/articles/${articleId}/like`)
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    alert('좋아요 처리 성공');
-                }
-            })
-            .catch(error => {
-                console.log('Error handling like', error);
-            });
         // 좋아요 처리가 되었음을 알림
+
+        if (articleId) {
+            likeArticle(articleId)
+                .then(res => {
+                    if (res.status === 200) {
+                        alert("좋아요를 눌렀습니다.")
+                    }
+                })
+        }
     }
 
 
     // 게시글 싫어요 핸들링
     async function handleArticleDislike() {
         // 싫어요 처리 비동기로 api를 호출함
-      await fetch(`/api/articles/${articleId}/dislike`)
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    alert('싫어요 처리 성공');
-                }
-            })
-            .catch(error => {
-                console.error('Error handling dislike article', error);
-            });
+        if (articleId) {
+            dislikeArticle(articleId)
+                .then(res => {
+                    if (res.status === 200) {
+                        alert("싫어요를 눌렀습니다.")
+                    }
+                })
+        }
     }
 
     // 댓글 좋아요 핸들링

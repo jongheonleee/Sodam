@@ -24,6 +24,8 @@ enum class ErrorCode(
     // 게시글
     ARTICLE_NOT_FOUND("SDE3000", "해당 게시글을 찾을 수 없습니다."),
     ARTICLE_ACCESS_DENIAL("SDE3001", "해당 게시글의 권한이 없습니다."),
+    USERS_ARTICLE_LIKE_NOT_FOUND("SDE3002", "해당 회원 좋아요 게시글 기록을 찾을 수 없습니다."),
+    USERS_ARTICLE_DISLIKE_NOT_FOUND("SDE3003", "해당 회원 싫어요 게시글 기록을 찾을 수 없습니다."),
 
     // 카테고리
     CATEGORY_NOT_FOUND("SDE4001", "해당 카테고리를 찾을 수 없습니다.");

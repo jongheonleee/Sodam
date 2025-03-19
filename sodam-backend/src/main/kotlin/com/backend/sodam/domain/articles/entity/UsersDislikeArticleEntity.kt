@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.articles.entity
 
+import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
@@ -21,17 +22,21 @@ class UsersDislikeArticleEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USERS_ARTICLE_DISLIKE_ID")
-    val articleDislikeId: Long,
+    val articleDislikeId: Long? = null,
 
     // FK(추후에 연관관계 매핑)
     // - 게시글 아이디 : 회원 싫어요 게시글 - 게시글 = 1 : N ✅
     // - 회원 아이디 : 회원 싫어요 게시글 - 회원 = 1 : N ✅
     @ManyToOne
     @JoinColumn(name = "ARTICLE_ID")
-    val article: ArticleEntity,
+    val article: ArticleEntity? = null,
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    val user: UsersEntity
+    val user: UsersEntity? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "SOCIAL_USER_ID")
+    val socialUser: SocialUsersEntity? = null,
 
 ) : MutableBaseEntity()

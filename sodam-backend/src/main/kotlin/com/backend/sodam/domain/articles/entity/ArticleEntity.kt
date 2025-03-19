@@ -113,5 +113,21 @@ class ArticleEntity(
     fun increaseViewCnt() {
         this.articleViewCnt++
     }
+
+    fun decreaseLikeCnt() {
+        this.articleLikeCnt--
+    }
+
+    fun increaseLikeCnt() {
+        this.articleLikeCnt++
+    }
+
+    fun increaseDislikeCnt() {
+        this.articleDislikeCnt++
+    }
+
+    fun decreaseDislikeCnt() {
+        this.articleDislikeCnt--
+    }
     
 }

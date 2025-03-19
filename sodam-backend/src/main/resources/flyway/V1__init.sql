@@ -173,7 +173,8 @@ DROP TABLE IF EXISTS `users_dislike_articles`;
 CREATE TABLE `users_dislike_articles` (
     `USERS_ARTICLE_DISLIKE_ID` BIGINT           NOT NULL    AUTO_INCREMENT    COMMENT '싫어요 게시글 아이디(PK)',
     `ARTICLE_ID`               BIGINT           NOT NULL                      COMMENT '게시글 아이디(FK)',
-    `USER_ID`                  VARCHAR(255)	    NOT NULL                      COMMENT '회원 아이디(FK)',
+    `USER_ID`                  VARCHAR(255)	                                  COMMENT '회원 아이디(FK)',
+    `SOCIAL_USER_ID`           VARCHAR(255)                                   COMMENT '소셜 회원 아이디(FK)',
 
     -- 시스템 칼럼
     `CREATED_AT`	           DATETIME	        NOT NULL                     COMMENT '생성일자',
@@ -184,6 +185,7 @@ CREATE TABLE `users_dislike_articles` (
     -- FK 참조 : 게시글, 회원
     CONSTRAINT `FK_USERS_DISLIKE_ARTICLES_ARTICLE_ID` FOREIGN KEY (`ARTICLE_ID`) REFERENCES `articles`(`ARTICLE_ID`) ON DELETE CASCADE,
     CONSTRAINT `FK_USERS_DISLIKE_ARTICLES_USER_ID` FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_USERS_DISLIKE_ARTICLES_SOCIAL_USER_ID` FOREIGN KEY (`SOCIAL_USER_ID`) REFERENCES `social_users`(`SOCIAL_USER_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (USERS_ARTICLE_DISLIKE_ID)
 );
@@ -192,21 +194,23 @@ CREATE TABLE `users_dislike_articles` (
 -- 회원 좋아요 게시글
 DROP TABLE IF EXISTS `users_like_articles`;
 CREATE TABLE `users_like_articles` (
-    `USERS_ARTICLE_LIKE_ID`     BIGINT              NOT NULL    COMMENT '좋아요 게시글 아이디(PK)',
-    `ARTICLE_ID`                BIGINT              NOT NULL    COMMENT '좋아요 게시글 아이디(FK)',
-    `USER_ID`                   VARCHAR(255)        NOT NULL    COMMENT '회원 아이디(UUID)(FK)',
+    `USERS_ARTICLE_LIKE_ID`     BIGINT              NOT NULL    AUTO_INCREMENT      COMMENT '좋아요 게시글 아이디(PK)',
+    `ARTICLE_ID`                BIGINT              NOT NULL                        COMMENT '좋아요 게시글 아이디(FK)',
+    `USER_ID`                   VARCHAR(255)                                        COMMENT '회원 아이디(UUID)(FK)',
+    `SOCIAL_USER_ID`            VARCHAR(255)                                        COMMENT '소셜 회원 아이디(UUID)(FK)',
 
     -- 시스템 칼럼
-    `CREATED_AT`	            DATETIME	        NOT NULL    COMMENT '생성일자',
-    `CREATED_BY`	            VARCHAR(50)		    NOT NULL    COMMENT '생성자',
-    `MODIFIED_AT`	            DATETIME	        NOT NULL    COMMENT '수정일자',
-    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL    COMMENT '수정자',
+    `CREATED_AT`	            DATETIME	        NOT NULL                        COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	        NOT NULL                        COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '수정자',
 
     -- FK 참조 : 게시글, 회원
     -- FK 참조 : 게시글 (ARTICLE_ID 참조: articles.ARTICLE_ID)
     -- FK 참조 : 회원 (USER_ID 참조: users.USER_ID)
     CONSTRAINT `FK_USERS_LIKE_ARTICLES_ARTICLE_ID` FOREIGN KEY (`ARTICLE_ID`) REFERENCES `articles`(`ARTICLE_ID`) ON DELETE CASCADE,
     CONSTRAINT `FK_USERS_LIKE_ARTICLES_USER_ID` FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_USERS_LIKE_ARTICLES_SOCIAL_USER_ID` FOREIGN KEY (`SOCIAL_USER_ID`) REFERENCES `social_users`(`SOCIAL_USER_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (USERS_ARTICLE_LIKE_ID)
 );

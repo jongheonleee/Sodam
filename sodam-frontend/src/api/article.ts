@@ -52,3 +52,24 @@ export const deleteArticle = (
         }
     })
 }
+
+export const likeArticle = (
+    articleId: string,
+) => {
+    return client.get(`/api/v1/articles/${articleId}/like`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}
+
+
+export const dislikeArticle = (
+    articleId: string,
+) => {
+    return client.get(`/api/v1/articles/${articleId}/dislike`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}
