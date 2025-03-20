@@ -37,7 +37,7 @@ export default function CommentList({
                                 </div>
 
                                 <div
-                                    className="comment__delete"
+                                    className="comment__edit"
                                     onClick={() => handleCommentEdit(comment.commentId)}
                                 >
                                     수정

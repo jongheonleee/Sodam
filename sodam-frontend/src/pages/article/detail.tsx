@@ -5,7 +5,7 @@ import Header from "../../components/Header";
 import ArticleDetail from "../../components/ArticleDetail";
 import Footer from "../../components/Footer";
 import {deleteArticle, dislikeArticle, getDetailArticle, likeArticle} from "../../api/article";
-import {postComment} from "../../api/comment";
+import {deleteComment, getComment, postComment, updateComment} from "../../api/comment";
 
 interface ArticleDetailPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -145,22 +145,14 @@ export default function ArticleDetailPage({
     }
 
     // 댓글 삭제 핸들링
-    async function handleCommentDelete(id : number){
+    async function handleCommentDelete(commentId : number){
         // 댓글 삭제 비동기로 api를 호출함
-        await fetch(`/api/comments/${id}`, {
-            method : 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }})
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    alert('게시글 성공적으로 삭제');
-                }
-            })
-            .catch(error => {
-                console.error('Error handling delete comment');
-            })
+        await deleteComment(commentId).then((res) => {
+            if (res.status === 200) {
+                alert('댓글 삭제 처리')
+                setCommendId(0)
+            }
+        })
     }
 
 
@@ -171,87 +163,72 @@ export default function ArticleDetailPage({
     }
 
     // 댓글 수정 버튼 클릭시 핸들링
-    async function handleCommentEdit(id : number) {
-        // id에 해당하는 댓글 조회
-        await fetch(`/api/comments/${id}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    setComment(data.data);         // comment 변경
-                    setCommendId(id);
-                    alert(id);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching comment', error);
-            })
+    async function handleCommentEdit(commentId : number) {
+        await getComment(commentId,).then((res) => {
+            if (res.status === 200) {
+                console.log(res.data.data)
+                setCommendId(res.data.data.commentId)
+                setComment(res.data.data.comment)
+            }
+        })
     }
 
 
     // 댓글 폼 제출 핸들링
-    async function handleCommentSubmit(e: React.FormEvent<HTMLFormElement>) {
+    function handleCommentSubmit(e: React.FormEvent<HTMLFormElement>) {
         // 1차 제출 방지
         e.preventDefault();
 
-        if (articleId) {
-            postComment(articleId, {
-                'comment' : comment
-            })
-                .then((res) => {
-                    if (res.status === 200) {
-                        alert("댓글 등록 성공")
-                    }
-
-                    console.log(res.data.data)
-                })
+        // articleId 존재하는지 확인 - 요청을 보내려면 기본적으로 articleId가 존재해야함
+        if (!articleId) {
+            setError('게시글 아이디가 조회되지 않습니다.');
+            return;
         }
 
+        // 유효성 검증
+        if (!(1 <= comment.length)) {
+            setError('댓글의 최소 길이는 1글자입니다.');
+            return;
+        }
 
-        // // articleId 존재하는지 확인
-        // if (!articleId) {
-        //     setError('게시글 아이디가 조회되지 않습니다.');
-        //     return;
-        // }
-        //
-        // // 유효성 검증
-        // if (!(1 <= comment.length)) {
-        //     setError('댓글의 최소 길이는 1글자입니다.');
-        //     return;
-        // }
-        //
-        // if (commentId !== 0 && articleId) { // 댓글 수정
-        //     // 요청 전송
-        //     const formData = new FormData();
-        //
-        //     formData.append('comment', comment);
-        //     formData.append('articleId', articleId);
-        //
-        //     try {
-        //
-        //         const response = await postComment(articleId, { 'content' : comment} )
-        //             .then((res) => {
-        //                 if (res.status === 200) {
-        //                     alert("댓글 등록 성공")
-        //                     console.log(res.data.data)
-        //                 }
-        //             })
-        //
-        //
-        //     } catch (error) {
-        //         console.error('댓글 수정 오류 : ', error);
-        //         setError("댓글 수정 오류 : " + error);
-        //     }
-        // } else if (articleId) { // 댓글 등록
-        //     postComment(articleId, {'content': comment})
-        //         .then((res) => {
-        //             if (res.status === 200) {
-        //                 alert("댓글 등록 성공")
-        //                 console.log(res.data.data)
-        //             }
-        //         })
+        if (commentId !== 0) { // 댓글 수정 - commentId가 존재하면 수정 처리 요청
+            return updateComment(
+                commentId,
+                {'comment': comment}
+            ).then((res) => {
+                if (res.status === 200) {
+                    // 초기화
+                    setCommendId(0)
+                    setComment('')
+
+                    // 데이터 확인
+                    alert("댓글 수정 성공")
+                    console.log(res.data.data)
+
+                    // // 네비게이션 처리
+                    navigate(`/articles/${articleId}`)
+                }
+            })
+        } else { // 댓글 등록 - commentId가 존재하지 않으면 등록 처리 요청
+            return postComment(
+                articleId,
+                {'comment': comment}
+            ).then((res) => {
+                if (res.status === 200) {
+                    // 초기화
+                    setComment('')
+
+                    // 데이터 확인
+                    alert("댓글 등록 성공")
+                    console.log(res.data.data)
+
+                    // // 네비게이션 처리
+                    navigate(`/articles/${articleId}`)
+                }
+            })
+        }
+
     }
-
-
 
     return (
         <>

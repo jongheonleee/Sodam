@@ -1,8 +1,10 @@
 package com.backend.sodam.domain.comments.repository
 
 import com.backend.sodam.domain.articles.repository.ArticleJpaRepository
+import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.comments.model.SodamComment
 import com.backend.sodam.domain.comments.service.command.CommentCreateCommand
+import com.backend.sodam.domain.comments.service.command.CommentUpdateCommand
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.UserJpaRepository
 import com.backend.sodam.global.utils.Formatter
@@ -30,19 +32,19 @@ class CommentRepository(
             socialUsersEntity = foundSocialUserEntity,
         )
 
-        val savedCommentEntity = commentJpaRepository.save(commentCreateEntity)
+        return commentJpaRepository.save(commentCreateEntity)
+                                   .toDomain()
+    }
 
+    @Transactional(readOnly = true)
+    fun findByCommentId(commentId: Long) : SodamComment {
+        val foundCommentEntityOptionalByCommentId = commentJpaRepository.findByCommentId(commentId)
+        if (foundCommentEntityOptionalByCommentId.isEmpty) {
+            throw CommentException.CommentNotFoundException()
+        }
 
-        return SodamComment(
-            commentId = savedCommentEntity.commentId!!,
-            articleId = savedCommentEntity.article!!.articleId!!,
-            profileImageUrl = savedCommentEntity.userImage!!,
-            userName = savedCommentEntity.socialUser!!.userName,
-            createdAt = formatter.timeFormat(savedCommentEntity.createdAt),
-            content = savedCommentEntity.commentContent,
-            commentLikeCnt = savedCommentEntity.commentLikeCnt,
-            commentDislikeCnt = savedCommentEntity.commentDislikeCnt,
-        )
+        return foundCommentEntityOptionalByCommentId.get()
+                                                    .toDomain()
     }
 
     @Transactional
@@ -55,17 +57,35 @@ class CommentRepository(
             userEntity = foundUserEntity,
         )
 
-        val savedCommentEntity = commentJpaRepository.save(commentCreateEntity)
+        return commentJpaRepository.save(commentCreateEntity)
+                                   .toDomain()
 
-        return SodamComment(
-            commentId = savedCommentEntity.commentId!!,
-            articleId = savedCommentEntity.article!!.articleId!!,
-            profileImageUrl = savedCommentEntity.userImage!!,
-            userName = savedCommentEntity.socialUser!!.userName,
-            createdAt = formatter.timeFormat(savedCommentEntity.createdAt),
-            content = savedCommentEntity.commentContent,
-            commentLikeCnt = savedCommentEntity.commentLikeCnt,
-            commentDislikeCnt = savedCommentEntity.commentDislikeCnt,
+    }
+
+    @Transactional
+    fun update(commentId: Long, commentUpdateCommand: CommentUpdateCommand) : SodamComment {
+        val foundCommentEntityOptionalByCommentId = commentJpaRepository.findByCommentId(commentId)
+        if (foundCommentEntityOptionalByCommentId.isEmpty) {
+            throw CommentException.CommentNotFoundException()
+        }
+
+        val foundCommentEntity = foundCommentEntityOptionalByCommentId.get()
+        foundCommentEntity.update(
+            commentUpdateCommand = commentUpdateCommand
         )
+
+        return commentJpaRepository.save(foundCommentEntity)
+                                   .toDomain()
+    }
+
+    @Transactional
+    fun delete(commentId: Long)  {
+        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
+        if (foundCommentEntityOptional.isEmpty) {
+            throw CommentException.CommentNotFoundException()
+        }
+
+        val foundCommentEntity = foundCommentEntityOptional.get()
+        commentJpaRepository.delete(foundCommentEntity)
     }
 }

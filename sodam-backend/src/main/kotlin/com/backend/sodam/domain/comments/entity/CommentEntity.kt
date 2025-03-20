@@ -1,6 +1,8 @@
 package com.backend.sodam.domain.comments.entity
 
 import com.backend.sodam.domain.articles.entity.ArticleEntity
+import com.backend.sodam.domain.comments.model.SodamComment
+import com.backend.sodam.domain.comments.service.command.CommentUpdateCommand
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
@@ -60,4 +62,25 @@ class CommentEntity(
     @Column(name = "COMMENT_DISLIKE_CNT")
     var commentDislikeCnt = commentDislikeCnt
         protected set
+
+    fun update(commentUpdateCommand: CommentUpdateCommand) {
+        this.commentContent = commentUpdateCommand.content
+    }
+
+    fun toDomain() : SodamComment {
+        return SodamComment(
+            commentId = this.commentId!!,
+            articleId = this.article!!.articleId!!,
+            profileImageUrl = this.userImage!!,
+            userName = if (this.user != null) this.user!!.userName
+                       else this.socialUser!!.userName,
+            createdAt = this.createdBy,
+            content = this.commentContent,
+            commentLikeCnt = this.commentLikeCnt,
+            commentDislikeCnt = this.commentDislikeCnt,
+            userId = if (this.user != null) this.user!!.userId
+                     else this.socialUser!!.socialUserId,
+        )
+    }
+
 }
