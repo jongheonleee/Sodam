@@ -30,6 +30,8 @@ enum class ErrorCode(
     // 댓글
     COMMENT_NOT_FOUND("SDE4000", "해당 댓글을 찾을 수 없습니다."),
     COMMENT_ACCESS_DENIAL("SDE4001", "해당 게시글의 권한이 없습니다."),
+    USERS_COMMENT_LIKE_NOT_FOUND("SDE4002", "해당 회원 좋아요 댓글 기록을 찾을 수 없습니다."),
+    USERS_COMMENT_DISLIKE_NOT_FOUND("SDE4003", "해당 회원 싫어요 댓글 기록을 찾을 수 없습니다."),
 
     // 카테고리
     CATEGORY_NOT_FOUND("SDE4001", "해당 카테고리를 찾을 수 없습니다.");

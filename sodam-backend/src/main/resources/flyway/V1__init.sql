@@ -270,7 +270,8 @@ DROP TABLE IF EXISTS `user_like_comments`;
 CREATE TABLE `user_like_comments` (
     `USERS_LIKE_COMMENT_ID`       BIGINT              NOT NULL    AUTO_INCREMENT    COMMENT '댓글 좋아요 아이디(PK)',
     `COMMENT_ID`                  BIGINT              NOT NULL                      COMMENT '댓글 아이디(FK)',
-    `USER_ID`                     VARCHAR(255)        NOT NULL                      COMMENT '사용자 아이디(FK)',
+    `USER_ID`                     VARCHAR(255)                                      COMMENT '사용자 아이디(FK)',
+    `SOCIAL_USER_ID`              VARCHAR(255)                                      COMMENT '소셜 사용자 아이디(FK)',
 
     -- 시스템 칼럼
     `CREATED_AT`	            DATETIME	        NOT NULL                      COMMENT '생성일자',
@@ -281,6 +282,7 @@ CREATE TABLE `user_like_comments` (
     -- FK 참조 : 댓글, 회원
     CONSTRAINT FK_USER_LIKE_COMMENTS_COMMENT_ID FOREIGN KEY (COMMENT_ID) REFERENCES `comments`(COMMENT_ID), -- FK 참조 : 댓글
     CONSTRAINT FK_USER_LIKE_COMMENTS_USER_ID FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+    CONSTRAINT FK_USER_LIKE_COMMENTS_SOCIAL_USER_ID FOREIGN KEY (SOCIAL_USER_ID) REFERENCES `social_users`(SOCIAL_USER_ID), -- FK 참조 : 소셜 회원
 
     PRIMARY KEY (USERS_LIKE_COMMENT_ID)
 );
@@ -290,7 +292,8 @@ DROP TABLE IF EXISTS `user_dislike_comments`;
 CREATE TABLE `user_dislike_comments` (
     `USERS_DISLIKE_COMMENT_ID`    BIGINT              NOT NULL    AUTO_INCREMENT    COMMENT '댓글 싫어요 아이디(PK)',
     `COMMENT_ID`                  BIGINT              NOT NULL                      COMMENT '댓글 아이디(FK)',
-    `USER_ID`                     VARCHAR(255)        NOT NULL                      COMMENT '사용자 아이디(FK)',
+    `USER_ID`                     VARCHAR(255)                                      COMMENT '사용자 아이디(FK)',
+    `SOCIAL_USER_ID`              VARCHAR(255)                                      COMMENT '소셜 사용자 아이디(FK)',
 
     -- 시스템 칼럼
     `CREATED_AT`	            DATETIME	        NOT NULL                      COMMENT '생성일자',
@@ -302,6 +305,7 @@ CREATE TABLE `user_dislike_comments` (
 
     CONSTRAINT FK_USER_DISLIKE_COMMENTS_COMMENT_ID FOREIGN KEY (COMMENT_ID) REFERENCES `comments`(COMMENT_ID), -- FK 참조 : 댓글
     CONSTRAINT FK_USER_DISLIKE_COMMENTS_USER_ID FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+    CONSTRAINT FK_USER_DISLIKE_COMMENTS_SOCIAL_USER_ID FOREIGN KEY (SOCIAL_USER_ID) REFERENCES `social_users`(SOCIAL_USER_ID), -- FK 참조 : 소셜 회원
 
     PRIMARY KEY (USERS_DISLIKE_COMMENT_ID)
 );

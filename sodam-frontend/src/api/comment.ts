@@ -36,3 +36,19 @@ export const deleteComment = (commentId : number) => {
         }
     })
 }
+
+export const likeComment = (commentId : number) => {
+    return client.get(`/api/v1/comments/${commentId}/like`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}
+
+export const dislikeComment = (commentId : number) => {
+    return client.get(`/api/v1/comments/${commentId}/dislike`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}

@@ -88,4 +88,49 @@ class CommentRepository(
         val foundCommentEntity = foundCommentEntityOptional.get()
         commentJpaRepository.delete(foundCommentEntity)
     }
+
+    @Transactional
+    fun decreaseLikeCnt(commentId: Long) {
+        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
+        if (foundCommentEntityOptional.isEmpty) {
+            throw CommentException.CommentNotFoundException()
+        }
+
+        val foundCommentEntity = foundCommentEntityOptional.get()
+        foundCommentEntity.decreaseLikeCnt()
+
+    }
+
+    @Transactional
+    fun increaseLikeCnt(commentId: Long) {
+        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
+        if (foundCommentEntityOptional.isEmpty) {
+            throw CommentException.CommentNotFoundException()
+        }
+
+        val foundCommentEntity = foundCommentEntityOptional.get()
+        foundCommentEntity.increaseLikeCnt()
+    }
+
+    @Transactional
+    fun decreaseDislikeCnt(commentId: Long) {
+        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
+        if (foundCommentEntityOptional.isEmpty) {
+            throw CommentException.CommentNotFoundException()
+        }
+
+        val foundCommentEntity = foundCommentEntityOptional.get()
+        foundCommentEntity.decreaseDislikeCnt()
+    }
+
+    @Transactional
+    fun increaseDislikeCnt(commentId: Long) {
+        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
+        if (foundCommentEntityOptional.isEmpty) {
+            throw CommentException.CommentNotFoundException()
+        }
+
+        val foundCommentEntity = foundCommentEntityOptional.get()
+        foundCommentEntity.increaseDislikeCnt()
+    }
 }

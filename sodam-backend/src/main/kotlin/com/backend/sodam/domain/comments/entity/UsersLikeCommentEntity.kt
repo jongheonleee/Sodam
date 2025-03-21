@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.comments.entity
 
+import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
@@ -21,16 +22,20 @@ class UsersLikeCommentEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USERS_LIKE_COMMENT_ID")
-    val likeCommentId: Long,
+    val commentLikeId: Long? = null,
 
     // FK(추후에 연관관계 매핑)
     // - 댓글 아이디 : 회원 싫어요 댓글 - 댓글 = N : 1 ✅
     // - 회원 아이디 : 회원 싫어요 댓글 - 회원 = N : 1 ✅
     @ManyToOne
     @JoinColumn(name = "COMMENT_ID")
-    val comment: CommentEntity,
+    val comment: CommentEntity? = null,
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    val user: UsersEntity
+    val user: UsersEntity? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "SOCIAL_USER_ID")
+    val socialUser: SocialUsersEntity? = null,
 ) : MutableBaseEntity()

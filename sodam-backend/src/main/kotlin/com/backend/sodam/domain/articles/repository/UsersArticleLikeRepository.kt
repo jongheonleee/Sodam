@@ -142,7 +142,6 @@ class UsersArticleLikeRepository(
             socialUser = foundSocialUserEntityOptional.get(),
         )
 
-
         usersArticleLikeJpaRepository.save(userArticleLikeRequestEntity)
     }
 }

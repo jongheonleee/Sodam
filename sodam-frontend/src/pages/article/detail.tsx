@@ -5,7 +5,7 @@ import Header from "../../components/Header";
 import ArticleDetail from "../../components/ArticleDetail";
 import Footer from "../../components/Footer";
 import {deleteArticle, dislikeArticle, getDetailArticle, likeArticle} from "../../api/article";
-import {deleteComment, getComment, postComment, updateComment} from "../../api/comment";
+import {deleteComment, dislikeComment, getComment, likeComment, postComment, updateComment} from "../../api/comment";
 
 interface ArticleDetailPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -17,6 +17,9 @@ export default function ArticleDetailPage({
 } : ArticleDetailPageProps) {
     // url에 있는 articleId 조회
     const { articleId } = useParams();
+
+    // 좋아요 기능, ... 처리된 이후에 항상 API 재요청해서 최신 데이터 반영하기
+    const [refreshTrigger, setRefreshTrigger] = useState(false);
 
     // 리다이렉션을 위한 navigate
     const navigate = useNavigate();
@@ -52,7 +55,7 @@ export default function ArticleDetailPage({
                 console.log(res.data.data);
             });
         }
-    }, [articleId]);
+    }, [articleId, refreshTrigger]);
 
 
 
@@ -60,19 +63,6 @@ export default function ArticleDetailPage({
     const handleArticleDelete = () => {
         // 게시글 삭제 요청을 보냄
         // 게시글을 성공적으로 삭제하면 홈으로 리다이렉션 처리
-        fetch(`/api/articles/${articleId}`,{
-            method : 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }})
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    alert('게시글 성공적으로 삭제');
-                    navigate('/', { replace : true })
-                }
-            })
-
         if (articleId) {
             deleteArticle(articleId)
                 .then(res => {
@@ -91,10 +81,13 @@ export default function ArticleDetailPage({
         // 좋아요 처리가 되었음을 알림
 
         if (articleId) {
-            likeArticle(articleId)
-                .then(res => {
+            await likeArticle(articleId).then(res => {
                     if (res.status === 200) {
-                        alert("좋아요를 눌렀습니다.")
+                        // 처리된 내용 알림
+                        alert("해당 게시글의 좋아요를 눌렀습니다.")
+
+                        // api 재요청하여 최신 데이터 반영
+                        setRefreshTrigger((prev) => !prev)
                     }
                 })
         }
@@ -105,43 +98,54 @@ export default function ArticleDetailPage({
     async function handleArticleDislike() {
         // 싫어요 처리 비동기로 api를 호출함
         if (articleId) {
-            dislikeArticle(articleId)
-                .then(res => {
+            await dislikeArticle(articleId).then(res => {
                     if (res.status === 200) {
-                        alert("싫어요를 눌렀습니다.")
+                        // 처리된 내용 알림
+                        alert("해당 게시글의 싫어요를 눌렀습니다.")
+
+                        // api 재요청하여 최신 데이터 반영
+                        setRefreshTrigger((prev) => !prev)
                     }
                 })
         }
     }
 
     // 댓글 좋아요 핸들링
-    async function handleCommentLike (id: number) {
+    async function handleCommentLike (commentId: number) {
         // 좋아요 처리 비동기로 api를 호출함
-        await fetch(`/api/comments/${id}/like`)
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    alert('댓글 좋아요 처리 성공');
+        if (commentId !== 0) {
+            likeComment(commentId).then(res => {
+                if (res.status === 200) {
+                    // commentId 초기화
+                    setCommendId(0)
+
+                    // 처리된거 알림
+                    alert('댓글 좋아요 처리')
+
+                    // api 재요청하여 최신 데이터 반영
+                    setRefreshTrigger((prev) => !prev)
                 }
             })
-            .catch(error => {
-                console.error('Error handling like comment');
-            })
+        }
     }
 
     // 댓글 싫어요 핸들링
-    async function handleCommentDislike(id: number) {
-       // 싫어요 처리 비동기로 api를 호출함
-        await fetch(`/api/comments/${id}/dislike`)
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    alert('댓글 싫어요 처리 성공');
+    async function handleCommentDislike(commentId: number) {
+        if (commentId !== 0) {
+            await dislikeComment(commentId).then(res => {
+                if (res.status === 200) {
+                    // commentId 초기화
+                    setCommendId(0)
+
+                    // 처리된거 알림
+                    alert('댓글 싫어요 처리')
+
+                    // api 재요청하여 최신 데이터 반영
+                    setRefreshTrigger((prev) => !prev)
                 }
             })
-            .catch(error => {
-                console.error('Error handling dislike comment');
-            })
+        }
+
     }
 
     // 댓글 삭제 핸들링
@@ -149,8 +153,14 @@ export default function ArticleDetailPage({
         // 댓글 삭제 비동기로 api를 호출함
         await deleteComment(commentId).then((res) => {
             if (res.status === 200) {
-                alert('댓글 삭제 처리')
+                // 초기화
                 setCommendId(0)
+
+                // 처리 내용 알림
+                alert('댓글 삭제 처리')
+
+                // api 재요청하여 최신 데이터 반영
+                setRefreshTrigger((prev) => !prev)
             }
         })
     }
@@ -167,6 +177,8 @@ export default function ArticleDetailPage({
         await getComment(commentId,).then((res) => {
             if (res.status === 200) {
                 console.log(res.data.data)
+
+                // 데이터 폼에 수정할 댓글 데이터 담기
                 setCommendId(res.data.data.commentId)
                 setComment(res.data.data.comment)
             }
@@ -205,8 +217,8 @@ export default function ArticleDetailPage({
                     alert("댓글 수정 성공")
                     console.log(res.data.data)
 
-                    // // 네비게이션 처리
-                    navigate(`/articles/${articleId}`)
+                    // api 재요청하여 최신 데이터 반영
+                    setRefreshTrigger((prev) => !prev)
                 }
             })
         } else { // 댓글 등록 - commentId가 존재하지 않으면 등록 처리 요청
@@ -222,8 +234,9 @@ export default function ArticleDetailPage({
                     alert("댓글 등록 성공")
                     console.log(res.data.data)
 
-                    // // 네비게이션 처리
-                    navigate(`/articles/${articleId}`)
+
+                    // api 재요청하여 최신 데이터 반영
+                    setRefreshTrigger((prev) => !prev)
                 }
             })
         }

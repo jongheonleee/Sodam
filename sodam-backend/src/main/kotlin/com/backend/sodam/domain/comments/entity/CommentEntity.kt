@@ -67,6 +67,22 @@ class CommentEntity(
         this.commentContent = commentUpdateCommand.content
     }
 
+    fun decreaseLikeCnt() {
+        this.commentLikeCnt--
+    }
+
+    fun increaseLikeCnt() {
+        this.commentLikeCnt++
+    }
+
+    fun decreaseDislikeCnt() {
+        this.commentDislikeCnt--
+    }
+
+    fun increaseDislikeCnt() {
+        this.commentDislikeCnt++
+    }
+
     fun toDomain() : SodamComment {
         return SodamComment(
             commentId = this.commentId!!,
@@ -82,5 +98,6 @@ class CommentEntity(
                      else this.socialUser!!.socialUserId,
         )
     }
+
 
 }
