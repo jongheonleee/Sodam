@@ -274,7 +274,7 @@ input:checked + .carousel__slide-container .nav label {
 .article__title {
   font-size: 20px;
   font-weight: 600;
-  margin: 14px 0px;
+  margin: 14px 0;
 }
 
 .article__text {
@@ -282,7 +282,8 @@ input:checked + .carousel__slide-container .nav label {
   font-size: 16px;
 }
 
-.article__list a {
+.article__list a,
+.secret__list a {
   text-decoration: none;
   color: gray;
 }
@@ -348,7 +349,7 @@ input:checked + .carousel__slide-container .nav label {
   color: gray;
   border: 1px solid lightgray;
   backgroud: #f2f2f2;
-  padding: 0px 4px;
+  padding: 0 4px;
   border-radius: 10px;
   font-size: 12px;
 }
@@ -1174,7 +1175,8 @@ input:checked + .carousel__slide-container .nav label {
   background-color: #45a049;
 }
 
-.article__pagination {
+.article__pagination,
+.secret__pagination {
   min-height: 40px;
   padding: 20px 40px;
   font-size: 20px;
@@ -1183,4 +1185,109 @@ input:checked + .carousel__slide-container .nav label {
   align-items: center;
   justify-content: center;
   gap: 20px;
+}
+
+
+.secret__list {
+  min-height: 90vh;
+  padding: 20px;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: left;
+  line-height: 24px;
+}
+
+
+
+.secret__profile-box {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  align-items: center;
+}
+
+.secret__profile {
+  width: 36px;
+  height: 36px;
+  background: #f2f2f2;
+  border-radius: 50%;
+}
+
+.secret__author-name,
+.secret__date {
+  color: gray;
+}
+
+.secret__title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 14px 0;
+}
+
+.secret__summary {
+
+}
+
+.secret__tag-box {
+  display: flex;
+  flex-wrap: wrap; /* 태그들이 자동으로 줄 바꿈되도록 설정 */
+  gap: 8px;
+  padding: 10px 0; /* 태그 간격 조정 */
+  margin-top: -18px;
+}
+
+.secret__tag {
+  background-color: #f2f2f2;
+  color: gray;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+
+
+.secret__thumbnail {
+  width: 150px; /* 이미지 크기 조정 */
+  height: 100px;
+  object-fit: cover; /* 이미지 비율 유지하면서 채우기 */
+  border-radius: 8px;
+}
+
+
+/* */
+.secret__box {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24px 0;
+  border-top: 1px solid #f2f2f2;
+  gap: 16px;
+}
+
+/* 글 내용 (좌측) */
+.secret__content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 태그 + 이미지 포함하는 우측 영역 */
+.secret__right-box {
+  display: flex;
+  flex-direction: column; /* 태그 위, 이미지 아래 정렬 */
+  align-items: flex-end;
+  max-width: 200px; /* 우측 영역 너비 조정 */
+}
+
+/* 태그 */
+.secret__tag-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* 이미지 */
+.secret__thumbnail-box {
+  margin-top: 12px; /* 태그 아래로 배치 */
 }

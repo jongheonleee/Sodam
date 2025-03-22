@@ -5,8 +5,9 @@ import Articles from "../../components/Articles";
 import Footer from "../../components/Footer";
 import React, {useEffect, useState} from "react";
 import {ArticleSummaryType, CategoryType} from "../../types/article";
-import {getArticles} from "../../api/article";
+import {deleteArticle, getArticles} from "../../api/article";
 import ArticlePagination from "../../components/ArticlePagination";
+import {getCategories} from "../../api/category";
 
 interface ArticlesPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -21,7 +22,7 @@ export default function ArticlesPage({
     const [totalPages, setTotalPages] = useState<number>(1)
 
     // 카테고리
-    // const [categories, setCategories] = useState<CategoryType[]>([]);
+    const [categories, setCategories] = useState<CategoryType[]>([]);
 
     // 검색 키워드
     const [keyword, setKeyword] = useState<string>('');
@@ -34,74 +35,57 @@ export default function ArticlesPage({
     useEffect(() => {
         // 초기화
         setArticles([]);
-        // setCategories([]);
+        setCategories([]);
 
+        // 게시글 조회
         getArticles().then((res) => {
             if (res.status === 200) {
-                alert("성공")
                 setArticles(res.data.data.content)
                 setPage(res.data.data.pageNumber)
                 setTotalPages(res.data.data.totalPages)
                 console.log(res.data.data)
             }
         })
-        //
-        // // 필요한 데이터 조회
-        // Promise.all([
-        //     fetch('/api/articles').then(res => {
-        //         console.log("[articles]Response Content-Type:", res.headers.get("content-type"));
-        //         return res.json();
-        //     }),
-        //     fetch('/api/categories').then(res => {
-        //         console.log("[categories]Response Content-Type:", res.headers.get("content-type"));
-        //         return res.json();
-        //     })
-        // ])
-        //     .then(([articlesData, categoriesData]) => {
-        //         if (articlesData?.result === 'SUCCESS') {
-        //             setArticles(articlesData.data);
-        //         }
-        //
-        //         if (categoriesData?.result === 'SUCCESS') {
-        //             setCategories(categoriesData.data);
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.log('Error fetching data', error);
-        //     });
+
+        // 카테고리 조회
+        getCategories().then((res) => {
+            if (res.status === 200) {
+                setCategories(res.data.data.categories)
+                console.log(res.data.data)
+            }
+        })
     }, []);
 
     // 카테고리 변경 시 해당 카테고리와 연관있는 게시글 조회
-    // const handleCategoryChange = (id: string) => {
-    //     // const selectedCategory = categories.find((category) => id === category.id);
-    //     if (selectedCategory) {
-    //         setActiveCategory(selectedCategory);
-    //     }
-    //
-    //     // 선택된 카테고리에 맞는 게시글 조회
-    //     fetch(`/api/articles?category=${activeCategory.id}`)
-    //         .then((res) => res.json())
-    //         .then((data) => {
-    //             if (data?.result === 'SUCCESS') {
-    //                 setArticles(data.data);
-    //             }
-    //         })
-    //         .catch((error) => console.error('Error fetching articles:', error));
-    // }
-    //
-    //
-    // // 키워드 검색 시 해당 키워드와 관련된 게시글 조회
-    // const handleKeywordSearch = (keyword : string) => {
-    //     // 검색 키워드로 게시글 조회
-    //     fetch(`/api/articles?category=${activeCategory.id}&keyword=${keyword}`)
-    //         .then((res) => res.json())
-    //         .then((data) => {
-    //             if (data?.result === 'SUCCESS') {
-    //                 setArticles(data.data)
-    //             }
-    //         })
-    //         .catch((error) => console.error('Error fetching articles:', error));
-    // }
+    const handleCategoryChange = (id: string) => {
+        // if (selectedCategory) {
+        //     setActiveCategory(selectedCategory);
+        // }
+
+        // 선택된 카테고리에 맞는 게시글 조회
+        fetch(`/api/articles?category=${activeCategory.categoryId}`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (data?.result === 'SUCCESS') {
+                    setArticles(data.data);
+                }
+            })
+            .catch((error) => console.error('Error fetching articles:', error));
+    }
+
+
+    // 키워드 검색 시 해당 키워드와 관련된 게시글 조회
+    const handleKeywordSearch = (keyword : string) => {
+        // 검색 키워드로 게시글 조회
+        fetch(`/api/articles?category=${activeCategory.categoryId}&keyword=${keyword}`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (data?.result === 'SUCCESS') {
+                    setArticles(data.data)
+                }
+            })
+            .catch((error) => console.error('Error fetching articles:', error));
+    }
 
     const handlePageChange : (event: unknown, value: number) => void = (event, value) => {
         setPage(value) // 바로 page를 사용할 수 없음
@@ -117,57 +101,41 @@ export default function ArticlesPage({
     }
 
     // 특정 게시글 삭제 처리 핸들링
-    const handleArticleDelete = (id: number) => {
-        fetch(`/api/articles/${id}`, {
-            method : 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }})
-            .then(res => res.json())
-            .then(data => {
-                if (data?.result === 'SUCCESS') {
-                    alert('게시글 성공적으로 삭제')
+    const handleArticleDelete = (articleId: number) => {
+        if (articleId) {
+            deleteArticle(articleId).then((res) => {
+                if (res.status === 200) {
+                    alert('게시글 삭제됨')
                 }
             })
-            .catch(error => {
-                console.error('Error handling delete article');
-            })
+        }
     }
 
     return (
         <>
-            {/* 헤더 */}
             <Header
                 handleLogout={handleLogout}
             />
-
-            {/* 베너 */}
             <ArticleCarousel/>
-
-            {/*<Categories*/}
-            {/*    hasNavigation={true}*/}
-            {/*    defaultCategoryTap={defaultCategory}*/}
-            {/*    categories={categories}*/}
-            {/*    keyword={keyword}*/}
-            {/*    onChangeCategory={handleCategoryChange}*/}
-            {/*    onChangeKeyword={setKeyword}*/}
-            {/*    onSearchKeyword={handleKeywordSearch}*/}
-            {/*    activeCategory={activeCategory}*/}
-            {/*/>*/}
-
-            {/* 콘텐츠 */}
+            <Categories
+                hasNavigation={true}
+                defaultCategoryTap={defaultCategory}
+                categories={categories}
+                keyword={keyword}
+                onChangeCategory={handleCategoryChange}
+                onChangeKeyword={setKeyword}
+                onSearchKeyword={handleKeywordSearch}
+                activeCategory={activeCategory}
+            />
             <Articles
                 articles={articles}
                 handleArticleDelete={handleArticleDelete}
             />
-
             <ArticlePagination
                 page={page}
                 totalPages={totalPages}
                 handlePageChange={handlePageChange}
             />
-
-            {/* 푸터 */}
             <Footer/>
         </>
     )

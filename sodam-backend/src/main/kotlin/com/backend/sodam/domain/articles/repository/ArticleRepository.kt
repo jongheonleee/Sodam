@@ -9,6 +9,7 @@ import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 import com.backend.sodam.domain.categories.exception.CategoryException
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
+import com.backend.sodam.domain.comments.repository.CommentJpaRepository
 import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.tags.repository.TagJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
@@ -24,6 +25,7 @@ class ArticleRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userJpaRepository: UserJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
+    private val commentJpaRepository: CommentJpaRepository,
 ) {
 
     @Transactional
@@ -144,7 +146,10 @@ class ArticleRepository(
         }
 
         val foundArticleEntity = foundArticleEntityOptional.get()
-        foundArticleEntity.tags.clear()
+        // 댓글 좋아요 싫어요
+        // 게시글 좋아요 싫어요
+        // 댓글
+        foundArticleEntity.tags.clear() // 댓글도 양방향 매핑해서 삭제하게 만들기
         articleJpaRepository.delete(foundArticleEntity)
     }
 

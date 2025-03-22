@@ -44,7 +44,7 @@ export const updateArticle = (
 }
 
 export const deleteArticle = (
-    articleId: string,
+    articleId: number,
 ) => {
     return client.delete(`/api/v1/articles/${articleId}`, {
         headers: {

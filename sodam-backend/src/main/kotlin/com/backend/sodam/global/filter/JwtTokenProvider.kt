@@ -22,6 +22,7 @@ class JwtTokenProvider(
             SimpleGrantedAuthority(foundUserByAccessToken.role)
         )
 
+
         val principal = User(
             foundUserByAccessToken.name,
             foundUserByAccessToken.password,

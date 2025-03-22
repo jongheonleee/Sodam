@@ -1,4 +1,4 @@
-INSERT INTO `category` (`CATEGORY_ID`, `TOP_CATEGORY_ID`, `CATEGORY_NAME`, `CATEGORY_ORD`, `VALID_YN`, `CREATED_AT`, `CREATED_BY`, `MODIFIED_AT`, `MODIFIED_BY`)
+INSERT INTO `categories` (`CATEGORY_ID`, `TOP_CATEGORY_ID`, `CATEGORY_NAME`, `CATEGORY_ORD`, `VALID_YN`, `CREATED_AT`, `CREATED_BY`, `MODIFIED_AT`, `MODIFIED_BY`)
 VALUES
     ('cate_000', '-', '전체', 1, 0, NOW(), 'system', NOW(), 'system'),   -- '전체' 카테고리
     (UUID(), 'cate_000', '일상', 2, 0, NOW(), 'system', NOW(), 'system'),   -- '일상' 카테고리

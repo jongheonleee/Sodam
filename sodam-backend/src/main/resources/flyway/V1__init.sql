@@ -238,6 +238,7 @@ CREATE TABLE `tags` (
 
 
 
+
 -- 댓글 관련 테이블
 -- 댓글
 DROP TABLE IF EXISTS `comments`;
@@ -362,6 +363,7 @@ CREATE TABLE `secretes` (
     `SECRETE_TITLE`               VARCHAR(255)        NOT NULL                                COMMENT '시크릿 타이틀',
     `SECRETE_CONTENT`             TEXT                NOT NULL                                COMMENT '시크릿 내용',
     `SECRETE_AUTHOR`              VARCHAR(255)        NOT NULL                                COMMENT '시크릿 작성자',
+    `SECRETE_THUMBNAIL_URL`       VARCHAR(255)        NOT NULL                                COMMENT '시크릿 섬네일 url',
 
     -- 시스템 칼럼
     `CREATED_AT`                  DATETIME            NOT NULL                                COMMENT '생성일자',
@@ -372,12 +374,30 @@ CREATE TABLE `secretes` (
      PRIMARY KEY (SECRETE_ID)
 );
 
+-- 시크릿 태그
+DROP TABLE IF EXISTS `secret_tags`;
+CREATE TABLE `secret_tags` (
+                               `TAG_ID`                    BIGINT              NOT NULL   AUTO_INCREMENT       COMMENT '태그 아이디(PK)',
+                               `SECRETE_ID`                BIGINT              NOT NULL                        COMMENT '구독자 전용 게시글 아이디(FK)',
+                               `TAG_NAME`                  VARCHAR(50)         NOT NULL                        COMMENT '태그명',
+
+    -- 시스템 칼럼
+                               `CREATED_AT`	            DATETIME	        NOT NULL                        COMMENT '생성일자',
+                               `CREATED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '생성자',
+                               `MODIFIED_AT`	            DATETIME	        NOT NULL                        COMMENT '수정일자',
+                               `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '수정자',
+
+                               CONSTRAINT `FK_TAGS_SECRET_ID` FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
+
+                               PRIMARY KEY (TAG_ID)
+);
+
 -- 시크릿(구독자 전용 게시글) 다운로드
 DROP TABLE IF EXISTS `download_secrets`;
 CREATE TABLE `download_secrets` (
     `USER_DOWN_ID`                VARCHAR(255)        NOT NULL                                                          COMMENT '회원 구독자 전용 게시글 다운로드 아이디(PK)',
     `USER_ID`                     VARCHAR(255)        NOT NULL                                                          COMMENT '회원 아이디(FK)',
-    `SECRETE_ID`                  BIGINT              NOT NULL                                           COMMENT '구독자 전용 게시글 아이디(FK)',
+    `SECRETE_ID`                  BIGINT              NOT NULL                                                          COMMENT '구독자 전용 게시글 아이디(FK)',
 
     -- 시스템 칼럼
     `CREATED_AT`                  DATETIME            NOT NULL                    COMMENT '생성일자',

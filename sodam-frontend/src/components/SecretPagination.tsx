@@ -2,21 +2,20 @@ import * as React from 'react';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
-interface ArticlePaginationProps {
-    page : number
-    totalPages : number
+interface SecretePaginationProps {
+    page: number
+    totalPages: number
     handlePageChange : (event: unknown, value: number) => void
 }
 
-export default function ArticlePagination({
+export default function SecretPagination({
     page,
     totalPages,
     handlePageChange,
-}: ArticlePaginationProps) {
-
+} : SecretePaginationProps) {
 
     return (
-        <Stack className="article__pagination" spacing={2}>
+        <Stack className="secret__pagination" spacing={2}>
             <Pagination
                 count={totalPages} // totalPages
                 page={page} // page

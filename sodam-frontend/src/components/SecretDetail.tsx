@@ -139,6 +139,8 @@
 
 export default function SecretDetail() {
     return (
-        <></>
+        <>
+            상세 내용
+        </>
     )
 }

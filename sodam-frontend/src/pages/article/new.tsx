@@ -13,9 +13,6 @@ interface ArticleNewPageProps {
 export default function ArticleNewPage({
     handleLogout,
 }: ArticleNewPageProps) {
-    // 리다이렉션을 위한 navigate
-    const navigate = useNavigate();
-
     // 해당 컴포넌트 생성시 카테고리 조회해 오기
     const [categories, setCategories] = useState<CategoryType[]>([]);
 

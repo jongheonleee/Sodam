@@ -64,7 +64,7 @@ export default function ArticleDetailPage({
         // 게시글 삭제 요청을 보냄
         // 게시글을 성공적으로 삭제하면 홈으로 리다이렉션 처리
         if (articleId) {
-            deleteArticle(articleId)
+            deleteArticle(parseInt(articleId))
                 .then(res => {
                     if (res.status === 200) {
                         alert("게시글이 삭제되었습니다.")

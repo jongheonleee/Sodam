@@ -40,8 +40,8 @@ export default function Router({
                         <Route path="/articles/like/:email" element={<LikePage handleLogout={handleLogout}  />} />
                         <Route path="/profile/:email" element={<ProfilePage handleLogout={handleLogout} />} />
                         <Route path="/subscription" element={<SubscriptionPage handleLogout={handleLogout}  />} />
-                        <Route path="/secretes" element={<SecretesPage handleLogout={handleLogout}  />} />
-                        <Route path="/secretes/:id" element={<SecretDetailPage handleLogout={handleLogout}  />} />
+                        <Route path="/secrets" element={<SecretesPage handleLogout={handleLogout}  />} />
+                        <Route path="/secrets/:secretId" element={<SecretDetailPage handleLogout={handleLogout}  />} />
                         <Route path="/subscription/order/:id" element={<SubscriptionOrderPage handleLogout={handleLogout} />} />
                         <Route path="*" element={<Navigate replace to="/" />} />
                     </>

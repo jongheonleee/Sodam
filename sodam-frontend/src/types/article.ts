@@ -24,10 +24,10 @@ export interface ArticleSummaryType {
     articleId: number
     username: string
     profileImageUrl: string
-    title: string,
-    summary: string,
-    createdAt: string,
-    tags: string[],
+    title: string
+    summary: string
+    createdAt: string
+    tags: string[]
 }
 
 

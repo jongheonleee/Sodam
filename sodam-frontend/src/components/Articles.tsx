@@ -2,8 +2,8 @@ import { ArticleSummaryType } from "../types/article";
 import {Link} from "react-router-dom";
 
 interface ArticlesProps {
-    articles: ArticleSummaryType[];
-    handleArticleDelete : (id: number) => void;
+    articles: ArticleSummaryType[]
+    handleArticleDelete : (articleId: number) => void
 }
 
 export default function Articles({
@@ -19,7 +19,6 @@ export default function Articles({
                      articles?.map((article) => (
                          // 각 아티클 단위
                          <div className="article__box">
-                             {/* 좌측 상단 프로필 영역 */}
                              <Link to={`/profile/${article?.username}`}>
                                  <div className="article__profile-box">
                                      <img className="article__profile" src={article.profileImageUrl} alt="Author Profile" />
@@ -28,7 +27,6 @@ export default function Articles({
                                  </div>
                              </Link>
 
-                                 {/* 우측 상단 태그 영역 */}
                                  <div className="article__tag-box">
                                      {/* 해당 아티클에 태그가 있는 경우 */}
                                      {article.tags?.length > 0 && (
@@ -40,18 +38,12 @@ export default function Articles({
 
                                  {/* 콘텐츠 영역 */}
                              <Link to={`/articles/${article?.articleId}`}>
-                                 <div className="article__title">
-                                     {article?.title}
-                                 </div>
-
-                                 <div className="article__summary">
-                                     {article?.summary}
-                                 </div>
+                                 <div className="article__title">{article?.title}</div>
+                                 <div className="article__summary">{article?.summary}</div>
                              </Link>
 
 
 
-                             {/* 삭제/수정 버튼 영역 */}
                              <div className="article__utils-box">
                                  <div
                                     className="article__delete"
