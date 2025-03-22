@@ -13,14 +13,14 @@ import org.springframework.stereotype.Service
 class ArticleDislikeService(
     private val userRepository: UserRepository,
     private val articleRepository: ArticleRepository,
-    private val usersArticleDislikeRepository: UsersArticleDislikeRepository,
+    private val usersArticleDislikeRepository: UsersArticleDislikeRepository
 ) {
 
     fun handleDislike(userId: String, articleId: Long) {
         // 사용자가 이미 싫어요를 누른 게시글인지 확인
-            // 만약 이미 눌렀던 싫어요 게시글의 경우
-            // 게시글 유저 싫어요 테이블에서 행을 삭제함
-            // 해당 게시글의 싫어요수 1 빼기
+        // 만약 이미 눌렀던 싫어요 게시글의 경우
+        // 게시글 유저 싫어요 테이블에서 행을 삭제함
+        // 해당 게시글의 싫어요수 1 빼기
         // 그렇지 않다면, 게시글 유저 싫어요 테이블에 행을 추가함
         // 해당 게시글의 실헝요수 1 증가
 
@@ -74,6 +74,5 @@ class ArticleDislikeService(
             // 해당 게시글의 좋아요수 1 증가
             articleRepository.increaseDislikeCnt(articleId)
         }
-
     }
 }

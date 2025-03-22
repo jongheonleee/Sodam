@@ -23,7 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource
 class SecurityConfig(
     private val sodamUserDetailsService: SodamUserDetailsService,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
-    private val userHistoryLoggingFilter: UserHistoryLoggingFilter,
+    private val userHistoryLoggingFilter: UserHistoryLoggingFilter
 ) {
 
     @Bean

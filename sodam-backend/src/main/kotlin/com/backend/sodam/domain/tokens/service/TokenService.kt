@@ -16,7 +16,6 @@ import io.jsonwebtoken.security.Keys
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import org.springframework.util.ObjectUtils
 import java.time.Duration
 import java.util.*
 import javax.crypto.SecretKey
@@ -25,11 +24,11 @@ import javax.crypto.SecretKey
 @RequiredArgsConstructor
 class TokenService(
     private val tokenRepository: TokenRepository,
-    private val kakaoTokenPort : KakaoTokenPort,
+    private val kakaoTokenPort: KakaoTokenPort,
     private val userService: UserService,
 
     @Value("\${jwt.secret}")
-    val secretKey: String,
+    val secretKey: String
 ) {
 
     // accesstoken 기반으로 회원 정보를 조회함
@@ -61,7 +60,6 @@ class TokenService(
         false
     }
 
-
     // 새로운 토큰 생성
     fun createNewTokenForUser(email: String): TokenResponse {
         // 회원 아이디 기반으로 토큰 발급
@@ -72,7 +70,7 @@ class TokenService(
         return tokenRepository.createTokenForUser(email, accessToken, refreshToken)
     }
 
-    fun createNewTokenForSocialUser(userId: String) : TokenResponse {
+    fun createNewTokenForSocialUser(userId: String): TokenResponse {
         // 회원 아이디 기반으로 토큰 발급
         val accessToken = getToken(userId, Duration.ofHours(5))
         val refreshToken = getToken(userId, Duration.ofHours(24))
@@ -81,7 +79,7 @@ class TokenService(
         return tokenRepository.createTokenForSocialUser(userId, accessToken, refreshToken)
     }
 
-    fun upsertTokenForSocialUser(providerId: String) : TokenResponse {
+    fun upsertTokenForSocialUser(providerId: String): TokenResponse {
         val foundTokenBySocialUserId = tokenRepository.findTokenBySocialUserId(providerId)
         return when {
             foundTokenBySocialUserId.isPresent -> updateTokenForSocialUser(providerId)
@@ -96,11 +94,11 @@ class TokenService(
         tokenRepository.updateTokenForSocialUser(providerId, accessToken, refreshToken)
         return TokenResponse(
             accessToken = accessToken,
-            refreshToken = refreshToken,
+            refreshToken = refreshToken
         )
     }
 
-    fun upsertTokenForUser(email: String) : TokenResponse {
+    fun upsertTokenForUser(email: String): TokenResponse {
         val foundTokenByUserId = tokenRepository.findTokenByUserId(email)
         return when {
             foundTokenByUserId.isPresent -> updateTokenForUser(email)
@@ -108,13 +106,13 @@ class TokenService(
         }
     }
 
-    fun updateTokenForUser(email: String) : TokenResponse {
+    fun updateTokenForUser(email: String): TokenResponse {
         val accessToken = getToken(email, Duration.ofHours(5))
         val refreshToken = getToken(email, Duration.ofHours(24))
         tokenRepository.updateTokenForUser(email, accessToken, refreshToken)
         return TokenResponse(
             accessToken = accessToken,
-            refreshToken = refreshToken,
+            refreshToken = refreshToken
         )
     }
 
@@ -129,20 +127,18 @@ class TokenService(
             .compact()
     }
 
-    private fun getSignKey() : SecretKey {
+    private fun getSignKey(): SecretKey {
         val keyBytes = Decoders.BASE64.decode(secretKey)
         return Keys.hmacShaKeyFor(keyBytes)
     }
 
     private fun parseClaims(accessToken: String): Claims = try {
-            Jwts.parser()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(accessToken)
-                .body
-        } catch (e : ExpiredJwtException) {
-            e.claims
-        }
+        Jwts.parser()
+            .setSigningKey(secretKey)
+            .build()
+            .parseClaimsJws(accessToken)
+            .body
+    } catch (e: ExpiredJwtException) {
+        e.claims
+    }
 }
-
-

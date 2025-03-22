@@ -16,11 +16,11 @@ class UsersArticleDislikeRepository(
     private val userJpaRepository: UserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val articleJpaRepository: ArticleJpaRepository,
-    private val usersArticleDislikeJpaRepository: UsersArticleDislikeJpaRepository,
+    private val usersArticleDislikeJpaRepository: UsersArticleDislikeJpaRepository
 ) {
 
     @Transactional(readOnly = true)
-    fun existsArticleDislikeForSocialUser(articleId:Long, socialUserId: String): Boolean {
+    fun existsArticleDislikeForSocialUser(articleId: Long, socialUserId: String): Boolean {
         val foundSocialUserEntityOptional = socialUserJpaRepository.findBySocialUserId(socialUserId)
         if (foundSocialUserEntityOptional.isEmpty) {
             throw UserException.UserNotFoundException()
@@ -38,7 +38,7 @@ class UsersArticleDislikeRepository(
     }
 
     @Transactional(readOnly = true)
-    fun existsArticleDislikeForUser(articleId:Long, userId:String):Boolean {
+    fun existsArticleDislikeForUser(articleId: Long, userId: String): Boolean {
         val foundUserEntityOptional = userJpaRepository.findByUserId(userId)
         if (foundUserEntityOptional.isEmpty) {
             throw UserException.UserNotFoundException()
@@ -81,7 +81,7 @@ class UsersArticleDislikeRepository(
     }
 
     @Transactional
-    fun deleteForUser(articleId:Long, userId:String) {
+    fun deleteForUser(articleId: Long, userId: String) {
         val foundUserEntityOptional = userJpaRepository.findByUserId(userId)
         if (foundUserEntityOptional.isEmpty) {
             throw UserException.UserNotFoundException()
@@ -105,9 +105,8 @@ class UsersArticleDislikeRepository(
         usersArticleDislikeJpaRepository.delete(foundUsersArticleDislikeEntity)
     }
 
-
     @Transactional
-    fun createForUser(articleId:Long, userId:String) {
+    fun createForUser(articleId: Long, userId: String) {
         val foundUserEntityOptional = userJpaRepository.findByUserId(userId)
         if (foundUserEntityOptional.isEmpty) {
             throw UserException.UserNotFoundException()
@@ -120,14 +119,14 @@ class UsersArticleDislikeRepository(
 
         val userArticleDislikeRequestEntity = UsersDislikeArticleEntity(
             article = foundArticleEntityOptional.get(),
-            user = foundUserEntityOptional.get(),
+            user = foundUserEntityOptional.get()
         )
 
         usersArticleDislikeJpaRepository.save(userArticleDislikeRequestEntity)
     }
 
     @Transactional
-    fun createForSocialUser(articleId:Long, socialUserId: String) {
+    fun createForSocialUser(articleId: Long, socialUserId: String) {
         val foundSocialUserEntityOptional = socialUserJpaRepository.findBySocialUserId(socialUserId)
         if (foundSocialUserEntityOptional.isEmpty) {
             throw UserException.UserNotFoundException()

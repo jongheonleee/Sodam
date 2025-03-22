@@ -12,9 +12,9 @@ data class ArticleDetailResponse(
     val content: String,
     val createdAt: String,
     val tags: List<TagResponse>,
-    val comments : List<CommentResponse>,
+    val comments: List<CommentResponse>,
     val images: List<String>, // 추후에 ImageResponse로 처리
     val articleLikeCnt: Long,
     val articleDislikeCnt: Long,
-    val articleViewCnt: Long,
+    val articleViewCnt: Long
 )

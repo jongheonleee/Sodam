@@ -16,7 +16,7 @@ import java.util.*
 class TokenRepository(
     private val userJpaRepository: UserJpaRepository,
     private val tokenJpaRepository: TokenJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository,
+    private val socialUserJpaRepository: SocialUserJpaRepository
 ) {
 
     // 소셜 유저 조회
@@ -75,16 +75,15 @@ class TokenRepository(
 
     @Transactional
     fun updateTokenForUser(email: String, accessToken: String, refreshToken: String) {
-        val foundTokenByEmail = tokenJpaRepository.findByUserId(email).orElseThrow{ TokenException.UserTokenNotFoundException() }
+        val foundTokenByEmail = tokenJpaRepository.findByUserId(email).orElseThrow { TokenException.UserTokenNotFoundException() }
         foundTokenByEmail.updateToken(accessToken, refreshToken)
         tokenJpaRepository.save(foundTokenByEmail)
     }
 
     @Transactional
     fun updateTokenForSocialUser(providerId: String, accessToken: String, refreshToken: String) {
-        val foundTokenByProviderId = tokenJpaRepository.findBySocialUserId(providerId).orElseThrow { TokenException.UserTokenNotFoundException()  } // 추후에 예외 정의하기
+        val foundTokenByProviderId = tokenJpaRepository.findBySocialUserId(providerId).orElseThrow { TokenException.UserTokenNotFoundException() } // 추후에 예외 정의하기
         foundTokenByProviderId.updateToken(accessToken, refreshToken)
         tokenJpaRepository.save(foundTokenByProviderId)
     }
-
 }

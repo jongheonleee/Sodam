@@ -8,5 +8,5 @@ data class CommentResponse(
     val createdAt: String,
     val content: String,
     val commentLikeCnt: Long,
-    val commentDislikeCnt: Long,
+    val commentDislikeCnt: Long
 )

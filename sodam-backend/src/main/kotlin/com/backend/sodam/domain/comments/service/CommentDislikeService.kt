@@ -1,6 +1,5 @@
 package com.backend.sodam.domain.comments.service
 
-import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.comments.repository.CommentRepository
 import com.backend.sodam.domain.comments.repository.UsersCommentDislikeRepository
 import com.backend.sodam.domain.users.exception.UserException
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service
 class CommentDislikeService(
     private val userRepository: UserRepository,
     private val commentRepository: CommentRepository,
-    private val usersDislikeCommentRepository: UsersCommentDislikeRepository,
+    private val usersDislikeCommentRepository: UsersCommentDislikeRepository
 ) {
     fun handleDislike(commentId: Long, userId: String) {
         // [비즈니스 로직]
@@ -29,13 +28,13 @@ class CommentDislikeService(
         // 유저 정보를 조회한다
         // 유저 타입에 따라서 다르게 서로 다르게 적용한다.
         // 좋아요 핸들링 처리를 진행한다.
-            // 기존에 눌렀다면, 해당 회원 좋아요 댓글 로우를 삭제한다.
-            // 해당 댓글의 좋아요 수를 -1 한다.
+        // 기존에 눌렀다면, 해당 회원 좋아요 댓글 로우를 삭제한다.
+        // 해당 댓글의 좋아요 수를 -1 한다.
 
         // 처음 눌렀거나 좋아요 눌렀던 기록이 없다면, 해당 회원 좋아요 댓글 로우를 생성한다.
         // 해당 댓글의 좋아요 수를 +1 한다.
 
-        val isExists = when(sodamUser.userType) {
+        val isExists = when (sodamUser.userType) {
             UserType.SOCIAL -> {
                 usersDislikeCommentRepository.existsByCommentDislikeForSocialUser(
                     commentId = commentId,
@@ -70,7 +69,6 @@ class CommentDislikeService(
 
             commentRepository.decreaseDislikeCnt(commentId)
         } else {
-
             when (sodamUser.userType) {
                 UserType.SOCIAL -> {
                     usersDislikeCommentRepository.createForSocialUser(

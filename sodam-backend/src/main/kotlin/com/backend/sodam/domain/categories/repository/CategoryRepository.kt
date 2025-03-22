@@ -20,7 +20,7 @@ class CategoryRepository(
     @Transactional(readOnly = true)
     fun findByCategoryId(categoryId: String): Category {
         return categoryJpaRepository.findByCategoryId(categoryId)
-                                    .get()
-                                    .toDomain()
+            .get()
+            .toDomain()
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 @Component
 @RequiredArgsConstructor
 class JwtTokenProvider(
-    private val tokenService: TokenService,
+    private val tokenService: TokenService
 ) {
 
     fun getAuthentication(accessToken: String): Authentication {
@@ -21,7 +21,6 @@ class JwtTokenProvider(
         val authorities = listOf<SimpleGrantedAuthority>(
             SimpleGrantedAuthority(foundUserByAccessToken.role)
         )
-
 
         val principal = User(
             foundUserByAccessToken.name,
@@ -45,5 +44,4 @@ class JwtTokenProvider(
         val authentication = SecurityContextHolder.getContext().authentication
         return authentication.authorities.toString()
     }
-
 }

@@ -13,16 +13,16 @@ import java.util.*
 
 @SpringBootTest
 class TokenCustomRepositoryImplTest(
-    private val sut : TokenCustomRepositoryImpl,
+    private val sut: TokenCustomRepositoryImpl,
     private val tokenJpaRepository: TokenJpaRepository,
-    private val userJpaRepository : UserJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository,
+    private val userJpaRepository: UserJpaRepository,
+    private val socialUserJpaRepository: SocialUserJpaRepository
 ) : DescribeSpec({
 
     val userId = UUID.randomUUID().toString()
     val socialUserId = UUID.randomUUID().toString()
-    var savedUsersTokenEntity : UsersTokenEntity? = null
-    var savedSocialUserTokenEntity : UsersTokenEntity? = null
+    var savedUsersTokenEntity: UsersTokenEntity? = null
+    var savedSocialUserTokenEntity: UsersTokenEntity? = null
 
     // 테스트 환경 구축
     beforeEach {
@@ -38,7 +38,7 @@ class TokenCustomRepositoryImplTest(
             userEmail = "test@test.com",
             introduce = "테스트 유저 자기 소개글",
             profileImageUrl = "avatarUrl",
-            password = "password",
+            password = "password"
         )
         val savedUserEntity = userJpaRepository.save(usersEntity)
 
@@ -48,10 +48,9 @@ class TokenCustomRepositoryImplTest(
             accessToken = "accessToken1",
             refreshToken = "refreshToken1",
             accessTokenExpiresAt = LocalDateTime.now().plusHours(5),
-            refreshTokenExpiresAt = LocalDateTime.now().plusHours(24),
+            refreshTokenExpiresAt = LocalDateTime.now().plusHours(24)
         )
         savedUsersTokenEntity = tokenJpaRepository.save(usersTokenEntity)
-
 
         // 2. 소셜 회원 생성 및 해당 회원의 토큰 저장
         val socialUserEntity = SocialUsersEntity(
@@ -68,7 +67,7 @@ class TokenCustomRepositoryImplTest(
             accessToken = "accessToken2",
             refreshToken = "refreshToken2",
             accessTokenExpiresAt = LocalDateTime.now().plusHours(5),
-            refreshTokenExpiresAt = LocalDateTime.now().plusHours(24),
+            refreshTokenExpiresAt = LocalDateTime.now().plusHours(24)
         )
 
         savedSocialUserTokenEntity = tokenJpaRepository.save(socialUserTokenEntity)
@@ -113,7 +112,6 @@ class TokenCustomRepositoryImplTest(
                 actualSocialUserTokenEntity.refreshToken shouldBe savedSocialUserTokenEntity?.refreshToken
                 actualSocialUserTokenEntity.accessTokenExpiresAt shouldBe savedSocialUserTokenEntity?.accessTokenExpiresAt
                 actualSocialUserTokenEntity.refreshToken shouldBe savedSocialUserTokenEntity?.refreshToken
-
             }
         }
 

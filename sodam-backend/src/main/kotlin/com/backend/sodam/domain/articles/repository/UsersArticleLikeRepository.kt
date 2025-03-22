@@ -16,7 +16,7 @@ class UsersArticleLikeRepository(
     private val userJpaRepository: UserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val articleJpaRepository: ArticleJpaRepository,
-    private val usersArticleLikeJpaRepository: UsersArticleLikeJpaRepository,
+    private val usersArticleLikeJpaRepository: UsersArticleLikeJpaRepository
 ) {
 
     @Transactional(readOnly = true)
@@ -33,10 +33,9 @@ class UsersArticleLikeRepository(
 
         return usersArticleLikeJpaRepository.existsByArticleAndUser(
             users = foundUserEntityOptional.get(),
-            article = foundArticleEntityOptional.get(),
+            article = foundArticleEntityOptional.get()
         )
     }
-
 
     @Transactional(readOnly = true)
     fun existsArticleLikeForSocialUser(articleId: Long, socialUserId: String): Boolean {
@@ -52,7 +51,7 @@ class UsersArticleLikeRepository(
 
         return usersArticleLikeJpaRepository.existsByArticleAndSocialUser(
             socialUser = foundSocialUserEntityOptional.get(),
-            article = foundArticleEntityOptional.get(),
+            article = foundArticleEntityOptional.get()
         )
     }
 
@@ -70,7 +69,7 @@ class UsersArticleLikeRepository(
 
         val foundUsersArticleLikeEntityOptional = usersArticleLikeJpaRepository.findByArticleAndSocialUser(
             article = foundArticleEntityOptional.get(),
-            socialUser = foundSocialUserEntityOptional.get(),
+            socialUser = foundSocialUserEntityOptional.get()
         )
 
         if (foundUsersArticleLikeEntityOptional.isEmpty) {
@@ -95,7 +94,7 @@ class UsersArticleLikeRepository(
 
         val foundUsersArticleLikeEntityOptional = usersArticleLikeJpaRepository.findByArticleAndUser(
             article = foundArticleEntityOptional.get(),
-            users = foundUserEntityOptional.get(),
+            users = foundUserEntityOptional.get()
         )
 
         if (foundUsersArticleLikeEntityOptional.isEmpty) {
@@ -120,13 +119,13 @@ class UsersArticleLikeRepository(
 
         val userArticleLikeRequestEntity = UsersLikeArticleEntity(
             article = foundArticleEntityOptional.get(),
-            user = foundUserEntityOptional.get(),
+            user = foundUserEntityOptional.get()
         )
         usersArticleLikeJpaRepository.save(userArticleLikeRequestEntity)
     }
 
     @Transactional
-    fun createForSocialUser(articleId: Long, userId: String)  {
+    fun createForSocialUser(articleId: Long, userId: String) {
         val foundSocialUserEntityOptional = socialUserJpaRepository.findBySocialUserId(userId)
         if (foundSocialUserEntityOptional.isEmpty) {
             throw UserException.UserNotFoundException()
@@ -139,7 +138,7 @@ class UsersArticleLikeRepository(
 
         val userArticleLikeRequestEntity = UsersLikeArticleEntity(
             article = foundArticleEntityOptional.get(),
-            socialUser = foundSocialUserEntityOptional.get(),
+            socialUser = foundSocialUserEntityOptional.get()
         )
 
         usersArticleLikeJpaRepository.save(userArticleLikeRequestEntity)

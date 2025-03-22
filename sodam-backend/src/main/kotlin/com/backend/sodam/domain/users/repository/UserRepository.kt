@@ -6,7 +6,8 @@ import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.service.command.*
+import com.backend.sodam.domain.users.service.command.UserSignupCommand
+import com.backend.sodam.domain.users.service.command.toEntity
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -17,7 +18,7 @@ import java.util.*
 class UserRepository(
     private val userJpaRepository: UserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
-    private val userSubscriptionRepository: UserSubscriptionRepository,
+    private val userSubscriptionRepository: UserSubscriptionRepository
 ) {
 
     @Transactional(readOnly = true)
@@ -30,7 +31,6 @@ class UserRepository(
         val userEntity = foundUserEntityOptionalByUserEmail.get()
         val foundUserSubscriptionOptionalByUserEmail = userSubscriptionRepository.findByUserId(email)
 
-
         return Optional.of(
             SodamUser(
                 userId = userEntity.userId,
@@ -39,10 +39,12 @@ class UserRepository(
                 email = userEntity.userEmail,
                 introduce = userEntity.userIntroduce,
                 profileImageUrl = userEntity.userImage,
-                role = if (foundUserSubscriptionOptionalByUserEmail.isPresent)
+                role = if (foundUserSubscriptionOptionalByUserEmail.isPresent) {
                     foundUserSubscriptionOptionalByUserEmail.get().subscriptionType.toRole()
-                else UserSubscription.newSubscription(userEntity.userId).subscriptionType.toRole(),
-                userType = UserType.NORMAL,
+                } else {
+                    UserSubscription.newSubscription(userEntity.userId).subscriptionType.toRole()
+                },
+                userType = UserType.NORMAL
             )
         )
     }
@@ -51,9 +53,8 @@ class UserRepository(
     fun create(userSignupCommand: UserSignupCommand): SodamUser {
         val signupRequestUserEntity = userSignupCommand.toEntity()
         return userJpaRepository.save(signupRequestUserEntity)
-                                .toDomain()
+            .toDomain()
     }
-
 
     @Transactional(readOnly = true)
     fun findSocialUserByProviderId(providerId: String): Optional<SodamUser> {
@@ -71,31 +72,30 @@ class UserRepository(
                 username = socialUserEntity.userName,
                 provider = socialUserEntity.provider,
                 providerId = socialUserEntity.providerId,
-                role = if (foundUserSubscriptionOptionalByProviderId.isPresent)
+                role = if (foundUserSubscriptionOptionalByProviderId.isPresent) {
                     foundUserSubscriptionOptionalByProviderId.get().subscriptionType.toRole()
-                else UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole(),
-                userType = UserType.SOCIAL,
+                } else {
+                    UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole()
+                },
+                userType = UserType.SOCIAL
             )
         )
     }
-
-
 
     @Transactional
     fun createSocialUser(
         name: String,
         provider: String,
         providerId: String
-    ) : SodamUser {
+    ): SodamUser {
         val socialUsersEntity = SocialUsersEntity.newEntity(
             userName = name,
             provider = provider,
-            providerId = providerId,
+            providerId = providerId
         )
         return socialUserJpaRepository.save(socialUsersEntity)
-                                      .toDomain()
+            .toDomain()
     }
-
 
     @Transactional(readOnly = true)
     fun findUserByUserId(userId: String): Optional<SodamUser> {
@@ -116,10 +116,12 @@ class UserRepository(
                 email = userEntity.userEmail,
                 introduce = userEntity.userIntroduce,
                 profileImageUrl = userEntity.userImage,
-                role = if (foundUserSubscriptionOptionalByUserId.isPresent)
+                role = if (foundUserSubscriptionOptionalByUserId.isPresent) {
                     foundUserSubscriptionOptionalByUserId.get().subscriptionType.toRole()
-                else UserSubscription.newSubscription(userEntity.userId).subscriptionType.toRole(),
-                userType = UserType.NORMAL,
+                } else {
+                    UserSubscription.newSubscription(userEntity.userId).subscriptionType.toRole()
+                },
+                userType = UserType.NORMAL
             )
         )
     }
@@ -135,15 +137,18 @@ class UserRepository(
                 username = socialUserEntity.userName,
                 provider = socialUserEntity.provider,
                 providerId = socialUserEntity.providerId,
-                role = if (foundUserSubscriptionOptionalBySocialUserId.isPresent) foundUserSubscriptionOptionalBySocialUserId.get().subscriptionType.toRole()
-                else UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole(),
-                userType = UserType.SOCIAL,
+                role = if (foundUserSubscriptionOptionalBySocialUserId.isPresent) {
+                    foundUserSubscriptionOptionalBySocialUserId.get().subscriptionType.toRole()
+                } else {
+                    UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole()
+                },
+                userType = UserType.SOCIAL
             )
         )
     }
 
     @Transactional(readOnly = true)
-    fun findByUserId(userId: String) : Optional<SodamUser> {
+    fun findByUserId(userId: String): Optional<SodamUser> {
         val existsUserByUserId = userJpaRepository.existsByUserId(userId)
         if (existsUserByUserId) {
             return findUserByUserId(userId)
@@ -156,6 +161,4 @@ class UserRepository(
 
         throw UserException.UserNotFoundException()
     }
-
-
 }

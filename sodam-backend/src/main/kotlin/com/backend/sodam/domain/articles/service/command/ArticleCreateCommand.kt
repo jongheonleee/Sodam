@@ -5,16 +5,15 @@ import com.backend.sodam.domain.categories.entity.CategoryEntity
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 
-
 data class ArticleCreateCommand(
     val categoryId: String,
     val title: String,
     val summary: String,
     val content: String,
-    val tags: List<String>,
+    val tags: List<String>
 ) {
 
-    fun toEntity(socialUsersEntity: SocialUsersEntity, categoryEntity: CategoryEntity) : ArticleEntity {
+    fun toEntity(socialUsersEntity: SocialUsersEntity, categoryEntity: CategoryEntity): ArticleEntity {
         return ArticleEntity(
             name = socialUsersEntity.userName,
             category = categoryEntity,
@@ -28,7 +27,7 @@ data class ArticleCreateCommand(
         )
     }
 
-    fun toEntity(userEntity: UsersEntity, categoryEntity: CategoryEntity) : ArticleEntity {
+    fun toEntity(userEntity: UsersEntity, categoryEntity: CategoryEntity): ArticleEntity {
         return ArticleEntity(
             name = userEntity.userName,
             category = categoryEntity,

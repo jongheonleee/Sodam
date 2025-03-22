@@ -1,4 +1,3 @@
 package com.backend.sodam.domain.articles.repository
 
-class UsersArticleDislikeCustomRepositoryImpl {
-}
+class UsersArticleDislikeCustomRepositoryImpl

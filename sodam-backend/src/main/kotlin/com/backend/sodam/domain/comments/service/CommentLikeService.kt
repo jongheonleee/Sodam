@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class CommentLikeService(
     private val userRepository: UserRepository,
     private val commentRepository: CommentRepository,
-    private val usersLikeCommentRepository: UsersCommentLikeRepository,
+    private val usersLikeCommentRepository: UsersCommentLikeRepository
 ) {
     fun handleLike(commentId: Long, userId: String) {
         // [비즈니스 로직]
@@ -73,7 +73,6 @@ class CommentLikeService(
             // 처음 눌렀거나 좋아요 눌렀던 기록이 없다면, 해당 회원 좋아요 댓글 로우를 생성한다.
             // 해당 댓글의 좋아요 수를 +1 한다.
 
-
             // repositories.stream().filter(repository -> repository.canHandle(sodamUser.userType)).findFirst().orElseThrow().create()
             when (sodamUser.userType) {
                 UserType.SOCIAL -> {
@@ -91,6 +90,5 @@ class CommentLikeService(
             }
             commentRepository.increaseLikeCnt(commentId)
         }
-
     }
 }

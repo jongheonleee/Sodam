@@ -7,12 +7,18 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class UserHistoryService(
-    private val userHistoryRepository: UserHistoryRepository,
+    private val userHistoryRepository: UserHistoryRepository
 ) {
 
-    fun log(userId: String, userRole: String, clientIp: String,
-            reqMethod: String, reqUrl: String, reqHeader: String,
-            reqPayload : String) {
-        userHistoryRepository.createUserHistory(userId, userRole, clientIp, reqMethod, reqUrl, reqHeader, reqPayload);
+    fun log(
+        userId: String,
+        userRole: String,
+        clientIp: String,
+        reqMethod: String,
+        reqUrl: String,
+        reqHeader: String,
+        reqPayload: String
+    ) {
+        userHistoryRepository.createUserHistory(userId, userRole, clientIp, reqMethod, reqUrl, reqHeader, reqPayload)
     }
 }

@@ -47,7 +47,7 @@ class UserSubscriptionRepository(
     }
 
     @Transactional
-    fun createUserSubscriptionForSocialUser(socialUserId : String) : UserSubscription {
+    fun createUserSubscriptionForSocialUser(socialUserId: String): UserSubscription {
         val userSubscription = UserSubscription.newSubscription(socialUserId)
 
         val foundSocialUserOptionalEntity = socialUserJpaRepository.findBySocialUserId(socialUserId)

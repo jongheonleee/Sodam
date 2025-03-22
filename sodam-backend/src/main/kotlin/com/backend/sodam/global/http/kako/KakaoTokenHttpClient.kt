@@ -4,14 +4,13 @@ import com.backend.sodam.global.port.KakaoTokenPort
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
-import org.springframework.http.MediaType
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
-
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +22,7 @@ class KakaoTokenHttpClient(
     private val kakaoClientSecret: String,
 
     @Value("\${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-    private val kakaoRedirectUri: String,
+    private val kakaoRedirectUri: String
 ) : KakaoTokenPort {
 
     companion object {

@@ -8,5 +8,5 @@ data class SecretSummaryResponse(
     val summary: String,
     val createdAt: String,
     val thumbnailUrl: String,
-    val tags: List<String>,
+    val tags: List<String>
 )

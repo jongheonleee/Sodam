@@ -5,10 +5,20 @@ import com.backend.sodam.domain.subscriptions.model.UserSubscription
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
+import java.util.*
 
 @Entity
 @Table(name = "user_subscriptions")
@@ -56,7 +66,7 @@ class UsersSubscriptionsEntity(
     var validYN = validYN
         protected set
 
-    fun toDomain() : UserSubscription {
+    fun toDomain(): UserSubscription {
         return UserSubscription(
             userId = if (this.user != null) this.user!!.userId else this.socialUser!!.socialUserId,
             subscriptionType = this.subscriptionName,

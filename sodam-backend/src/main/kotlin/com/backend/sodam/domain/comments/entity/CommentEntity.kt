@@ -83,21 +83,25 @@ class CommentEntity(
         this.commentDislikeCnt++
     }
 
-    fun toDomain() : SodamComment {
+    fun toDomain(): SodamComment {
         return SodamComment(
             commentId = this.commentId!!,
             articleId = this.article!!.articleId!!,
             profileImageUrl = this.userImage!!,
-            userName = if (this.user != null) this.user!!.userName
-                       else this.socialUser!!.userName,
+            userName = if (this.user != null) {
+                this.user!!.userName
+            } else {
+                this.socialUser!!.userName
+            },
             createdAt = this.createdBy,
             content = this.commentContent,
             commentLikeCnt = this.commentLikeCnt,
             commentDislikeCnt = this.commentDislikeCnt,
-            userId = if (this.user != null) this.user!!.userId
-                     else this.socialUser!!.socialUserId,
+            userId = if (this.user != null) {
+                this.user!!.userId
+            } else {
+                this.socialUser!!.socialUserId
+            }
         )
     }
-
-
 }

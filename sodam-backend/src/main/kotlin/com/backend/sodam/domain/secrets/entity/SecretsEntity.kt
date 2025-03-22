@@ -32,7 +32,10 @@ class SecretsEntity(
     // 가변 필드
     secretThumbnailUrl: String,
     secretTitle: String,
-    secretContent: String
+    secretContent: String,
+    secretViewCnt: Long,
+    secretLikeCnt: Long,
+    secretDislikeCnt: Long
 ) : MutableBaseEntity() {
 
     @Column(name = "SECRETE_THUMBNAIL_URL")
@@ -46,4 +49,20 @@ class SecretsEntity(
     @Column(name = "SECRETE_CONTENT")
     var secretContent = secretContent
         protected set
+
+    @Column(name = "SECRETE_VIEW_CNT")
+    var secretViewCnt = secretViewCnt
+        protected set
+
+    @Column(name = "SECRETE_LIKE_CNT")
+    var secretLikeCnt = secretLikeCnt
+        protected set
+
+    @Column(name = "SECRETE_DISLIKE_CNT")
+    var secretDislikeCnt = secretDislikeCnt
+        protected set
+
+    fun increaseViewCnt() {
+        this.secretViewCnt++
+    }
 }

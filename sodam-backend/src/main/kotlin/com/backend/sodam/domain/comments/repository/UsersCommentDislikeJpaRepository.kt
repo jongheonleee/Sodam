@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
 interface UsersCommentDislikeJpaRepository : JpaRepository<UsersDislikeCommentEntity, Long> {
-    fun existsByCommentAndSocialUser(comment: CommentEntity, socialUser: SocialUsersEntity) : Boolean
-    fun existsByCommentAndUser(comment: CommentEntity, user: UsersEntity) : Boolean
-    fun findByCommentAndSocialUser(comment: CommentEntity, socialUser: SocialUsersEntity) : Optional<UsersDislikeCommentEntity>
-    fun findByCommentAndUser(comment: CommentEntity, user: UsersEntity) : Optional<UsersDislikeCommentEntity>
+    fun existsByCommentAndSocialUser(comment: CommentEntity, socialUser: SocialUsersEntity): Boolean
+    fun existsByCommentAndUser(comment: CommentEntity, user: UsersEntity): Boolean
+    fun findByCommentAndSocialUser(comment: CommentEntity, socialUser: SocialUsersEntity): Optional<UsersDislikeCommentEntity>
+    fun findByCommentAndUser(comment: CommentEntity, user: UsersEntity): Optional<UsersDislikeCommentEntity>
 }

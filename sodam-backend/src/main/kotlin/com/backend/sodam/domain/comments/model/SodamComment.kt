@@ -9,7 +9,7 @@ class SodamComment(
     val createdAt: String,
     var content: String,
     var commentLikeCnt: Long,
-    var commentDislikeCnt: Long,
+    var commentDislikeCnt: Long
 ) {
 
     fun canAccess(userId: String): Boolean {

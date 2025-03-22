@@ -46,14 +46,14 @@ class UsersEntity(
     var password = password
         protected set
 
-    fun toDomain() : SodamUser {
+    fun toDomain(): SodamUser {
         return SodamUser(
             userId = this.userId,
             username = this.userName,
             encryptedPassword = this.password,
             email = this.userEmail,
             introduce = this.userIntroduce,
-            profileImageUrl = this.userImage,
+            profileImageUrl = this.userImage
         )
     }
 }

@@ -11,3 +11,11 @@ export const getSecrets = (pageNumber : number = 1) => {
         }
     })
 }
+
+export const getDetailSecret = (secretId : number) => {
+    return client.get(`/api/v1/secrets/${secretId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}

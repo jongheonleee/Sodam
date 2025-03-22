@@ -10,21 +10,28 @@ import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import jakarta.validation.Valid
 import lombok.RequiredArgsConstructor
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequiredArgsConstructor
 class CommentController(
     private val tokenProvider: JwtTokenProvider,
-    private val commentService: CommentService,
+    private val commentService: CommentService
 ) {
 
     // 댓글 작성
     @PostMapping("/api/v1/articles/{articleId}/comments")
     fun create(
         @PathVariable("articleId") articleId: Long,
-        @RequestBody @Valid commentCreateRequest: CommentCreateRequest,
-    ) : SodamApiResponse<CommentCreateResponse> {
+        @RequestBody @Valid
+        commentCreateRequest: CommentCreateRequest
+    ): SodamApiResponse<CommentCreateResponse> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
             commentService.create(articleId, commentCreateRequest.toCommand(userId))
@@ -34,8 +41,8 @@ class CommentController(
     // 특정 댓글 단순 조회 - 클라이언트용
     @GetMapping("/api/v1/comments/{commentId}")
     fun getComment(
-        @PathVariable("commentId") commentId: Long,
-    ) : SodamApiResponse<CommentSimpleResponse> {
+        @PathVariable("commentId") commentId: Long
+    ): SodamApiResponse<CommentSimpleResponse> {
         return SodamApiResponse.ok(
             commentService.getSimpleComment(commentId)
         )
@@ -45,8 +52,9 @@ class CommentController(
     @PutMapping("/api/v1/comments/{commentId}")
     fun update(
         @PathVariable("commentId") commentId: Long,
-        @RequestBody @Valid commentUpdateRequest: CommentUpdateRequest,
-    ) : SodamApiResponse<CommentUpdateResponse> {
+        @RequestBody @Valid
+        commentUpdateRequest: CommentUpdateRequest
+    ): SodamApiResponse<CommentUpdateResponse> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
             commentService.update(commentId, commentUpdateRequest.toCommand(userId))
@@ -56,8 +64,8 @@ class CommentController(
     // 댓글 삭제
     @DeleteMapping("/api/v1/comments/{commentId}")
     fun delete(
-        @PathVariable("commentId") commentId: Long,
-    ) : SodamApiResponse<Unit> {
+        @PathVariable("commentId") commentId: Long
+    ): SodamApiResponse<Unit> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
             commentService.delete(userId, commentId)

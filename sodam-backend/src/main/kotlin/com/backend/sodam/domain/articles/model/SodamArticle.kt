@@ -11,8 +11,8 @@ class SodamArticle(
     var viewCnt: Long,
     var likeCnt: Long,
     var dislikeCnt: Long,
-    val createdAt: String,
+    val createdAt: String
 ) {
 
-    fun canAccess(userId: String) : Boolean = this.userId == userId
+    fun canAccess(userId: String): Boolean = this.userId == userId
 }

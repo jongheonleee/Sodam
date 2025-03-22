@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val userService: UserService,
     private val authenticationManagerBuilder: AuthenticationManagerBuilder,
-    private val tokenService: TokenService,
+    private val tokenService: TokenService
 ) {
 
     @PostMapping("/api/v1/auth/signup")
@@ -35,7 +35,6 @@ class AuthController(
         val command = signupRequest.toCommand()
         return SodamApiResponse.ok(userService.signupUser(command))
     }
-
 
     @PostMapping("/api/v1/auth/login")
     fun login(

@@ -35,8 +35,8 @@ class KakaoUserHttpClient : KakaoUserPort {
         val providerId = response.body?.get("id") as Long
 
         return SodamUser(
-               username = nickname,
-               providerId = providerId.toString(),
+            username = nickname,
+            providerId = providerId.toString()
         )
     }
 }

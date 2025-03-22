@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController
 @RequiredArgsConstructor
 class CommentLikeController(
     private val tokenProvider: JwtTokenProvider,
-    private val commentLikeService: CommentLikeService,
+    private val commentLikeService: CommentLikeService
 ) {
 
     @GetMapping("/api/v1/comments/{commentId}/like")
     fun likeComment(
-        @PathVariable("commentId") commentId: Long,
-    ) : SodamApiResponse<Unit> {
+        @PathVariable("commentId") commentId: Long
+    ): SodamApiResponse<Unit> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
             commentLikeService.handleLike(commentId, userId)

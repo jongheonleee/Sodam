@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequiredArgsConstructor
 class ArticleLikeController(
     private val tokenProvider: JwtTokenProvider,
-    private val articleLikeService: ArticleLikeService,
+    private val articleLikeService: ArticleLikeService
 ) {
 
     @GetMapping("/api/v1/articles/{articleId}/like")

@@ -13,7 +13,6 @@ enum class ErrorCode(
     USER_NOT_FOUND("SDE0002", "존재하지 않는 회원입니다."),
     SOCIAL_USER_ALREADY_EXISTS("SDE0003", "이미 소셜 회원이 존재합니다."),
 
-
     // 구독권
     SUBSCRIPTION_NOT_FOUND("SDE1000", "존재하지 않는 구독권입니다."),
 
@@ -32,6 +31,9 @@ enum class ErrorCode(
     COMMENT_ACCESS_DENIAL("SDE4001", "해당 게시글의 권한이 없습니다."),
     USERS_COMMENT_LIKE_NOT_FOUND("SDE4002", "해당 회원 좋아요 댓글 기록을 찾을 수 없습니다."),
     USERS_COMMENT_DISLIKE_NOT_FOUND("SDE4003", "해당 회원 싫어요 댓글 기록을 찾을 수 없습니다."),
+
+    // 시크릿
+    SECRET_NOT_FOUND("SDE5000", "해당 시크릿을 찾을 수 없습니다."),
 
     // 카테고리
     CATEGORY_NOT_FOUND("SDE4001", "해당 카테고리를 찾을 수 없습니다.");

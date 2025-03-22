@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController
 @RequiredArgsConstructor
 class ArticleDislikeController(
     private val tokenProvider: JwtTokenProvider,
-    private val articleDislikeService: ArticleDislikeService,
+    private val articleDislikeService: ArticleDislikeService
 ) {
 
     @GetMapping("/api/v1/articles/{articleId}/dislike")
-    fun dislikeArticle(@PathVariable("articleId") articleId: Long) : SodamApiResponse<Unit> {
+    fun dislikeArticle(@PathVariable("articleId") articleId: Long): SodamApiResponse<Unit> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
             articleDislikeService.handleDislike(userId, articleId)

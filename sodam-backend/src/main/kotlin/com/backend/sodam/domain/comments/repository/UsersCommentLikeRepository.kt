@@ -1,9 +1,7 @@
 package com.backend.sodam.domain.comments.repository
 
-import com.backend.sodam.domain.comments.entity.CommentEntity
 import com.backend.sodam.domain.comments.entity.UsersLikeCommentEntity
 import com.backend.sodam.domain.comments.exception.CommentException
-import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.UserJpaRepository
@@ -17,7 +15,7 @@ class UsersCommentLikeRepository(
     private val userJpaRepository: UserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val commentJpaRepository: CommentJpaRepository,
-    private val usersCommentLikeJpaRepository: UsersCommentLikeJpaRepository,
+    private val usersCommentLikeJpaRepository: UsersCommentLikeJpaRepository
 ) {
 
     // 같은 로직이 계속 추가된다는 것은 안좋은 현상의 첫 신호
@@ -107,7 +105,6 @@ class UsersCommentLikeRepository(
 
         val foundCommentLikeEntity = foundCommentLikeEntityOptional.get()
         usersCommentLikeJpaRepository.delete(foundCommentLikeEntity)
-
     }
 
     @Transactional
@@ -154,6 +151,4 @@ class UsersCommentLikeRepository(
         val foundCommentLikeEntity = foundCommentLikeEntityOptional.get()
         usersCommentLikeJpaRepository.delete(foundCommentLikeEntity)
     }
-
-
 }

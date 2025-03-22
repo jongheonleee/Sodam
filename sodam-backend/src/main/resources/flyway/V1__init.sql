@@ -364,6 +364,9 @@ CREATE TABLE `secretes` (
     `SECRETE_CONTENT`             TEXT                NOT NULL                                COMMENT '시크릿 내용',
     `SECRETE_AUTHOR`              VARCHAR(255)        NOT NULL                                COMMENT '시크릿 작성자',
     `SECRETE_THUMBNAIL_URL`       VARCHAR(255)        NOT NULL                                COMMENT '시크릿 섬네일 url',
+    `SECRETE_VIEW_CNT`            INT                 NOT NULL    DEFAULT 0                   COMMENT '시크릿 조회수',
+    `SECRETE_LIKE_CNT`            INT                 NOT NULL    DEFAULT 0                   COMMENT '시크릿 좋아요 수',
+    `SECRETE_DISLIKE_CNT`         INT                 NOT NULL    DEFAULT 0                   COMMENT '시크릿 싫어요 수',
 
     -- 시스템 칼럼
     `CREATED_AT`                  DATETIME            NOT NULL                                COMMENT '생성일자',

@@ -8,14 +8,18 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 @RequiredArgsConstructor
 class UserHistoryRepository(
-    private val userHistoryJpaRepository: UserHistoryJpaRepository,
+    private val userHistoryJpaRepository: UserHistoryJpaRepository
 ) {
 
     @Transactional
     fun createUserHistory(
-        userId: String, userRole: String, clientIp : String,
-        reqMethod: String, reqUrl: String, reqHeader: String,
-        reqPayload : String
+        userId: String,
+        userRole: String,
+        clientIp: String,
+        reqMethod: String,
+        reqUrl: String,
+        reqHeader: String,
+        reqPayload: String
     ) {
         userHistoryJpaRepository.save(
             UsersHistoryEntity(
@@ -25,7 +29,7 @@ class UserHistoryRepository(
                 reqMethod = reqMethod,
                 reqUrl = reqUrl,
                 reqHeader = reqHeader,
-                reqBody = reqPayload,
+                reqBody = reqPayload
             )
         )
     }

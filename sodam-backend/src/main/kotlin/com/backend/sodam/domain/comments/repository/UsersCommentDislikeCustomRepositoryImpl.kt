@@ -1,4 +1,3 @@
 package com.backend.sodam.domain.comments.repository
 
-class UsersCommentDislikeCustomRepositoryImpl {
-}
+class UsersCommentDislikeCustomRepositoryImpl

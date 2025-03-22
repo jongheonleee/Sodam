@@ -3,7 +3,8 @@ package com.backend.sodam.domain.users.service
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.UserRepository
-import com.backend.sodam.domain.users.service.command.*
+import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
+import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.response.SimpleUserResponse
 import com.backend.sodam.domain.users.service.response.SocialUserResponse
 import com.backend.sodam.domain.users.service.response.UserResponse
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service
 class UserService(
     private val userRepository: UserRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository,
-    private val kakaoUserPort: KakaoUserPort,
+    private val kakaoUserPort: KakaoUserPort
 ) {
 
     fun signupUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
@@ -31,7 +32,7 @@ class UserService(
             username = sodamUser.username,
             encryptedPassword = sodamUser.encryptedPassword,
             email = sodamUser.email,
-            introduce = sodamUser.introduce,
+            introduce = sodamUser.introduce
         )
     }
 
@@ -42,10 +43,12 @@ class UserService(
         val sodamUser = userRepository.createSocialUser(
             name = socialUserSignupCommand.username,
             provider = socialUserSignupCommand.provider,
-            providerId = socialUserSignupCommand.providerId,
+            providerId = socialUserSignupCommand.providerId
         )
 
-        userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
+        val saved =
+            userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
+        println("Saved $saved")
 
         return UserSignupResponse(
             username = sodamUser.username
@@ -62,23 +65,23 @@ class UserService(
 
         return SimpleUserResponse(
             username = sodamUser.username,
-            email = sodamUser.email,
+            email = sodamUser.email
         )
     }
 
     fun findKakaoUser(accessToken: String): SocialUserResponse {
         val foundUserFromKakao = kakaoUserPort.findUserFromKakao(accessToken)
         return SocialUserResponse(
-                name = foundUserFromKakao.username,
-                provider = "kakao",
-                providerId = foundUserFromKakao.providerId,
+            name = foundUserFromKakao.username,
+            provider = "kakao",
+            providerId = foundUserFromKakao.providerId
         )
     }
 
     fun findByProviderId(providerId: String): UserResponse? {
         return userRepository.findSocialUserByProviderId(providerId) // socialUser
-                             .map { UserResponse.toUserResponse(it) }
-                             .orElse(null)
+            .map { UserResponse.toUserResponse(it) }
+            .orElse(null)
     }
 
     fun findByEmail(email: String): UserResponse? {
@@ -86,5 +89,4 @@ class UserService(
             .map { UserResponse.toUserResponse(it) }
             .orElse(null)
     }
-
 }

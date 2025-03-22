@@ -15,7 +15,7 @@ class UsersCommentDislikeRepository(
     private val userJpaRepository: UserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val commentJpaRepository: CommentJpaRepository,
-    private val usersCommentDislikeJpaRepository: UsersCommentDislikeJpaRepository,
+    private val usersCommentDislikeJpaRepository: UsersCommentDislikeJpaRepository
 ) {
 
     @Transactional(readOnly = true)
@@ -143,5 +143,4 @@ class UsersCommentDislikeRepository(
 
         usersCommentDislikeJpaRepository.save(usersCommentDislikeEntity)
     }
-
 }

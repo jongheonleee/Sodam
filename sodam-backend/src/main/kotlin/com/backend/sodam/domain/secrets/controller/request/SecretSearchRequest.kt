@@ -7,12 +7,12 @@ data class SecretSearchRequest(
     @RequestParam
     val title: String? = null,
     @RequestParam
-    val author: String? = null,
+    val author: String? = null
 ) {
-    fun toCommand() : SecretSearchCommand {
+    fun toCommand(): SecretSearchCommand {
         return SecretSearchCommand(
             title = title,
-            author = author,
+            author = author
         )
     }
 }

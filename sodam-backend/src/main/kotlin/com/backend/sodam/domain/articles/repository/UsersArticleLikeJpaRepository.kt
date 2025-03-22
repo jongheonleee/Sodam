@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
 interface UsersArticleLikeJpaRepository : JpaRepository<UsersLikeArticleEntity, Long> {
-    fun existsByArticleAndUser(article: ArticleEntity, users: UsersEntity) : Boolean
-    fun existsByArticleAndSocialUser(article: ArticleEntity, socialUser: SocialUsersEntity) : Boolean
-    fun findByArticleAndUser(article: ArticleEntity, users: UsersEntity) : Optional<UsersLikeArticleEntity>
-    fun findByArticleAndSocialUser(article: ArticleEntity, socialUser: SocialUsersEntity) : Optional<UsersLikeArticleEntity>
+    fun existsByArticleAndUser(article: ArticleEntity, users: UsersEntity): Boolean
+    fun existsByArticleAndSocialUser(article: ArticleEntity, socialUser: SocialUsersEntity): Boolean
+    fun findByArticleAndUser(article: ArticleEntity, users: UsersEntity): Optional<UsersLikeArticleEntity>
+    fun findByArticleAndSocialUser(article: ArticleEntity, socialUser: SocialUsersEntity): Optional<UsersLikeArticleEntity>
 }

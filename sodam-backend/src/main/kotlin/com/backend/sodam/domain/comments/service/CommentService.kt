@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service
 class CommentService(
     private val articleRepository: ArticleRepository,
     private val commentRepository: CommentRepository,
-    private val userRepository: UserRepository,
+    private val userRepository: UserRepository
 ) {
 
-    fun create(articleId: Long, commentCreateCommand: CommentCreateCommand) : CommentCreateResponse {
+    fun create(articleId: Long, commentCreateCommand: CommentCreateCommand): CommentCreateResponse {
         if (!articleRepository.isExistsByArticleId(articleId)) {
             throw ArticleException.ArticleNotFoundException()
         }
@@ -54,14 +54,13 @@ class CommentService(
             createdAt = sodamComment.createdAt,
             content = sodamComment.content,
             commentLikeCnt = sodamComment.commentLikeCnt,
-            commentDislikeCnt = sodamComment.commentDislikeCnt,
+            commentDislikeCnt = sodamComment.commentDislikeCnt
         )
-
     }
 
-    fun update(commentId: Long, commentUpdateCommand: CommentUpdateCommand) : CommentUpdateResponse {
+    fun update(commentId: Long, commentUpdateCommand: CommentUpdateCommand): CommentUpdateResponse {
         // 해당 댓글을 작성한 사용자 인지 확인한다
-            // 그렇지 않다면, 권한 없음을 나타내는 예외를 발생시킨다.
+        // 그렇지 않다면, 권한 없음을 나타내는 예외를 발생시킨다.
         val sodamComment = commentRepository.findByCommentId(commentId)
         if (!sodamComment.canAccess(commentUpdateCommand.userId)) {
             throw CommentException.CommentAccessDeniedException()
@@ -72,15 +71,15 @@ class CommentService(
         // 수정된 내용을 리스폰스 객체로 담아서 반환한다.
         return CommentUpdateResponse(
             commentId = updatedSodamComment.commentId,
-            comment = updatedSodamComment.content,
+            comment = updatedSodamComment.content
         )
     }
 
-    fun getSimpleComment(commentId: Long) : CommentSimpleResponse {
+    fun getSimpleComment(commentId: Long): CommentSimpleResponse {
         val sodamComment = commentRepository.findByCommentId(commentId)
         return CommentSimpleResponse(
             commentId = sodamComment.commentId,
-            comment = sodamComment.content,
+            comment = sodamComment.content
         )
     }
 

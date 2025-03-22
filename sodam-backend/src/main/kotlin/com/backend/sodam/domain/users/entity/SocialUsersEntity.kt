@@ -33,13 +33,13 @@ class SocialUsersEntity(
     var userName = userName
         protected set
 
-    fun toDomain() : SodamUser {
+    fun toDomain(): SodamUser {
         return SodamUser(
             userId = this.socialUserId,
             username = this.userName,
             provider = this.provider,
             providerId = this.providerId,
-            userType = UserType.SOCIAL,
+            userType = UserType.SOCIAL
         )
     }
 

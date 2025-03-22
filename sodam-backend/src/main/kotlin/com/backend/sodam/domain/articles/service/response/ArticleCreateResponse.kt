@@ -7,5 +7,5 @@ data class ArticleCreateResponse(
     val summary: String,
     val content: String,
     val tags: List<String>,
-    val createdAt: String,
+    val createdAt: String
 )

@@ -23,26 +23,27 @@ import org.springframework.stereotype.Service
 class ArticleService(
     private val userRepository: UserRepository,
     private val socialUserRepository: SocialUserRepository,
-    private val articleRepository: ArticleRepository,
+    private val articleRepository: ArticleRepository
 ) {
 
-    fun create(userId: String, articleCreateCommand: ArticleCreateCommand) : ArticleCreateResponse {
+    fun create(userId: String, articleCreateCommand: ArticleCreateCommand): ArticleCreateResponse {
         val sodamUser = socialUserRepository.findBySocialUserId(userId)
-                .orElseGet { userRepository.findUserByUserId(userId)
-                .orElseThrow { UserException.UserNotFoundException() } }
-
+            .orElseGet {
+                userRepository.findUserByUserId(userId)
+                    .orElseThrow { UserException.UserNotFoundException() }
+            }
 
         val sodamArticle = when (sodamUser.userType) {
             UserType.SOCIAL -> {
                 articleRepository.createArticleForSocialUser(
                     userId,
-                    articleCreateCommand,
+                    articleCreateCommand
                 )
             }
             else -> {
                 articleRepository.createArticleForUser(
                     userId,
-                    articleCreateCommand,
+                    articleCreateCommand
                 )
             }
         }
@@ -54,11 +55,11 @@ class ArticleService(
             summary = sodamArticle.summary,
             content = sodamArticle.content,
             tags = sodamArticle.tags,
-            createdAt = sodamArticle.createdAt,
+            createdAt = sodamArticle.createdAt
         )
     }
 
-    fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand) : Page<ArticleSummaryResponse> {
+    fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand): Page<ArticleSummaryResponse> {
         return articleRepository.findByPageBy(
             pageRequest = pageable,
             articleSearchCommand = articleSearchCommand
@@ -69,12 +70,12 @@ class ArticleService(
                 username = it.author,
                 summary = it.summary,
                 createdAt = it.createdAt,
-                tags = it.tags,
+                tags = it.tags
             )
         }
     }
 
-    fun getArticleDetail(articleId: Long) : ArticleDetailResponse {
+    fun getArticleDetail(articleId: Long): ArticleDetailResponse {
         // 조회수 증가 시키기
         articleRepository.increaseViewCnt(articleId)
         val sodamDetailArticle = articleRepository.findDetailByArticleId(articleId)
@@ -91,7 +92,7 @@ class ArticleService(
             images = sodamDetailArticle.images,
             articleLikeCnt = sodamDetailArticle.articleLikeCnt,
             articleDislikeCnt = sodamDetailArticle.articleDislikeCnt,
-            articleViewCnt = sodamDetailArticle.articleViewCnt,
+            articleViewCnt = sodamDetailArticle.articleViewCnt
         )
     }
 
@@ -110,11 +111,9 @@ class ArticleService(
             summary = sodamUpdatedArticle.summary,
             content = sodamUpdatedArticle.content,
             tags = sodamUpdatedArticle.tags,
-            createdAt = sodamUpdatedArticle.createdAt,
+            createdAt = sodamUpdatedArticle.createdAt
         )
     }
-
-
 
     fun delete(userId: String, articleId: Long) {
         // userId 가 작성한 글이 맞는지 확인
@@ -124,8 +123,7 @@ class ArticleService(
         }
 
         // 맞다면 삭제 처리
-            // - 연관되어 있는 테이블부터 지움(태그, 좋아요, 싫어요, 댓글)
+        // - 연관되어 있는 테이블부터 지움(태그, 좋아요, 싫어요, 댓글)
         articleRepository.delete(articleId)
     }
-
 }

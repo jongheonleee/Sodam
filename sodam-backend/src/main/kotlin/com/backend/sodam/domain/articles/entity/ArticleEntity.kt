@@ -7,7 +7,16 @@ import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
@@ -31,7 +40,6 @@ class ArticleEntity(
     @JoinColumn(name = "CATEGORY_ID")
     var category: CategoryEntity, // 카테고리는 가변
 
-
     // 소셜 유저, 일반 유저
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = true)
@@ -43,10 +51,10 @@ class ArticleEntity(
 
     // 양방향 매핑 처리
     @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var tags : MutableList<TagsEntity> = mutableListOf(),
+    var tags: MutableList<TagsEntity> = mutableListOf(),
 
     @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var comments : MutableList<CommentEntity> = mutableListOf(),
+    var comments: MutableList<CommentEntity> = mutableListOf(),
 
     // 가변 필드
     articleTitle: String,
@@ -81,10 +89,13 @@ class ArticleEntity(
     var articleDislikeCnt = articleDislikeCnt
         protected set
 
-    fun toDomain() : SodamArticle {
+    fun toDomain(): SodamArticle {
         return SodamArticle(
-            userId = if (user != null) user!!.userId
-                     else socialUser!!.socialUserId,
+            userId = if (user != null) {
+                user!!.userId
+            } else {
+                socialUser!!.socialUserId
+            },
             articleId = articleId!!,
             title = articleTitle,
             author = name,
@@ -94,7 +105,7 @@ class ArticleEntity(
             viewCnt = articleViewCnt,
             likeCnt = articleLikeCnt,
             dislikeCnt = articleDislikeCnt,
-            createdAt = createdAt.toString(),
+            createdAt = createdAt.toString()
         )
     }
 
@@ -129,5 +140,4 @@ class ArticleEntity(
     fun decreaseDislikeCnt() {
         this.articleDislikeCnt--
     }
-    
 }

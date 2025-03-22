@@ -7,5 +7,5 @@ data class ArticleSummaryResponse(
     val title: String,
     val summary: String,
     val createdAt: String,
-    val tags: List<String>,
+    val tags: List<String>
 )

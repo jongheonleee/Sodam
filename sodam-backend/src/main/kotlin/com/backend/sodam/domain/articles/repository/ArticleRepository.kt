@@ -1,6 +1,5 @@
 package com.backend.sodam.domain.articles.repository
 
-import com.backend.sodam.domain.articles.controller.request.ArticleSearchRequest
 import com.backend.sodam.domain.articles.exception.ArticleException
 import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.articles.model.SodamDetailArticle
@@ -11,7 +10,6 @@ import com.backend.sodam.domain.categories.exception.CategoryException
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
 import com.backend.sodam.domain.comments.repository.CommentJpaRepository
 import com.backend.sodam.domain.tags.entity.TagsEntity
-import com.backend.sodam.domain.tags.repository.TagJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.UserJpaRepository
 import org.springframework.data.domain.Page
@@ -25,17 +23,17 @@ class ArticleRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userJpaRepository: UserJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
-    private val commentJpaRepository: CommentJpaRepository,
+    private val commentJpaRepository: CommentJpaRepository
 ) {
 
     @Transactional
-    fun createArticleForSocialUser(userId: String, articleCreateCommand: ArticleCreateCommand) : SodamArticle {
+    fun createArticleForSocialUser(userId: String, articleCreateCommand: ArticleCreateCommand): SodamArticle {
         val foundSocialUserEntity = socialUserJpaRepository.findBySocialUserId(userId).get()
         val foundCategoryEntity = categoryJpaRepository.findByCategoryId(articleCreateCommand.categoryId).get()
 
         val articleCreateRequestEntity = articleCreateCommand.toEntity(
             socialUsersEntity = foundSocialUserEntity,
-            categoryEntity = foundCategoryEntity,
+            categoryEntity = foundCategoryEntity
         )
 
         articleCreateCommand.tags.map {
@@ -44,17 +42,17 @@ class ArticleRepository(
         }
 
         return articleJpaRepository.save(articleCreateRequestEntity)
-                                   .toDomain()
+            .toDomain()
     }
 
     @Transactional
-    fun createArticleForUser(userId: String, articleCreateCommand: ArticleCreateCommand) : SodamArticle {
+    fun createArticleForUser(userId: String, articleCreateCommand: ArticleCreateCommand): SodamArticle {
         val foundUserEntity = userJpaRepository.findByUserId(userId).get()
         val foundCategoryEntity = categoryJpaRepository.findByCategoryId(articleCreateCommand.categoryId).get()
 
         val articleCreateRequestEntity = articleCreateCommand.toEntity(
             userEntity = foundUserEntity,
-            categoryEntity = foundCategoryEntity,
+            categoryEntity = foundCategoryEntity
         )
 
         articleCreateCommand.tags.map {
@@ -63,13 +61,13 @@ class ArticleRepository(
         }
 
         return articleJpaRepository.save(articleCreateRequestEntity)
-                                   .toDomain()
+            .toDomain()
     }
 
     @Transactional(readOnly = true)
     fun findByPageBy(pageRequest: Pageable, articleSearchCommand: ArticleSearchCommand): Page<SodamArticle> = articleJpaRepository.findByPageBy(
-            pageRequest = pageRequest,
-            articleSearchCommand = articleSearchCommand
+        pageRequest = pageRequest,
+        articleSearchCommand = articleSearchCommand
     )
 
     @Transactional
@@ -108,7 +106,7 @@ class ArticleRepository(
     }
 
     @Transactional
-    fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand) : SodamArticle {
+    fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): SodamArticle {
         val foundArticleEntityOptional = articleJpaRepository.findByArticleId(articleId)
         if (foundArticleEntityOptional.isEmpty) {
             throw ArticleException.ArticleNotFoundException()
@@ -117,12 +115,10 @@ class ArticleRepository(
         val foundArticleEntity = foundArticleEntityOptional.get()
         foundArticleEntity.tags.clear() // 연관된 모든 태그 삭제
 
-
         val foundCategoryEntityOptionalByCategoryId = categoryJpaRepository.findByCategoryId(articleUpdateCommand.categoryId)
         if (foundCategoryEntityOptionalByCategoryId.isEmpty) {
             throw CategoryException.CategoryNotFoundException()
         } // 카테고리를 조회한다. 없으면 예외 발생
-
 
         articleUpdateCommand.tags.map {
             val tagEntity = TagsEntity(tagName = it)
@@ -135,7 +131,7 @@ class ArticleRepository(
         ) // 해당 게시글을 업데이트한다.
 
         return articleJpaRepository.save(foundArticleEntity)
-                                   .toDomain() // 도메인 모델로 반환한다.
+            .toDomain() // 도메인 모델로 반환한다.
     }
 
     @Transactional
@@ -153,22 +149,21 @@ class ArticleRepository(
         articleJpaRepository.delete(foundArticleEntity)
     }
 
+    @Transactional(readOnly = true)
+    fun findDetailByArticleId(articleId: Long): SodamDetailArticle = articleJpaRepository.findDetailByArticleId(articleId)
 
     @Transactional(readOnly = true)
-    fun findDetailByArticleId(articleId: Long) : SodamDetailArticle = articleJpaRepository.findDetailByArticleId(articleId)
+    fun isExistsByArticleId(articleId: Long): Boolean = articleJpaRepository.findByArticleId(articleId).isPresent
 
     @Transactional(readOnly = true)
-    fun isExistsByArticleId(articleId: Long) : Boolean = articleJpaRepository.findByArticleId(articleId).isPresent
-
-    @Transactional(readOnly = true)
-    fun findArticleByArticleId(articleId: Long) : SodamArticle {
+    fun findArticleByArticleId(articleId: Long): SodamArticle {
         val foundArticleOptionalEntityByArticleId = articleJpaRepository.findByArticleId(articleId)
         if (foundArticleOptionalEntityByArticleId.isEmpty) {
             throw ArticleException.ArticleNotFoundException()
         }
 
         return foundArticleOptionalEntityByArticleId.get()
-                                                    .toDomain()
+            .toDomain()
     }
 
     @Transactional

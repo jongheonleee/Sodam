@@ -14,7 +14,7 @@ import java.util.*
 @RequiredArgsConstructor
 class SocialUserRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
-    private val userSubscriptionRepository: UserSubscriptionRepository,
+    private val userSubscriptionRepository: UserSubscriptionRepository
 ) {
 
     @Transactional(readOnly = true)
@@ -39,10 +39,12 @@ class SocialUserRepository(
                 username = socialUserEntity.userName,
                 provider = socialUserEntity.provider,
                 providerId = socialUserEntity.providerId,
-                role = if (foundUserSubscriptionOptionalByProviderId.isPresent)
+                role = if (foundUserSubscriptionOptionalByProviderId.isPresent) {
                     foundUserSubscriptionOptionalByProviderId.get().subscriptionType.toRole()
-                else UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole(),
-                userType = UserType.SOCIAL,
+                } else {
+                    UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole()
+                },
+                userType = UserType.SOCIAL
             )
         )
     }

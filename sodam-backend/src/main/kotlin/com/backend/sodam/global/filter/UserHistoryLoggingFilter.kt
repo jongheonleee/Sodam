@@ -18,7 +18,7 @@ import java.util.stream.Collectors
 @Component
 @RequiredArgsConstructor
 class UserHistoryLoggingFilter(
-    private val userHistoryService: UserHistoryService,
+    private val userHistoryService: UserHistoryService
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -66,7 +66,7 @@ class UserHistoryLoggingFilter(
         return try {
             val objectMapper = ObjectMapper()
             objectMapper.writeValueAsString(headersMap)
-        } catch (e : JsonProcessingException) {
+        } catch (e: JsonProcessingException) {
             "{}"
         }
     }

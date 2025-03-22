@@ -170,7 +170,7 @@ class UserServiceUnitTest : BehaviorSpec({
             val email = "asdf1234@gmail.com"
             val expected = SimpleUserResponse(
                 username = "테스트 유저",
-                email = "asdf1234@gmail.com",
+                email = "asdf1234@gmail.com"
             )
 
             every { sut.findByUserEmail(email) }.returns(expected)
@@ -213,7 +213,7 @@ class UserServiceUnitTest : BehaviorSpec({
             val expected = SocialUserResponse(
                 name = "테스트 유저",
                 provider = "테스트 프로바이더",
-                providerId = "테스트 프로바이더 아이디",
+                providerId = "테스트 프로바이더 아이디"
             )
 
             every { sut.findKakaoUser(accessToken) }.returns(expected)

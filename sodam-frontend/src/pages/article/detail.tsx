@@ -16,10 +16,10 @@ export default function ArticleDetailPage({
     handleLogout
 } : ArticleDetailPageProps) {
     // url에 있는 articleId 조회
-    const { articleId } = useParams();
+    const { articleId } = useParams()
 
     // 좋아요 기능, ... 처리된 이후에 항상 API 재요청해서 최신 데이터 반영하기
-    const [refreshTrigger, setRefreshTrigger] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(false)
 
     // 리다이렉션을 위한 navigate
     const navigate = useNavigate();

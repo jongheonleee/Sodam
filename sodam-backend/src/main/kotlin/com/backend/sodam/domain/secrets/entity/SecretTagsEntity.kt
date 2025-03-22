@@ -1,11 +1,16 @@
 package com.backend.sodam.domain.secrets.entity
 
-import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
-
 
 @Entity
 @Table(name = "secret_tags")

@@ -13,15 +13,15 @@ import org.springframework.stereotype.Service
 class ArticleLikeService(
     private val userRepository: UserRepository,
     private val articleRepository: ArticleRepository,
-    private val usersArticleLikeRepository: UsersArticleLikeRepository,
+    private val usersArticleLikeRepository: UsersArticleLikeRepository
 ) {
 
     fun handleLike(userId: String, articleId: Long) {
         // 근데 유저 타입마다 다르게 처리해야함
         // 사용자가 이미 좋아요를 누른 게시글인지 확인
-            // 만약 이미 눌렀던 좋아요 게시글의 경우
-            // 게시글 유저 좋아요 테이블에서 행을 삭제함
-            // 해당 게시글의 좋아요수 1 빼기
+        // 만약 이미 눌렀던 좋아요 게시글의 경우
+        // 게시글 유저 좋아요 테이블에서 행을 삭제함
+        // 해당 게시글의 좋아요수 1 빼기
         // 그렇지 않다면, 게시글 유저 싫어요 테이블에 행을 추가함
         // 해당 게시글의 좋아요수 1 증가
         // 근데 유저 타입마다 다르게 처리해야함
@@ -75,6 +75,5 @@ class ArticleLikeService(
             // 해당 게시글의 좋아요수 1 증가
             articleRepository.increaseLikeCnt(articleId)
         }
-
     }
 }

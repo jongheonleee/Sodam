@@ -67,7 +67,7 @@ fun UserSubscription.toEntity(user: UsersEntity, subscription: SubscriptionsEnti
     )
 }
 
-fun UserSubscription.toEntity(socialUser : SocialUsersEntity, subscription: SubscriptionsEntity) : UsersSubscriptionsEntity {
+fun UserSubscription.toEntity(socialUser: SocialUsersEntity, subscription: SubscriptionsEntity): UsersSubscriptionsEntity {
     return UsersSubscriptionsEntity(
         userSubscriptionId = UUID.randomUUID().toString(),
         socialUser = socialUser,

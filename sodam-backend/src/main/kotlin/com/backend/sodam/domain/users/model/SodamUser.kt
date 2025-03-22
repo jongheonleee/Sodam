@@ -14,4 +14,3 @@ data class SodamUser(
     val profileImageUrl: String = "",
     val userType: UserType? = null
 )
-

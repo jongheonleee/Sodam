@@ -31,7 +31,7 @@ class TokenServiceUnitTest : BehaviorSpec({
         `when`("토큰에서 회원 아이디를 조회했고 해당 회원 아이디에 해당하는 회원이 있는 경우") {
             val token = "테스트 토큰"
             val expected = UserResponse(
-                userId = "테스트 유저 아이디" ,
+                userId = "테스트 유저 아이디",
                 email = "테스트 유저 이메일",
                 name = "테스트 유저",
                 password = "테스트 유저 비밀번호",
@@ -141,7 +141,7 @@ class TokenServiceUnitTest : BehaviorSpec({
             val email = "test@test.com"
             val expected = TokenResponse(
                 accessToken = "테스트 access token",
-                refreshToken = "테스트 refresh token",
+                refreshToken = "테스트 refresh token"
             )
 
             every { sut.createNewTokenForUser(email) } returns expected
@@ -164,7 +164,7 @@ class TokenServiceUnitTest : BehaviorSpec({
             val userId = "테스트 아이디"
             val expected = TokenResponse(
                 accessToken = "테스트 access token",
-                refreshToken = "테스트 refresh token",
+                refreshToken = "테스트 refresh token"
             )
 
             every { sut.createNewTokenForSocialUser(userId) } returns expected
@@ -187,7 +187,7 @@ class TokenServiceUnitTest : BehaviorSpec({
             val providerId = "테스트 프로바이더 아이디"
             val expected = TokenResponse(
                 accessToken = "테스트 발급 토큰",
-                refreshToken = "테스트 리프레쉬 토큰",
+                refreshToken = "테스트 리프레쉬 토큰"
             )
 
             every { sut.upsertTokenForSocialUser(providerId) } returns expected
@@ -202,7 +202,6 @@ class TokenServiceUnitTest : BehaviorSpec({
         }
     }
 
-
     // - 7. 회원의 토큰 upsert(존재하면 업데이트, 없으면 생성)
     // - accessToken 을 성공적으로 반환한다
     given("클라이언트로부터 회원 email로 토큰 upsert를 요청할 때") {
@@ -211,7 +210,7 @@ class TokenServiceUnitTest : BehaviorSpec({
             val email = "test@test.com"
             val expected = TokenResponse(
                 accessToken = "테스트 발급 토큰",
-                refreshToken = "테스트 리프레쉬 토큰",
+                refreshToken = "테스트 리프레쉬 토큰"
             )
 
             every { sut.upsertTokenForUser(email) } returns expected

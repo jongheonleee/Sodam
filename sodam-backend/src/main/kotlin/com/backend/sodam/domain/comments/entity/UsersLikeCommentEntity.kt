@@ -37,5 +37,5 @@ class UsersLikeCommentEntity(
 
     @ManyToOne
     @JoinColumn(name = "SOCIAL_USER_ID")
-    val socialUser: SocialUsersEntity? = null,
+    val socialUser: SocialUsersEntity? = null
 ) : MutableBaseEntity()

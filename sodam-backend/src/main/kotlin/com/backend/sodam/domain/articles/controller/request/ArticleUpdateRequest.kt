@@ -7,9 +7,9 @@ data class ArticleUpdateRequest(
     val title: String,
     val summary: String,
     val content: String,
-    val tags: List<String>,
+    val tags: List<String>
 ) {
-    fun toCommand(userId: String) : ArticleUpdateCommand {
+    fun toCommand(userId: String): ArticleUpdateCommand {
         return ArticleUpdateCommand(
             userId = userId,
             categoryId = categoryId,

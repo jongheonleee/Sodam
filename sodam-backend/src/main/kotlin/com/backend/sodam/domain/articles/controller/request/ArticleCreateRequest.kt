@@ -8,9 +8,9 @@ data class ArticleCreateRequest(
     val title: String,
     val summary: String,
     val content: String,
-    val tags: List<String>,
+    val tags: List<String>
 ) {
-    fun toCommand() : ArticleCreateCommand {
+    fun toCommand(): ArticleCreateCommand {
         return ArticleCreateCommand(
             categoryId = categoryId,
             title = title,

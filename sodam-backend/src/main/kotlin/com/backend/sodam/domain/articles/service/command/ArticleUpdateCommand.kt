@@ -6,5 +6,5 @@ data class ArticleUpdateCommand(
     val articleTitle: String,
     val articleSummary: String,
     val articleContent: String,
-    val tags: List<String>,
+    val tags: List<String>
 )
