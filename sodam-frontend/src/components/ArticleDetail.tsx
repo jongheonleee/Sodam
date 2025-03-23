@@ -1,6 +1,7 @@
 import {Link} from "react-router-dom";
 import Comments from "./Comments";
 import {ArticleDetailType, TagType} from "../types/article";
+import React from "react";
 
 interface ArticleDetailProps  {
     user?: { email : string },

@@ -48,6 +48,7 @@ class ArticleController(
         pageable: Pageable,
         articleSearchRequest: ArticleSearchRequest
     ): SodamApiResponse<Page<ArticleSummaryResponse>> {
+        println(articleSearchRequest.toString())
         val command = articleSearchRequest.toCommand()
         return SodamApiResponse.ok(
             articleService.fetchFromClient(pageable, command)

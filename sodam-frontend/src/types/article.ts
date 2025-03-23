@@ -30,6 +30,14 @@ export interface ArticleSummaryType {
     tags: string[]
 }
 
+export interface ArticleSearchRequestType {
+    pageNumber: number
+    title: string | null
+    author: string | null
+    // tag: string | null
+    categoryId: string | null
+}
+
 
 export interface CommentType {
     commentId: number

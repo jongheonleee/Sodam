@@ -5,7 +5,7 @@ import Articles from "../../components/Articles";
 import Footer from "../../components/Footer";
 import React, {useEffect, useState} from "react";
 import {ArticleSummaryType, CategoryType} from "../../types/article";
-import {deleteArticle, getArticles} from "../../api/article";
+import {deleteArticle, getArticles, getArticlesByCategoryId} from "../../api/article";
 import ArticlePagination from "../../components/ArticlePagination";
 import {getCategories} from "../../api/category";
 
@@ -57,20 +57,23 @@ export default function ArticlesPage({
     }, []);
 
     // 카테고리 변경 시 해당 카테고리와 연관있는 게시글 조회
-    const handleCategoryChange = (id: string) => {
-        // if (selectedCategory) {
-        //     setActiveCategory(selectedCategory);
-        // }
+    const handleCategoryChange = (categoryId: string) => {
+        let selectedCategory = categories.find(category => category.categoryId === categoryId);
+        if (selectedCategory) {
+            console.log(selectedCategory)
+            setActiveCategory(selectedCategory);
 
-        // 선택된 카테고리에 맞는 게시글 조회
-        fetch(`/api/articles?category=${activeCategory.categoryId}`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data?.result === 'SUCCESS') {
-                    setArticles(data.data);
+            getArticlesByCategoryId(
+                selectedCategory.categoryId
+            ).then((res) => {
+                if (res.status === 200) {
+                    setArticles(res.data.data.content)
+                    setPage(res.data.data.pageNumber)
+                    setTotalPages(res.data.data.totalPages)
+                    console.log(res.data.data)
                 }
             })
-            .catch((error) => console.error('Error fetching articles:', error));
+        }
     }
 
 
