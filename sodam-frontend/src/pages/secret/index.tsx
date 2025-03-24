@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react";
 import {SecreteSummaryType} from "../../types/secret";
 import {getSecrets} from "../../api/secret";
 import SecretPagination from "../../components/SecretPagination";
-import {getArticles} from "../../api/article";
+import {getArticlesByPageNumber} from "../../api/article";
 
 interface SecretesPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,

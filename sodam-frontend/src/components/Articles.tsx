@@ -4,11 +4,13 @@ import {Link} from "react-router-dom";
 interface ArticlesProps {
     articles: ArticleSummaryType[]
     handleArticleDelete : (articleId: number) => void
+    handleTagSearch: (tag: string) => void
 }
 
 export default function Articles({
     articles,
     handleArticleDelete,
+    handleTagSearch
 } : ArticlesProps) {
 
     return (
@@ -31,7 +33,10 @@ export default function Articles({
                                      {/* 해당 아티클에 태그가 있는 경우 */}
                                      {article.tags?.length > 0 && (
                                          article.tags?.map((tag) => (
-                                             <div className="article__tag">{tag}</div>
+                                             <div
+                                                 className="article__tag"
+                                                 onClick={() => handleTagSearch(tag)}
+                                             >{tag}</div>
                                          ))
                                      )}
                                  </div>

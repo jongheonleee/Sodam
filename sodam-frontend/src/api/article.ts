@@ -6,8 +6,24 @@ const client = axios.create({
 });
 
 
-export const getArticles = (pageNumber : number = 1) => {
+export const getArticlesByPageNumber = (pageNumber : number = 1) => {
     return client.get(`/api/v1/articles?page=${pageNumber-1}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}
+
+export const getArticlesWithCategoryIdAndPageNumber = (pageNumber: number = 1, categoryId: string) => {
+    return client.get(`/api/v1/articles?page=${pageNumber-1}&categoryId=${categoryId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}
+
+export const getArticlesByTag = (tag: string) => {
+    return client.get(`/api/v1/articles?tag=${tag}`, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
         }

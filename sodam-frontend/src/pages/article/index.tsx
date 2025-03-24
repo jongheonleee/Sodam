@@ -4,8 +4,13 @@ import Categories, {defaultCategory} from "../../components/Categories";
 import Articles from "../../components/Articles";
 import Footer from "../../components/Footer";
 import React, {useEffect, useState} from "react";
-import {ArticleSummaryType, CategoryType} from "../../types/article";
-import {deleteArticle, getArticles, getArticlesByCategoryId} from "../../api/article";
+import {ArticleSummaryType, CategoryType, TagType} from "../../types/article";
+import {
+    deleteArticle,
+    getArticlesByPageNumber,
+    getArticlesByCategoryId,
+    getArticlesWithCategoryIdAndPageNumber, getArticlesByTag
+} from "../../api/article";
 import ArticlePagination from "../../components/ArticlePagination";
 import {getCategories} from "../../api/category";
 
@@ -17,15 +22,18 @@ export default function ArticlesPage({
     handleLogout,
 } : ArticlesPageProps) {
     // 게시글 및 페이징 정보
-    const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
+    const [articles, setArticles] = useState<ArticleSummaryType[]>([])
     const [page, setPage] = useState<number>(1)
     const [totalPages, setTotalPages] = useState<number>(1)
 
     // 카테고리
-    const [categories, setCategories] = useState<CategoryType[]>([]);
+    const [categories, setCategories] = useState<CategoryType[]>([])
+
+    // 태그
+    const [ tag, setTag ] = useState<TagType | null>(null)
 
     // 검색 키워드
-    const [keyword, setKeyword] = useState<string>('');
+    const [keyword, setKeyword] = useState<string>('')
 
     // 기본 선정 카테고리
     const [activeCategory, setActiveCategory] = useState<CategoryType>(defaultCategory);
@@ -38,7 +46,7 @@ export default function ArticlesPage({
         setCategories([]);
 
         // 게시글 조회
-        getArticles().then((res) => {
+        getArticlesByPageNumber().then((res) => {
             if (res.status === 200) {
                 setArticles(res.data.data.content)
                 setPage(res.data.data.pageNumber)
@@ -60,19 +68,33 @@ export default function ArticlesPage({
     const handleCategoryChange = (categoryId: string) => {
         let selectedCategory = categories.find(category => category.categoryId === categoryId);
         if (selectedCategory) {
-            console.log(selectedCategory)
             setActiveCategory(selectedCategory);
 
-            getArticlesByCategoryId(
-                selectedCategory.categoryId
-            ).then((res) => {
-                if (res.status === 200) {
-                    setArticles(res.data.data.content)
-                    setPage(res.data.data.pageNumber)
-                    setTotalPages(res.data.data.totalPages)
+            if (selectedCategory.categoryName === '전체') {
+                getArticlesByPageNumber(
+                    page
+                ).then((res) => {
+                    if (res.status === 200) {
+                        setArticles(res.data.data.content)
+                        setPage(res.data.data.pageNumber)
+                        setTotalPages(res.data.data.totalPages)
+                    }
+
                     console.log(res.data.data)
-                }
-            })
+                })
+            } else {
+                getArticlesByCategoryId(
+                    selectedCategory.categoryId
+                ).then((res) => {
+                    if (res.status === 200) {
+                        setArticles(res.data.data.content)
+                        setPage(res.data.data.pageNumber)
+                        setTotalPages(res.data.data.totalPages)
+                    }
+
+                    console.log(res.data.data)
+                })
+            }
         }
     }
 
@@ -92,15 +114,28 @@ export default function ArticlesPage({
 
     const handlePageChange : (event: unknown, value: number) => void = (event, value) => {
         setPage(value) // 바로 page를 사용할 수 없음
+        let selectedCategory = categories.find(category => category.categoryId === activeCategory.categoryId);
 
-        getArticles(value).then((res) => {
-            if (res.status === 200) {
-                setArticles(res.data.data.content)
-                setPage(res.data.data.pageNumber)
-                setTotalPages(res.data.data.totalPages)
-                console.log(res.data.data)
-            }
-        })
+        if (selectedCategory && selectedCategory.categoryName !== '전체') {
+            setActiveCategory(selectedCategory)
+            getArticlesWithCategoryIdAndPageNumber(value, selectedCategory.categoryId).then((res) => {
+                if (res.status === 200) {
+                    setArticles(res.data.data.content)
+                    setPage(res.data.data.pageNumber)
+                    setTotalPages(res.data.data.totalPages)
+                    console.log(res.data.data)
+                }
+            })
+        } else {
+            getArticlesByPageNumber(value).then((res) => {
+                if (res.status === 200) {
+                    setArticles(res.data.data.content)
+                    setPage(res.data.data.pageNumber)
+                    setTotalPages(res.data.data.totalPages)
+                    console.log(res.data.data)
+                }
+            })
+        }
     }
 
     // 특정 게시글 삭제 처리 핸들링
@@ -112,6 +147,18 @@ export default function ArticlesPage({
                 }
             })
         }
+    }
+
+    // 태그 선택시 해당 태그로 검색
+    const handleTagSearch = (tag : string) => {
+        getArticlesByTag(tag).then((res) => {
+            if (res.status === 200) {
+                setArticles(res.data.data.content)
+                setPage(res.data.data.pageNumber)
+                setTotalPages(res.data.data.totalPages)
+                console.log(res.data.data)
+            }
+        })
     }
 
     return (
@@ -133,6 +180,7 @@ export default function ArticlesPage({
             <Articles
                 articles={articles}
                 handleArticleDelete={handleArticleDelete}
+                handleTagSearch={handleTagSearch}
             />
             <ArticlePagination
                 page={page}

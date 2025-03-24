@@ -27,6 +27,8 @@ class AuthController(
     private val tokenService: TokenService
 ) {
 
+
+    // 회원가입
     @PostMapping("/api/v1/auth/signup")
     fun signup(
         @RequestBody @Valid
@@ -36,6 +38,7 @@ class AuthController(
         return SodamApiResponse.ok(userService.signupUser(command))
     }
 
+    // 로그인
     @PostMapping("/api/v1/auth/login")
     fun login(
         @RequestBody @Valid
@@ -48,6 +51,7 @@ class AuthController(
         return SodamApiResponse.ok(tokenService.upsertTokenForUser(principal.email))
     }
 
+    // oauth2 로그인
     @PostMapping("/api/v1/auth/callback")
     fun oauth2Callback(
         @RequestBody request: Map<String, String>
@@ -69,4 +73,15 @@ class AuthController(
 
         return SodamApiResponse.ok(tokenService.upsertTokenForSocialUser(foundKakaoUser.providerId))
     }
+
+//    // 토큰 재발급
+//    @PostMapping("/api/v1/reissue")
+//    fun reissueToken(
+//
+//    ) : SodamApiResponse<TokenResponse> {
+//
+//        return SodamApiResponse.ok(
+//
+//        )
+//    }
 }

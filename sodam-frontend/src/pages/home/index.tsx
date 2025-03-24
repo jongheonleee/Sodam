@@ -5,6 +5,7 @@ import Articles from "../../components/Articles";
 import Categories, {defaultCategory} from "../../components/Categories";
 import React, {useEffect, useState} from "react";
 import {ArticleSummaryType, CategoryType} from "../../types/article";
+import {getArticlesByTag} from "../../api/article";
 
 interface HomeProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -13,8 +14,10 @@ interface HomeProps {
 export default function Home({
     handleLogout,
 } : HomeProps) {
-    // 게시글
-    const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
+    // 게시글 및 페이징 정보
+    const [articles, setArticles] = useState<ArticleSummaryType[]>([])
+    const [page, setPage] = useState<number>(1)
+    const [totalPages, setTotalPages] = useState<number>(1)
 
     // 카테고리
     const [categories, setCategories] = useState<CategoryType[]>([]);
@@ -105,6 +108,20 @@ export default function Home({
             })
     }
 
+    // 태그 선택시 해당 태그로 검색
+    const handleTagSearch = (tag : string) => {
+        getArticlesByTag(tag).then((res) => {
+            if (res.status === 200) {
+                setArticles(res.data.data.content)
+                setPage(res.data.data.pageNumber)
+                setTotalPages(res.data.data.totalPages)
+                console.log(res.data.data)
+            }
+        })
+    }
+
+
+
 
     return (
         <>
@@ -131,6 +148,7 @@ export default function Home({
             <Articles
                 articles={articles}
                 handleArticleDelete={handleArticleDelete}
+                handleTagSearch={handleTagSearch}
             />
 
             {/* 푸터 */}

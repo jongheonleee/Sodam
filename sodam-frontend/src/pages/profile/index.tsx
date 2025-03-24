@@ -4,6 +4,7 @@ import Profile from "../../components/Profile";
 import Articles from "../../components/Articles";
 import React, {useEffect, useState} from "react";
 import {ArticleSummaryType} from "../../types/article";
+import {getArticlesByTag} from "../../api/article";
 
 
 interface ProfilePageProps {
@@ -18,8 +19,22 @@ export default function ProfilePage({
         email : "qwefghnm1212@gmail.com"
     }
 
-    // 게시글
-    const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
+    // 게시글 및 페이징 정보
+    const [articles, setArticles] = useState<ArticleSummaryType[]>([])
+    const [page, setPage] = useState<number>(1)
+    const [totalPages, setTotalPages] = useState<number>(1)
+
+    // 태그 선택시 해당 태그로 검색
+    const handleTagSearch = (tag : string) => {
+        getArticlesByTag(tag).then((res) => {
+            if (res.status === 200) {
+                setArticles(res.data.data.content)
+                setPage(res.data.data.pageNumber)
+                setTotalPages(res.data.data.totalPages)
+                console.log(res.data.data)
+            }
+        })
+    }
 
     // 컴포넌트 생성시 특정 유저와 관련된 게시글 정보 조회
     useEffect(() => {
@@ -69,6 +84,7 @@ export default function ProfilePage({
             <Articles
                 articles={articles}
                 handleArticleDelete={handleArticleDelete}
+                handleTagSearch={handleTagSearch}
             />
             <Footer />
         </>

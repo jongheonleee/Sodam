@@ -17,7 +17,8 @@ data class ArticleSearchRequest(
         return ArticleSearchCommand(
             title = title,
             author = author,
-            tag = tag
+            tag = tag,
+            categoryId = categoryId,
         )
     }
 }

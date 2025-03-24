@@ -3,13 +3,16 @@ import Articles from "./Articles";
 import {useEffect, useState} from "react";
 import {ArticleSummaryType} from "../types/article";
 import {useParams} from "react-router-dom";
+import {getArticlesByTag} from "../api/article";
 
 export default function ArticleLikes()  {
+    // 게시글 및 페이징 정보
+    const [articles, setArticles] = useState<ArticleSummaryType[]>([])
+    const [page, setPage] = useState<number>(1)
+    const [totalPages, setTotalPages] = useState<number>(1)
+
     // 사용자 이메일 조회
     const { email } = useParams();
-
-    // 게시글
-    const [articles, setArticles] = useState<ArticleSummaryType[]>([]);
 
     // 특정 게시글 삭제 처리 핸들링
     const handleArticleDelete = (id: number) => {
@@ -27,6 +30,18 @@ export default function ArticleLikes()  {
             .catch(error => {
                 console.error('Error handling delete article');
             })
+    }
+
+    // 태그 선택시 해당 태그로 검색
+    const handleTagSearch = (tag : string) => {
+        getArticlesByTag(tag).then((res) => {
+            if (res.status === 200) {
+                setArticles(res.data.data.content)
+                setPage(res.data.data.pageNumber)
+                setTotalPages(res.data.data.totalPages)
+                console.log(res.data.data)
+            }
+        })
     }
 
     // 사용자 이메일을 통해 해당 사용자가 좋아요를 클릭한 글을 조회해옴
@@ -55,6 +70,7 @@ export default function ArticleLikes()  {
             <Articles
                 articles={articles}
                 handleArticleDelete={handleArticleDelete}
+                handleTagSearch={handleTagSearch}
             />
         </>
     )

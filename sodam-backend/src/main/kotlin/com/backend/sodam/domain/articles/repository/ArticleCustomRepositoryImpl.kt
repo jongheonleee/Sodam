@@ -5,6 +5,8 @@ import com.backend.sodam.domain.articles.exception.ArticleException
 import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.articles.model.SodamDetailArticle
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
+import com.backend.sodam.domain.categories.entity.QCategoryEntity
+import com.backend.sodam.domain.categories.entity.QCategoryEntity.*
 import com.backend.sodam.domain.comments.entity.QCommentEntity.commentEntity
 import com.backend.sodam.domain.comments.service.response.CommentResponse
 import com.backend.sodam.domain.tags.entity.QTagsEntity.tagsEntity
@@ -33,6 +35,7 @@ class ArticleCustomRepositoryImpl(
         // 쿼리 생성
         val query = jpaQueryFactory.selectFrom(articleEntity)
             .leftJoin(articleEntity.tags, tagsEntity) // 태그 조인
+            .leftJoin(articleEntity.category, categoryEntity)
             .where(
                 // 제목 확인
                 articleSearchCommand.title?.let {
@@ -49,6 +52,10 @@ class ArticleCustomRepositoryImpl(
                 // 태그명 확인
                 articleSearchCommand.tag?.let {
                     tagsEntity.tagName.eq(it)
+                },
+                // 카테고리 확인
+                articleSearchCommand.categoryId?.let {
+                    categoryEntity.categoryId.eq(it)
                 }
             )
 
