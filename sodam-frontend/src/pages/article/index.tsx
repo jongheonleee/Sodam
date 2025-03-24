@@ -9,7 +9,7 @@ import {
     deleteArticle,
     getArticlesByPageNumber,
     getArticlesByCategoryId,
-    getArticlesWithCategoryIdAndPageNumber, getArticlesByTag
+    getArticlesWithCategoryIdAndPageNumber, getArticlesByTag, getArticleByKeyword
 } from "../../api/article";
 import ArticlePagination from "../../components/ArticlePagination";
 import {getCategories} from "../../api/category";
@@ -102,14 +102,15 @@ export default function ArticlesPage({
     // 키워드 검색 시 해당 키워드와 관련된 게시글 조회
     const handleKeywordSearch = (keyword : string) => {
         // 검색 키워드로 게시글 조회
-        fetch(`/api/articles?category=${activeCategory.categoryId}&keyword=${keyword}`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data?.result === 'SUCCESS') {
-                    setArticles(data.data)
-                }
-            })
-            .catch((error) => console.error('Error fetching articles:', error));
+        getArticleByKeyword(keyword).then((res) => {
+            if (res.status === 200) {
+                setArticles(res.data.data.content)
+                setPage(res.data.data.pageNumber)
+                setTotalPages(res.data.data.totalPages)
+            }
+
+            console.log(res.data.data)
+        })
     }
 
     const handlePageChange : (event: unknown, value: number) => void = (event, value) => {

@@ -30,6 +30,14 @@ export const getArticlesByTag = (tag: string) => {
     })
 }
 
+export const getArticleByKeyword = (keyword: string) => {
+    return client.get(`/api/v1/articles?author=${keyword}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}
+
 export const getArticlesByCategoryId = (categoryId: string) => {
     return client.get(`/api/v1/articles?categoryId=${categoryId}`, {
         headers: {

@@ -5,12 +5,15 @@ import com.backend.sodam.domain.articles.exception.ArticleException
 import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.articles.model.SodamDetailArticle
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
-import com.backend.sodam.domain.categories.entity.QCategoryEntity
 import com.backend.sodam.domain.categories.entity.QCategoryEntity.*
 import com.backend.sodam.domain.comments.entity.QCommentEntity.commentEntity
 import com.backend.sodam.domain.comments.service.response.CommentResponse
 import com.backend.sodam.domain.tags.entity.QTagsEntity.tagsEntity
 import com.backend.sodam.domain.tags.service.response.TagResponse
+import com.backend.sodam.domain.users.entity.QSocialUsersEntity
+import com.backend.sodam.domain.users.entity.QSocialUsersEntity.*
+import com.backend.sodam.domain.users.entity.QUsersEntity
+import com.backend.sodam.domain.users.entity.QUsersEntity.*
 import com.backend.sodam.global.utils.Formatter
 import com.querydsl.jpa.impl.JPAQueryFactory
 import lombok.RequiredArgsConstructor
@@ -36,23 +39,26 @@ class ArticleCustomRepositoryImpl(
         val query = jpaQueryFactory.selectFrom(articleEntity)
             .leftJoin(articleEntity.tags, tagsEntity) // 태그 조인
             .leftJoin(articleEntity.category, categoryEntity)
+            .leftJoin(articleEntity.user, usersEntity)
+            .leftJoin(articleEntity.socialUser, socialUsersEntity)
             .where(
+
                 // 제목 확인
                 articleSearchCommand.title?.let {
                     articleEntity.articleTitle.contains(it)
                 },
+
                 // 사용자명 확인
                 articleSearchCommand.author?.let {
-                    if (articleEntity.user != null) {
-                        articleEntity.user.userName.contains(it)
-                    } else {
-                        articleEntity.socialUser.userName.contains(it)
-                    }
+                    articleEntity.socialUser.userName.eq(it)
+                        .or(articleEntity.user.userName.eq(it))
                 },
+
                 // 태그명 확인
                 articleSearchCommand.tag?.let {
                     tagsEntity.tagName.eq(it)
                 },
+
                 // 카테고리 확인
                 articleSearchCommand.categoryId?.let {
                     categoryEntity.categoryId.eq(it)
