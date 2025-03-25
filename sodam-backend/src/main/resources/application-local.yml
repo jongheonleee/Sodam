@@ -60,5 +60,5 @@ server:
     servlet:
         session:
             cookie:
-                same-site: None
+                http-only: true
                 secure: true

@@ -74,10 +74,7 @@ export default function Login({
 
     }
 
-    // const KAKAO_CLIENT_ID = "8fb1e8921f2ee60c0e7990d9c5386e26";
-    // const REDIRECT_URI = "http://localhost:3000/login/oauth2/code/kakao";
 
-    // `http://localhost:8080/oauth2/authorization/kakao`
     const handleKakaoLogin = () => {
         window.location.href = `https://localhost:8443//oauth2/authorization/kakao`;  // 카카오 로그인 페이지로 리디렉션
     };

@@ -87,6 +87,9 @@ dependencies {
 
     // .env 관련 의존성 추가
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.2")
+
+    // https, samesite = none 처리 관련 의존성 추가
+    implementation("org.springframework.session:spring-session-core")
 }
 
 kotlin {

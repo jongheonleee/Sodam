@@ -84,6 +84,7 @@ class AuthController(
     ): SodamApiResponse<String> {
         val refreshToken = httpServletRequest.getHeader("refresh_token")
         val accessToken = httpServletRequest.getHeader("token")
+        println("RefreshToken: $refreshToken")
         return SodamApiResponse.ok(
             "de"
         )

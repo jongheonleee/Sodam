@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.session.web.http.CookieSerializer
+import org.springframework.session.web.http.DefaultCookieSerializer
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 
@@ -29,10 +31,10 @@ class SecurityConfig(
     @Bean
     fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         // 프론트엔드 리액트로 개발했기 때문에 아래 disable 시키기
+        httpSecurity.cors { it.configurationSource(corsConfigurationSource()) }
         httpSecurity.httpBasic { it.disable() }
         httpSecurity.formLogin { it.disable() }
         httpSecurity.csrf { it.disable() }
-        httpSecurity.cors { it.configurationSource(corsConfigurationSource()) }
 
         // 로그인, 회원가입, 이외의 모든 요청 인증 요구
         httpSecurity.authorizeHttpRequests {
@@ -72,6 +74,15 @@ class SecurityConfig(
             configuration
         }
     }
+
+    @Bean
+    fun cookieSerializer(): CookieSerializer {
+        val serializer = DefaultCookieSerializer()
+        serializer.setSameSite("None")
+        serializer.setUseSecureCookie(true)
+        return serializer
+    }
+
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
