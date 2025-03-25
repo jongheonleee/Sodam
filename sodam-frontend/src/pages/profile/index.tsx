@@ -5,6 +5,7 @@ import Articles from "../../components/Articles";
 import React, {useEffect, useState} from "react";
 import {ArticleSummaryType} from "../../types/article";
 import {getArticlesByTag} from "../../api/article";
+import {getUserInfo} from "../../api/user";
 
 
 interface ProfilePageProps {
@@ -43,16 +44,21 @@ export default function ProfilePage({
 
 
         // 유저가 작성한 게시글 조회
-        fetch(`/api/profile/${user.email}`)
-            .then(res => res.json())
-            .then(articleData => {
-                if (articleData?.result === 'SUCCESS') {
-                    setArticles(articleData.data);
-                }
-            })
-            .catch(error => {
-                console.log('Error fetching data', error);
-            });
+        getUserInfo().then((res) => {
+            if (res.status === 200) {
+                console.log(res.data.data)
+            }
+        })
+        // fetch(`/api/profile/${user.email}`)
+        //     .then(res => res.json())
+        //     .then(articleData => {
+        //         if (articleData?.result === 'SUCCESS') {
+        //             setArticles(articleData.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.log('Error fetching data', error);
+        //     });
     }, [user.email]);
 
     // 특정 게시글 삭제 처리 핸들링

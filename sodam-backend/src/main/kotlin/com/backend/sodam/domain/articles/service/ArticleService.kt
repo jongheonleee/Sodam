@@ -5,10 +5,7 @@ import com.backend.sodam.domain.articles.repository.ArticleRepository
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
-import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
-import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
-import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
-import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
+import com.backend.sodam.domain.articles.service.response.*
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.SocialUserRepository
@@ -93,6 +90,13 @@ class ArticleService(
             articleLikeCnt = sodamDetailArticle.articleLikeCnt,
             articleDislikeCnt = sodamDetailArticle.articleDislikeCnt,
             articleViewCnt = sodamDetailArticle.articleViewCnt
+        )
+    }
+
+    fun getArticleSimple(articleId: Long): ArticleSimpleResponse {
+        val sodamArticle = articleRepository.findArticleByArticleId(articleId)
+        return ArticleSimpleResponse(
+            articleId = sodamArticle.articleId,
         )
     }
 

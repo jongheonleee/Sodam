@@ -1,12 +1,11 @@
 spring:
-    # rdb
+    config:
+        import: optional:file:.env[.properties]
     datasource:
         url: jdbc:mysql://localhost:3306/sodam?useSSL=false&serverTimezone=Asia/Seoul
-        username: root
-        password: 12341234
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
-
-    # jpa
     jpa:
         hibernate:
             ddl-auto: update
@@ -14,30 +13,25 @@ spring:
         properties:
             hibernate:
                 format_sql: true
-    # redis
     data:
         redis:
             host: localhost
             port: 6379
-
-    # flyway
     flyway:
         locations: classpath:flyway
         baseline-on-migrate: true
         baseline-version: 1
         enabled: true
-
-    # oauth2 - kakao oauth2 기본 설정
     security:
       oauth2:
         client:
             registration:
                 kakao:
-                    client-id: 8fb1e8921f2ee60c0e7990d9c5386e26 # restapi 키 값
-                    client-secret: 3P8VQdR5435uc26mSWWWbWNWqU5uhdB4 # 보안 코드값
+                    client-id: ${KAKAO_CLIENT_ID} # restapi 키 값
+                    client-secret: ${KAKAO_CLIENT_SECRET} # 보안 코드값
                     client-name: Kakao
                     authorization-grant-type: authorization_code
-                    redirect-uri: "http://localhost:3000/login/oauth2/code/kakao" # 등록한 redirect-uri
+                    redirect-uri: "https://localhost:3000/login/oauth2/code/kakao" # 등록한 redirect-uri
                     scope: profile_nickname
                     client-authentication-method: client_secret_post
             provider:
@@ -47,10 +41,24 @@ spring:
                     user-info-uri: https://kapi.kakao.com/v2/user/me
                     user-name-attribute: id
 
-    # jwt 토큰 관련 정보
 jwt:
-    secret: 9fbda65e0628c06a000725a771bd2676f5bd744c7b044ce4496e852c8903997e # oppenssl rand -hex 32 명령어로 생성된 토큰값
+    secret: ${JWT_SECRET}
     expire:
         access-token: 1
         refresh-token: 24
 
+# SSL 설정 추가
+server:
+    port: 8443  # HTTPS 포트 설정
+    ssl:
+        enabled: true
+        key-store: file:mycert.p12
+        key-store-password: 1234
+        key-store-type: PKCS12
+        key-alias: localhost
+
+    servlet:
+        session:
+            cookie:
+                same-site: None
+                secure: true

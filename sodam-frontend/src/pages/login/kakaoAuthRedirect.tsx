@@ -18,20 +18,20 @@ export default function KakaoAuthRedirect({
 
         // 백엔드에 인증 코드 전송하여 JWT 토큰 받기
         if (code) {
-            axios.post('http://localhost:8080/api/v1/auth/callback', { code })
-                .then(response => {
-                    console.log(response)
-                    const token = response.data.data.accessToken  // 백엔드에서 받은 JWT 토큰
-                    console.log(token)
-                    localStorage.setItem('token', token)  // 토큰을 localStorage에 저장
+            axios.post('https://localhost:8443/api/v1/auth/callback', { code })
+                .then(res => {
+                    // 로그인 성공하면 로컬 스토리지에 백엔드에서 발급된 토큰을 저장함
+                    localStorage.setItem('token', res.data.data.accessToken)
+                    localStorage.setItem('refresh_token', res.data.data.refreshToken)
+                    // 인증 여부 확인 및 홈으로 리다이렉션
                     setIsAuthenticated(true)
-                    navigate('/')  // 로그인 후 홈화면으로 리다이렉트
+                    navigate('/')
                 })
                 .catch(error => {
                     console.error('카카오 로그인 실패:', error)
                 });
         }
-    }, [navigate]);
+    }, );
 
     return (
         <div>

@@ -9,6 +9,7 @@ import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 import com.backend.sodam.domain.categories.exception.CategoryException
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
 import com.backend.sodam.domain.comments.repository.CommentJpaRepository
+import com.backend.sodam.domain.comments.repository.CommentRepository
 import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.UserJpaRepository
@@ -23,7 +24,10 @@ class ArticleRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userJpaRepository: UserJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
-    private val commentJpaRepository: CommentJpaRepository
+    private val commentRepository: CommentRepository,
+    private val commentJpaRepository: CommentJpaRepository,
+    private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
+    private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository,
 ) {
 
     @Transactional
@@ -142,10 +146,16 @@ class ArticleRepository(
         }
 
         val foundArticleEntity = foundArticleEntityOptional.get()
-        // 댓글 좋아요 싫어요
-        // 게시글 좋아요 싫어요
-        // 댓글
-        foundArticleEntity.tags.clear() // 댓글도 양방향 매핑해서 삭제하게 만들기
+
+        foundArticleEntity.tags.clear()
+        foundArticleEntity.comments.forEach {
+            commentRepository.delete(it.commentId!!)
+        }
+
+        val foundAllArticleLikeByArticle = articleLikeJpaRepository.findByArticle(foundArticleEntity)
+        articleLikeJpaRepository.deleteAll(foundAllArticleLikeByArticle)
+        val foundArticleDislikeByArticle = articleDislikeJpaRepository.findByArticle(foundArticleEntity)
+        articleDislikeJpaRepository.deleteAll(foundArticleDislikeByArticle)
         articleJpaRepository.delete(foundArticleEntity)
     }
 

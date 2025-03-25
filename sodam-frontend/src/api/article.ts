@@ -1,5 +1,5 @@
 import axios from "axios";
-import {ArticleCreateRequest, ArticleSearchRequestType, ArticleUpdateRequest} from "../types/article";
+import {ArticleCreateRequest, ArticleUpdateRequest} from "../types/article";
 
 const client = axios.create({
     baseURL : 'http://localhost:8080', // 백엔드 현재 로컬에서 돌아가고 있음
@@ -22,6 +22,14 @@ export const getArticlesWithCategoryIdAndPageNumber = (pageNumber: number = 1, c
     })
 }
 
+export const getArticleSimple = (articleId: number) => {
+    return client.get(`/api/v1/articles/simple/${articleId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}
+
 export const getArticlesByTag = (tag: string) => {
     return client.get(`/api/v1/articles?tag=${tag}`, {
         headers: {
@@ -31,7 +39,7 @@ export const getArticlesByTag = (tag: string) => {
 }
 
 export const getArticleByKeyword = (keyword: string) => {
-    return client.get(`/api/v1/articles?author=${keyword}`, {
+    return client.get(`/api/v1/articles?keyword=${keyword}`, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
@@ -53,9 +61,6 @@ export const getDetailArticle = (articleId : string) => {
         }
     })
 }
-
-
-
 
 
 export const postArticle = (articleCreateRequest: ArticleCreateRequest) => {

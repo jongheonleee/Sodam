@@ -4,10 +4,7 @@ import com.backend.sodam.domain.articles.controller.request.ArticleCreateRequest
 import com.backend.sodam.domain.articles.controller.request.ArticleSearchRequest
 import com.backend.sodam.domain.articles.controller.request.ArticleUpdateRequest
 import com.backend.sodam.domain.articles.service.ArticleService
-import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
-import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
-import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
-import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
+import com.backend.sodam.domain.articles.service.response.*
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import jakarta.validation.Valid
@@ -60,6 +57,16 @@ class ArticleController(
     fun getArticle(@PathVariable("articleId") articleId: Long): SodamApiResponse<ArticleDetailResponse> {
         return SodamApiResponse.ok(
             articleService.getArticleDetail(articleId)
+        )
+    }
+
+    // 게시글 단순 조회 - 게시글 수정 처리용
+    @GetMapping("/api/v1/articles/simple/{articleId}/")
+    fun getArticleSimple(
+        @PathVariable("articleId") articleId: Long,
+    ) : SodamApiResponse<ArticleSimpleResponse> {
+        return SodamApiResponse.ok(
+            articleService.getArticleSimple(articleId)
         )
     }
 

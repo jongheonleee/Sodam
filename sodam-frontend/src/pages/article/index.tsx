@@ -13,6 +13,7 @@ import {
 } from "../../api/article";
 import ArticlePagination from "../../components/ArticlePagination";
 import {getCategories} from "../../api/category";
+import {getReissuedToken} from "../../api/token";
 
 interface ArticlesPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -38,6 +39,8 @@ export default function ArticlesPage({
     // 기본 선정 카테고리
     const [activeCategory, setActiveCategory] = useState<CategoryType>(defaultCategory);
 
+    // API 재요청해서 최신 데이터 반영하기
+    const [refreshTrigger, setRefreshTrigger] = useState(false)
 
     // 컴포넌트 생성시 카테고리와 게시글 조회
     useEffect(() => {
@@ -62,7 +65,7 @@ export default function ArticlesPage({
                 console.log(res.data.data)
             }
         })
-    }, []);
+    }, [refreshTrigger]);
 
     // 카테고리 변경 시 해당 카테고리와 연관있는 게시글 조회
     const handleCategoryChange = (categoryId: string) => {
@@ -125,6 +128,7 @@ export default function ArticlesPage({
                     setPage(res.data.data.pageNumber)
                     setTotalPages(res.data.data.totalPages)
                     console.log(res.data.data)
+
                 }
             })
         } else {
@@ -145,6 +149,8 @@ export default function ArticlesPage({
             deleteArticle(articleId).then((res) => {
                 if (res.status === 200) {
                     alert('게시글 삭제됨')
+                    // api 재요청하여 최신 데이터 반영
+                    setRefreshTrigger((prev) => !prev)
                 }
             })
         }

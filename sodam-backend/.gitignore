@@ -54,3 +54,12 @@ out/
 .LSOverride
 
 .jqwik-database
+
+# 키스토어 파일 무시
+*.jks
+*.p12
+*.keystore
+dev.key
+
+# 환경변수
+.env

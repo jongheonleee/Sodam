@@ -46,9 +46,7 @@ class UserService(
             providerId = socialUserSignupCommand.providerId
         )
 
-        val saved =
-            userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
-        println("Saved $saved")
+        val saved = userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
 
         return UserSignupResponse(
             username = sodamUser.username
@@ -66,6 +64,18 @@ class UserService(
         return SimpleUserResponse(
             username = sodamUser.username,
             email = sodamUser.email
+        )
+    }
+
+    fun findByUserId(userId: String): UserResponse {
+        val foundOptionalSodamUserByUserId = userRepository.findByUserId(userId)
+        if (foundOptionalSodamUserByUserId.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val sodamUser = foundOptionalSodamUserByUserId.get()
+        return UserResponse.toUserResponse(
+            sodamUser = sodamUser
         )
     }
 

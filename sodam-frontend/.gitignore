@@ -21,3 +21,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# 환경변수 관련 파일
+.env
+
+
+
+# 인증서 파일
+/certs/
+mycert-key.pem
+mycert.pem

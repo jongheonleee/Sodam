@@ -62,6 +62,7 @@ export default function Login({
                 if (res.status === 200) {
                     // 로그인 성공하면 로컬 스토리지에 백엔드에서 발급된 토큰을 저장함
                     localStorage.setItem('token', res.data.data.accessToken)
+                    localStorage.setItem('refresh_token', res.data.data.refreshToken)
                     // 인증 여부 확인 및 홈으로 리다이렉션
                     setIsAuthenticated(true)
                     navigate('/')
@@ -78,7 +79,7 @@ export default function Login({
 
     // `http://localhost:8080/oauth2/authorization/kakao`
     const handleKakaoLogin = () => {
-        window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;  // 카카오 로그인 페이지로 리디렉션
+        window.location.href = `https://localhost:8443//oauth2/authorization/kakao`;  // 카카오 로그인 페이지로 리디렉션
     };
 
 

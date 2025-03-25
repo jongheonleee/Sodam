@@ -12,4 +12,5 @@ interface UsersCommentDislikeJpaRepository : JpaRepository<UsersDislikeCommentEn
     fun existsByCommentAndUser(comment: CommentEntity, user: UsersEntity): Boolean
     fun findByCommentAndSocialUser(comment: CommentEntity, socialUser: SocialUsersEntity): Optional<UsersDislikeCommentEntity>
     fun findByCommentAndUser(comment: CommentEntity, user: UsersEntity): Optional<UsersDislikeCommentEntity>
+    fun findByComment(comment: CommentEntity): List<UsersDislikeCommentEntity>
 }

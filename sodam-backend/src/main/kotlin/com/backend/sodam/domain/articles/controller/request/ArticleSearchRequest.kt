@@ -5,9 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam
 
 data class ArticleSearchRequest(
     @RequestParam
-    val title: String? = null,
-    @RequestParam
-    val author: String? = null,
+    val keyword: String? = null,
     @RequestParam
     val tag: String? = null,
     @RequestParam
@@ -15,8 +13,7 @@ data class ArticleSearchRequest(
 ) {
     fun toCommand(): ArticleSearchCommand {
         return ArticleSearchCommand(
-            title = title,
-            author = author,
+            keyword = keyword,
             tag = tag,
             categoryId = categoryId,
         )

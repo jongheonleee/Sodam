@@ -10,9 +10,7 @@ import com.backend.sodam.domain.comments.entity.QCommentEntity.commentEntity
 import com.backend.sodam.domain.comments.service.response.CommentResponse
 import com.backend.sodam.domain.tags.entity.QTagsEntity.tagsEntity
 import com.backend.sodam.domain.tags.service.response.TagResponse
-import com.backend.sodam.domain.users.entity.QSocialUsersEntity
 import com.backend.sodam.domain.users.entity.QSocialUsersEntity.*
-import com.backend.sodam.domain.users.entity.QUsersEntity
 import com.backend.sodam.domain.users.entity.QUsersEntity.*
 import com.backend.sodam.global.utils.Formatter
 import com.querydsl.jpa.impl.JPAQueryFactory
@@ -37,20 +35,16 @@ class ArticleCustomRepositoryImpl(
     ): Page<SodamArticle> {
         // 쿼리 생성
         val query = jpaQueryFactory.selectFrom(articleEntity)
-            .leftJoin(articleEntity.tags, tagsEntity) // 태그 조인
+            // 추후에 밑 부분 성능 개선 여지는 없는지 확인해보기
+            .leftJoin(articleEntity.tags, tagsEntity)
             .leftJoin(articleEntity.category, categoryEntity)
             .leftJoin(articleEntity.user, usersEntity)
             .leftJoin(articleEntity.socialUser, socialUsersEntity)
             .where(
-
-                // 제목 확인
-                articleSearchCommand.title?.let {
+                // 제목 & 사용자명 확인
+                articleSearchCommand.keyword?.let {
                     articleEntity.articleTitle.contains(it)
-                },
-
-                // 사용자명 확인
-                articleSearchCommand.author?.let {
-                    articleEntity.socialUser.userName.eq(it)
+                        .or(articleEntity.socialUser.userName.eq(it))
                         .or(articleEntity.user.userName.eq(it))
                 },
 

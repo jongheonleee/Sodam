@@ -19,6 +19,8 @@ class CommentRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userJpaRepository: UserJpaRepository,
     private val commentJpaRepository: CommentJpaRepository,
+    private val commentLikeJpaRepository: UsersCommentLikeJpaRepository,
+    private val commentDislikeJpaRepository: UsersCommentDislikeJpaRepository,
     private val formatter: Formatter
 ) {
 
@@ -85,6 +87,10 @@ class CommentRepository(
         }
 
         val foundCommentEntity = foundCommentEntityOptional.get()
+        val foundCommentLikeByComment = commentLikeJpaRepository.findByComment(foundCommentEntity)
+        commentLikeJpaRepository.deleteAll(foundCommentLikeByComment)
+        val foundCommentDislikeByComment = commentDislikeJpaRepository.findByComment(foundCommentEntity)
+        commentDislikeJpaRepository.deleteAll(foundCommentDislikeByComment)
         commentJpaRepository.delete(foundCommentEntity)
     }
 

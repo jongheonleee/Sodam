@@ -10,13 +10,16 @@ import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.response.UserSignupResponse
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.security.SodamAuthUser
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import lombok.RequiredArgsConstructor
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.util.ObjectUtils
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -71,17 +74,21 @@ class AuthController(
             )
         }
 
-        return SodamApiResponse.ok(tokenService.upsertTokenForSocialUser(foundKakaoUser.providerId))
+        return SodamApiResponse.ok(
+            tokenService.upsertTokenForSocialUser(foundKakaoUser.providerId)
+        )
     }
 
-//    // 토큰 재발급
-//    @PostMapping("/api/v1/reissue")
-//    fun reissueToken(
-//
-//    ) : SodamApiResponse<TokenResponse> {
-//
-//        return SodamApiResponse.ok(
-//
-//        )
-//    }
+    // 토큰 재발급 - 이 부분 현재 cors 에러 발생으로 추후에 개발[헤더에 값 담아서 처리하다 보니 cors 정책에 걸림]
+    // - sam-site
+    @PostMapping("/api/v1/reissue")
+    fun reissueToken(
+        httpServletRequest: HttpServletRequest,
+    ) : SodamApiResponse<String> {
+        val refreshToken = httpServletRequest.getHeader("refresh_token")
+        val accessToken = httpServletRequest.getHeader("token")
+        return SodamApiResponse.ok(
+            "de"
+        )
+    }
 }

@@ -12,4 +12,5 @@ interface UsersArticleDislikeJpaRepository : JpaRepository<UsersDislikeArticleEn
     fun existsByArticleAndUser(article: ArticleEntity, user: UsersEntity): Boolean
     fun findByArticleAndSocialUser(article: ArticleEntity, socialUser: SocialUsersEntity): Optional<UsersDislikeArticleEntity>
     fun findByArticleAndUser(article: ArticleEntity, user: UsersEntity): Optional<UsersDislikeArticleEntity>
+    fun findByArticle(article: ArticleEntity): List<UsersDislikeArticleEntity>
 }

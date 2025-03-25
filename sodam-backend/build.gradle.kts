@@ -84,6 +84,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")
     implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
+
+    // .env 관련 의존성 추가
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.2")
 }
 
 kotlin {

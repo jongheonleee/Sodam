@@ -39,7 +39,9 @@ class SecurityConfig(
             it.requestMatchers(
                 "/api/v1/auth/signup", // 회원가입
                 "/api/v1/auth/login", // 로그인
-                "/api/v1/auth/callback" // oauth2 로그인 요청
+                "/api/v1/auth/callback", // oauth2 로그인 요청
+                "/swagger-ui/**", // Swagger UI 경로
+                "/v3/api-docs/**" // Swagger API 문서 경로
             )
                 .permitAll()
                 .anyRequest()
@@ -64,8 +66,8 @@ class SecurityConfig(
         return CorsConfigurationSource {
             val configuration = CorsConfiguration()
             configuration.allowedHeaders = listOf("*")
-            configuration.allowedMethods = listOf("*")
-            configuration.allowedOriginPatterns = listOf("*")
+            configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
+            configuration.allowedOriginPatterns = listOf("https://localhost:3000")
             configuration.allowCredentials = true
             configuration
         }
@@ -75,4 +77,6 @@ class SecurityConfig(
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder() // 개발 단계 이므로 BCryptPasswordEncoder 사용
     }
+
+
 }

@@ -4,7 +4,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {ArticleFormType, CategoryType} from "../../types/article";
 import {getCategories} from "../../api/category";
-import {updateArticle} from "../../api/article";
+import {getArticleSimple, updateArticle} from "../../api/article";
 
 interface ArticleEditPageProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
@@ -233,24 +233,15 @@ export default function ArticleEditPage({
                 }
             })
 
-        // api 요청 -> 카테고리, 게시글
-        // Promise.all([
-        //     fetch('/api/categories').then(res => res.json()),
-        //     fetch(`/api/articles/edit/${articleId}`).then(res => res.json())
-        // ]).then(([categoriesData, articleData]) => {
-        //     if (categoriesData?.result === 'SUCCESS') {
-        //         setCategories(categoriesData.data);
-        //     }
-        //
-        //     if (articleData?.result === 'SUCCESS') {
-        //         setArticleForm(articleData.data);
-        //     }
-        //
-        //     console.log(articleData);
-        //     console.log(categoriesData);
-        // }).catch(error => {
-        //     console.error('Error fetching data', error);
-        // })
+
+        if (articleId) {
+            getArticleSimple(parseInt(articleId)).then((res) => {
+                if (res.status === 200) {
+                    console.log(res.data.data)
+                    setArticleForm(res.data.data)
+                }
+            })
+        }
 
     }, [articleId]);
 
