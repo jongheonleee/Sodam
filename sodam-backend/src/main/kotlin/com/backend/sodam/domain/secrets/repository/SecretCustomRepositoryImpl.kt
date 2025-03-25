@@ -74,7 +74,7 @@ class SecretCustomRepositoryImpl(
                         TagResponse(
                             articleId = it.secretId!!, // 추후에 secretId로 변경
                             tagId = tag.tagId!!,
-                            tagName = tag.tagName,
+                            tagName = tag.tagName
                         )
                     },
                     secretLikeCnt = it.secretLikeCnt,

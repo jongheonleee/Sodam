@@ -9,13 +9,13 @@ data class ArticleSearchRequest(
     @RequestParam
     val tag: String? = null,
     @RequestParam
-    val categoryId: String? = null,
+    val categoryId: String? = null
 ) {
     fun toCommand(): ArticleSearchCommand {
         return ArticleSearchCommand(
             keyword = keyword,
             tag = tag,
-            categoryId = categoryId,
+            categoryId = categoryId
         )
     }
 }

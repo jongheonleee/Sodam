@@ -26,7 +26,7 @@ class TokenRepository(
     @Transactional
     fun createTokenForSocialUser(userId: String, accessToken: String, refreshToken: String): TokenResponse {
         val foundSocialUserByProviderId = socialUserJpaRepository.findByProviderId(userId) // socialUserId != userId, userId == providerId
-                                                                                  .orElseThrow { UserException.UserNotFoundException() }
+            .orElseThrow { UserException.UserNotFoundException() }
 
         val tokenEntity = UsersTokenEntity.newTokenEntity(
             foundSocialUserByProviderId,

@@ -63,8 +63,8 @@ class ArticleController(
     // 게시글 단순 조회 - 게시글 수정 처리용
     @GetMapping("/api/v1/articles/simple/{articleId}/")
     fun getArticleSimple(
-        @PathVariable("articleId") articleId: Long,
-    ) : SodamApiResponse<ArticleSimpleResponse> {
+        @PathVariable("articleId") articleId: Long
+    ): SodamApiResponse<ArticleSimpleResponse> {
         return SodamApiResponse.ok(
             articleService.getArticleSimple(articleId)
         )

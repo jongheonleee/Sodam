@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequiredArgsConstructor
 class UserController(
     private val userService: UserService,
-    private val tokenProvider: JwtTokenProvider,
+    private val tokenProvider: JwtTokenProvider
 ) {
 
     @GetMapping("/api/v1/users/info")

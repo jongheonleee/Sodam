@@ -96,7 +96,7 @@ class ArticleService(
     fun getArticleSimple(articleId: Long): ArticleSimpleResponse {
         val sodamArticle = articleRepository.findArticleByArticleId(articleId)
         return ArticleSimpleResponse(
-            articleId = sodamArticle.articleId,
+            articleId = sodamArticle.articleId
         )
     }
 

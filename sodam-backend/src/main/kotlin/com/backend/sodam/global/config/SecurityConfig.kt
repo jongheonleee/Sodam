@@ -77,6 +77,4 @@ class SecurityConfig(
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder() // 개발 단계 이므로 BCryptPasswordEncoder 사용
     }
-
-
 }

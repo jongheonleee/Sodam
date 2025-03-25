@@ -16,10 +16,8 @@ import lombok.RequiredArgsConstructor
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.util.ObjectUtils
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -29,7 +27,6 @@ class AuthController(
     private val authenticationManagerBuilder: AuthenticationManagerBuilder,
     private val tokenService: TokenService
 ) {
-
 
     // 회원가입
     @PostMapping("/api/v1/auth/signup")
@@ -83,8 +80,8 @@ class AuthController(
     // - sam-site
     @PostMapping("/api/v1/reissue")
     fun reissueToken(
-        httpServletRequest: HttpServletRequest,
-    ) : SodamApiResponse<String> {
+        httpServletRequest: HttpServletRequest
+    ): SodamApiResponse<String> {
         val refreshToken = httpServletRequest.getHeader("refresh_token")
         val accessToken = httpServletRequest.getHeader("token")
         return SodamApiResponse.ok(

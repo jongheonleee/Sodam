@@ -27,7 +27,7 @@ class ArticleRepository(
     private val commentRepository: CommentRepository,
     private val commentJpaRepository: CommentJpaRepository,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
-    private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository,
+    private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository
 ) {
 
     @Transactional
