@@ -1,7 +1,9 @@
 package com.backend.sodam.domain.users.repository
 
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.subscriptions.model.UserSubscription
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
+import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.SodamUser
@@ -9,6 +11,8 @@ import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.command.toEntity
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -165,5 +169,72 @@ class UserRepository(
         }
 
         throw UserException.UserNotFoundException()
+    }
+
+    @Transactional(readOnly = true)
+    fun findProfileInfo(userId: String): Optional<SodamUserDetail> {
+        val sodamUseOptional = findByUserId(userId)
+        if (sodamUseOptional.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val sodamUser = sodamUseOptional.get()
+        when (sodamUser.userType) {
+            UserType.SOCIAL -> {
+                return userJpaRepository.findProfileInfoForSocialUser(
+                        socialUserId = sodamUser.userId
+                )
+            }
+
+            else -> {
+                return userJpaRepository.findProfileInfoForUser(
+                        userId = sodamUser.userId
+                )
+            }
+        }
+    }
+
+    @Transactional(readOnly = true)
+    fun findOwnArticlesByPageBy(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
+        val sodamUserOptional = findByUserId(userId)
+        if (sodamUserOptional.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val sodamUser = sodamUserOptional.get()
+
+        when(sodamUser.userType) {
+            UserType.SOCIAL -> {
+                return userJpaRepository.findSocialUserOwnArticlesByPageBy(
+                    pageable = pageable,
+                    socialUserId = sodamUser.userId
+                ).map {
+                    ArticleSummaryResponse(
+                        articleId = it.articleId,
+                        title = it.title,
+                        username = it.author,
+                        summary = it.summary,
+                        createdAt = it.createdAt,
+                        tags = it.tags
+                    )
+                }
+            }
+
+            else -> {
+                return userJpaRepository.findUserOwnArticlesByPageBy(
+                    pageable = pageable,
+                    userId = sodamUser.userId
+                ).map {
+                    ArticleSummaryResponse(
+                        articleId = it.articleId,
+                        title = it.title,
+                        username = it.author,
+                        summary = it.summary,
+                        createdAt = it.createdAt,
+                        tags = it.tags
+                    )
+                }
+            }
+        }
     }
 }

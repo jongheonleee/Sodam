@@ -1,30 +1,43 @@
 import React from "react";
-
-const profileImage = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+import {UserProfileInfoType} from "../types/auth";
 
 interface ProfileProps {
     handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+    userProfileInfo :UserProfileInfoType | null
 }
 
 export default function Profile({
     handleLogout,
+    userProfileInfo,
 }: ProfileProps) {
     return (
-        <div className="profile__box">
-            <div className="flex__box-lg">
-                <img
-                    className="profile__image"
-                    src={profileImage}
-                />
-                <div>
-                    <div className="profile__email">qwefghnm1212@gmail.com</div>
-                    <div className="profile__name">yeonuel</div>
-                    <div className="profile__introduce">안녕하세요 풀스택 AI 서비스 개발자를 목표로 학습하고 있는 28살 취준생입니다. 🧑🏻‍💻 </div>
+        userProfileInfo ?
+            <div className="profile__container">
+                {/* 좌측: 프로필 이미지, 이름, 이메일 */}
+                <div className="profile__left">
+                    <img className="profile__image" src={userProfileInfo.profileImageUrl} alt="프로필 이미지" />
+                    <div className="profile__name">{userProfileInfo.name}</div>
+                    <div className="profile__email">{userProfileInfo.email}</div>
+                    <div className="profile__introduce"> 안녕하세요 저는 AI 풀스택 엔지니어 이종헌입니다.🙋🏻‍♂️ </div>
+                </div>
+
+                {/* 우측: 자기소개 및 추가 정보 */}
+                <div className="profile__right">
+
+                    <div className="profile__details">
+                        {/*{userProfileInfo.introduce && (*/}
+                        {/*    <div className="profile__introduce">{userProfileInfo.introduce}</div>*/}
+                        {/*)}*/}
+                        <div>🧑🏻‍💻 포지션 : AI 서비스 개발자 </div>
+                        <div>🏆 랭킹: {userProfileInfo.ranking}</div>
+                        <div>🔰 회원 등급: {userProfileInfo.grade}</div>
+                        <div>📝 작성한 게시글: {userProfileInfo.articleTotalCnt}</div>
+                        <div>📜 보유 구독권: {userProfileInfo.subscription}</div>
+                    </div>
+
                 </div>
             </div>
-            <button role="presentation" className="profile__logout" onClick={(e) => handleLogout(e)}>
-                로그아웃
-            </button>
-        </div>
+
+            : <div> 유저의 프로필이 없습니다. </div>
     )
 }

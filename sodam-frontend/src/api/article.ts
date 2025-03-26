@@ -112,3 +112,11 @@ export const dislikeArticle = (
         }
     })
 }
+
+export const getUserArticles = () => {
+    return client.get(`/api/v1/users/articles`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}

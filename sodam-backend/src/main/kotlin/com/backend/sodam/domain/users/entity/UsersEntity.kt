@@ -1,10 +1,14 @@
 package com.backend.sodam.domain.users.entity
 
+import com.backend.sodam.domain.articles.entity.ArticleEntity
+import com.backend.sodam.domain.subscriptions.entity.UsersSubscriptionsEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.global.audit.MutableBaseEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
@@ -17,6 +21,13 @@ class UsersEntity(
     @Id
     @Column(name = "USER_ID")
     val userId: String,
+
+    // 양방향 매핑
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var subscriptions: MutableList<UsersSubscriptionsEntity> = mutableListOf(),
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var articles: MutableList<ArticleEntity> = mutableListOf(),
 
     // 가변필드
     userEmail: String,

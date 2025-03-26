@@ -1,16 +1,16 @@
 package com.backend.sodam.domain.users.service
 
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.UserRepository
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
-import com.backend.sodam.domain.users.service.response.SimpleUserResponse
-import com.backend.sodam.domain.users.service.response.SocialUserResponse
-import com.backend.sodam.domain.users.service.response.UserResponse
-import com.backend.sodam.domain.users.service.response.UserSignupResponse
+import com.backend.sodam.domain.users.service.response.*
 import com.backend.sodam.global.port.KakaoUserPort
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -98,6 +98,24 @@ class UserService(
         return userRepository.findByUserEmail(email)
             .map { UserResponse.toUserResponse(it) }
             .orElse(null)
+    }
+
+    fun findUserProfileInfo(userId: String): UserProfileResponse {
+        val sodamUserDetailOptional = userRepository.findProfileInfo(userId)
+        if (sodamUserDetailOptional.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val sodamUserDetail = sodamUserDetailOptional.get()
+        return sodamUserDetail.toResponse()
+
+    }
+
+    fun getOwnArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
+        return userRepository.findOwnArticlesByPageBy(
+            pageable = pageable,
+            userId = userId
+        )
     }
 
 }

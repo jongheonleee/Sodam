@@ -42,11 +42,11 @@ class ArticleEntity(
 
     // 소셜 유저, 일반 유저
     @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = true)
+    @JoinColumn(name = "USER_ID")
     val user: UsersEntity? = null,
 
     @ManyToOne
-    @JoinColumn(name = "SOCIAL_USER_ID", nullable = true)
+    @JoinColumn(name = "SOCIAL_USER_ID")
     val socialUser: SocialUsersEntity? = null,
 
     // 양방향 매핑 처리

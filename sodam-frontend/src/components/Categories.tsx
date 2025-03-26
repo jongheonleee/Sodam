@@ -21,15 +21,13 @@ interface CategoryProps {
 
 export default function Categories({
         hasNavigation,
-        defaultCategoryTap,
         categories,
         keyword,
         onChangeCategory,
         onChangeKeyword,
         onSearchKeyword,
         activeCategory
-    } : CategoryProps) {
-
+} : CategoryProps) {
 
     return (
         <>

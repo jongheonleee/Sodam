@@ -26,16 +26,16 @@ class UsersSubscriptionsEntity(
     @Column(name = "USER_SUBSCRIPTION_ID")
     val userSubscriptionId: String,
 
-    // FK(추후에 연관관계 매핑)s
+    // FK(추후에 연관관계 매핑)
     // - 회원 아이디 : 회원 보유 구독권 - 회원 = N : 1
     // - 구독권 아이디 : 회원 보유 구독권 - 구독권 = N : 1
     @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = true)
-    val user: UsersEntity? = null,
+    @JoinColumn(name = "USER_ID")
+    var user: UsersEntity? = null,
 
     @ManyToOne
-    @JoinColumn(name = "SOCIAL_USER_ID", nullable = true)
-    val socialUser: SocialUsersEntity? = null,
+    @JoinColumn(name = "SOCIAL_USER_ID")
+    var socialUser: SocialUsersEntity? = null,
 
     @ManyToOne
     @JoinColumn(name = "SUBSCRIPTION_ID")

@@ -1,12 +1,11 @@
 package com.backend.sodam.domain.users.entity
 
+import com.backend.sodam.domain.articles.entity.ArticleEntity
+import com.backend.sodam.domain.subscriptions.entity.UsersSubscriptionsEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.util.*
@@ -25,6 +24,13 @@ class SocialUsersEntity(
 
     @Column(name = "PROVIDER_ID")
     val providerId: String,
+
+    // 양방향 매핑
+    @OneToMany(mappedBy = "socialUser", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var subscriptions: MutableList<UsersSubscriptionsEntity> = mutableListOf(),
+
+    @OneToMany(mappedBy = "socialUser", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var articles: MutableList<ArticleEntity> = mutableListOf(),
 
     userName: String
 ) : MutableBaseEntity() {

@@ -23,3 +23,17 @@ export interface SignupProps {
     profileImageUrl?: string;   // S3 업로드 후 반환된 URL
     introduce: string;
 }
+
+// 회원 프로필 타입
+export interface UserProfileInfoType {
+    userId: string
+    articleTotalCnt: number
+    email: string | null
+    introduce: string
+    grade: string
+    name: string
+    profileImageUrl: string
+    ranking: number
+    subscription: string
+
+}
