@@ -58,6 +58,7 @@ class SecurityConfig(
 
         // jwt 토큰 필터 추가(해당 필터 앞단에 추가함) -> 인증 이전에 처리해야함
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+
         // 회원 이력 처리 필터 추가 -> 인증 이후에 처리해야함
         httpSecurity.addFilterAfter(userHistoryLoggingFilter, UsernamePasswordAuthenticationFilter::class.java)
 
@@ -69,7 +70,7 @@ class SecurityConfig(
             val configuration = CorsConfiguration()
             configuration.allowedHeaders = listOf("*")
             configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
-            configuration.allowedOriginPatterns = listOf("https://localhost:3000")
+            configuration.allowedOriginPatterns = listOf("https://localhost:3000" )
             configuration.allowCredentials = true
             configuration
         }

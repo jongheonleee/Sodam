@@ -54,19 +54,22 @@ class ArticleController(
 
     // 게시글 상세 조회
     @GetMapping("/api/v1/articles/{articleId}")
-    fun getArticle(@PathVariable("articleId") articleId: Long): SodamApiResponse<ArticleDetailResponse> {
+    fun getArticle(
+        @PathVariable("articleId") articleId: Long
+    ): SodamApiResponse<ArticleDetailResponse> {
         return SodamApiResponse.ok(
             articleService.getArticleDetail(articleId)
         )
     }
 
     // 게시글 단순 조회 - 게시글 수정 처리용
-    @GetMapping("/api/v1/articles/simple/{articleId}")
+    @GetMapping("/api/v1/articles/edit/{articleId}")
     fun getArticleSimple(
         @PathVariable("articleId") articleId: Long
     ): SodamApiResponse<ArticleSimpleResponse> {
+        val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
-            articleService.getArticleSimple(articleId)
+            articleService.getArticleSimple(userId, articleId)
         )
     }
 

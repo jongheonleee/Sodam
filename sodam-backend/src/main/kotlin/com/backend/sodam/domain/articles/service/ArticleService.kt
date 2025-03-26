@@ -93,8 +93,12 @@ class ArticleService(
         )
     }
 
-    fun getArticleSimple(articleId: Long): ArticleSimpleResponse {
+    fun getArticleSimple(userId: String, articleId: Long): ArticleSimpleResponse {
         val sodamArticle = articleRepository.findArticleByArticleId(articleId)
+        if (!sodamArticle.canAccess(userId)) {
+            throw ArticleException.ArticleAccessDeniedException()
+        }
+
         return ArticleSimpleResponse(
             articleId = sodamArticle.articleId,
             title = sodamArticle.title,

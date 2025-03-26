@@ -23,7 +23,7 @@ export const getArticlesWithCategoryIdAndPageNumber = (pageNumber: number = 1, c
 }
 
 export const getArticleSimple = (articleId: number) => {
-    return client.get(`/api/v1/articles/simple/${articleId}`, {
+    return client.get(`/api/v1/articles/edit/${articleId}`, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
