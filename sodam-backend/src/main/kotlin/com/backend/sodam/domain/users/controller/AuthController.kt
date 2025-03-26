@@ -8,8 +8,10 @@ import com.backend.sodam.domain.users.controller.request.toCommand
 import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.response.UserSignupResponse
+import com.backend.sodam.global.commons.ErrorCode
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.security.SodamAuthUser
+import io.micrometer.common.util.StringUtils
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import lombok.RequiredArgsConstructor
@@ -76,17 +78,18 @@ class AuthController(
         )
     }
 
-    // 토큰 재발급 - 이 부분 현재 cors 에러 발생으로 추후에 개발[헤더에 값 담아서 처리하다 보니 cors 정책에 걸림]
-    // - sam-site
     @PostMapping("/api/v1/reissue")
     fun reissueToken(
         httpServletRequest: HttpServletRequest
-    ): SodamApiResponse<String> {
+    ): SodamApiResponse<out TokenResponse> {
         val refreshToken = httpServletRequest.getHeader("refresh_token")
         val accessToken = httpServletRequest.getHeader("token")
-        println("RefreshToken: $refreshToken")
+
+        if (StringUtils.isBlank(refreshToken) || StringUtils.isBlank(accessToken)) {
+            return SodamApiResponse.fail(ErrorCode.DEFAULT_ERROR, "토큰이 없습니다.")
+        }
         return SodamApiResponse.ok(
-            "de"
+            tokenService.reissueToken(accessToken, refreshToken)
         )
     }
 }

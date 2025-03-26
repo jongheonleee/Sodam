@@ -6,6 +6,9 @@ import com.backend.sodam.domain.tokens.service.response.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.UserRepository
+import com.backend.sodam.domain.users.service.response.SocialUserResponse
+import com.backend.sodam.domain.users.service.response.UserResponse
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -16,7 +19,7 @@ import java.util.*
 class TokenRepository(
     private val userJpaRepository: UserJpaRepository,
     private val tokenJpaRepository: TokenJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository
+    private val socialUserJpaRepository: SocialUserJpaRepository,
 ) {
 
     // 소셜 유저 조회
@@ -74,15 +77,26 @@ class TokenRepository(
 
     @Transactional
     fun updateTokenForUser(email: String, accessToken: String, refreshToken: String) {
-        val foundTokenByEmail = tokenJpaRepository.findByUserId(email).orElseThrow { TokenException.UserTokenNotFoundException() }
+        val foundTokenByEmail = tokenJpaRepository.findByUserId(email)
+                                                                   .orElseThrow { TokenException.UserTokenNotFoundException() }
         foundTokenByEmail.updateToken(accessToken, refreshToken)
         tokenJpaRepository.save(foundTokenByEmail)
     }
 
+    // providerId => socialUserId
     @Transactional
     fun updateTokenForSocialUser(providerId: String, accessToken: String, refreshToken: String) {
-        val foundTokenByProviderId = tokenJpaRepository.findBySocialUserId(providerId).orElseThrow { TokenException.UserTokenNotFoundException() } // 추후에 예외 정의하기
+        // 추후 리팩토링 대상
+        val foundSocialUserByProviderId = socialUserJpaRepository.findByProviderId(providerId)
+        if (foundSocialUserByProviderId.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val foundTokenByProviderId = tokenJpaRepository.findBySocialUserId(foundSocialUserByProviderId.get().socialUserId)
+                                                                        .orElseThrow { TokenException.UserTokenNotFoundException() } // 추후에 예외 정의하기
+
         foundTokenByProviderId.updateToken(accessToken, refreshToken)
         tokenJpaRepository.save(foundTokenByProviderId)
     }
+
 }

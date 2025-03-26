@@ -159,6 +159,11 @@ class UserRepository(
             return findSocialUserBySocialUserId(userId)
         }
 
+        val existsByProviderId = socialUserJpaRepository.existsByProviderId(userId)
+        if (existsByProviderId) {
+            return findSocialUserByProviderId(userId)
+        }
+
         throw UserException.UserNotFoundException()
     }
 }

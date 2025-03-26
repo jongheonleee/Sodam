@@ -4,6 +4,8 @@ import com.backend.sodam.domain.tokens.exception.TokenException
 import com.backend.sodam.domain.tokens.repository.TokenRepository
 import com.backend.sodam.domain.tokens.service.response.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
+import com.backend.sodam.domain.users.model.UserType
+import com.backend.sodam.domain.users.repository.UserRepository
 import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.service.response.UserResponse
 import com.backend.sodam.global.port.KakaoTokenPort
@@ -26,7 +28,7 @@ class TokenService(
     private val tokenRepository: TokenRepository,
     private val kakaoTokenPort: KakaoTokenPort,
     private val userService: UserService,
-
+    private val userRepository: UserRepository,
     @Value("\${jwt.secret}")
     val secretKey: String
 ) {
@@ -114,6 +116,48 @@ class TokenService(
             accessToken = accessToken,
             refreshToken = refreshToken
         )
+    }
+
+    // 토큰 재발행
+    fun reissueToken(accessToken: String, refreshToken: String): TokenResponse {
+        val claimsJws = Jwts.parser()
+            .setSigningKey(secretKey)
+            .build()
+            .parseClaimsJws(accessToken)
+
+        val userId = claimsJws.payload["userId"] as String
+        val sodamUserOptional = userRepository.findByUserId(userId)
+        if (sodamUserOptional.isEmpty) {
+            throw TokenException.InvalidTokenException()
+        }
+
+        val sodamUser = sodamUserOptional.get()
+        when(sodamUser.userType) {
+            UserType.SOCIAL -> {
+                val foundTokenBySocialUserId = tokenRepository.findTokenBySocialUserId(
+                    socialUserId = sodamUser.userId
+                )
+
+                val sodamToken = foundTokenBySocialUserId.get()
+                if (sodamToken.refreshToken != refreshToken) {
+                    throw TokenException.InvalidTokenException()
+                }
+
+                return updateTokenForSocialUser(userId)
+            }
+            else -> {
+                val foundTokenByUserId = tokenRepository.findTokenByUserId(
+                    userId = sodamUser.userId
+                )
+                val sodamToken = foundTokenByUserId.get()
+                if (sodamToken.refreshToken != refreshToken) {
+                    throw TokenException.InvalidTokenException()
+                }
+
+                return updateTokenForUser(userId)
+            }
+        }
+
     }
 
     private fun getToken(userId: String, expiredAt: Duration): String {

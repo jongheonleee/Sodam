@@ -32,7 +32,7 @@ class UsersTokenEntity(
 
     // - 소셜 회원 :회원 토큰 - 소셜 화원 : N : 1
     @ManyToOne
-    @JoinColumn(name = "SOCIAL_USER_ID", nullable = true)
+    @JoinColumn(name = "SOCIAL_USER_ID", nullable = true) // 이 부분 위험
     val socialUser: SocialUsersEntity? = null,
 
     // 가변 필드
