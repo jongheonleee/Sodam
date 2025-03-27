@@ -5,6 +5,7 @@ import com.backend.sodam.domain.categories.service.dto.CategoriesResponse
 import com.backend.sodam.global.commons.SodamApiResponse
 import lombok.RequiredArgsConstructor
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -12,9 +13,12 @@ import org.springframework.web.bind.annotation.RestController
 class CategoryController(
     private val categoryService: CategoryService
 ) {
-    @GetMapping("/api/v1/categories")
-    fun getCategories(): SodamApiResponse<CategoriesResponse> {
-        val fetchedCategories = categoryService.fetchFromClient()
-        return SodamApiResponse.ok(fetchedCategories)
+    @GetMapping("/api/v1/categories/{topCategoryId}")
+    fun getCategories(
+        @PathVariable("topCategoryId") topCategoryId: String
+    ): SodamApiResponse<CategoriesResponse> {
+        return SodamApiResponse.ok(
+            categoryService.findCategories(topCategoryId)
+        )
     }
 }

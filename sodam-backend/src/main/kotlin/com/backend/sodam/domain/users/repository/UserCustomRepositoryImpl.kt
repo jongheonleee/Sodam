@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.users.repository
 
 import com.backend.sodam.domain.articles.entity.QArticleEntity.*
+import com.backend.sodam.domain.articles.entity.QUsersLikeArticleEntity.*
 import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.categories.entity.QCategoryEntity.categoryEntity
 import com.backend.sodam.domain.subscriptions.entity.QUsersSubscriptionsEntity.*
@@ -155,5 +156,86 @@ class UserCustomRepositoryImpl(
                 )
             }
         )
+    }
+
+    @Transactional(readOnly = true)
+    override fun findSocialUserOwnLikeArticlesByPageBy(socialUserId: String, pageable: Pageable): Page<SodamArticle> {
+        val query = jpaQueryFactory.selectFrom(articleEntity)
+            .leftJoin(articleEntity.socialUser, socialUsersEntity)
+            .leftJoin(articleEntity.tags, tagsEntity)
+            .leftJoin(articleEntity.category, categoryEntity)
+            .leftJoin(usersLikeArticleEntity)
+            .on(usersLikeArticleEntity.article.eq(articleEntity))
+            .where(articleEntity.socialUser.socialUserId.eq(socialUserId)
+                    .and(usersLikeArticleEntity.socialUser.socialUserId.eq(socialUserId)))
+
+        val totalArticleCount = query.fetch().size
+
+        val foundResults = query.offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .orderBy(articleEntity.createdAt.desc())
+            .fetch()
+            .map {
+                SodamArticle(
+                    userId = it.socialUser!!.socialUserId,
+                    articleId = it.articleId!!,
+                    title = it.articleTitle,
+                    author = it.name,
+                    summary = it.articleSummary,
+                    content = it.articleContent,
+                    tags = it.tags.map { tag -> tag.tagName },
+                    viewCnt = it.articleViewCnt,
+                    likeCnt = it.articleLikeCnt,
+                    dislikeCnt = it.articleDislikeCnt,
+                    createdAt = formatter.timeFormat(it.createdAt)
+                )
+            }
+
+        return PageImpl(
+            foundResults,
+            pageable,
+            totalArticleCount.toLong()
+        )
+    }
+
+    @Transactional(readOnly = true)
+    override fun findUserOwnLikeArticlesByPageBy(userId: String, pageable: Pageable): Page<SodamArticle> {
+        val query = jpaQueryFactory.selectFrom(articleEntity)
+            .leftJoin(articleEntity.user, usersEntity)
+            .leftJoin(articleEntity.tags, tagsEntity)
+            .leftJoin(articleEntity.category, categoryEntity)
+            .leftJoin(usersLikeArticleEntity)
+            .on(usersLikeArticleEntity.article.eq(articleEntity))
+            .where(articleEntity.user.userId.eq(userId)
+                .and(usersLikeArticleEntity.user.userId.eq(userId)))
+
+        val totalArticleCount = query.fetch().size
+
+        val foundResults = query.offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .orderBy(articleEntity.createdAt.desc())
+            .fetch()
+            .map {
+                SodamArticle(
+                    userId = it.user!!.userId,
+                    articleId = it.articleId!!,
+                    title = it.articleTitle,
+                    author = it.name,
+                    summary = it.articleSummary,
+                    content = it.articleContent,
+                    tags = it.tags.map { tag -> tag.tagName },
+                    viewCnt = it.articleViewCnt,
+                    likeCnt = it.articleLikeCnt,
+                    dislikeCnt = it.articleDislikeCnt,
+                    createdAt = formatter.timeFormat(it.createdAt)
+                )
+            }
+
+        return PageImpl(
+            foundResults,
+            pageable,
+            totalArticleCount.toLong()
+        )
+
     }
 }

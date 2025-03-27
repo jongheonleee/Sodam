@@ -5,8 +5,8 @@ const client = axios.create({
 });
 
 
-export const getCategories = () => {
-    return client.get("/api/v1/categories",  {
+export const getCategories = (topCategoryId: string) => {
+    return client.get(`/api/v1/categories/${topCategoryId}`,  {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
         }

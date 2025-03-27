@@ -58,7 +58,7 @@ export default function ArticlesPage({
         })
 
         // 카테고리 조회
-        getCategories().then((res) => {
+        getCategories('CT0001').then((res) => {
             if (res.status === 200) {
                 setCategories(res.data.data.categories)
                 console.log(res.data.data)

@@ -225,7 +225,7 @@ export default function ArticleEditPage({
 
 
         // 카테고리 데이터 용청 받아오기
-        getCategories()
+        getCategories('CT0001')
             .then((res) => {
                 if (res.status === 200) {
                     console.log(res.data.data.categories)

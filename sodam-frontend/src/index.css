@@ -219,7 +219,7 @@ input:checked + .carousel__slide-container .nav label {
 .article__detail {
   min-height: 90vh;
   padding: 20px;
-  max-width: 800px;
+  max-width: 975px;
   margin: 0 auto;
   text-align: left;
   line-height: 24px;
@@ -332,11 +332,11 @@ input:checked + .carousel__slide-container .nav label {
   align-items: center; /* 세로 중앙 정렬 */
   gap: 12px;
   margin: 0 auto;
-  max-width: 800px;
+  max-width: 975px;
   font-size: 16px;
   color: gray;
   cursor: pointer;
-  padding: 48px 20px 0px 20px;
+  padding: 20px 20px 0 20px;
 }
 
 .article__navigation--active {
@@ -348,7 +348,7 @@ input:checked + .carousel__slide-container .nav label {
 .article__category {
   color: gray;
   border: 1px solid lightgray;
-  backgroud: #f2f2f2;
+  background: #f2f2f2;
   padding: 0 4px;
   border-radius: 10px;
   font-size: 12px;
@@ -357,8 +357,8 @@ input:checked + .carousel__slide-container .nav label {
 .article__hashtag {
   color: gray;
   border: 1px solid lightgray;
-  backgroud: #f2f2f2;
-  padding: 0px 4px;
+  background: #f2f2f2;
+  padding: 0 4px;
   margin: 3px;
   border-radius: 10px;
   font-size: 12px;
@@ -478,9 +478,9 @@ input:checked + .carousel__slide-container .nav label {
 /* form */
 .form {
   margin: 0 auto;
-  max-width: 680px;
+  max-width: 975px;
   padding: 20px;
-  margin-top: 20px;
+  /*margin-top: 20px;*/
 }
 
 .form input {
@@ -490,7 +490,7 @@ input:checked + .carousel__slide-container .nav label {
   border-radius: 0.3rem;
   border: 1px solid lightgray;
   width: 96%;
-  max-width: 680px;
+  max-width: 975px;
 }
 
 .form textarea {
@@ -501,7 +501,7 @@ input:checked + .carousel__slide-container .nav label {
   border-radius: 0.3rem;
   border: 1px solid lightgray;
   width: 96%;
-  max-width: 680px;
+  max-width: 975px;
 }
 
 .form .form__block {
@@ -563,9 +563,9 @@ input:checked + .carousel__slide-container .nav label {
 
 .form select {
   border: 1px solid lightgray;
-  max-width: 680px;
+  max-width: 975px;
   height: 40px;
-  padding: 0px 20px;
+  padding: 0 20px;
   font-size: 16px;
   border-radius: 0.3rem;
 }
@@ -672,7 +672,7 @@ input:checked + .carousel__slide-container .nav label {
   display: flex;
   justify-content: space-between;
   align-items: center; /* 높이 정렬 */
-  max-width: 800px;
+  max-width: 975px;
   margin: 40px auto;
   gap: 8px;
 }
@@ -696,18 +696,18 @@ input:checked + .carousel__slide-container .nav label {
 }
 
 .profile__name {
-  font-size: 20px;
+  font-size: 25px;
   font-weight: bold;
   margin-top: 8px;
 }
 
 .profile__email {
-  font-size: 12px;
+  font-size: 15px;
   color: #555;
 }
 
 .profile__introduce {
-  font-size: 12px;
+  font-size: 15px;
   color: #555;
 }
 
@@ -870,10 +870,8 @@ input:checked + .carousel__slide-container .nav label {
   border: 1px solid lightgray;
   display: block;
   width: 100%;
-  max-width: 680px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+  max-width: 975px;
+  box-sizing: border-box; /* 표준 속성만 사용 */
 }
 
 .comments__form .form__block {
@@ -1041,7 +1039,7 @@ input:checked + .carousel__slide-container .nav label {
 .subscription__list {
   min-height: 90vh;
   padding: 20px;
-  max-width: 680px;
+  max-width: 975px;
   margin: 0 auto;
   text-align: center;
   line-height: 24px;
@@ -1050,7 +1048,7 @@ input:checked + .carousel__slide-container .nav label {
 .subscription__form {
   min-height: 90vh;
   padding: 20px;
-  max-width: 680px;
+  max-width: 975px;
   margin: 0 auto;
   text-align: center;
   line-height: 24px;
@@ -1204,7 +1202,7 @@ input:checked + .carousel__slide-container .nav label {
 .secret__list {
   min-height: 90vh;
   padding: 20px;
-  max-width: 680px;
+  max-width: 975px;
   margin: 0 auto;
   text-align: left;
   line-height: 24px;

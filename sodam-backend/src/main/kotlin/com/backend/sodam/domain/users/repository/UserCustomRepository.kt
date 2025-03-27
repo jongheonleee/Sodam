@@ -11,4 +11,6 @@ interface UserCustomRepository {
     fun findProfileInfoForUser(userId: String): Optional<SodamUserDetail>
     fun findUserOwnArticlesByPageBy(userId: String, pageable: Pageable): Page<SodamArticle>
     fun findSocialUserOwnArticlesByPageBy(socialUserId: String, pageable: Pageable): Page<SodamArticle>
+    fun findSocialUserOwnLikeArticlesByPageBy(socialUserId: String, pageable: Pageable): Page<SodamArticle>
+    fun findUserOwnLikeArticlesByPageBy(userId: String, pageable: Pageable): Page<SodamArticle>
 }

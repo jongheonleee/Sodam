@@ -16,4 +16,11 @@ class CategoryService(
         val fetchedValidCategories = categoryRepository.fetchValidCategories()
         return CategoriesResponse(fetchedValidCategories)
     }
+
+    fun findCategories(topCategoryId: String): CategoriesResponse {
+        val fetchedValidCategories = categoryRepository.fetchValidCategoriesByTopCategoryId(
+            topCategoryId = topCategoryId
+        )
+        return CategoriesResponse(fetchedValidCategories)
+    }
 }

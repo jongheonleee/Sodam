@@ -120,3 +120,11 @@ export const getUserArticles = () => {
         }
     })
 }
+
+export const getUserLikeArticles = () => {
+    return client.get(`/api/v1/users/like/articles`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}

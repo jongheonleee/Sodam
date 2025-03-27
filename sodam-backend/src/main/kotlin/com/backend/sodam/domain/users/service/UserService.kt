@@ -118,4 +118,11 @@ class UserService(
         )
     }
 
+    fun getOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
+        return userRepository.findOwnLikeArticles(
+            pageable = pageable,
+            userId = userId
+        )
+    }
+
 }

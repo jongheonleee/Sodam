@@ -237,4 +237,48 @@ class UserRepository(
             }
         }
     }
+
+    @Transactional(readOnly = true)
+    fun findOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
+        val sodamUserOptional = findByUserId(userId)
+        if (sodamUserOptional.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val sodamUser = sodamUserOptional.get()
+
+        when(sodamUser.userType) {
+            UserType.SOCIAL -> {
+                return userJpaRepository.findSocialUserOwnLikeArticlesByPageBy(
+                    pageable = pageable,
+                    socialUserId = sodamUser.userId
+                ).map {
+                    ArticleSummaryResponse(
+                        articleId = it.articleId,
+                        title = it.title,
+                        username = it.author,
+                        summary = it.summary,
+                        createdAt = it.createdAt,
+                        tags = it.tags
+                    )
+                }
+            }
+
+            else -> {
+                return userJpaRepository.findUserOwnLikeArticlesByPageBy(
+                    pageable = pageable,
+                    userId = sodamUser.userId
+                ).map {
+                    ArticleSummaryResponse(
+                        articleId = it.articleId,
+                        title = it.title,
+                        username = it.author,
+                        summary = it.summary,
+                        createdAt = it.createdAt,
+                        tags = it.tags
+                    )
+                }
+            }
+        }
+    }
 }

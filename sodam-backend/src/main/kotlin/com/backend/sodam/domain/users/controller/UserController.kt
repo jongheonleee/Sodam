@@ -40,4 +40,17 @@ class UserController(
             )
         )
     }
+
+    @GetMapping("/api/v1/users/like/articles")
+    fun getUserLikedArticles(
+        pageable: Pageable,
+    ): SodamApiResponse<Page<ArticleSummaryResponse>> {
+        val userId = tokenProvider.getUserId()
+        return SodamApiResponse.ok(
+            userService.getOwnLikeArticles(
+                userId = userId,
+                pageable = pageable
+            )
+        )
+    }
 }

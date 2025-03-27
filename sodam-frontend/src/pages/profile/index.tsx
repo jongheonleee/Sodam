@@ -8,7 +8,7 @@ import {
     getArticleByKeyword,
     getArticlesByCategoryId,
     getArticlesByPageNumber,
-    getArticlesByTag, getArticlesWithCategoryIdAndPageNumber, getUserArticles
+    getArticlesByTag, getArticlesWithCategoryIdAndPageNumber, getUserArticles, getUserLikeArticles
 } from "../../api/article";
 import {getUserInfo} from "../../api/user";
 import {UserProfileInfoType} from "../../types/auth";
@@ -72,7 +72,7 @@ export default function ProfilePage({
         })
 
         // 카테고리 조회
-        getCategories().then((res) => {
+        getCategories('CT0002').then((res) => {
             if (res.status === 200) {
                 setCategories(res.data.data.categories)
                 console.log(res.data.data)
@@ -114,19 +114,24 @@ export default function ProfilePage({
         if (selectedCategory) {
             setActiveCategory(selectedCategory);
 
-            if (selectedCategory.categoryName === '전체') {
-                getArticlesByPageNumber(
-                    page
-                ).then((res) => {
+            if (selectedCategory.categoryName === '작성한 글') {
+                getUserArticles().then((res) => {
                     if (res.status === 200) {
                         setArticles(res.data.data.content)
                         setPage(res.data.data.pageNumber)
                         setTotalPages(res.data.data.totalPages)
                     }
-
-                    console.log(res.data.data)
                 })
-            } else {
+            } else if (selectedCategory.categoryName === '좋아요') {
+                getUserLikeArticles().then((res) => {
+                    if (res.status === 200) {
+                        setArticles(res.data.data.content)
+                        setPage(res.data.data.pageNumber)
+                        setTotalPages(res.data.data.totalPages)
+                    }
+                })
+            }
+            else {
                 getArticlesByCategoryId(
                     selectedCategory.categoryId
                 ).then((res) => {
@@ -148,24 +153,25 @@ export default function ProfilePage({
 
         if (selectedCategory && selectedCategory.categoryName !== '전체') {
             setActiveCategory(selectedCategory)
-            getArticlesWithCategoryIdAndPageNumber(value, selectedCategory.categoryId).then((res) => {
-                if (res.status === 200) {
-                    setArticles(res.data.data.content)
-                    setPage(res.data.data.pageNumber)
-                    setTotalPages(res.data.data.totalPages)
-                    console.log(res.data.data)
-
-                }
-            })
+            if (selectedCategory.categoryName === '작성한 글') {
+                getUserArticles().then((res) => {
+                    if (res.status === 200) {
+                        setArticles(res.data.data.content)
+                        setPage(res.data.data.pageNumber)
+                        setTotalPages(res.data.data.totalPages)
+                    }
+                })
+            }
+            // getArticlesWithCategoryIdAndPageNumber(value, selectedCategory.categoryId).then((res) => {
+            //     if (res.status === 200) {
+            //         setArticles(res.data.data.content)
+            //         setPage(res.data.data.pageNumber)
+            //         setTotalPages(res.data.data.totalPages)
+            //         console.log(res.data.data)
+            //
+            //     }
+            // })
         } else {
-            getArticlesByPageNumber(value).then((res) => {
-                if (res.status === 200) {
-                    setArticles(res.data.data.content)
-                    setPage(res.data.data.pageNumber)
-                    setTotalPages(res.data.data.totalPages)
-                    console.log(res.data.data)
-                }
-            })
         }
     }
 
@@ -194,7 +200,16 @@ export default function ProfilePage({
                 userProfileInfo={userProfile}
             />
 
-            {/* 카테고리 영역 */}
+            <Categories
+                hasNavigation={true}
+                defaultCategoryTap={defaultCategory}
+                categories={categories}
+                keyword={keyword}
+                onChangeCategory={handleCategoryChange}
+                onChangeKeyword={setKeyword}
+                onSearchKeyword={handleKeywordSearch}
+                activeCategory={activeCategory}
+            />
 
             <Articles
                 articles={articles}
