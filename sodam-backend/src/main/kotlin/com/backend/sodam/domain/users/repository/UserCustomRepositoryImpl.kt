@@ -58,7 +58,7 @@ class UserCustomRepositoryImpl(
     @Transactional(readOnly = true)
     override fun findUserOwnArticlesByPageBy(userId: String, pageable: Pageable): Page<SodamArticle> {
         val query = jpaQueryFactory.selectFrom(articleEntity)
-                                                         .leftJoin(usersEntity.articles, articleEntity)
+                                                         .leftJoin(articleEntity.user, usersEntity)
                                                          .leftJoin(articleEntity.tags, tagsEntity)
                                                          .leftJoin(articleEntity.category, categoryEntity)
                                                          .where(usersEntity.userId.eq(userId))
@@ -95,10 +95,10 @@ class UserCustomRepositoryImpl(
     @Transactional(readOnly = true)
     override fun findSocialUserOwnArticlesByPageBy(socialUserId: String, pageable: Pageable): Page<SodamArticle> {
         val query = jpaQueryFactory.selectFrom(articleEntity)
-            .leftJoin(articleEntity.socialUser, socialUsersEntity)
-            .leftJoin(articleEntity.tags, tagsEntity)
-            .leftJoin(articleEntity.category, categoryEntity)
-            .where(socialUsersEntity.socialUserId.eq(socialUserId))
+                                                        .leftJoin(articleEntity.socialUser, socialUsersEntity)
+                                                        .leftJoin(articleEntity.tags, tagsEntity)
+                                                        .leftJoin(articleEntity.category, categoryEntity)
+                                                        .where(socialUsersEntity.socialUserId.eq(socialUserId))
 
         val totalArticleCount = query.fetch().size
 

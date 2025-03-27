@@ -1,7 +1,7 @@
-import LoginForm from "../../components/LoginForm";
 import {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {login} from "../../api/login";
+import LoginForm from "../../components/v2/LoginForm";
 
 interface LoginProps {
     setIsAuthenticated: (isAuthenticated: boolean) => void;
@@ -82,23 +82,14 @@ export default function Login({
 
 
     return (
-        <>
-            <header className="header">
-                <Link to="/" className="header__logo">Sodam 🍃</Link>
-                <div>
-                    <Link to="/signup">회원가입</Link>
-                    <Link to="/login">로그인</Link>
-                </div>
-            </header>
-            <LoginForm
-                email={email}
-                password={password}
-                onSubmit={handleSubmit}
-                onChangeEmail={handleEmailChange}
-                onChangePassword={handlePasswordChange}
-                onKakaoLogin={handleKakaoLogin}
-                error={error}
-            />
-        </>
+        <LoginForm
+            email={email}
+            password={password}
+            onSubmit={handleSubmit}
+            onChangeEmail={handleEmailChange}
+            onChangePassword={handlePasswordChange}
+            onKakaoLogin={handleKakaoLogin}
+            error={error}
+        />
     )
 }

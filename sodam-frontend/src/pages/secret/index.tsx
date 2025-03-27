@@ -9,12 +9,11 @@ import SecretPagination from "../../components/SecretPagination";
 import {
     getArticleByKeyword,
     getArticlesByCategoryId,
-    getArticlesByPageNumber,
     getUserArticles,
     getUserLikeArticles
 } from "../../api/article";
 import Categories, {defaultCategory} from "../../components/Categories";
-import {ArticleSummaryType, CategoryType} from "../../types/article";
+import {CategoryType} from "../../types/article";
 import {getCategories} from "../../api/category";
 
 interface SecretesPageProps {
