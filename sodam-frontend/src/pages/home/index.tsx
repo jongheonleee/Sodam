@@ -134,18 +134,7 @@ export default function Home({
             {/* 베너 */}
             <ArticleCarousel />
 
-            <Categories
-                hasNavigation={true}
-                defaultCategoryTap={defaultCategory}
-                categories={categories}
-                keyword={keyword}
-                onChangeCategory={handleCategoryChange}
-                onChangeKeyword={handleKeywordChange}
-                onSearchKeyword={handleSearchKeyword}
-                activeCategory={activeCategory}
-            />
-
-            {/* 콘텐츠 */}
+            {/* 콘텐츠 - 회원 등급 탑 5명, 베스트 게시글 */}
             <Articles
                 articles={articles}
                 handleArticleDelete={handleArticleDelete}

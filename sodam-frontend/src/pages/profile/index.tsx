@@ -7,8 +7,7 @@ import {ArticleSummaryType, CategoryType} from "../../types/article";
 import {
     getArticleByKeyword,
     getArticlesByCategoryId,
-    getArticlesByPageNumber,
-    getArticlesByTag, getArticlesWithCategoryIdAndPageNumber, getUserArticles, getUserLikeArticles
+    getArticlesByTag, getUserArticles, getUserLikeArticles
 } from "../../api/article";
 import {getUserInfo} from "../../api/user";
 import {UserProfileInfoType} from "../../types/auth";

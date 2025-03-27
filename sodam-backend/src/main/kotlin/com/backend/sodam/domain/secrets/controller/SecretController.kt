@@ -38,6 +38,7 @@ class SecretController(
     }
 
     @GetMapping("/api/v1/secrets")
+    @PreAuthorize("hasAnyRole('ROLE_FREE', 'ROLE_BRONZE', 'ROLE_SILVER', 'ROLE_GOLD', 'ROLE_PLATINUM')")
     fun getSecrets(
         pageable: Pageable,
         secretSearchRequest: SecretSearchRequest

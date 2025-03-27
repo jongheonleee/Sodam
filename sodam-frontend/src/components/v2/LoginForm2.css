@@ -1,0 +1,76 @@
+.container {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 500px;
+}
+
+.login-header h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.login-header p {
+    color: #666;
+}
+
+.login-form input,
+.login-form button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.password-container {
+    position: relative;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+}
+
+.login-form button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    margin-top: 20px;
+}
+
+.login-form .kakao-login {
+    background-color: #fee500;
+    color: #333;
+    border: none;
+    margin-top: 20px;
+}
+
+.login-footer p {
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.login-footer a {
+    color: #28a745;
+    text-decoration: none;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}

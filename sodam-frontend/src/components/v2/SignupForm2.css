@@ -1,0 +1,97 @@
+.container {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.join-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 500px;
+}
+
+.join-header h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.join-header p {
+    color: #666;
+}
+
+.join-form input,
+.join-form select,
+.join-form textarea,
+.join-form button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.password-container {
+    position: relative;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+}
+
+.join-remember {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 10px;
+    flex-wrap: nowrap;
+}
+
+.join-remember label {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.join-remember input[type="checkbox"] {
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+.join-remember a {
+    color: #28a745;
+    text-decoration: none;
+}
+
+.join-form button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    margin-top: 20px;
+}
+
+.join-footer p {
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.join-footer a {
+    color: #28a745;
+    text-decoration: none;
+}
+
+.join-footer a:hover {
+    text-decoration: underline;
+}
