@@ -1,6 +1,8 @@
 import './LoginForm.css'
 import React from "react";
 import {Link} from "react-router-dom";
+import {Button} from "../core/Button";
+import {ButtonGroup} from "../core/ButtonGroup";
 
 interface LoginFormProps {
     email : string;
@@ -39,12 +41,24 @@ export default function LoginForm({
                         <input type="password" placeholder="비밀번호를 입력해 주세요" value={password} onChange={(e) => onChangePassword(e)} required/>
                         <span className="eye-icon">👁️</span>
                     </div>
-                    <button type="submit">
-                        로그인
-                    </button>
-                    <button type="submit" className="kakao-login" onClick={onKakaoLogin} disabled={error?.length > 0}>
-                        카카오로 로그인
-                    </button>
+                    <ButtonGroup>
+                        <Button
+                            type="submit"
+                            size="medium"
+                            isDisabled={error?.length > 0}
+                        >
+                            로그인
+                        </Button>
+                        <Button
+                            type="submit"
+                            size="medium"
+                            className="kakao-login"
+                            onClick={onKakaoLogin}
+                            isDisabled={error?.length > 0}
+                        >
+                            카카오로 로그인
+                        </Button>
+                    </ButtonGroup>
                 </form>
                 <div className="login-footer">
                     <p>

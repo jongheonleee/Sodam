@@ -8,7 +8,7 @@ import {deleteArticle, dislikeArticle, getDetailArticle, likeArticle} from "../.
 import {deleteComment, dislikeComment, getComment, likeComment, postComment, updateComment} from "../../api/comment";
 
 interface ArticleDetailPageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+    handleLogout: (e : React.MouseEvent<HTMLButtonElement>) => void,
 }
 
 

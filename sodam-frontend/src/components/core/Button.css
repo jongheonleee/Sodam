@@ -1,0 +1,48 @@
+.button {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 5s;
+}
+
+.button:hover {
+    color: white;
+    background-color: #4caf50;
+}
+
+.button.kakao-login:hover {
+    color: white;
+    background-color: #FEE500;
+}
+
+.button.small {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.button.medium {
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.button.small:active {
+    color: white;
+    background-color: #4caf50;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.0);
+    transform: translate(3px, 3px);
+}
+
+.button.medium:active {
+    color: white;
+    background-color: #4caf50;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.0);
+    transform: translate(6px, 6px);
+}
+
+.button.kakao-login:active {
+    color: white;
+    background-color: #FEE500;
+}

@@ -1,0 +1,12 @@
+.button-group {
+    display: flex;
+    gap: 1em;
+}
+
+.align-center {
+    justify-content: center;
+}
+
+.align-right {
+    justify-content: flex-end;
+}

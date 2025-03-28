@@ -1,9 +1,10 @@
-import "./SignupForm2.css"
+import "./SignupForm.css"
 import {Link, useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {signup} from "../../api/signup";
+import {Button} from "../core/Button";
 
-export default function SignupForm2() {
+export default function SignupForm() {
     // 리다이렉션을 위한 navigate
     const navigate = useNavigate();
 
@@ -111,13 +112,16 @@ export default function SignupForm2() {
                             <input type="checkbox"/>
                             가입 후 자동 로그인
                         </label>
-                        <a href="#">
+                        <Link to="#">
                             회원 약관 보기
-                        </a>
+                        </Link>
                     </div>
-                    <button type="submit">
+                    <Button
+                        type="submit"
+                        size="medium"
+                    >
                         회원 가입
-                    </button>
+                    </Button>
                 </form>
                 <div className="join-footer">
                     <p>
