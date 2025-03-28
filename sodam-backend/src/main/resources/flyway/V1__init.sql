@@ -18,6 +18,25 @@ CREATE TABLE `categories` (
 );
 
 -- 회원 관련 테이블
+-- 회원 포지션
+DROP TABLE IF EXISTS `users_position`;
+CREATE TABLE `users_position` (
+    `POSITION_ID`	       VARCHAR(255)	    NOT NULL    COMMENT '포지션 아이디(PK)(UUID)',
+    `USER_ID`	           VARCHAR(255)	    NULL        COMMENT '일반 회원 아이디(FK)(UUID)',
+    `SOCIAL_USER_ID`	   VARCHAR(255)	    NULL        COMMENT '소셜 회원 아이디(FK)(UUID)',
+    `POSITION_NAME`	       VARCHAR(50)	    NOT NULL    COMMENT '포지션 이름',
+    `ORD`	               INT	            NOT NULL    COMMENT '정렬 순서',
+    `VALID_YN`	           TINYINT	        NULL        COMMENT '사용 가능 여부(0: 사용 가능, 1: 사용 불가능)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`	       DATETIME	    NOT NULL    COMMENT '생성일자',
+    `CREATED_BY`	       VARCHAR(50)		NOT NULL    COMMENT '생성자',
+    `MODIFIED_AT`	       DATETIME	    NOT NULL    COMMENT '수정일자',
+    `MODIFIED_BY`	       VARCHAR(50)		NOT NULL    COMMENT '수정자',
+
+    PRIMARY KEY (`POSITION_ID`)
+);
+
 -- 회원
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
@@ -44,14 +63,14 @@ CREATE TABLE `users` (
 -- 소셜 회원(카카오, 구글, ... 등)
 DROP TABLE IF EXISTS `social_users`;
 CREATE TABLE `social_users` (
-    `SOCIAL_USER_ID`            VARCHAR(255)             NOT NULL    COMMENT '소셜 사용자 ID(UUID)(PK)',
-    `POSITION_ID`               VARCHAR(255)                         COMMENT '사용자 포지션(카테고리 참조)(UUID)(FK)',
-    `USER_EMAIL`                VARCHAR(255)             NOT NULL    COMMENT '사용자 이메일',
-    `USER_INTRODUCE`            TEXT                     NULL        COMMENT '사용자 자기소개글',
-    `USER_IMAGE`                VARCHAR(255)             NOT NULL    COMMENT '사용자 프로필 이미지(aws s3에 등록된 url)',
-    `USER_NAME`                 VARCHAR(50)              NOT NULL    COMMENT '소셜 사용자 이름',
-    `PROVIDER`                  VARCHAR(255)             NOT NULL    COMMENT '소셜 프로바이더 (구글, 카카오, ... 등)',
-    `PROVIDER_ID`               VARCHAR(255)             NOT NULL    COMMENT '프로바이더 아이디(FK)',
+    `SOCIAL_USER_ID`            VARCHAR(255)             NOT NULL       COMMENT '소셜 사용자 ID(UUID)(PK)',
+    `POSITION_ID`               VARCHAR(255)             NULL           COMMENT '사용자 포지션(카테고리 참조)(UUID)(FK)',
+    `USER_EMAIL`                VARCHAR(255)             NULL           COMMENT '사용자 이메일',
+    `USER_INTRODUCE`            TEXT                     NULL           COMMENT '사용자 자기소개글',
+    `USER_IMAGE`                VARCHAR(255)             NULL           COMMENT '사용자 프로필 이미지(aws s3에 등록된 url)',
+    `USER_NAME`                 VARCHAR(50)              NULL           COMMENT '소셜 사용자 이름',
+    `PROVIDER`                  VARCHAR(255)             NOT NULL       COMMENT '소셜 프로바이더 (구글, 카카오, ... 등)',
+    `PROVIDER_ID`               VARCHAR(255)             NOT NULL       COMMENT '프로바이더 아이디(FK)',
 
     -- 시스템 칼럼
     `CREATED_AT`	            DATETIME	             NOT NULL    COMMENT '생성일자',
@@ -65,6 +84,8 @@ CREATE TABLE `social_users` (
 
     PRIMARY KEY (SOCIAL_USER_ID)
 );
+
+
 
 -- 회원 이력(접속, 요청 이력 기록)
 DROP TABLE IF EXISTS `users_history`;
@@ -86,6 +107,52 @@ CREATE TABLE `users_history` (
 
     PRIMARY KEY (USER_HISTORY_ID)
 );
+
+-- 등급 테이블
+DROP TABLE IF EXISTS `grades`;
+CREATE TABLE `grades` (
+    `GRADE_ID`         VARCHAR(255)                     NOT NULL                        COMMENT '등급 ID (PK)',
+    `GRADE_NAME`       VARCHAR(50)                      NOT NULL                        COMMENT '등급명',
+    `GRADE_ORD`        INT                              NOT NULL                        COMMENT '정렬 순서',
+    `GRADE_SUMMARY`    VARCHAR(500)                     NOT NULL                        COMMENT '등급 요약',
+    `GRADE_DESCRIBE`   TEXT                             NOT NULL                        COMMENT '등급 설명',
+    `VALID_YN`         TINYINT                          NOT NULL                        COMMENT '사용 가능 여부 (0: 사용 가능, 1: 사용 불가능)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`       DATETIME                         NOT NULL                        COMMENT '생성일자',
+    `CREATED_BY`       VARCHAR(50)                      NOT NULL                        COMMENT '생성자',
+    `MODIFIED_AT`      DATETIME                         NOT NULL                        COMMENT '수정일자',
+    `MODIFIED_BY`      VARCHAR(50)                      NOT NULL                        COMMENT '수정자',
+
+     PRIMARY KEY (`GRADE_ID`)
+);
+
+
+-- 회원 등급 테이블
+DROP TABLE IF EXISTS `users_grade`;
+CREATE TABLE `users_grade` (
+    `USER_GRADE_ID`   VARCHAR(255)                      NOT NULL                        COMMENT '회원 등급 ID (PK)',
+    `USER_ID`         VARCHAR(255)                      NULL                            COMMENT '일반 회원 ID (FK)',
+    `SOCIAL_USER_ID`  VARCHAR(255)                      NULL                            COMMENT '소셜 회원 ID (FK)',
+    `GRADE_ID`        VARCHAR(255)                      NOT NULL                        COMMENT '등급 ID (FK)',
+    `START_AT`        DATETIME                          NOT NULL                        COMMENT '등급 시작일',
+    `END_AT`          DATETIME                          NOT NULL                        COMMENT '등급 종료일',
+    `VALID_YN`        TINYINT                           NOT NULL                        COMMENT '사용 가능 여부 (0: 사용 가능, 1: 사용 불가능)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`      DATETIME                          NOT NULL                        COMMENT '생성일자',
+    `CREATED_BY`      VARCHAR(50)                       NOT NULL                        COMMENT '생성자',
+    `MODIFIED_AT`     DATETIME                          NOT NULL                        COMMENT '수정일자',
+    `MODIFIED_BY`     VARCHAR(50)                       NOT NULL                        COMMENT '수정자',
+
+    -- 참조 키 : 등급, 일반 회원, 소셜 회원
+    CONSTRAINT FK_USERS_GRADE_GRADE_ID FOREIGN KEY (GRADE_ID) REFERENCES `grades`(GRADE_ID), -- FK 참조 : 등급
+    CONSTRAINT FK_USERS_GRADE_USER_ID  FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+    CONSTRAINT FK_USERS_GRADE_SOCIAL_USER_ID FOREIGN KEY (SOCIAL_USER_ID) REFERENCES `social_users`(SOCIAL_USER_ID), -- FK 참조 : 소셜 회원
+
+    PRIMARY KEY (`USER_GRADE_ID`)
+);
+
 
 -- 회원 토큰
 DROP TABLE IF EXISTS `user_tokens`;
@@ -111,6 +178,99 @@ CREATE TABLE `user_tokens` (
     PRIMARY KEY (TOKEN_ID)
 );
 
+-- 정책 부분 추가
+-- 규칙 테이블
+DROP TABLE IF EXISTS `rules`;
+CREATE TABLE `rules` (
+    `RULE_ID`         VARCHAR(255)  NOT NULL    COMMENT '규칙 ID (PK, UUID)',
+    `RULE_KIND`       INT           NOT NULL    COMMENt '규칙 구분 칼럼, 서비스 제제에서 활용되는 규칙, 쿠폰에서 활용되는 규칙',
+    `TARGET_INDEX`    INT           NOT NULL    COMMENT '대상 인덱스 (0: 비하발언, 2: 정치발언, 3: 종교발언 등)',
+    `TARGET_OPERATOR` INT           NOT NULL    COMMENT '대상 연산자 (0: =, 1: <, 2: <=, 3: >, 4: >=)',
+    `TARGET_VALUE`    INT           NOT NULL    COMMENT '비교 기준 값',
+    `VALID_YN`        TINYINT       NOT NULL    COMMENT '사용 가능 여부 (0: 사용 가능, 1: 사용 불가능)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`      DATETIME      NOT NULL    COMMENT '생성일자',
+    `CREATED_BY`      VARCHAR(50)   NOT NULL    COMMENT '생성자',
+    `MODIFIED_AT`     DATETIME      NOT NULL    COMMENT '수정일자',
+    `MODIFIED_BY`     VARCHAR(50)   NOT NULL    COMMENT '수정자',
+
+     PRIMARY KEY (`RULE_ID`)
+);
+
+-- 제재 정책 테이블
+DROP TABLE IF EXISTS `sanctions_policy`;
+CREATE TABLE `sanctions_policy` (
+    `POLICY_ID`      VARCHAR(255)  NOT NULL    COMMENT '제재 정책 ID (PK, UUID)',
+    `RULE_ID1`       VARCHAR(255)  NOT NULL    COMMENT '규칙 ID 1 (FK, UUID)',
+    `ORDER1`         INT           NOT NULL    COMMENT '규칙 1 적용 순서',
+    `RULE_ID2`       VARCHAR(255)  NOT NULL    COMMENT '규칙 ID 2 (FK, UUID)',
+    `ORDER2`         INT           NOT NULL    COMMENT '규칙 2 적용 순서',
+    `RULE_ID3`       VARCHAR(255)  NOT NULL    COMMENT '규칙 ID 3 (FK, UUID)',
+    `VALID_YN`       TINYINT       NOT NULL    COMMENT '사용 가능 여부 (0: 사용 가능, 1: 사용 불가능)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`     DATETIME      NOT NULL    COMMENT '생성일자',
+    `CREATED_BY`     VARCHAR(50)   NOT NULL    COMMENT '생성자',
+    `MODIFIED_AT`    DATETIME      NOT NULL    COMMENT '수정일자',
+    `MODIFIED_BY`    VARCHAR(50)   NOT NULL    COMMENT '수정자',
+
+    -- FK 참조 : 규칙 3개
+    CONSTRAINT FK_SANCTION_POLICY_RULE_ID1 FOREIGN KEY (RULE_ID1) REFERENCES `rules`(RULE_ID),
+    CONSTRAINT FK_SANCTION_POLICY_RULE_ID2 FOREIGN KEY (RULE_ID2) REFERENCES `rules`(RULE_ID),
+    CONSTRAINT FK_SANCTION_POLICY_RULE_ID3 FOREIGN KEY (RULE_ID3) REFERENCES `rules`(RULE_ID),
+
+    PRIMARY KEY (`POLICY_ID`)
+);
+
+
+-- 회원 제재 이력 테이블
+DROP TABLE IF EXISTS `users_sanction_history`;
+CREATE TABLE `users_sanction_history` (
+    `SANCTION_ID`    BIGINT          NOT NULL       AUTO_INCREMENT  COMMENT '제재 ID (PK)',
+    `USER_ID`        VARCHAR(255)    NULL                           COMMENT '회원 ID (FK)',
+    `SOCIAL_USER_ID` VARCHAR(255)    NULL                           COMMENT '소셜 회원 ID (FK)',
+    `POLICY_ID`      VARCHAR(255)    NOT NULL                       COMMENT '정책 ID (FK)',
+    `START_AT`       DATETIME        NOT NULL                       COMMENT '제재 시작일',
+    `END_AT`         DATETIME        NOT NULL                       COMMENT '제재 종료일',
+
+    -- 시스템 칼럼
+    `CREATED_AT`     DATETIME       NOT NULL                        COMMENT '생성일자',
+    `CREATED_BY`     VARCHAR(50)    NOT NULL                        COMMENT '생성자',
+    `MODIFIED_AT`    DATETIME       NOT NULL                        COMMENT '수정일자',
+    `MODIFIED_BY`    VARCHAR(50)    NOT NULL                        COMMENT '수정자',
+
+    -- FK 참조 : 회원, 정책
+    CONSTRAINT FK_USER_SANCTION_HISTORY_USER_ID FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+    CONSTRAINT FK_USER_SANCTION_HISTORY_SOCIAL_USER_ID FOREIGN KEY (SOCIAL_USER_ID) REFERENCES `social_users`(SOCIAL_USER_ID),
+    CONSTRAINT FK_USER_SANCTION_HISTORY_POLICY_ID FOREIGN KEY (POLICY_ID) REFERENCES `sanctions_policy`(POLICY_ID),
+
+    PRIMARY KEY (`SANCTION_ID`)
+);
+
+-- 공인 회원 상태 테이블
+DROP TABLE IF EXISTS `official_users_status`;
+CREATE TABLE `official_users_status` (
+    `OFFICIAL_ID`      BIGINT           NOT NULL    AUTO_INCREMENT  COMMENT '공식 회원 ID (PK)',
+    `SOCIAL_USER_ID`   VARCHAR(255)     NULL                        COMMENT '소셜 회원 ID (FK)',
+    `USER_ID`          VARCHAR(255)     NULL                        COMMENT '일반 회원 ID (FK)',
+    `START_AT`         DATETIME         NOT NULL                    COMMENT '공식 인증 시작일',
+    `END_AT`           DATETIME         NOT NULL                    COMMENT '공식 인증 종료일',
+    `VALID_YN`         TINYINT          NOT NULL                    COMMENT '사용 가능 여부 (0: 사용 가능, 1: 사용 불가능)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`       DATETIME         NOT NULL                    COMMENT '생성일자',
+    `CREATED_BY`       VARCHAR(50)      NOT NULL                    COMMENT '생성자',
+    `MODIFIED_AT`      DATETIME         NOT NULL                    COMMENT '수정일자',
+    `MODIFIED_BY`      VARCHAR(50)      NOT NULL                    COMMENT '수정자',
+
+    CONSTRAINT FK_OFFICIAL_USERS_STATUS_USER_ID FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+    CONSTRAINT FK_OFFICIAL_USERS_STATUS_SOCIAL_USER_ID FOREIGN KEY (SOCIAL_USER_ID) REFERENCES `social_users`(SOCIAL_USER_ID),
+
+    PRIMARY KEY (`OFFICIAL_ID`)
+);
+
+
 -- 게시글
 DROP TABLE IF EXISTS `articles`;
 CREATE TABLE `articles` (
@@ -135,6 +295,7 @@ CREATE TABLE `articles` (
     -- FK 참조 : 카테고리, 회원
     CONSTRAINT `FK_ARTICLES_CATEGORY_ID` FOREIGN KEY (`CATEGORY_ID`) REFERENCES `categories`(`CATEGORY_ID`) ON DELETE CASCADE,
     CONSTRAINT `FK_ARTICLES_USER_ID` FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_ARTICLES_SOCIAL_USER_ID` FOREIGN KEY (`SOCIAL_USER_ID`) REFERENCES `social_users`(`SOCIAL_USER_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (ARTICLE_ID)
 );
@@ -248,8 +409,6 @@ CREATE TABLE `tags` (
 
 
 
-
-
 -- 댓글 관련 테이블
 -- 댓글
 DROP TABLE IF EXISTS `comments`;
@@ -322,7 +481,7 @@ CREATE TABLE `user_dislike_comments` (
     PRIMARY KEY (USERS_DISLIKE_COMMENT_ID)
 );
 
-
+-- 📌여기 작업 중
 -- 구독권
 DROP TABLE IF EXISTS `subscriptions`;
 CREATE TABLE `subscriptions` (
@@ -340,6 +499,78 @@ CREATE TABLE `subscriptions` (
 
     PRIMARY KEY (SUBSCRIPTION_ID)
 );
+
+
+-- 구독 가격 테이블
+DROP TABLE IF EXISTS `subscription_price`;
+CREATE TABLE `subscription_price` (
+    `PRICE_ID`          BIGINT AUTO_INCREMENT  NOT NULL COMMENT '자동증분',
+    `SUBSCRIPTION_ID`   VARCHAR(255)           NOT NULL COMMENT '구독 ID (FK)',
+    `PRICE`             INT                    NOT NULL COMMENT '기본 가격',
+    `DISC_RATE`         FLOAT                  NOT NULL DEFAULT 1 COMMENT '할인율 (기본값 1)',
+    `SALE_PRICE`        INT                    NOT NULL COMMENT '할인가',
+    `VALID_YN`          TINYINT                NOT NULL COMMENT '사용 가능 여부',
+    `START_AT`          DATETIME               NOT NULL COMMENT '시작일',
+    `END_AT`            DATETIME               NOT NULL COMMENT '종료일',
+
+    -- 시스템 칼럼
+    `CREATED_AT`        DATETIME               NOT NULL COMMENT '생성일자',
+    `CREATED_BY`        VARCHAR(50)            NOT NULL COMMENT '생성자',
+    `MODIFIED_AT`       DATETIME               NOT NULL COMMENT '수정일자',
+    `MODIFIED_BY`       VARCHAR(50)            NOT NULL COMMENT '수정자',
+
+    -- 참조 테이블
+    CONSTRAINT FK_SUBSCRIPTION_PRICE_SUBSCRIPTION_ID FOREIGN KEY (SUBSCRIPTION_ID) REFERENCES `subscriptions`(SUBSCRIPTION_ID), -- FK 참조 : 회원
+
+    PRIMARY KEY (`PRICE_ID`)
+);
+
+-- 구독 내역 테이블
+DROP TABLE IF EXISTS `subscriptions_history`;
+CREATE TABLE `subscriptions_history` (
+    `HISTORY_ID`        BIGINT AUTO_INCREMENT  NOT NULL COMMENT '자동증분',
+    `SUBSCRIPTION_ID`   VARCHAR(255)           NOT NULL COMMENT '구독 ID (FK)',
+    `START_AT`          DATETIME               NOT NULL COMMENT '시작일',
+    `END_AT`            DATETIME               NOT NULL COMMENT '종료일',
+    `SUBSCRIPTION_NAME` VARCHAR(255)           NOT NULL COMMENT '구독 이름',
+    `DOWN_CNT`          INT                    NOT NULL COMMENT '다운로드 횟수',
+    `WATCH_CNT`         INT                    NOT NULL COMMENT '시청 횟수',
+    `SUBSCRIPTION_DESC` TEXT                   NOT NULL COMMENT '구독 설명',
+
+    -- 시스템 칼럼
+    `CREATED_AT`        DATETIME               NOT NULL COMMENT '생성일자',
+    `CREATED_BY`        VARCHAR(50)            NOT NULL COMMENT '생성자',
+    `MODIFIED_AT`       DATETIME               NOT NULL COMMENT '수정일자',
+    `MODIFIED_BY`       VARCHAR(50)            NOT NULL COMMENT '수정자',
+
+    -- 참조 테이블
+    CONSTRAINT FK_SUBSCRIPTION_HISTORY_SUBSCRIPTION_ID FOREIGN KEY (SUBSCRIPTION_ID) REFERENCES `subscriptions`(SUBSCRIPTION_ID), -- FK 참조 : 회원
+
+    PRIMARY KEY (`HISTORY_ID`)
+);
+
+-- 구독 상태 테이블
+DROP TABLE IF EXISTS `subscription_status`;
+CREATE TABLE `subscription_status` (
+    `STATUS_ID`         BIGINT AUTO_INCREMENT  NOT NULL COMMENT '자동증분',
+    `SUBSCRIPTION_ID`   VARCHAR(255)           NOT NULL COMMENT '구독 ID (FK)',
+    `SUBSCRIPTION_STATUS` INT                 NOT NULL COMMENT '구독 상태 코드',
+    `START_AT`          DATETIME               NOT NULL COMMENT '시작일',
+    `END_AT`            DATETIME               NOT NULL COMMENT '종료일',
+    `VALID_YN`          TINYINT                NOT NULL COMMENT '사용 가능 여부',
+
+    -- 시스템 칼럼
+    `CREATED_AT`        DATETIME               NOT NULL COMMENT '생성일자',
+    `CREATED_BY`        VARCHAR(50)            NOT NULL COMMENT '생성자',
+    `MODIFIED_AT`       DATETIME               NOT NULL COMMENT '수정일자',
+    `MODIFIED_BY`       VARCHAR(50)            NOT NULL COMMENT '수정자',
+
+    -- 참조 테이블
+    CONSTRAINT FK_SUBSCRIPTION_STATUS_SUBSCRIPTION_ID FOREIGN KEY (SUBSCRIPTION_ID) REFERENCES `subscriptions`(SUBSCRIPTION_ID), -- FK 참조 : 회원
+
+    PRIMARY KEY (`STATUS_ID`)
+);
+
 
 -- 회원 보유 구독권
 DROP TABLE IF EXISTS `user_subscriptions`;
@@ -360,8 +591,8 @@ CREATE TABLE `user_subscriptions` (
     `MODIFIED_BY`	            VARCHAR(50)		        NOT NULL    COMMENT '수정자',
 
     -- FK 참조 : 회원, 구독
-
     CONSTRAINT FK_SUBSCRIPTIONS_USER_ID FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+    CONSTRAINT FK_SUBSCRIPTIONS_SOCIAL_USER_ID FOREIGN KEY (SOCIAL_USER_ID) REFERENCES `social_users`(SOCIAL_USER_ID), -- FK 참조 : 회원
     CONSTRAINT FK_SUBSCRIPTIONS_SUBSCRIPTION_ID FOREIGN KEY (SUBSCRIPTION_ID) REFERENCES `subscriptions`(SUBSCRIPTION_ID), -- FK 참조 : 구독
 
     PRIMARY KEY (USER_SUBSCRIPTION_ID)
@@ -391,27 +622,29 @@ CREATE TABLE `secretes` (
 -- 시크릿 태그
 DROP TABLE IF EXISTS `secret_tags`;
 CREATE TABLE `secret_tags` (
-                               `TAG_ID`                    BIGINT              NOT NULL   AUTO_INCREMENT       COMMENT '태그 아이디(PK)',
-                               `SECRETE_ID`                BIGINT              NOT NULL                        COMMENT '구독자 전용 게시글 아이디(FK)',
-                               `TAG_NAME`                  VARCHAR(50)         NOT NULL                        COMMENT '태그명',
+    `TAG_ID`                    BIGINT              NOT NULL   AUTO_INCREMENT       COMMENT '태그 아이디(PK)',
+    `SECRETE_ID`                BIGINT              NOT NULL                        COMMENT '구독자 전용 게시글 아이디(FK)',
+    `TAG_NAME`                  VARCHAR(50)         NOT NULL                        COMMENT '태그명',
 
     -- 시스템 칼럼
-                               `CREATED_AT`	            DATETIME	        NOT NULL                        COMMENT '생성일자',
-                               `CREATED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '생성자',
-                               `MODIFIED_AT`	            DATETIME	        NOT NULL                        COMMENT '수정일자',
-                               `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '수정자',
+    `CREATED_AT`	            DATETIME	        NOT NULL                        COMMENT '생성일자',
+    `CREATED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '생성자',
+    `MODIFIED_AT`	            DATETIME	        NOT NULL                        COMMENT '수정일자',
+    `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL                        COMMENT '수정자',
 
-                               CONSTRAINT `FK_TAGS_SECRET_ID` FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_TAGS_SECRET_ID` FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
 
-                               PRIMARY KEY (TAG_ID)
+    PRIMARY KEY (TAG_ID)
 );
 
 -- 시크릿(구독자 전용 게시글) 다운로드
 DROP TABLE IF EXISTS `download_secrets`;
 CREATE TABLE `download_secrets` (
-    `USER_DOWN_ID`                VARCHAR(255)        NOT NULL                                                          COMMENT '회원 구독자 전용 게시글 다운로드 아이디(PK)',
-    `USER_ID`                     VARCHAR(255)        NOT NULL                                                          COMMENT '회원 아이디(FK)',
-    `SECRETE_ID`                  BIGINT              NOT NULL                                                          COMMENT '구독자 전용 게시글 아이디(FK)',
+    `USER_DOWN_ID`                VARCHAR(255)        NOT NULL                    COMMENT '회원 구독자 전용 게시글 다운로드 아이디(PK)',
+    `USER_ID`                     VARCHAR(255)        NULL                        COMMENT '회원 아이디(FK)',
+    `SOCIAL_USER_ID`              VARCHAR(255)        NULL                        COMMENT '소셜 회원 아이디(FK)',
+
+    `SECRETE_ID`                  BIGINT              NOT NULL                    COMMENT '구독자 전용 게시글 아이디(FK)',
 
     -- 시스템 칼럼
     `CREATED_AT`                  DATETIME            NOT NULL                    COMMENT '생성일자',
@@ -421,19 +654,60 @@ CREATE TABLE `download_secrets` (
 
     -- FK 참조 : 시크릿, 사용자
     CONSTRAINT FK_DOWNLOAD_SECRETS_USER_ID FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT FK_DOWNLOAD_SECRETS_SOCIAL_USER_ID FOREIGN KEY (`SOCIAL_USER_ID`) REFERENCES `social_users`(`SOCIAL_USER_ID`) ON DELETE CASCADE,
     CONSTRAINT FK_DOWNLOAD_SECRETS_SECRETE_ID FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (USER_DOWN_ID)
 );
 
+-- 구독자 전용 게시글 이력 테이블
+DROP TABLE IF EXISTS `secret_history`;
+CREATE TABLE `secret_history` (
+    `HISTORY_ID`       BIGINT AUTO_INCREMENT   NOT NULL COMMENT '자동증분',
+    `SECRETE_ID`       BIGINT                  NOT NULL COMMENT '비밀 ID (FK)',
+    `SECRET_TITLE`     VARCHAR(255)            NOT NULL COMMENT '비밀 제목',
+    `SECRET_CONTENT`   VARCHAR(255)            NOT NULL COMMENT '비밀 내용',
+    `SECRET_AUTHOR`    TEXT                    NOT NULL COMMENT '비밀 작성자',
+    `START_AT`         DATETIME                NOT NULL COMMENT '시작일',
+    `END_AT`           DATETIME                NOT NULL COMMENT '종료일',
+    `VALID_STEP`       INT                     NOT NULL COMMENT '검증 단계 (0: 검증대기, 1:검증진행, 2:검증실패, 3:검증성공)',
 
--- 주문, 결제 관련 테이블
+    -- 시스템 칼럼
+    `CREATED_AT`       DATETIME                NOT NULL COMMENT '생성일자',
+    `CREATED_BY`       VARCHAR(50)             NOT NULL COMMENT '생성자',
+    `MODIFIED_AT`      DATETIME                NOT NULL COMMENT '수정일자',
+    `MODIFIED_BY`      VARCHAR(50)             NOT NULL COMMENT '수정자',
+
+    CONSTRAINT FK_SECRET_HISTORY_SECRET_ID FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
+
+     PRIMARY KEY (`HISTORY_ID`)
+);
+
+-- 구독자 전용 게시글 베스트 테이블
+DROP TABLE IF EXISTS `best_secrets`;
+CREATE TABLE `best_secrets` (
+    `BEST_SECRET_ID`   BIGINT AUTO_INCREMENT   NOT NULL COMMENT '자동증분',
+    `SECRETE_ID`       BIGINT                  NOT NULL COMMENT '시크릿 ID (FK)',
+    `START_AT`         DATETIME                NOT NULL COMMENT '시작일',
+    `END_AT`           DATETIME                NOT NULL COMMENT '종료일',
+
+    -- 시스템 칼럼
+    `CREATED_AT`       DATETIME                NOT NULL COMMENT '생성일자',
+    `CREATED_BY`       VARCHAR(50)             NOT NULL COMMENT '생성자',
+    `MODIFIED_AT`      DATETIME                NOT NULL COMMENT '수정일자',
+    `MODIFIED_BY`      VARCHAR(50)             NOT NULL COMMENT '수정자',
+
+    CONSTRAINT FK_BEST_SECRETS_SECRET_ID FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
+
+     PRIMARY KEY (`BEST_SECRET_ID`)
+);
 
 -- 주문
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
     `ORDER_ID`                   VARCHAR(255)          NOT NULL                                COMMENT '주문 아이디(UUID)(PK)',
     `USER_ID`                    VARCHAR(255)          NOT NULL                                COMMENT '회원 아이디(UUID)(FK)',
+    `SOCIAL_USER_ID`                    VARCHAR(255)          NOT NULL                         COMMENT '소셜 회원 아이디(UUID)(FK)',
     `SUBSCRIPTION_ID`            VARCHAR(255)          NOT NULL                                COMMENT '구독 아이디(UUID)(FK)',
     `ORDER_TOT_AMOUNT`           INT                   NOT NULL         DEFAULT 0              COMMENT '총 주문 금액',
     `DISC_TOT_AMOUNT`            INT                   NOT NULL         DEFAULT 0              COMMENT '총 할인 금액',
@@ -448,6 +722,7 @@ CREATE TABLE `orders` (
 
     -- FK 참조 : 사용자, 구독
     CONSTRAINT FK_ORDERS_USER_ID FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT FK_ORDERS_SOCIAL_USER_ID FOREIGN KEY (`SOCIAL_USER_ID`) REFERENCES `social_users`(`SOCIAL_USER_ID`) ON DELETE CASCADE,
     CONSTRAINT FK_ORDERS_SUBSCRIPTION_ID FOREIGN KEY (`SUBSCRIPTION_ID`) REFERENCES `subscriptions`(`SUBSCRIPTION_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (ORDER_ID)
@@ -507,7 +782,8 @@ CREATE TABLE `orders_history` (
 DROP TABLE IF EXISTS `payments`;
 CREATE TABLE `payments` (
     `PAYMENT_ID`                 VARCHAR(255)          NOT NULL                                COMMENT '결제 아이디(UUID)(PK)',
-    `USER_ID`                    VARCHAR(255)          NOT NULL                                COMMENT '사용자 아이디(UUID)(FK)',
+    `USER_ID`                    VARCHAR(255)          NULL                                    COMMENT '사용자 아이디(UUID)(FK)',
+    `SOCIAL_USER_ID`             VARCHAR(255)          NULL                                    COMMENT '소셜 사용자 아이디(UUID)(FK)',
     `ORDER_ID`                   VARCHAR(255)          NOT NULL                                COMMENT '주문 아이디(UUID)(FK)',
     `PAYMENT_AMOUNT`             INT                   NOT NULL         DEFAULT 0              COMMENT '결제 금액',
     `PAYMENT_CODE`               VARCHAR(255)          NOT NULL                                COMMENT '결제 코드',
@@ -524,6 +800,7 @@ CREATE TABLE `payments` (
 
     -- FK 참조 : 회원, 주문
     CONSTRAINT FK_PAYMENTS_USER_ID FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT FK_PAYMENTS_SOCIAL_USER_ID FOREIGN KEY (`SOCIAL_USER_ID`) REFERENCES `social_users`(`SOCIAL_USER_ID`) ON DELETE CASCADE,
     CONSTRAINT FK_PAYMENTS_ORDER_ID FOREIGN KEY (`ORDER_ID`) REFERENCES `orders`(`ORDER_ID`) ON DELETE CASCADE,
 
     PRIMARY KEY (PAYMENT_ID)
