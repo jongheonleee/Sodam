@@ -74,11 +74,6 @@ export default function SignupForm() {
             })
     }
 
-    useEffect(() => {
-
-    }, []);
-
-
     return (
         <div className="container">
             <div className="join-container">

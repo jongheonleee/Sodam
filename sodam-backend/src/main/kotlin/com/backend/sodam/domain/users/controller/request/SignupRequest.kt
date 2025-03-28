@@ -20,17 +20,23 @@ data class SignupRequest(
     @field:Size(min = 8, max = 30, message = "비밀번호는 8자 이상 30자 이하로 입력해주세요.")
     var password: String, // AOP 로 인코딩 처리해야하므로 var 로 선언
 
+    @field:NotBlank(message = "포지션을 선택해주세요.")
+    val positionId: String,
+
 //    @field:NotBlank(message = "프로필 이미지를 입력해주세요.") // 추후 파일 업로드 방식 변경 예정
 //    val profileImage: String,
 
     @field:Size(max = 200, message = "자기소개는 최대 200자까지 입력 가능합니다.")
     val introduce: String
-)
-
-fun SignupRequest.toCommand() = UserSignupCommand(
-    email = email,
-    name = name,
-    password = password,
-    profileImage = "추후에 개발할 예정",
-    introduce = introduce
-)
+) {
+    fun toCommand(): UserSignupCommand {
+        return UserSignupCommand(
+            email = email,
+            name = name,
+            password = password,
+            positionId = positionId,
+            profileImage = "추후에 개발할 예정",
+            introduce = introduce
+        )
+    }
+}

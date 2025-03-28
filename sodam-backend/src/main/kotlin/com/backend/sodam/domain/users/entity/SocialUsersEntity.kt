@@ -32,6 +32,10 @@ class SocialUsersEntity(
     @OneToMany(mappedBy = "socialUser", cascade = [CascadeType.ALL], orphanRemoval = true)
     var articles: MutableList<ArticleEntity> = mutableListOf(),
 
+    @OneToMany(mappedBy = "socialUser", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var positions: MutableList<UsersPositionsEntity> = mutableListOf(),
+
+
     userName: String
 ) : MutableBaseEntity() {
 

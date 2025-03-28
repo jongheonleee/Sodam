@@ -23,12 +23,14 @@ class UsersEntity(
     val userId: String,
 
     // 양방향 매핑
-
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
     var subscriptions: MutableList<UsersSubscriptionsEntity> = mutableListOf(),
 
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
     var articles: MutableList<ArticleEntity> = mutableListOf(),
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var positions: MutableList<UsersPositionsEntity> = mutableListOf(),
 
     // 가변필드
     userEmail: String,

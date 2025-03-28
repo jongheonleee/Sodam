@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequiredArgsConstructor
-class PositionsController (
+class PositionController (
     private val positionService: PositionService,
 ){
 
     @GetMapping("/api/v1/positions")
-    fun getPositions(): SodamApiResponse<PositionsResponse> {
+    fun fetchValidPositions(): SodamApiResponse<PositionsResponse> {
         return SodamApiResponse.ok(
-            positionService.getValidPositions()
+            positionService.fetchValidPositions()
         )
     }
 }
