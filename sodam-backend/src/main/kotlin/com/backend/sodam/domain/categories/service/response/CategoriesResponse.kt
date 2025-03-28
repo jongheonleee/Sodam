@@ -1,4 +1,4 @@
-package com.backend.sodam.domain.categories.service.dto
+package com.backend.sodam.domain.categories.service.response
 
 import com.backend.sodam.domain.categories.model.Category
 

@@ -1,7 +1,6 @@
 package com.backend.sodam.domain.categories.repository
 
 import com.backend.sodam.domain.categories.entity.CategoryEntity
-import com.backend.sodam.domain.categories.entity.QCategoryEntity
 import com.backend.sodam.domain.categories.entity.QCategoryEntity.categoryEntity
 import com.backend.sodam.domain.categories.model.Category
 import com.querydsl.jpa.impl.JPAQueryFactory

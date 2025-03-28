@@ -53,5 +53,21 @@ VALUES
     (UUID(), 'CT0004', 'QA', 11, 0, NOW(), 'system', NOW(), 'system'),
     (UUID(), 'CT0004', '테스터', 12, 0, NOW(), 'system', NOW(), 'system');
 
+INSERT INTO `positions`
+(`POSITION_ID`, `POSITION_NAME`, `ORD`, `VALID_YN`, `CREATED_AT`, `CREATED_BY`, `MODIFIED_AT`, `MODIFIED_BY`)
+VALUES
+    (UUID(), '프론트엔드 개발자', 1, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '백엔드 개발자', 2, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '풀스택 개발자', 3, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'AI/ML 개발자', 4, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '디자이너', 5, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '기획자', 6, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '아키텍처', 7, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '소프트웨어 엔지니어', 8, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '학생', 9, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '취업준비생', 10, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'QA', 11, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '테스터', 12, 0, NOW(), 'system', NOW(), 'system');
+
 
 

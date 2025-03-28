@@ -18,30 +18,27 @@ CREATE TABLE `categories` (
 );
 
 -- 회원 관련 테이블
--- 회원 포지션
-DROP TABLE IF EXISTS `users_position`;
-CREATE TABLE `users_position` (
-    `POSITION_ID`	       VARCHAR(255)	    NOT NULL    COMMENT '포지션 아이디(PK)(UUID)',
-    `USER_ID`	           VARCHAR(255)	    NULL        COMMENT '일반 회원 아이디(FK)(UUID)',
-    `SOCIAL_USER_ID`	   VARCHAR(255)	    NULL        COMMENT '소셜 회원 아이디(FK)(UUID)',
-    `POSITION_NAME`	       VARCHAR(50)	    NOT NULL    COMMENT '포지션 이름',
-    `ORD`	               INT	            NOT NULL    COMMENT '정렬 순서',
-    `VALID_YN`	           TINYINT	        NULL        COMMENT '사용 가능 여부(0: 사용 가능, 1: 사용 불가능)',
+-- 포지션
+CREATE TABLE `positions` (
+    `POSITION_ID`       VARCHAR(255)    NOT NULL    COMMENT '직책 ID',
+    `POSITION_NAME`     VARCHAR(255)    NOT NULL    COMMENT '직책 이름',
+    `ORD`               INT             NOT NULL    COMMENT '정렬순서',
+    `VALID_YN`          TINYINT         NOT NULL    COMMENT '사용 가능 여부 (0: 사용 가능, 1: 사용 불가능)',
 
     -- 시스템 칼럼
-    `CREATED_AT`	       DATETIME	    NOT NULL    COMMENT '생성일자',
-    `CREATED_BY`	       VARCHAR(50)		NOT NULL    COMMENT '생성자',
-    `MODIFIED_AT`	       DATETIME	    NOT NULL    COMMENT '수정일자',
-    `MODIFIED_BY`	       VARCHAR(50)		NOT NULL    COMMENT '수정자',
+    `CREATED_AT`        DATETIME        NOT NULL    COMMENT '생성일자',
+    `CREATED_BY`        VARCHAR(50)     NOT NULL    COMMENT '생성자',
+    `MODIFIED_AT`       DATETIME        NOT NULL    COMMENT '수정일자',
+    `MODIFIED_BY`       VARCHAR(50)     NOT NULL    COMMENT '수정자',
 
     PRIMARY KEY (`POSITION_ID`)
 );
+
 
 -- 회원
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
     `USER_ID`                   VARCHAR(255)        NOT NULL    COMMENT '사용자 아이디(UUID)(PK)',
-    `POSITION_ID`               VARCHAR(255)                    COMMENT '사용자 포지션(카테고리 참조)(UUID)(FK)',
     `USER_EMAIL`                VARCHAR(255)        NOT NULL    COMMENT '사용자 이메일',
     `USER_NAME`                 VARCHAR(50)         NOT NULL    COMMENT '사용자 이름',
     `USER_INTRODUCE`            TEXT                NULL        COMMENT '사용자 자기소개글',
@@ -54,9 +51,6 @@ CREATE TABLE `users` (
     `MODIFIED_AT`	            DATETIME	        NOT NULL    COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL    COMMENT '수정자',
 
-    -- FK 참조 : 카테고리
-    CONSTRAINT `FK_USERS_POSITION_ID` FOREIGN KEY (`POSITION_ID`) REFERENCES `categories`(`CATEGORY_ID`) ON DELETE CASCADE,
-
     PRIMARY KEY (USER_ID)
 );
 
@@ -64,7 +58,6 @@ CREATE TABLE `users` (
 DROP TABLE IF EXISTS `social_users`;
 CREATE TABLE `social_users` (
     `SOCIAL_USER_ID`            VARCHAR(255)             NOT NULL       COMMENT '소셜 사용자 ID(UUID)(PK)',
-    `POSITION_ID`               VARCHAR(255)             NULL           COMMENT '사용자 포지션(카테고리 참조)(UUID)(FK)',
     `USER_EMAIL`                VARCHAR(255)             NULL           COMMENT '사용자 이메일',
     `USER_INTRODUCE`            TEXT                     NULL           COMMENT '사용자 자기소개글',
     `USER_IMAGE`                VARCHAR(255)             NULL           COMMENT '사용자 프로필 이미지(aws s3에 등록된 url)',
@@ -78,11 +71,29 @@ CREATE TABLE `social_users` (
     `MODIFIED_AT`	            DATETIME	             NOT NULL    COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		         NOT NULL    COMMENT '수정자',
 
-    -- FK 참조 : 카테고리
-    CONSTRAINT `FK_SOCIAL_USERS_POSITION_ID` FOREIGN KEY (`POSITION_ID`) REFERENCES `categories`(`CATEGORY_ID`) ON DELETE CASCADE,
-
 
     PRIMARY KEY (SOCIAL_USER_ID)
+);
+
+-- 회원 포지션
+CREATE TABLE `users_position` (
+    `USER_POSITION_ID`  VARCHAR(255)  NOT NULL COMMENT '회원 포지션 생성 ID',
+    `POSITION_ID`       VARCHAR(255)  NOT NULL COMMENT '포지션 ID (FK)',
+    `USER_ID`           VARCHAR(255)  NULL COMMENT '사용자 ID',
+    `SOCIAL_USER_ID`    VARCHAR(255)  NULL COMMENT '소셜 사용자 ID',
+
+    -- 시스템 칼럼
+    `CREATED_AT`        DATETIME      NOT NULL COMMENT '생성일자',
+    `CREATED_BY`        VARCHAR(50)   NOT NULL COMMENT '생성자',
+    `MODIFIED_AT`       DATETIME      NOT NULL COMMENT '수정일자',
+    `MODIFIED_BY`       VARCHAR(50)   NOT NULL COMMENT '수정자',
+
+    -- 참조
+    CONSTRAINT FK_USERS_POSITION_USER_ID  FOREIGN KEY (USER_ID) REFERENCES `users`(USER_ID), -- FK 참조 : 회원
+    CONSTRAINT FK_USERS_POSITION_SOCIAL_USER_ID FOREIGN KEY (SOCIAL_USER_ID) REFERENCES `social_users`(SOCIAL_USER_ID), -- FK 참조 : 소셜 회원
+    CONSTRAINT FK_USERS_POSITION_POSITION_ID  FOREIGN KEY (POSITION_ID) REFERENCES `positions`(POSITION_ID), -- FK 참조 : 포지션
+
+    PRIMARY KEY (`USER_POSITION_ID`)
 );
 
 

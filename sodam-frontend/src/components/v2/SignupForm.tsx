@@ -3,12 +3,14 @@ import {Link, useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {signup} from "../../api/signup";
 import {Button} from "../core/Button";
+import usePositions from "../../hooks/usePositions";
 
 export default function SignupForm() {
     // 리다이렉션을 위한 navigate
     const navigate = useNavigate();
 
     // 회원가입시 필요한 필드값 -- 이 부분 form으로 보내지 말기
+    const positions = usePositions()
     const [email, setEmail] = useState<string>('')
     const [name, setName] = useState<string>('')
     const [password, setPassword] = useState<string>('')
@@ -95,16 +97,19 @@ export default function SignupForm() {
                         <input type="password" placeholder="비밀번호를 입력해 주세요" onChange={(e) => setPassword(e.target.value)} value={password} required/>
                         <span className="eye-icon">👁️</span>
                     </div>
-                    <select>
-                        {/* 포지션 백엔드에서 조회받게 만들기 */}
-                        <option value="1">프론트엔드 개발자</option>
-                        <option value="2">백엔드 개발자</option>
-                        <option value="3">풀스택 개발자</option>
-                        <option value="4">AI/ML 개발자</option>
-                        <option value="5">디자이너</option>
-                        <option value="6">학생</option>
-                        <option value="7">취업 준비생</option>
-                    </select>
+                    {/* 포지션 내용 보여주기 - 추후에 select, option도 컴포넌트로 정의해서 관리(components - core) */}
+                    { positions && positions.length > 0
+                        ? <select>
+                            {positions.map((position) => (
+                                <option key={position.positionId} value={position.positionId}>
+                                    {position.positionName}
+                                </option>
+                            ))}
+                          </select>
+                        : <div>
+                            조회된 포지션 내용이 없습니다.
+                          </div>
+                    }
                     <textarea placeholder="자기소개를 입력해주세요." onChange={(e) => setIntroduce(e.target.value)} required>
                     </textarea>
                     <div className="join-remember">

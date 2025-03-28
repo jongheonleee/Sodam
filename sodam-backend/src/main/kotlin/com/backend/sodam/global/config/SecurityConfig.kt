@@ -43,7 +43,8 @@ class SecurityConfig(
                 "/api/v1/auth/login", // 로그인
                 "/api/v1/auth/callback", // oauth2 로그인 요청
                 "/swagger-ui/**", // Swagger UI 경로
-                "/v3/api-docs/**" // Swagger API 문서 경로
+                "/v3/api-docs/**", // Swagger API 문서 경로
+                "/api/v1/positions" // 회원가입시 포지션 조회
             )
                 .permitAll()
                 .anyRequest()

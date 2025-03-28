@@ -12,5 +12,5 @@ interface SignupRequestProps{
 }
 
 export const signup = (request : SignupRequestProps) => {
-    return client.post("/api/v1/auth/signup", request);
+    return client.post('/api/v1/auth/signup', request)
 }
