@@ -23,6 +23,7 @@ class UsersEntity(
     val userId: String,
 
     // 양방향 매핑
+
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
     var subscriptions: MutableList<UsersSubscriptionsEntity> = mutableListOf(),
 

@@ -22,6 +22,7 @@ CREATE TABLE `categories` (
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
     `USER_ID`                   VARCHAR(255)        NOT NULL    COMMENT '사용자 아이디(UUID)(PK)',
+    `POSITION_ID`               VARCHAR(255)                    COMMENT '사용자 포지션(카테고리 참조)(UUID)(FK)',
     `USER_EMAIL`                VARCHAR(255)        NOT NULL    COMMENT '사용자 이메일',
     `USER_NAME`                 VARCHAR(50)         NOT NULL    COMMENT '사용자 이름',
     `USER_INTRODUCE`            TEXT                NULL        COMMENT '사용자 자기소개글',
@@ -34,13 +35,20 @@ CREATE TABLE `users` (
     `MODIFIED_AT`	            DATETIME	        NOT NULL    COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		    NOT NULL    COMMENT '수정자',
 
-     PRIMARY KEY (USER_ID)
+    -- FK 참조 : 카테고리
+    CONSTRAINT `FK_USERS_POSITION_ID` FOREIGN KEY (`POSITION_ID`) REFERENCES `categories`(`CATEGORY_ID`) ON DELETE CASCADE,
+
+    PRIMARY KEY (USER_ID)
 );
 
 -- 소셜 회원(카카오, 구글, ... 등)
 DROP TABLE IF EXISTS `social_users`;
 CREATE TABLE `social_users` (
     `SOCIAL_USER_ID`            VARCHAR(255)             NOT NULL    COMMENT '소셜 사용자 ID(UUID)(PK)',
+    `POSITION_ID`               VARCHAR(255)                         COMMENT '사용자 포지션(카테고리 참조)(UUID)(FK)',
+    `USER_EMAIL`                VARCHAR(255)             NOT NULL    COMMENT '사용자 이메일',
+    `USER_INTRODUCE`            TEXT                     NULL        COMMENT '사용자 자기소개글',
+    `USER_IMAGE`                VARCHAR(255)             NOT NULL    COMMENT '사용자 프로필 이미지(aws s3에 등록된 url)',
     `USER_NAME`                 VARCHAR(50)              NOT NULL    COMMENT '소셜 사용자 이름',
     `PROVIDER`                  VARCHAR(255)             NOT NULL    COMMENT '소셜 프로바이더 (구글, 카카오, ... 등)',
     `PROVIDER_ID`               VARCHAR(255)             NOT NULL    COMMENT '프로바이더 아이디(FK)',
@@ -50,6 +58,9 @@ CREATE TABLE `social_users` (
     `CREATED_BY`	            VARCHAR(50)		         NOT NULL    COMMENT '생성자',
     `MODIFIED_AT`	            DATETIME	             NOT NULL    COMMENT '수정일자',
     `MODIFIED_BY`	            VARCHAR(50)		         NOT NULL    COMMENT '수정자',
+
+    -- FK 참조 : 카테고리
+    CONSTRAINT `FK_SOCIAL_USERS_POSITION_ID` FOREIGN KEY (`POSITION_ID`) REFERENCES `categories`(`CATEGORY_ID`) ON DELETE CASCADE,
 
 
     PRIMARY KEY (SOCIAL_USER_ID)
