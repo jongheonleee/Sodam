@@ -1,6 +1,10 @@
 package com.backend.sodam.domain.users.service
 
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.grades.model.GradesType
+import com.backend.sodam.domain.grades.repository.UserGradeRepository
+import com.backend.sodam.domain.positions.model.PositionsType
+import com.backend.sodam.domain.positions.repository.UserPositionRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.UserRepository
@@ -16,45 +20,49 @@ import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 @RequiredArgsConstructor
 class UserService(
     private val userRepository: UserRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository,
-    private val kakaoUserPort: KakaoUserPort
+    private val kakaoUserPort: KakaoUserPort,
+    private val userGradeRepository: UserGradeRepository,
+    private val userPositionRepository: UserPositionRepository,
 ) {
 
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor = [Exception::class]
+    )
     fun signupUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
-        userRepository.findByUserEmail(userSignupCommand.email)
-            .ifPresent { throw UserException.UserAlreadyExistsException() }
+        if (userRepository.isExistsByEmail(userSignupCommand.email)) {
+            throw UserException.UserAlreadyExistsException()
+        }
 
         val sodamUser = userRepository.create(userSignupCommand)
+        userPositionRepository.createPositionForUser(sodamUser.userId, userSignupCommand.positionId)
         userSubscriptionRepository.createSubscriptionForUser(sodamUser.userId)
-
-        return UserSignupResponse(
-            username = sodamUser.username,
-            encryptedPassword = sodamUser.encryptedPassword,
-            email = sodamUser.email,
-            introduce = sodamUser.introduce
-        )
+        userGradeRepository.createGradeForUser(sodamUser.userId, GradesType.ENTRY.name)
+        return sodamUser.toSignupResponse()
     }
 
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor = [Exception::class]
+    )
     fun signupSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse {
-        userRepository.findSocialUserByProviderId(socialUserSignupCommand.providerId)
-            .ifPresent { throw UserException.SocialUserAlreadyExistsException() }
+        if (userRepository.isExistsByProviderId(socialUserSignupCommand.providerId)) {
+            throw UserException.SocialUserAlreadyExistsException()
+        }
 
-        val sodamUser = userRepository.createSocialUser(
-            name = socialUserSignupCommand.username,
-            provider = socialUserSignupCommand.provider,
-            providerId = socialUserSignupCommand.providerId
-        )
-
-        val saved = userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
-
-        return UserSignupResponse(
-            username = sodamUser.username
-        )
+        val sodamUser = userRepository.createSocialUser(socialUserSignupCommand)
+        userPositionRepository.createPositionForSocialUser(sodamUser.userId, PositionsType.TBD.fullName)
+        userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
+        userGradeRepository.createGradeForSocialUser(sodamUser.userId, GradesType.ENTRY.name)
+        return sodamUser.toSignupResponse()
     }
 
     fun findByUserEmail(email: String): SimpleUserResponse {

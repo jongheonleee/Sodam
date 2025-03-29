@@ -8,6 +8,7 @@ import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType
+import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
@@ -23,6 +24,16 @@ class UserRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository
 ) {
+
+    @Transactional(readOnly = true)
+    fun isExistsByEmail(email: String): Boolean {
+        return userJpaRepository.existsByUserEmail(email)
+    }
+
+    @Transactional(readOnly = true)
+    fun isExistsByProviderId(providerId: String): Boolean {
+        return socialUserJpaRepository.existsByProviderId(providerId)
+    }
 
     @Transactional(readOnly = true)
     fun findByUserEmail(email: String): Optional<SodamUser> {
@@ -87,14 +98,12 @@ class UserRepository(
 
     @Transactional
     fun createSocialUser(
-        name: String,
-        provider: String,
-        providerId: String
+        socialUserSignupCommand: SocialUserSignupCommand
     ): SodamUser {
         val socialUsersEntity = SocialUsersEntity.newEntity(
-            userName = name,
-            provider = provider,
-            providerId = providerId
+            userName = socialUserSignupCommand.username,
+            provider = socialUserSignupCommand.provider,
+            providerId = socialUserSignupCommand.providerId
         )
         return socialUserJpaRepository.save(socialUsersEntity)
             .toDomain()

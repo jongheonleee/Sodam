@@ -8,4 +8,5 @@ interface UserJpaRepository : JpaRepository<UsersEntity, String>, UserCustomRepo
     fun findByUserEmail(email: String): Optional<UsersEntity>
     fun findByUserId(userId: String): Optional<UsersEntity>
     fun existsByUserId(userId: String): Boolean
+    fun existsByUserEmail(email: String): Boolean
 }

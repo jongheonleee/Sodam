@@ -15,6 +15,7 @@ export default function SignupForm() {
     const [name, setName] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [introduce, setIntroduce] = useState<string>('')
+    const [positionId, setPositionId] = useState<string>('')
 
     // 에러 발생시 알림 메시지
     const [error, setError] = useState<string>('')
@@ -63,7 +64,9 @@ export default function SignupForm() {
             return;
         }
 
-        signup({email, name, password, introduce})
+
+
+        signup({email, name, password, introduce, positionId})
             .then((res) => {
                 if (res.status === 200) {
                     alert('회원가입 성공')
@@ -94,7 +97,7 @@ export default function SignupForm() {
                     </div>
                     {/* 포지션 내용 보여주기 - 추후에 select, option도 컴포넌트로 정의해서 관리(components - core) */}
                     { positions && positions.length > 0
-                        ? <select>
+                        ? <select onChange={(e) => setPositionId(e.target.value)}>
                             {positions.map((position) => (
                                 <option key={position.positionId} value={position.positionId}>
                                     {position.positionName}

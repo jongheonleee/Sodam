@@ -36,7 +36,13 @@ enum class ErrorCode(
     SECRET_NOT_FOUND("SDE5000", "해당 시크릿을 찾을 수 없습니다."),
 
     // 카테고리
-    CATEGORY_NOT_FOUND("SDE4001", "해당 카테고리를 찾을 수 없습니다.");
+    CATEGORY_NOT_FOUND("SDE4001", "해당 카테고리를 찾을 수 없습니다."),
+
+    // 등급
+    GRADE_NOT_FOUND("SDE5000", "해당 등급을 찾을 수 없습니다."),
+
+    // 포지션
+    POSITION_NOT_FOUND("SDE6000", "해당 포지션을 찾을 수 없습니다.");
 
     override fun toString(): String {
         return "[$code] $desc"

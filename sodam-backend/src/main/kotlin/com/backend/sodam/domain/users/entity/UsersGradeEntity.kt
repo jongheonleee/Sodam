@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.users.entity
 
 import com.backend.sodam.domain.grades.entity.GradesEntity
+import com.backend.sodam.domain.grades.model.SodamUserGrade
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -22,15 +23,15 @@ class UsersGradeEntity(
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    val user: UsersEntity? = null,
+    var user: UsersEntity? = null,
 
     @ManyToOne
     @JoinColumn(name = "SOCIAL_USER_ID")
-    val socialUser: SocialUsersEntity? = null,
+    var socialUser: SocialUsersEntity? = null,
 
     @ManyToOne
     @JoinColumn(name = "GRADE_ID")
-    val grade: GradesEntity? = null,
+    var grade: GradesEntity? = null,
 
     // 가변 필드
     startAt: LocalDateTime,
@@ -49,4 +50,5 @@ class UsersGradeEntity(
     @Column(name = "VALID_YN")
     var validYN: Int = validYN
         protected set
+
 }

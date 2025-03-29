@@ -7,6 +7,7 @@ import com.backend.sodam.domain.users.entity.UsersEntity
 import java.time.LocalDateTime
 import java.util.*
 
+// 추후에 class 로 바꾸기 
 data class UserSubscription(
     val userId: String,
     var subscriptionType: SubscriptionsType,
@@ -37,6 +38,30 @@ data class UserSubscription(
         return now.isBefore(endAt) && now.isAfter(startAt) && validYn
     }
 
+    fun toEntity(user: UsersEntity, subscription: SubscriptionsEntity): UsersSubscriptionsEntity {
+        return UsersSubscriptionsEntity(
+            userSubscriptionId = UUID.randomUUID().toString(),
+            user = user,
+            subscription = subscription,
+            startAt = this.startAt,
+            endAt = this.endAt,
+            validYN = if (this.validYn) 0 else 1,
+            subscriptionName = this.subscriptionType
+        )
+    }
+
+    fun toEntity(socialUser: SocialUsersEntity, subscription: SubscriptionsEntity): UsersSubscriptionsEntity {
+        return UsersSubscriptionsEntity(
+            userSubscriptionId = UUID.randomUUID().toString(),
+            socialUser = socialUser,
+            subscription = subscription,
+            startAt = this.startAt,
+            endAt = this.endAt,
+            validYN = if (this.validYn) 0 else 1,
+            subscriptionName = this.subscriptionType
+        )
+    }
+
     companion object {
         fun newSubscription(userId: String): UserSubscription {
             val now = LocalDateTime.now()
@@ -55,26 +80,3 @@ data class UserSubscription(
     }
 }
 
-fun UserSubscription.toEntity(user: UsersEntity, subscription: SubscriptionsEntity): UsersSubscriptionsEntity {
-    return UsersSubscriptionsEntity(
-        userSubscriptionId = UUID.randomUUID().toString(),
-        user = user,
-        subscription = subscription,
-        startAt = this.startAt,
-        endAt = this.endAt,
-        validYN = if (this.validYn) 0 else 1,
-        subscriptionName = this.subscriptionType
-    )
-}
-
-fun UserSubscription.toEntity(socialUser: SocialUsersEntity, subscription: SubscriptionsEntity): UsersSubscriptionsEntity {
-    return UsersSubscriptionsEntity(
-        userSubscriptionId = UUID.randomUUID().toString(),
-        socialUser = socialUser,
-        subscription = subscription,
-        startAt = this.startAt,
-        endAt = this.endAt,
-        validYN = if (this.validYn) 0 else 1,
-        subscriptionName = this.subscriptionType
-    )
-}

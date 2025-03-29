@@ -1,7 +1,6 @@
 package com.backend.sodam.domain.subscriptions.repository
 
 import com.backend.sodam.domain.subscriptions.model.UserSubscription
-import com.backend.sodam.domain.subscriptions.model.toEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.UserJpaRepository
@@ -25,9 +24,8 @@ class UserSubscriptionRepository(
     // 회원 보유 구독권 엔티티를 생성한다.
     // 생성한 엔티티를 저장하고 리스폰스로 반환한다.
     @Transactional
-    fun createSubscriptionForUser(userId: String): UserSubscription {
+    fun createSubscriptionForUser(userId: String): UserSubscription { // 매개변수로 subscriptionName 전달받게 구성하기
         val userSubscription = UserSubscription.newSubscription(userId)
-        println(userSubscription.subscriptionType)
 
         val foundUserOptionalEntity = userJpaRepository.findByUserId(userId)
 
@@ -47,7 +45,7 @@ class UserSubscriptionRepository(
     }
 
     @Transactional
-    fun createUserSubscriptionForSocialUser(socialUserId: String): UserSubscription {
+    fun createUserSubscriptionForSocialUser(socialUserId: String): UserSubscription { // 매개변수로 subscriptionName 전달받게 구성하기
         val userSubscription = UserSubscription.newSubscription(socialUserId)
 
         val foundSocialUserOptionalEntity = socialUserJpaRepository.findBySocialUserId(socialUserId)

@@ -8,7 +8,8 @@ interface SignupRequestProps{
     name : string,
     email : string,
     password : string,
-    introduce : string
+    introduce : string,
+    positionId: string,
 }
 
 export const signup = (request : SignupRequestProps) => {

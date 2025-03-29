@@ -36,7 +36,9 @@ class AuthController(
         signupRequest: SignupRequest
     ): SodamApiResponse<UserSignupResponse> {
         val command = signupRequest.toCommand()
-        return SodamApiResponse.ok(userService.signupUser(command))
+        return SodamApiResponse.ok(
+            userService.signupUser(command)
+        )
     }
 
     // 로그인
@@ -57,7 +59,7 @@ class AuthController(
     fun oauth2Callback(
         @RequestBody request: Map<String, String>
     ): SodamApiResponse<TokenResponse> {
-        val code = request["code"] ?: throw RuntimeException()
+        val code = request["code"] ?: throw IllegalArgumentException()
         val accessTokenFromKakao = tokenService.getTokenFromKakao(code)
         val foundKakaoUser = userService.findKakaoUser(accessTokenFromKakao)
         val foundUserByProviderId = userService.findByProviderId(foundKakaoUser.providerId)
