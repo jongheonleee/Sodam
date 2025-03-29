@@ -21,13 +21,32 @@ class BestArticleEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BEST_ARTICLE_ID")
-    val bestArticleId: Long,
+    val bestArticleId: Long? = null,
 
     // FK(추후에 연관관계 매핑)
     // - 게시글 아이디 : 게시글 : 베스트 게시글 = 1 : N ✅
     @ManyToOne
     @JoinColumn(name = "ARTICLE_ID")
-    val article: ArticleEntity, // 게시글은 불변
+    var article: ArticleEntity? = null, // 게시글은 불변
+
+    @Column(name = "ARTICLE_TITLE")
+    val articleTitle: String,
+
+    @Column(name = "ARTICLE_SUMMARY")
+    val articleSummary: String,
+
+    @Column(name = "ARTICLE_AUTHOR")
+    val articleAuthor: String,
+
+    @Column(name = "TAG1")
+    val tag1: String,
+
+    @Column(name = "TAG2")
+    val tag2: String,
+
+    @Column(name = "TAG3")
+    val tag3: String,
+
 
     // 가변 필드
     startAt: LocalDateTime,

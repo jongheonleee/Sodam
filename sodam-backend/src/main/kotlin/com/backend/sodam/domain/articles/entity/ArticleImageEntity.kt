@@ -10,6 +10,7 @@ import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
+// 📌 AWS 올릴 때 작업할 예정
 @Entity
 @Table(name = "article_images")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

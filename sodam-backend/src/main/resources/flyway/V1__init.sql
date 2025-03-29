@@ -331,24 +331,34 @@ CREATE TABLE `article_images` (
     PRIMARY KEY (ARTICLE_IMAGE_ID)
 );
 
--- 베스트 게시판
 DROP TABLE IF EXISTS `best_articles`;
+
 CREATE TABLE `best_articles` (
     `BEST_ARTICLE_ID`   BIGINT          NOT NULL    AUTO_INCREMENT COMMENT '베스트 게시글 아이디(PK)',
     `ARTICLE_ID`        BIGINT          NOT NULL                   COMMENT '게시글 아이디(FK)',
     `START_AT`          DATETIME        NOT NULL                   COMMENT '베스트 게시글 적용 시작 시간',
     `END_AT`            DATETIME        NOT NULL                   COMMENT '베스트 게시글 적용 종료 시간',
 
+    -- 게시글 정보
+    `ARTICLE_TITLE`     VARCHAR(255)    NOT NULL                   COMMENT '게시글 제목',
+    `ARTICLE_SUMMARY`   VARCHAR(500)    NOT NULL                   COMMENT '게시글 요약',
+    `ARTICLE_AUTHOR`    VARCHAR(255)    NOT NULL                   COMMENT '게시글 작성자',
+
+    -- 태그
+    `TAG1`             VARCHAR(25)      NULL                       COMMENT '태그 1',
+    `TAG2`             VARCHAR(25)      NULL                       COMMENT '태그 2',
+    `TAG3`             VARCHAR(25)      NULL                       COMMENT '태그 3',
+
     -- 시스템 칼럼
-    `CREATED_AT`	    DATETIME	    NOT NULL                   COMMENT '생성일자',
-    `CREATED_BY`	    VARCHAR(50)		NOT NULL                   COMMENT '생성자',
-    `MODIFIED_AT`	    DATETIME	    NOT NULL                   COMMENT '수정일자',
-    `MODIFIED_BY`	    VARCHAR(50)		NOT NULL                   COMMENT '수정자',
+    `CREATED_AT`        DATETIME        NOT NULL                   COMMENT '생성일자',
+    `CREATED_BY`        VARCHAR(50)     NOT NULL                   COMMENT '생성자',
+    `MODIFIED_AT`       DATETIME        NOT NULL                   COMMENT '수정일자',
+    `MODIFIED_BY`       VARCHAR(50)     NOT NULL                   COMMENT '수정자',
 
     -- FK 참조 : 게시글
     CONSTRAINT `FK_BEST_ARTICLES_ARTICLE_ID` FOREIGN KEY (`ARTICLE_ID`) REFERENCES `articles`(`ARTICLE_ID`) ON DELETE CASCADE,
 
-    PRIMARY KEY (BEST_ARTICLE_ID)
+    PRIMARY KEY (`BEST_ARTICLE_ID`)
 );
 
 -- 회원 싫어요 게시글
@@ -676,11 +686,6 @@ DROP TABLE IF EXISTS `secret_history`;
 CREATE TABLE `secret_history` (
     `HISTORY_ID`       BIGINT AUTO_INCREMENT   NOT NULL COMMENT '자동증분',
     `SECRETE_ID`       BIGINT                  NOT NULL COMMENT '비밀 ID (FK)',
-    `SECRET_TITLE`     VARCHAR(255)            NOT NULL COMMENT '비밀 제목',
-    `SECRET_CONTENT`   VARCHAR(255)            NOT NULL COMMENT '비밀 내용',
-    `SECRET_AUTHOR`    TEXT                    NOT NULL COMMENT '비밀 작성자',
-    `START_AT`         DATETIME                NOT NULL COMMENT '시작일',
-    `END_AT`           DATETIME                NOT NULL COMMENT '종료일',
     `VALID_STEP`       INT                     NOT NULL COMMENT '검증 단계 (0: 검증대기, 1:검증진행, 2:검증실패, 3:검증성공)',
 
     -- 시스템 칼럼
@@ -697,20 +702,31 @@ CREATE TABLE `secret_history` (
 -- 구독자 전용 게시글 베스트 테이블
 DROP TABLE IF EXISTS `best_secrets`;
 CREATE TABLE `best_secrets` (
-    `BEST_SECRET_ID`   BIGINT AUTO_INCREMENT   NOT NULL COMMENT '자동증분',
-    `SECRETE_ID`       BIGINT                  NOT NULL COMMENT '시크릿 ID (FK)',
-    `START_AT`         DATETIME                NOT NULL COMMENT '시작일',
-    `END_AT`           DATETIME                NOT NULL COMMENT '종료일',
+    `BEST_SECRET_ID`   BIGINT          NOT NULL    AUTO_INCREMENT COMMENT '베스트 비밀글 아이디(PK)',
+    `SECRETE_ID`        BIGINT          NOT NULL                  COMMENT '비밀글 아이디(FK)',
+    `START_AT`         DATETIME        NOT NULL                   COMMENT '베스트 비밀글 적용 시작 시간',
+    `END_AT`           DATETIME        NOT NULL                   COMMENT '베스트 비밀글 적용 종료 시간',
+
+    -- 비밀글 정보
+    `SECRET_TITLE`     VARCHAR(255)    NOT NULL                   COMMENT '비밀글 제목',
+    `SECRET_SUMMARY`   VARCHAR(500)    NOT NULL                   COMMENT '비밀글 요약',
+    `SECRET_AUTHOR`    VARCHAR(255)    NOT NULL                   COMMENT '비밀글 작성자',
+
+    -- 태그
+    `TAG1`            VARCHAR(25)      NULL                       COMMENT '태그 1',
+    `TAG2`            VARCHAR(25)      NULL                       COMMENT '태그 2',
+    `TAG3`            VARCHAR(25)      NULL                       COMMENT '태그 3',
 
     -- 시스템 칼럼
-    `CREATED_AT`       DATETIME                NOT NULL COMMENT '생성일자',
-    `CREATED_BY`       VARCHAR(50)             NOT NULL COMMENT '생성자',
-    `MODIFIED_AT`      DATETIME                NOT NULL COMMENT '수정일자',
-    `MODIFIED_BY`      VARCHAR(50)             NOT NULL COMMENT '수정자',
+    `CREATED_AT`       DATETIME        NOT NULL                   COMMENT '생성일자',
+    `CREATED_BY`       VARCHAR(50)     NOT NULL                   COMMENT '생성자',
+    `MODIFIED_AT`      DATETIME        NOT NULL                   COMMENT '수정일자',
+    `MODIFIED_BY`      VARCHAR(50)     NOT NULL                   COMMENT '수정자',
 
-    CONSTRAINT FK_BEST_SECRETS_SECRET_ID FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
+    -- FK 참조 : 비밀글
+    CONSTRAINT `FK_BEST_SECRETS_SECRET_ID` FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
 
-     PRIMARY KEY (`BEST_SECRET_ID`)
+    PRIMARY KEY (`BEST_SECRET_ID`)
 );
 
 -- 주문
@@ -718,7 +734,7 @@ DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
     `ORDER_ID`                   VARCHAR(255)          NOT NULL                                COMMENT '주문 아이디(UUID)(PK)',
     `USER_ID`                    VARCHAR(255)          NOT NULL                                COMMENT '회원 아이디(UUID)(FK)',
-    `SOCIAL_USER_ID`                    VARCHAR(255)          NOT NULL                         COMMENT '소셜 회원 아이디(UUID)(FK)',
+    `SOCIAL_USER_ID`             VARCHAR(255)          NOT NULL                                COMMENT '소셜 회원 아이디(UUID)(FK)',
     `SUBSCRIPTION_ID`            VARCHAR(255)          NOT NULL                                COMMENT '구독 아이디(UUID)(FK)',
     `ORDER_TOT_AMOUNT`           INT                   NOT NULL         DEFAULT 0              COMMENT '총 주문 금액',
     `DISC_TOT_AMOUNT`            INT                   NOT NULL         DEFAULT 0              COMMENT '총 할인 금액',
