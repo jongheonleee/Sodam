@@ -9,7 +9,6 @@ import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
-import com.backend.sodam.domain.users.service.command.toEntity
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

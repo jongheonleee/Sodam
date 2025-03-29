@@ -32,6 +32,9 @@ class UsersEntity(
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
     var positions: MutableList<UsersPositionsEntity> = mutableListOf(),
 
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var certifications: MutableList<OfficialUsersStatusEntity> = mutableListOf(),
+
     // 가변필드
     userEmail: String,
     userName: String,

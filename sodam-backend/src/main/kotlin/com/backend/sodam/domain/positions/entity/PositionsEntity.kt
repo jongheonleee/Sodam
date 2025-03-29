@@ -18,8 +18,6 @@ class PositionsEntity(
     @Column(name = "POSITION_ID")
     val positionId: String,
 
-    @OneToMany
-
     // 가변 필드
     positionName: String,
     ord: Int,

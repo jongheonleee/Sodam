@@ -193,18 +193,18 @@ CREATE TABLE `user_tokens` (
 -- 규칙 테이블
 DROP TABLE IF EXISTS `rules`;
 CREATE TABLE `rules` (
-    `RULE_ID`         VARCHAR(255)  NOT NULL    COMMENT '규칙 ID (PK, UUID)',
-    `RULE_KIND`       INT           NOT NULL    COMMENt '규칙 구분 칼럼, 서비스 제제에서 활용되는 규칙, 쿠폰에서 활용되는 규칙',
-    `TARGET_INDEX`    INT           NOT NULL    COMMENT '대상 인덱스 (0: 비하발언, 2: 정치발언, 3: 종교발언 등)',
-    `TARGET_OPERATOR` INT           NOT NULL    COMMENT '대상 연산자 (0: =, 1: <, 2: <=, 3: >, 4: >=)',
-    `TARGET_VALUE`    INT           NOT NULL    COMMENT '비교 기준 값',
-    `VALID_YN`        TINYINT       NOT NULL    COMMENT '사용 가능 여부 (0: 사용 가능, 1: 사용 불가능)',
+    `RULE_ID`         VARCHAR(255)          NOT NULL    COMMENT         '규칙 ID (PK, UUID)',
+    `RULE_KIND`       INT                   NOT NULL    COMMENt         '규칙 구분 칼럼, 서비스 제제에서 활용되는 규칙, 쿠폰에서 활용되는 규칙',
+    `TARGET_INDEX`    INT                   NOT NULL    COMMENT         '대상 인덱스 (0: 비하발언, 2: 정치발언, 3: 종교발언 등)',
+    `TARGET_OPERATOR` VARCHAR(50)           NOT NULL    COMMENT         '대상 연산자 (=, <, <=, >, >=)',
+    `TARGET_VALUE`    INT                   NOT NULL    COMMENT         '비교 기준 값',
+    `VALID_YN`        TINYINT               NOT NULL    COMMENT         '사용 가능 여부 (0: 사용 가능, 1: 사용 불가능)',
 
     -- 시스템 칼럼
-    `CREATED_AT`      DATETIME      NOT NULL    COMMENT '생성일자',
-    `CREATED_BY`      VARCHAR(50)   NOT NULL    COMMENT '생성자',
-    `MODIFIED_AT`     DATETIME      NOT NULL    COMMENT '수정일자',
-    `MODIFIED_BY`     VARCHAR(50)   NOT NULL    COMMENT '수정자',
+    `CREATED_AT`      DATETIME              NOT NULL    COMMENT         '생성일자',
+    `CREATED_BY`      VARCHAR(50)           NOT NULL    COMMENT         '생성자',
+    `MODIFIED_AT`     DATETIME              NOT NULL    COMMENT         '수정일자',
+    `MODIFIED_BY`     VARCHAR(50)           NOT NULL    COMMENT         '수정자',
 
      PRIMARY KEY (`RULE_ID`)
 );
@@ -214,9 +214,9 @@ DROP TABLE IF EXISTS `sanctions_policy`;
 CREATE TABLE `sanctions_policy` (
     `POLICY_ID`      VARCHAR(255)  NOT NULL    COMMENT '제재 정책 ID (PK, UUID)',
     `RULE_ID1`       VARCHAR(255)  NOT NULL    COMMENT '규칙 ID 1 (FK, UUID)',
-    `ORDER1`         INT           NOT NULL    COMMENT '규칙 1 적용 순서',
+    `OPERATOR1`      VARCHAR(50)   NOT NULL    COMMENT '규칙1과 규칙2 조합 연산 -> and, or, not, ...',
     `RULE_ID2`       VARCHAR(255)  NOT NULL    COMMENT '규칙 ID 2 (FK, UUID)',
-    `ORDER2`         INT           NOT NULL    COMMENT '규칙 2 적용 순서',
+    `OPERATOR2`      VARCHAR(50)   NOT NULL    COMMENT '규칙2와 규칙3 조합 연산 -> and, or, not, ...',
     `RULE_ID3`       VARCHAR(255)  NOT NULL    COMMENT '규칙 ID 3 (FK, UUID)',
     `VALID_YN`       TINYINT       NOT NULL    COMMENT '사용 가능 여부 (0: 사용 가능, 1: 사용 불가능)',
 
