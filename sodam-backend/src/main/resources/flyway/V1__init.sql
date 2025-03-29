@@ -555,7 +555,7 @@ CREATE TABLE `subscriptions_history` (
     `END_AT`            DATETIME               NOT NULL COMMENT '종료일',
     `SUBSCRIPTION_NAME` VARCHAR(255)           NOT NULL COMMENT '구독 이름',
     `DOWN_CNT`          INT                    NOT NULL COMMENT '다운로드 횟수',
-    `WATCH_CNT`         INT                    NOT NULL COMMENT '시청 횟수',
+    `VIEW_CNT`         INT                    NOT NULL COMMENT '시청 횟수',
     `SUBSCRIPTION_DESC` TEXT                   NOT NULL COMMENT '구독 설명',
 
     -- 시스템 칼럼
