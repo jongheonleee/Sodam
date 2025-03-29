@@ -3,9 +3,9 @@ package com.backend.sodam.domain.comments.controller
 import com.backend.sodam.domain.comments.controller.request.CommentCreateRequest
 import com.backend.sodam.domain.comments.controller.request.CommentUpdateRequest
 import com.backend.sodam.domain.comments.service.CommentService
-import com.backend.sodam.domain.comments.service.response.CommentCreateResponse
-import com.backend.sodam.domain.comments.service.response.CommentSimpleResponse
-import com.backend.sodam.domain.comments.service.response.CommentUpdateResponse
+import com.backend.sodam.domain.comments.controller.response.CommentCreateResponse
+import com.backend.sodam.domain.comments.controller.response.CommentSimpleResponse
+import com.backend.sodam.domain.comments.controller.response.CommentUpdateResponse
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import jakarta.validation.Valid

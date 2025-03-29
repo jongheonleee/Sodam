@@ -2,10 +2,8 @@ package com.backend.sodam.domain.tokens.repository
 
 import com.backend.sodam.domain.tokens.entity.QUsersTokenEntity.usersTokenEntity
 import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
-import com.backend.sodam.domain.users.entity.QSocialUsersEntity
-import com.backend.sodam.domain.users.entity.QSocialUsersEntity.*
-import com.backend.sodam.domain.users.entity.QUsersEntity
-import com.backend.sodam.domain.users.entity.QUsersEntity.*
+import com.backend.sodam.domain.users.entity.QSocialUsersEntity.socialUsersEntity
+import com.backend.sodam.domain.users.entity.QUsersEntity.usersEntity
 import com.querydsl.jpa.impl.JPAQueryFactory
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
@@ -30,12 +28,12 @@ class TokenCustomRepositoryImpl(
 
     override fun findBySocialUserId(socialUserId: String): Optional<UsersTokenEntity> {
         return jpaQueryFactory.selectFrom(usersTokenEntity)
-                              .leftJoin(usersTokenEntity.socialUser, socialUsersEntity)
-                              .where(
-                                  usersTokenEntity.socialUser.socialUserId.eq(socialUserId)
-                              )
-                              .fetch()
-                              .stream()
-                              .findFirst()
+            .leftJoin(usersTokenEntity.socialUser, socialUsersEntity)
+            .where(
+                usersTokenEntity.socialUser.socialUserId.eq(socialUserId)
+            )
+            .fetch()
+            .stream()
+            .findFirst()
     }
 }

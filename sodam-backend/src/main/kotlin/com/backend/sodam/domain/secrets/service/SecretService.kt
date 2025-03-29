@@ -3,9 +3,9 @@ package com.backend.sodam.domain.secrets.service
 import com.backend.sodam.domain.secrets.repository.SecretRepository
 import com.backend.sodam.domain.secrets.service.command.SecretCreateCommand
 import com.backend.sodam.domain.secrets.service.command.SecretSearchCommand
-import com.backend.sodam.domain.secrets.service.response.SecretCreateResponse
-import com.backend.sodam.domain.secrets.service.response.SecretDetailResponse
-import com.backend.sodam.domain.secrets.service.response.SecretSummaryResponse
+import com.backend.sodam.domain.secrets.controller.response.SecretCreateResponse
+import com.backend.sodam.domain.secrets.controller.response.SecretDetailResponse
+import com.backend.sodam.domain.secrets.controller.response.SecretSummaryResponse
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

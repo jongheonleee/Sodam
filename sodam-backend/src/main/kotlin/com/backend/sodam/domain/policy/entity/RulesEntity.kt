@@ -25,8 +25,8 @@ class RulesEntity(
 
     // 가변 필드
     targetValue: Int, // 가변필드 비교대상의 기준값
-    validYN: Int, // 가변필드 사용가능 여부
-): MutableBaseEntity() {
+    validYN: Int // 가변필드 사용가능 여부
+) : MutableBaseEntity() {
 
     @Column(name = "TARGET_VALUE")
     var targetValue: Int = targetValue

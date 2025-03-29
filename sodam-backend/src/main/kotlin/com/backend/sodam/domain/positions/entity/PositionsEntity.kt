@@ -5,7 +5,6 @@ import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
@@ -21,8 +20,8 @@ class PositionsEntity(
     // 가변 필드
     positionName: String,
     ord: Int,
-    validYN: Int,
-): MutableBaseEntity() {
+    validYN: Int
+) : MutableBaseEntity() {
     @Column(name = "POSITION_NAME")
     var positionName: String = positionName
         protected set

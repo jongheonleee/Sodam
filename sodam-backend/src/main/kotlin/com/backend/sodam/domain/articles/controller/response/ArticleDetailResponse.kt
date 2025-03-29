@@ -1,7 +1,7 @@
-package com.backend.sodam.domain.articles.service.response
+package com.backend.sodam.domain.articles.controller.response
 
-import com.backend.sodam.domain.comments.service.response.CommentResponse
-import com.backend.sodam.domain.tags.service.response.TagResponse
+import com.backend.sodam.domain.comments.controller.response.CommentResponse
+import com.backend.sodam.domain.tags.controller.response.TagResponse
 
 data class ArticleDetailResponse(
     val userId: String,

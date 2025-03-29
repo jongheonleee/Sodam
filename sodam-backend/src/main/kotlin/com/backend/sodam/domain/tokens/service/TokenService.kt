@@ -2,12 +2,12 @@ package com.backend.sodam.domain.tokens.service
 
 import com.backend.sodam.domain.tokens.exception.TokenException
 import com.backend.sodam.domain.tokens.repository.TokenRepository
-import com.backend.sodam.domain.tokens.service.response.TokenResponse
+import com.backend.sodam.domain.tokens.controller.response.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.UserRepository
 import com.backend.sodam.domain.users.service.UserService
-import com.backend.sodam.domain.users.service.response.UserResponse
+import com.backend.sodam.domain.users.controller.response.UserResponse
 import com.backend.sodam.global.port.KakaoTokenPort
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
@@ -132,7 +132,7 @@ class TokenService(
         }
 
         val sodamUser = sodamUserOptional.get()
-        when(sodamUser.userType) {
+        when (sodamUser.userType) {
             UserType.SOCIAL -> {
                 val foundTokenBySocialUserId = tokenRepository.findTokenBySocialUserId(
                     socialUserId = sodamUser.userId
@@ -157,7 +157,6 @@ class TokenService(
                 return updateTokenForUser(userId)
             }
         }
-
     }
 
     private fun getToken(userId: String, expiredAt: Duration): String {

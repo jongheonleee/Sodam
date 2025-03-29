@@ -1,4 +1,4 @@
-package com.backend.sodam.domain.users.service.response
+package com.backend.sodam.domain.users.controller.response
 
 data class UserSignupResponse(
     val username: String,

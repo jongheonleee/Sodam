@@ -6,7 +6,7 @@ import com.backend.sodam.domain.secrets.exception.SecretException
 import com.backend.sodam.domain.secrets.model.SodamDetailSecret
 import com.backend.sodam.domain.secrets.model.SodamSecret
 import com.backend.sodam.domain.secrets.service.command.SecretSearchCommand
-import com.backend.sodam.domain.tags.service.response.TagResponse
+import com.backend.sodam.domain.tags.controller.response.TagResponse
 import com.backend.sodam.global.utils.Formatter
 import com.querydsl.jpa.impl.JPAQueryFactory
 import lombok.RequiredArgsConstructor

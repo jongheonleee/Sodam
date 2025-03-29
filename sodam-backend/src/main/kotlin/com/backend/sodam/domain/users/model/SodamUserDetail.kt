@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.users.model
 
 import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
-import com.backend.sodam.domain.users.service.response.UserProfileResponse
+import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 
 class SodamUserDetail(
     val userId: String,
@@ -12,7 +12,7 @@ class SodamUserDetail(
     val subscription: SubscriptionsType,
     val articleTotalCnt: Long,
     val grade: String,
-    val ranking: Long,
+    val ranking: Long
 ) {
 
     fun toResponse(): UserProfileResponse {

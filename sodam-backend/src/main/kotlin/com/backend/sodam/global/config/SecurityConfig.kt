@@ -71,7 +71,7 @@ class SecurityConfig(
             val configuration = CorsConfiguration()
             configuration.allowedHeaders = listOf("*")
             configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
-            configuration.allowedOriginPatterns = listOf("https://localhost:3000" )
+            configuration.allowedOriginPatterns = listOf("https://localhost:3000")
             configuration.allowCredentials = true
             configuration
         }
@@ -84,7 +84,6 @@ class SecurityConfig(
         serializer.setUseSecureCookie(true)
         return serializer
     }
-
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {

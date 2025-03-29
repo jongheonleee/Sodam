@@ -1,4 +1,4 @@
-package com.backend.sodam.domain.comments.service.response
+package com.backend.sodam.domain.comments.controller.response
 
 data class CommentCreateResponse(
     val commentId: Long,

@@ -4,10 +4,10 @@ import com.backend.sodam.domain.subscriptions.exception.SubscriptionException
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
-import com.backend.sodam.domain.users.service.response.SimpleUserResponse
-import com.backend.sodam.domain.users.service.response.SocialUserResponse
-import com.backend.sodam.domain.users.service.response.UserResponse
-import com.backend.sodam.domain.users.service.response.UserSignupResponse
+import com.backend.sodam.domain.users.controller.response.SimpleUserResponse
+import com.backend.sodam.domain.users.controller.response.SocialUserResponse
+import com.backend.sodam.domain.users.controller.response.UserResponse
+import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -37,7 +37,8 @@ class UserServiceUnitTest : BehaviorSpec({
                 name = "테스트 유저",
                 password = "asdf1234",
                 profileImage = "aws에 등록된 프로필 이미지",
-                introduce = "테스트 자기소개글"
+                introduce = "테스트 자기소개글",
+                positionId = "12"
             )
 
             val expected = UserSignupResponse(
@@ -71,7 +72,8 @@ class UserServiceUnitTest : BehaviorSpec({
                 name = "테스트 유저",
                 password = "asdf1234",
                 profileImage = "aws에 등록된 프로필 이미지",
-                introduce = "테스트 자기소개글"
+                introduce = "테스트 자기소개글",
+                positionId = "12"
             )
 
             val expected = UserException.UserAlreadyExistsException()
@@ -93,7 +95,8 @@ class UserServiceUnitTest : BehaviorSpec({
                 name = "테스트 유저",
                 password = "asdf1234",
                 profileImage = "aws에 등록된 프로필 이미지",
-                introduce = "테스트 자기소개글"
+                introduce = "테스트 자기소개글",
+                positionId = "12"
             )
 
             val expected = SubscriptionException.SubscriptionNotFoundException()

@@ -1,6 +1,6 @@
-package com.backend.sodam.domain.articles.service.response
+package com.backend.sodam.domain.articles.controller.response
 
-data class ArticleUpdateResponse(
+data class ArticleCreateResponse(
     val articleId: Long,
     val title: String,
     val author: String,

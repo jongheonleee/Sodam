@@ -2,14 +2,14 @@ package com.backend.sodam.domain.users.entity
 
 import com.backend.sodam.domain.positions.entity.PositionsEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import lombok.AccessLevel
-import lombok.NoArgsConstructor
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import lombok.AccessLevel
+import lombok.NoArgsConstructor
 
 @Entity
 @Table(name = "users_position")
@@ -29,7 +29,6 @@ class UsersPositionsEntity(
 
     @ManyToOne
     @JoinColumn(name = "POSITION_ID")
-    val position: PositionsEntity? = null,
+    val position: PositionsEntity? = null
 
-    ): MutableBaseEntity() {
-}
+) : MutableBaseEntity()

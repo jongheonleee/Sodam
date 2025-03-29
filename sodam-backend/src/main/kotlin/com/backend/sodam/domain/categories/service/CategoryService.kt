@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.categories.service
 
 import com.backend.sodam.domain.categories.repository.CategoryRepository
-import com.backend.sodam.domain.categories.service.response.CategoriesResponse
+import com.backend.sodam.domain.categories.controller.response.CategoriesResponse
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 

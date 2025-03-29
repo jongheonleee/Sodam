@@ -1,7 +1,7 @@
-package com.backend.sodam.domain.secrets.service.response
+package com.backend.sodam.domain.secrets.controller.response
 
-import com.backend.sodam.domain.comments.service.response.CommentResponse
-import com.backend.sodam.domain.tags.service.response.TagResponse
+import com.backend.sodam.domain.comments.controller.response.CommentResponse
+import com.backend.sodam.domain.tags.controller.response.TagResponse
 
 data class SecretDetailResponse(
     val secretId: Long,

@@ -14,6 +14,6 @@ class PositionRepository(
     @Transactional(readOnly = true)
     fun fetchValidPositionsInOrder(): List<SodamPosition> {
         return positionJpaRepository.fetchValidPositionsInOrder()
-                                    .map { it.toDomain() }
+            .map { it.toDomain() }
     }
 }

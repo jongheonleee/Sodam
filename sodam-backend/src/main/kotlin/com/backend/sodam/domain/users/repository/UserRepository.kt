@@ -1,12 +1,12 @@
 package com.backend.sodam.domain.users.repository
 
-import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.subscriptions.model.UserSubscription
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
-import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.SodamUser
+import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import lombok.RequiredArgsConstructor
@@ -181,13 +181,13 @@ class UserRepository(
         when (sodamUser.userType) {
             UserType.SOCIAL -> {
                 return userJpaRepository.findProfileInfoForSocialUser(
-                        socialUserId = sodamUser.userId
+                    socialUserId = sodamUser.userId
                 )
             }
 
             else -> {
                 return userJpaRepository.findProfileInfoForUser(
-                        userId = sodamUser.userId
+                    userId = sodamUser.userId
                 )
             }
         }
@@ -202,7 +202,7 @@ class UserRepository(
 
         val sodamUser = sodamUserOptional.get()
 
-        when(sodamUser.userType) {
+        when (sodamUser.userType) {
             UserType.SOCIAL -> {
                 return userJpaRepository.findSocialUserOwnArticlesByPageBy(
                     pageable = pageable,
@@ -246,7 +246,7 @@ class UserRepository(
 
         val sodamUser = sodamUserOptional.get()
 
-        when(sodamUser.userType) {
+        when (sodamUser.userType) {
             UserType.SOCIAL -> {
                 return userJpaRepository.findSocialUserOwnLikeArticlesByPageBy(
                     pageable = pageable,

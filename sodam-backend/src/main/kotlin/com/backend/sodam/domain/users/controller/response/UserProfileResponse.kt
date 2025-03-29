@@ -1,4 +1,4 @@
-package com.backend.sodam.domain.users.service.response
+package com.backend.sodam.domain.users.controller.response
 
 data class UserProfileResponse(
     val userId: String,
@@ -9,5 +9,5 @@ data class UserProfileResponse(
     val subscription: String,
     val articleTotalCnt: Long,
     val grade: String,
-    val ranking: Long,
+    val ranking: Long
 )

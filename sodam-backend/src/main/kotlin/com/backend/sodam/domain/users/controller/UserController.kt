@@ -1,9 +1,8 @@
 package com.backend.sodam.domain.users.controller
 
-import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.users.service.UserService
-import com.backend.sodam.domain.users.service.response.UserProfileResponse
-import com.backend.sodam.domain.users.service.response.UserResponse
+import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import lombok.RequiredArgsConstructor
@@ -30,7 +29,7 @@ class UserController(
     // 자신이 작성한 게시글 목록 조회
     @GetMapping("/api/v1/users/articles")
     fun getUserArticles(
-        pageable: Pageable,
+        pageable: Pageable
     ): SodamApiResponse<Page<ArticleSummaryResponse>> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
@@ -43,7 +42,7 @@ class UserController(
 
     @GetMapping("/api/v1/users/like/articles")
     fun getUserLikedArticles(
-        pageable: Pageable,
+        pageable: Pageable
     ): SodamApiResponse<Page<ArticleSummaryResponse>> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(

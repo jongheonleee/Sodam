@@ -1,4 +1,4 @@
-package com.backend.sodam.domain.tags.service.response
+package com.backend.sodam.domain.tags.controller.response
 
 data class TagResponse(
     val articleId: Long,

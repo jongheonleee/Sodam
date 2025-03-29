@@ -1,9 +1,9 @@
 package com.backend.sodam.domain.tokens.service
 
 import com.backend.sodam.domain.tokens.exception.TokenException
-import com.backend.sodam.domain.tokens.service.response.TokenResponse
+import com.backend.sodam.domain.tokens.controller.response.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
-import com.backend.sodam.domain.users.service.response.UserResponse
+import com.backend.sodam.domain.users.controller.response.UserResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every

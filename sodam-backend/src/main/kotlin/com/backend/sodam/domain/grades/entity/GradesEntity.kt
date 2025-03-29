@@ -29,8 +29,8 @@ class GradesEntity(
     val gradeDescription: String,
 
     // 가변 필드
-    validYN: Int,
-): MutableBaseEntity() {
+    validYN: Int
+) : MutableBaseEntity() {
 
     @Column(name = "VALID_YN")
     var validYN: Int = validYN

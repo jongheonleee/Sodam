@@ -2,7 +2,14 @@ package com.backend.sodam.domain.users.entity
 
 import com.backend.sodam.domain.policy.entity.SanctionsPolicyEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
@@ -30,8 +37,8 @@ class UsersSanctionHistoryEntity(
 
     // 가변 필드
     startAt: LocalDateTime,
-    endAt: LocalDateTime,
-): MutableBaseEntity() {
+    endAt: LocalDateTime
+) : MutableBaseEntity() {
 
     @Column(name = "START_AT")
     var startAt: LocalDateTime? = null

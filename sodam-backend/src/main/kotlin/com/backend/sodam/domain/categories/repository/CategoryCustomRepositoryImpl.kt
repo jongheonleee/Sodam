@@ -27,10 +27,12 @@ class CategoryCustomRepositoryImpl(
     @Transactional(readOnly = true)
     override fun fetchValidCategoriesInOrderByTopCategoryId(topCategoryId: String): List<Category> {
         return jpaQueryFactory.selectFrom(categoryEntity)
-                              .where(categoryEntity.topCategoryId.eq(topCategoryId)
-                                  .and(categoryEntity.validYN.eq(0)))
-                              .orderBy(categoryEntity.categoryOrd.asc())
-                              .fetch()
-                              .map { it.toDomain() }
+            .where(
+                categoryEntity.topCategoryId.eq(topCategoryId)
+                    .and(categoryEntity.validYN.eq(0))
+            )
+            .orderBy(categoryEntity.categoryOrd.asc())
+            .fetch()
+            .map { it.toDomain() }
     }
 }

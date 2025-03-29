@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.categories.controller
 
 import com.backend.sodam.domain.categories.service.CategoryService
-import com.backend.sodam.domain.categories.service.response.CategoriesResponse
+import com.backend.sodam.domain.categories.controller.response.CategoriesResponse
 import com.backend.sodam.global.commons.SodamApiResponse
 import lombok.RequiredArgsConstructor
 import org.springframework.web.bind.annotation.GetMapping

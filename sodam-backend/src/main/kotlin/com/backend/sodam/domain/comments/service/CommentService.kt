@@ -6,9 +6,9 @@ import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.comments.repository.CommentRepository
 import com.backend.sodam.domain.comments.service.command.CommentCreateCommand
 import com.backend.sodam.domain.comments.service.command.CommentUpdateCommand
-import com.backend.sodam.domain.comments.service.response.CommentCreateResponse
-import com.backend.sodam.domain.comments.service.response.CommentSimpleResponse
-import com.backend.sodam.domain.comments.service.response.CommentUpdateResponse
+import com.backend.sodam.domain.comments.controller.response.CommentCreateResponse
+import com.backend.sodam.domain.comments.controller.response.CommentSimpleResponse
+import com.backend.sodam.domain.comments.controller.response.CommentUpdateResponse
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.UserRepository
 import lombok.RequiredArgsConstructor

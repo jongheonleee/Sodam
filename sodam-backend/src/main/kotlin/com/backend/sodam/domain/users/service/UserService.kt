@@ -1,12 +1,16 @@
 package com.backend.sodam.domain.users.service
 
-import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.UserRepository
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
-import com.backend.sodam.domain.users.service.response.*
+import com.backend.sodam.domain.users.controller.response.SimpleUserResponse
+import com.backend.sodam.domain.users.controller.response.SocialUserResponse
+import com.backend.sodam.domain.users.controller.response.UserProfileResponse
+import com.backend.sodam.domain.users.controller.response.UserResponse
+import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 import com.backend.sodam.global.port.KakaoUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
@@ -108,7 +112,6 @@ class UserService(
 
         val sodamUserDetail = sodamUserDetailOptional.get()
         return sodamUserDetail.toResponse()
-
     }
 
     fun getOwnArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
@@ -124,5 +127,4 @@ class UserService(
             userId = userId
         )
     }
-
 }

@@ -5,7 +5,11 @@ import com.backend.sodam.domain.articles.repository.ArticleRepository
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
-import com.backend.sodam.domain.articles.service.response.*
+import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleDetailResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleSimpleResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.SocialUserRepository
@@ -103,7 +107,7 @@ class ArticleService(
             articleId = sodamArticle.articleId,
             title = sodamArticle.title,
             summary = sodamArticle.summary,
-            content = sodamArticle.content,
+            content = sodamArticle.content
         )
     }
 
@@ -137,5 +141,4 @@ class ArticleService(
         // - 연관되어 있는 테이블부터 지움(태그, 좋아요, 싫어요, 댓글)
         articleRepository.delete(articleId)
     }
-
 }

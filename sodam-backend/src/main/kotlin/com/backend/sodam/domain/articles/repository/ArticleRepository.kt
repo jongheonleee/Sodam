@@ -74,7 +74,6 @@ class ArticleRepository(
         articleSearchCommand = articleSearchCommand
     )
 
-
     @Transactional
     fun increaseViewCnt(articleId: Long) {
         val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)

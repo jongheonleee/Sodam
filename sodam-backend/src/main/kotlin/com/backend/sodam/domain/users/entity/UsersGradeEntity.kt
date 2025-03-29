@@ -2,7 +2,12 @@ package com.backend.sodam.domain.users.entity
 
 import com.backend.sodam.domain.grades.entity.GradesEntity
 import com.backend.sodam.global.audit.MutableBaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
@@ -30,8 +35,8 @@ class UsersGradeEntity(
     // 가변 필드
     startAt: LocalDateTime,
     endAt: LocalDateTime,
-    validYN: Int,
-): MutableBaseEntity() {
+    validYN: Int
+) : MutableBaseEntity() {
 
     @Column(name = "START_AT")
     var startAt: LocalDateTime = startAt

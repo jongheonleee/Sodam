@@ -1,4 +1,4 @@
-package com.backend.sodam.domain.positions.service.response
+package com.backend.sodam.domain.positions.controller.response
 
 data class PositionsResponse(
     val positions: List<PositionResponse>

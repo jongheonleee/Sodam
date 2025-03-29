@@ -3,9 +3,9 @@ package com.backend.sodam.domain.secrets.controller
 import com.backend.sodam.domain.secrets.controller.request.SecretCreateRequest
 import com.backend.sodam.domain.secrets.controller.request.SecretSearchRequest
 import com.backend.sodam.domain.secrets.service.SecretService
-import com.backend.sodam.domain.secrets.service.response.SecretCreateResponse
-import com.backend.sodam.domain.secrets.service.response.SecretDetailResponse
-import com.backend.sodam.domain.secrets.service.response.SecretSummaryResponse
+import com.backend.sodam.domain.secrets.controller.response.SecretCreateResponse
+import com.backend.sodam.domain.secrets.controller.response.SecretDetailResponse
+import com.backend.sodam.domain.secrets.controller.response.SecretSummaryResponse
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import jakarta.validation.Valid

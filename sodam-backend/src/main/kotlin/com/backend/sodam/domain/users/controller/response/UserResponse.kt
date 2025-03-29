@@ -1,4 +1,4 @@
-package com.backend.sodam.domain.users.service.response
+package com.backend.sodam.domain.users.controller.response
 
 import com.backend.sodam.domain.users.model.SodamUser
 

@@ -38,7 +38,7 @@ class SanctionsPolicyEntity(
 
     validYN: Int
 
-): MutableBaseEntity() {
+) : MutableBaseEntity() {
 
     @Column(name = "VALID_YN")
     var validYN = validYN
