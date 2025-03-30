@@ -9,5 +9,6 @@ data class UserProfileResponse(
     val subscription: String,
     val articleTotalCnt: Long,
     val grade: String,
-    val ranking: Long
+    val ranking: Long,
+    val positions: List<String>
 )

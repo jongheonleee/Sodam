@@ -461,18 +461,16 @@ input:checked + .carousel__slide-container .nav label {
   border-color: #28a745;
 }
 
-.article__search-btn {
-  padding: 6px 12px;
-  font-size: 14px;
+
+
+.article__search-box button {
   background-color: #28a745; /* 초록색 */
   color: white;
   border: none;
-  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.article__search-btn:hover {
+.article__search-box button:hover {
   background-color: #218838;
 }
 /* form */
@@ -722,6 +720,7 @@ input:checked + .carousel__slide-container .nav label {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  border-radius: 8px;
   flex: 1;
   background: #fafafa;
 }

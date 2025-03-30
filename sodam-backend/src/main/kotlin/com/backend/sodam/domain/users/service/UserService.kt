@@ -73,6 +73,11 @@ class UserService(
         rollbackFor = [Exception::class]
     )
     fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): UserUpdateResponse {
+        // 이메일 중복 확인
+        if (userRepository.isExistsByEmail(userUpdateCommand.email)) {
+            throw UserException.UserAlreadyExistsException()
+        }
+
         val byUserId = userRepository.findByUserId(userId)
         if (byUserId.isEmpty) {
             throw UserException.UserNotFoundException()
@@ -174,6 +179,7 @@ class UserService(
         }
 
         val sodamUserDetail = sodamUserDetailOptional.get()
+        println("sodamUserDetail: $sodamUserDetail")
         return sodamUserDetail.toResponse()
     }
 

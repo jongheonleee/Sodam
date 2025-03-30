@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.users.model
 
+import com.backend.sodam.domain.positions.model.PositionsType
 import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
 import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 
@@ -10,6 +11,7 @@ class SodamUserDetail(
     val introduce: String,
     val profileImageUrl: String,
     val subscription: SubscriptionsType,
+    val positions: List<String>,
     val articleTotalCnt: Long,
     val grade: String,
     val ranking: Long
@@ -25,7 +27,8 @@ class SodamUserDetail(
             subscription = this.subscription.name,
             articleTotalCnt = this.articleTotalCnt,
             grade = this.grade,
-            ranking = this.ranking
+            ranking = this.ranking,
+            positions = this.positions,
         )
     }
 }

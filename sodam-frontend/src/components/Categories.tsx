@@ -1,4 +1,5 @@
 import {CategoryType} from "../types/article";
+import {Button} from "./core/Button";
 
 export const defaultCategory : CategoryType = {
     categoryId : "CT001",
@@ -58,12 +59,9 @@ export default function Categories({
                             value={keyword}
                             onChange={(e) => onChangeKeyword(e.target.value)}
                         />
-                        <div
-                            className="article__search-btn"
-                            onClick={() => onSearchKeyword(keyword ? keyword : '')}
-                        >
+                        <Button size="small" type="button" onClick={() => onSearchKeyword(keyword ? keyword : '')}>
                             검색
-                        </div>
+                        </Button>
                     </div>
                 </div>
             )}

@@ -13,8 +13,16 @@ export const getUserInfo = () => {
     })
 }
 
-export const updateUserInfo = () => {
-    return client.put("/api/v1/users/info", {
+interface UserInfoUpdateRequest{
+    name : string,
+    email : string,
+    password : string,
+    introduce : string,
+    positionId: string,
+}
+
+export const updateUserInfo = (request: UserInfoUpdateRequest) => {
+    return client.put("/api/v1/users/info", request, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
         }

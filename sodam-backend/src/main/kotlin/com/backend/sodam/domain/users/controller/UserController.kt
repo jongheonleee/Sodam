@@ -59,7 +59,7 @@ class UserController(
     }
 
     // 회원 정보 수정 처리
-    @PutMapping("/api/v1/users/update")
+    @PutMapping("/api/v1/users/info")
     fun updateUserInfo(
         @RequestBody @Valid userUpdateRequest: UserUpdateRequest,
     ): SodamApiResponse<UserUpdateResponse> {

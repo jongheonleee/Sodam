@@ -7,7 +7,7 @@ import usePositions from "../../hooks/usePositions";
 
 export default function SignupForm() {
     // 리다이렉션을 위한 navigate
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     // 회원가입시 필요한 필드값 -- 이 부분 form으로 보내지 말기
     const positions = usePositions()
@@ -66,7 +66,7 @@ export default function SignupForm() {
 
 
 
-        signup({email, name, password, introduce, positionId})
+        await signup({email, name, password, introduce, positionId})
             .then((res) => {
                 if (res.status === 200) {
                     alert('회원가입 성공')

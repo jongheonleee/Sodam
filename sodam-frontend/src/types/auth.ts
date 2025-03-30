@@ -35,5 +35,5 @@ export interface UserProfileInfoType {
     profileImageUrl: string
     ranking: number
     subscription: string
-
+    positions: string[]
 }
