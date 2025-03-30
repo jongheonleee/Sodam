@@ -12,3 +12,11 @@ export const getUserInfo = () => {
         }
     })
 }
+
+export const updateUserInfo = () => {
+    return client.put("/api/v1/users/info", {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+}

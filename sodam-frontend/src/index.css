@@ -57,7 +57,7 @@ header button:hover,
 
 /* footer */
 footer {
-  background-color: #f2f2f2;
+  background-color: #f2f2f2; /* 화이트 아니면 #f2f2f2 이렇게 설정해주기 - 회원 수정 폼*/
   min-height: 40px;
   padding: 20px 40px;
   font-size: 14px;
@@ -711,11 +711,19 @@ input:checked + .carousel__slide-container .nav label {
   color: #555;
 }
 
+.profile__edit {
+  font-size: 15px;
+  color: #555;
+  text-decoration: underline;
+}
+
+
 .profile__right {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   flex: 1;
+  background: #fafafa;
 }
 
 .profile__details {

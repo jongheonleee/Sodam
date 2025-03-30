@@ -3,6 +3,7 @@ package com.backend.sodam.domain.users.entity
 import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.subscriptions.entity.UsersSubscriptionsEntity
 import com.backend.sodam.domain.users.model.SodamUser
+import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -62,6 +63,12 @@ class UsersEntity(
     @Column(name = "PASSWORD")
     var password = password
         protected set
+
+    fun update(userUpdateCommand: UserUpdateCommand) {
+        this.userEmail = userUpdateCommand.email
+        this.userName = userUpdateCommand.name
+        this.userIntroduce = userUpdateCommand.introduce
+    }
 
     fun toDomain(): SodamUser {
         return SodamUser(

@@ -1,6 +1,8 @@
 package com.backend.sodam.domain.users.repository
 
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.positions.exception.PositionException
+import com.backend.sodam.domain.positions.repository.PositionJpaRepository
 import com.backend.sodam.domain.subscriptions.model.UserSubscription
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
@@ -10,6 +12,7 @@ import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
+import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,7 +25,8 @@ import java.util.*
 class UserRepository(
     private val userJpaRepository: UserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
-    private val userSubscriptionRepository: UserSubscriptionRepository
+    private val userSubscriptionRepository: UserSubscriptionRepository,
+    private val positionJpaRepository: PositionJpaRepository,
 ) {
 
     @Transactional(readOnly = true)
@@ -136,6 +140,25 @@ class UserRepository(
                 userType = UserType.NORMAL
             )
         )
+    }
+
+    @Transactional
+    fun updateSocialUser(socialUserId: String, userUpdateCommand: UserUpdateCommand): SodamUser {
+        // 아이디로 해당 엔티티를 조회한다.
+        val socialUserEntity = socialUserJpaRepository.findBySocialUserId(socialUserId).get()
+        // 엔티티를 업데이트 한다
+        socialUserEntity.update(userUpdateCommand)
+        // 이를 저장하고 도메인으로 반환한다.
+        return socialUserJpaRepository.save(socialUserEntity)
+                                      .toDomain()
+    }
+
+    @Transactional
+    fun updateNormalUser(userId: String, userUpdateCommand: UserUpdateCommand): SodamUser {
+        val normalUserEntity = userJpaRepository.findByUserId(userId).get()
+        normalUserEntity.update(userUpdateCommand)
+        return userJpaRepository.save(normalUserEntity)
+                                .toDomain()
     }
 
     @Transactional(readOnly = true)

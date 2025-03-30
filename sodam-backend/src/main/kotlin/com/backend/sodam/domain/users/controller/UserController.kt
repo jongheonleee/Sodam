@@ -1,14 +1,19 @@
 package com.backend.sodam.domain.users.controller
 
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.users.controller.request.UserUpdateRequest
 import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.controller.response.UserProfileResponse
+import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
+import jakarta.validation.Valid
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -49,6 +54,20 @@ class UserController(
             userService.getOwnLikeArticles(
                 userId = userId,
                 pageable = pageable
+            )
+        )
+    }
+
+    // 회원 정보 수정 처리
+    @PutMapping("/api/v1/users/update")
+    fun updateUserInfo(
+        @RequestBody @Valid userUpdateRequest: UserUpdateRequest,
+    ): SodamApiResponse<UserUpdateResponse> {
+        val userId = tokenProvider.getUserId()
+        return SodamApiResponse.ok(
+            userService.updateUserInfo(
+                userId = userId,
+                userUpdateCommand = userUpdateRequest.toCommand()
             )
         )
     }

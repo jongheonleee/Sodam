@@ -95,7 +95,7 @@ export default function SignupForm() {
                         <input type="password" placeholder="비밀번호를 입력해 주세요" onChange={(e) => setPassword(e.target.value)} value={password} required/>
                         <span className="eye-icon">👁️</span>
                     </div>
-                    {/* 포지션 내용 보여주기 - 추후에 select, option도 컴포넌트로 정의해서 관리(components - core) */}
+                    {/* 포지션 내용 보여주기 - 추후에 select, option 도 컴포넌트로 정의해서 관리(components - core) */}
                     { positions && positions.length > 0
                         ? <select onChange={(e) => setPositionId(e.target.value)}>
                             {positions.map((position) => (

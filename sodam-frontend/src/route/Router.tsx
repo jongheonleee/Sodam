@@ -14,6 +14,7 @@ import SecretDetailPage from "../pages/secret/detail";
 import ArticlesPage from "../pages/article";
 import ArticleEditPage from "../pages/article/edit";
 import KakaoAuthRedirect from "../pages/login/kakaoAuthRedirect";
+import EditProfile from "../pages/profile/edit";
 
 interface RouterProps {
     isAuthenticated : boolean,
@@ -40,6 +41,7 @@ export default function Router({
                         <Route path="/articles/like/:email" element={<LikePage handleLogout={handleLogout}  />} />
                         <Route path="/profile/:email" element={<ProfilePage handleLogout={handleLogout} />} />
                         <Route path="/subscription" element={<SubscriptionPage handleLogout={handleLogout}  />} />
+                        <Route path="/edit-profile" element={<EditProfile />}/>
                         <Route path="/secrets" element={<SecretesPage handleLogout={handleLogout}  />} />
                         <Route path="/secrets/:secretId" element={<SecretDetailPage handleLogout={handleLogout}  />} />
                         <Route path="/subscription/order/:id" element={<SubscriptionOrderPage handleLogout={handleLogout} />} />

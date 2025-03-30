@@ -1,0 +1,54 @@
+.container{
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.update-container{
+    padding: 20px;
+    border-radius: 10px;
+    width: 500px;
+}
+
+.update-header h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.update-header p {
+    color: #666;
+}
+
+.update-form input,
+.update-form button,
+.update-form select,
+.update-form textarea {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.password-container {
+    position: relative;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+}
+
+.update-form button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    margin-top: 20px;
+}

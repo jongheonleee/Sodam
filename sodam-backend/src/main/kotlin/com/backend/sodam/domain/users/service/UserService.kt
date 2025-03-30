@@ -15,6 +15,9 @@ import com.backend.sodam.domain.users.controller.response.SocialUserResponse
 import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 import com.backend.sodam.domain.users.controller.response.UserResponse
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
+import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
+import com.backend.sodam.domain.users.model.UserType
+import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import com.backend.sodam.global.port.KakaoUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
@@ -63,6 +66,58 @@ class UserService(
         userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
         userGradeRepository.createGradeForSocialUser(sodamUser.userId, GradesType.ENTRY.name)
         return sodamUser.toSignupResponse()
+    }
+
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor = [Exception::class]
+    )
+    fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): UserUpdateResponse {
+        val byUserId = userRepository.findByUserId(userId)
+        if (byUserId.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val sodamUser = byUserId.get()
+        when(sodamUser.userType) {
+            UserType.SOCIAL -> {
+                // 기본 회원 정보를 업데이트한다.
+                val updatedSodamUser = userRepository.updateSocialUser(
+                    socialUserId = sodamUser.userId,
+                    userUpdateCommand = userUpdateCommand,
+                )
+                // 포지션을 재등록한다.
+                userPositionRepository.upsertPositionForSocialUser(
+                    socialUserId = sodamUser.userId,
+                    positionId = userUpdateCommand.positionId
+                )
+
+                return UserUpdateResponse(
+                    username = updatedSodamUser.username,
+                    email = updatedSodamUser.email,
+                    introduce = updatedSodamUser.introduce,
+                )
+            }
+
+            else -> {
+                val updatedSodamUser = userRepository.updateNormalUser(
+                    userId = sodamUser.userId,
+                    userUpdateCommand = userUpdateCommand,
+                )
+
+                // 포지션을 재등록한다.
+                userPositionRepository.upsertPositionForUser(
+                    userId = sodamUser.userId,
+                    positionId = userUpdateCommand.positionId
+                )
+
+                return UserUpdateResponse(
+                    username = updatedSodamUser.username,
+                    email = updatedSodamUser.email,
+                    introduce = updatedSodamUser.introduce,
+                )
+            }
+        }
     }
 
     fun findByUserEmail(email: String): SimpleUserResponse {

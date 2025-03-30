@@ -45,8 +45,33 @@ class UserPositionRepository(
     }
 
     @Transactional
+    fun upsertPositionForUser(userId: String, positionId: String): UsersPositionsEntity {
+        val byUserId = userJpaRepository.findByUserId(userId)
+        if (byUserId.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val userEntity = byUserId.get()
+        userEntity.positions.clear()
+
+        val byPositionId = positionJpaRepository.findByPositionId(positionId)
+        if (byPositionId.isEmpty) {
+            throw PositionException.PositionNotFoundException()
+        }
+
+        val positionEntity = byPositionId.get()
+        val userPositionEntity = UsersPositionsEntity(
+            userPositionId = UUID.randomUUID().toString(),
+            user = userEntity,
+            position = positionEntity
+        )
+
+        return userPositionJpaRepository.save(userPositionEntity)
+    }
+
+
+    @Transactional
     fun createPositionForSocialUser(socialUserId: String, positionName: String): UsersPositionsEntity {
-        println(positionName)
         val bySocialUserId = socialUserJpaRepository.findBySocialUserId(socialUserId)
         if (bySocialUserId.isEmpty) {
             throw UserException.UserNotFoundException()
@@ -55,6 +80,32 @@ class UserPositionRepository(
         val socialUserEntity = bySocialUserId.get()
 
         val byPositionId = positionJpaRepository.findByPositionName(positionName)
+        if (byPositionId.isEmpty) {
+            throw PositionException.PositionNotFoundException()
+        }
+
+        val positionEntity = byPositionId.get()
+
+        val userPositionEntity = UsersPositionsEntity(
+            userPositionId = UUID.randomUUID().toString(),
+            socialUser = socialUserEntity,
+            position = positionEntity
+        )
+
+        return userPositionJpaRepository.save(userPositionEntity)
+    }
+
+    @Transactional
+    fun upsertPositionForSocialUser(socialUserId: String, positionId: String): UsersPositionsEntity {
+        val bySocialUserId = socialUserJpaRepository.findBySocialUserId(socialUserId)
+        if (bySocialUserId.isEmpty) {
+            throw UserException.UserNotFoundException()
+        }
+
+        val socialUserEntity = bySocialUserId.get()
+        socialUserEntity.positions.clear()
+
+        val byPositionId = positionJpaRepository.findByPositionId(positionId)
         if (byPositionId.isEmpty) {
             throw PositionException.PositionNotFoundException()
         }

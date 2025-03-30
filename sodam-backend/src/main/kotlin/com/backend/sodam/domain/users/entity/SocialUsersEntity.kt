@@ -4,6 +4,7 @@ import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.subscriptions.entity.UsersSubscriptionsEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.UserType
+import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -43,12 +44,28 @@ class SocialUsersEntity(
     @OneToMany(mappedBy = "socialUser", cascade = [CascadeType.ALL], orphanRemoval = true)
     var certifications: MutableList<OfficialUsersStatusEntity> = mutableListOf(),
 
-    userName: String
+    email: String = "-",
+    userName: String = "-",
+    introduce: String = "-",
 ) : MutableBaseEntity() {
+
+    @Column(name = "USER_EMAIL")
+    var email = email
+        protected set
 
     @Column(name = "USER_NAME")
     var userName = userName
         protected set
+
+    @Column(name = "USER_INTRODUCE")
+    var introduce = introduce
+        protected set
+
+    fun update(userUpdateCommand: UserUpdateCommand) {
+        this.email = userUpdateCommand.email
+        this.userName = userUpdateCommand.name
+        this.introduce = userUpdateCommand.introduce
+    }
 
     fun toDomain(): SodamUser {
         return SodamUser(
@@ -66,7 +83,7 @@ class SocialUsersEntity(
                 socialUserId = UUID.randomUUID().toString(),
                 provider = provider,
                 providerId = providerId,
-                userName = userName
+                userName = userName,
             )
         }
     }
