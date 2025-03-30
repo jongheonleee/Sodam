@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.secrets.model
 
 import com.backend.sodam.domain.comments.controller.response.CommentResponse
+import com.backend.sodam.domain.secrets.controller.response.SecretDetailResponse
 import com.backend.sodam.domain.tags.controller.response.TagResponse
 
 class SodamDetailSecret(
@@ -15,4 +16,20 @@ class SodamDetailSecret(
     val secretViewCnt: Long,
     val secretLikeCnt: Long,
     val secretDislikeCnt: Long
-)
+) {
+    fun toResponse(): SecretDetailResponse {
+        return SecretDetailResponse(
+            secretId = this.secretId,
+            author = this.author,
+            title = this.title,
+            content = this.content,
+            createdAt = this.createdAt,
+            tags = this.tags,
+            comments = this.comments,
+            images = this.images,
+            secretLikeCnt = this.secretLikeCnt,
+            secretDislikeCnt = this.secretDislikeCnt,
+            secretViewCnt = this.secretViewCnt
+        )
+    }
+}

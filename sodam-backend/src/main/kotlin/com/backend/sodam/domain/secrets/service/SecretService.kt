@@ -6,15 +6,21 @@ import com.backend.sodam.domain.secrets.service.command.SecretSearchCommand
 import com.backend.sodam.domain.secrets.controller.response.SecretCreateResponse
 import com.backend.sodam.domain.secrets.controller.response.SecretDetailResponse
 import com.backend.sodam.domain.secrets.controller.response.SecretSummaryResponse
+import com.backend.sodam.domain.secrets.exception.SecretException
+import com.backend.sodam.domain.secrets.repository.SecretViewRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 @RequiredArgsConstructor
 class SecretService(
-    private val secretRepository: SecretRepository
+    private val secretRepository: SecretRepository,
+    private val secretViewRepository: SecretViewRepository,
+    private val viewValidators: List<SecretViewValidator>,
 ) {
 
     fun create(secretCreateCommand: SecretCreateCommand): SecretCreateResponse {
@@ -40,21 +46,27 @@ class SecretService(
         }
     }
 
-    fun getSecretDetail(secretId: Long): SecretDetailResponse {
-        secretRepository.increaseViewCnt(secretId)
-        val sodamDetailSecret = secretRepository.findDetailBySecretId(secretId)
-        return SecretDetailResponse(
-            secretId = sodamDetailSecret.secretId,
-            author = sodamDetailSecret.author,
-            title = sodamDetailSecret.title,
-            content = sodamDetailSecret.content,
-            createdAt = sodamDetailSecret.createdAt,
-            tags = sodamDetailSecret.tags,
-            comments = sodamDetailSecret.comments,
-            images = sodamDetailSecret.images,
-            secretLikeCnt = sodamDetailSecret.secretLikeCnt,
-            secretDislikeCnt = sodamDetailSecret.secretDislikeCnt,
-            secretViewCnt = sodamDetailSecret.secretViewCnt
-        )
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor = [Exception::class],
+    )
+    fun getSecretDetail(userId: String, secretId: Long, role: String): SecretDetailResponse {
+        println("role: $role")
+        val totalViewCnt = secretViewRepository.countViewToday(userId = userId) // 보유 구독권 서비스에서 현재 회원의 당일 조회수 확인
+        val isViewable = viewValidators.stream()
+                                                .filter { it.isTarget(role) } // 현재 발급된 구독권
+                                                .findFirst()
+                                                .orElseThrow()
+                                                .isValidView(totalViewCnt) // 조회 가능 여부 확인
+
+        if (!isViewable)   // 조회 가능 여부 확인
+            throw SecretException.InvalidSecretViewException()
+
+
+        secretRepository.increaseViewCnt(secretId) // 조회수 증가
+        secretViewRepository.create(userId = userId, secretId = secretId) // 시청 이력 생성
+        return secretRepository.findDetailBySecretId(secretId = secretId)
+                               .toResponse()
+
     }
 }

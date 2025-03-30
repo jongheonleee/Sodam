@@ -681,6 +681,27 @@ CREATE TABLE `download_secrets` (
     PRIMARY KEY (USER_DOWN_ID)
 );
 
+DROP TABLE IF EXISTS `view_secrets`;
+CREATE TABLE `view_secrets` (
+    `USER_VIEW_ID`                VARCHAR(255)        NOT NULL                    COMMENT '회원 뷰 아이디(UUID)(PK)',
+    `SECRETE_ID`                  BIGINT              NOT NULL                    COMMENT '자동증분',
+    `USER_ID`                     VARCHAR(255)        NULL                        COMMENT '회원 아이디(FK)',
+    `SOCIAL_USER_ID`              VARCHAR(255)        NULL                        COMMENT '소셜 회원 아이디(FK)',
+
+    -- 시스템 칼럼
+    `CREATED_AT`                  DATETIME            NOT NULL                    COMMENT '생성일자',
+    `CREATED_BY`                  VARCHAR(50)         NOT NULL                    COMMENT '생성자',
+    `MODIFIED_AT`                 DATETIME            NOT NULL                    COMMENT '수정일자',
+    `MODIFIED_BY`                 VARCHAR(50)         NOT NULL                    COMMENT '수정자',
+
+    -- FK 참조 : 시크릿, 사용자
+    CONSTRAINT FK_VIEW_SECRETS_USER_ID FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT FK_VIEW_SECRETS_SOCIAL_USER_ID FOREIGN KEY (`SOCIAL_USER_ID`) REFERENCES `social_users`(`SOCIAL_USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT FK_VIEW_SECRETS_SECRETE_ID FOREIGN KEY (`SECRETE_ID`) REFERENCES `secretes`(`SECRETE_ID`) ON DELETE CASCADE,
+
+    PRIMARY KEY(`USER_VIEW_ID`)
+);
+
 -- 구독자 전용 게시글 이력 테이블
 DROP TABLE IF EXISTS `secret_history`;
 CREATE TABLE `secret_history` (

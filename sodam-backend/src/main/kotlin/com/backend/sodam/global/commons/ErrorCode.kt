@@ -34,6 +34,7 @@ enum class ErrorCode(
 
     // 시크릿
     SECRET_NOT_FOUND("SDE5000", "해당 시크릿을 찾을 수 없습니다."),
+    SECRET_INVALID_VIEW("SDE5001", "해당 시크릿을 조회할 수 없습니다."),
 
     // 카테고리
     CATEGORY_NOT_FOUND("SDE4001", "해당 카테고리를 찾을 수 없습니다."),

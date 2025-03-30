@@ -13,13 +13,12 @@ import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
 @Entity
-@Table(name = "download_secrets")
+@Table(name = "view_secrets")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class DownloadSecretsEntity(
-    // pk 및 불변 필드
+class ViewSecretsEntity(
     @Id
-    @Column(name = "USER_DOWN_ID")
-    val userDownId: String,
+    @Column(name = "USER_VIEW_ID")
+    val userViewId: String,
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
@@ -33,5 +32,4 @@ class DownloadSecretsEntity(
     @JoinColumn(name = "SECRETE_ID")
     val secret: SecretsEntity? = null,
 
-    // 가변 필드
-) : MutableBaseEntity()
+): MutableBaseEntity()

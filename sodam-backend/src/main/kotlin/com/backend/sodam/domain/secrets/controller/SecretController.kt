@@ -54,8 +54,14 @@ class SecretController(
     fun getSecretDetail(
         @PathVariable("secretId") secretId: Long
     ): SodamApiResponse<SecretDetailResponse> {
+        val userId = tokenProvider.getUserId()
+        val role = tokenProvider.getRole()
         return SodamApiResponse.ok(
-            secretService.getSecretDetail(secretId)
+            secretService.getSecretDetail(
+                userId = userId,
+                role = role,
+                secretId = secretId,
+            )
         )
     }
 }
