@@ -101,6 +101,7 @@ class UserService(
                     username = updatedSodamUser.username,
                     email = updatedSodamUser.email,
                     introduce = updatedSodamUser.introduce,
+                    encryptedPassword = updatedSodamUser.encryptedPassword,
                 )
             }
 
@@ -120,6 +121,7 @@ class UserService(
                     username = updatedSodamUser.username,
                     email = updatedSodamUser.email,
                     introduce = updatedSodamUser.introduce,
+                    encryptedPassword = updatedSodamUser.encryptedPassword,
                 )
             }
         }
@@ -179,7 +181,6 @@ class UserService(
         }
 
         val sodamUserDetail = sodamUserDetailOptional.get()
-        println("sodamUserDetail: $sodamUserDetail")
         return sodamUserDetail.toResponse()
     }
 

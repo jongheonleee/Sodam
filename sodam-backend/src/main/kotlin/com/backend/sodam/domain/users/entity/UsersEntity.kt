@@ -71,6 +71,7 @@ class UsersEntity(
         this.userEmail = userUpdateCommand.email
         this.userName = userUpdateCommand.name
         this.userIntroduce = userUpdateCommand.introduce
+        this.password = userUpdateCommand.encryptedPassword
     }
 
     fun toDomain(): SodamUser {
