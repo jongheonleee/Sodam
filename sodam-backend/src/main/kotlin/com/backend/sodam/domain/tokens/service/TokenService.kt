@@ -5,7 +5,7 @@ import com.backend.sodam.domain.tokens.repository.TokenRepository
 import com.backend.sodam.domain.tokens.controller.response.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.UserRepository
+import com.backend.sodam.domain.users.repository.NormalUserRepository
 import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.controller.response.UserResponse
 import com.backend.sodam.global.port.KakaoTokenPort
@@ -28,7 +28,7 @@ class TokenService(
     private val tokenRepository: TokenRepository,
     private val kakaoTokenPort: KakaoTokenPort,
     private val userService: UserService,
-    private val userRepository: UserRepository,
+    private val normalUserRepository: NormalUserRepository,
     @Value("\${jwt.secret}")
     val secretKey: String
 ) {
@@ -126,7 +126,7 @@ class TokenService(
             .parseClaimsJws(accessToken)
 
         val userId = claimsJws.payload["userId"] as String
-        val sodamUserOptional = userRepository.findByUserId(userId)
+        val sodamUserOptional = normalUserRepository.findByUserId(userId)
         if (sodamUserOptional.isEmpty) {
             throw TokenException.InvalidTokenException()
         }

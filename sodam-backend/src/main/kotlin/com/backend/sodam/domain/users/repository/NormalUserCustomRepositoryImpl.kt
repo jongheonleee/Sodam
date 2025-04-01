@@ -4,16 +4,16 @@ import com.backend.sodam.domain.articles.entity.QArticleEntity.articleEntity
 import com.backend.sodam.domain.articles.entity.QUsersLikeArticleEntity.usersLikeArticleEntity
 import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.categories.entity.QCategoryEntity.categoryEntity
-import com.backend.sodam.domain.positions.entity.QPositionsEntity
 import com.backend.sodam.domain.subscriptions.entity.QUsersSubscriptionsEntity.usersSubscriptionsEntity
 import com.backend.sodam.domain.tags.entity.QTagsEntity.tagsEntity
 import com.backend.sodam.domain.users.entity.QSocialUsersEntity.socialUsersEntity
 import com.backend.sodam.domain.users.entity.QUsersEntity.usersEntity
-import com.backend.sodam.domain.users.entity.QUsersGradeEntity
 import com.backend.sodam.domain.users.entity.QUsersGradeEntity.*
-import com.backend.sodam.domain.users.entity.QUsersPositionsEntity
 import com.backend.sodam.domain.users.entity.QUsersPositionsEntity.*
+import com.backend.sodam.domain.users.entity.SocialUsersEntity
+import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
+import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.global.utils.Formatter
 import com.querydsl.jpa.impl.JPAQueryFactory
 import lombok.RequiredArgsConstructor
@@ -27,10 +27,58 @@ import java.util.*
 
 @Repository
 @RequiredArgsConstructor
-class UserCustomRepositoryImpl(
+class NormalUserCustomRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory,
     private val formatter: Formatter
-) : UserCustomRepository {
+) : NormalUserCustomRepository {
+
+    @Transactional(readOnly = true)
+    override fun findByEmailWithRole(email: String): Optional<SodamUser> {
+        return Optional.ofNullable(
+            jpaQueryFactory.selectFrom(usersEntity)
+                .leftJoin(usersEntity.subscriptions, usersSubscriptionsEntity)
+                .where(usersEntity.userEmail.eq(email)
+                    .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
+                )
+                .fetchOne()
+                ?. let {
+                    SodamUser(
+                        userId = it.userId,
+                        username = it.userName,
+                        encryptedPassword = it.password,
+                        introduce = it.userIntroduce,
+                        profileImageUrl = it.userImage,
+                        email = it.userEmail,
+                        role = it.subscriptions.first().subscriptionName.toRole(),
+                        userType = UserType.NORMAL
+                    )
+                }
+        )
+    }
+
+    @Transactional(readOnly = true)
+    override fun findSodamUserByUserId(userId: String): Optional<SodamUser> {
+        return Optional.ofNullable(
+            jpaQueryFactory.selectFrom(usersEntity)
+                .leftJoin(usersEntity.subscriptions, usersSubscriptionsEntity)
+                .where(usersEntity.userId.eq(userId)
+                        .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
+                )
+                .fetchOne()
+                ?. let {
+                    SodamUser(
+                        userId = it.userId,
+                        username = it.userName,
+                        encryptedPassword = it.password,
+                        introduce = it.userIntroduce,
+                        profileImageUrl = it.userImage,
+                        email = it.userEmail,
+                        role = it.subscriptions.first().subscriptionName.toRole(),
+                        userType = UserType.NORMAL
+                    )
+                }
+        )
+    }
 
     @Transactional(readOnly = true)
     override fun findProfileInfoForSocialUser(socialUserId: String): Optional<SodamUserDetail> {
@@ -256,4 +304,6 @@ class UserCustomRepositoryImpl(
             totalArticleCount.toLong()
         )
     }
+
+
 }

@@ -4,7 +4,7 @@ import com.backend.sodam.domain.positions.exception.PositionException
 import com.backend.sodam.domain.users.entity.UsersPositionsEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -13,7 +13,7 @@ import java.util.*
 @Repository
 @RequiredArgsConstructor
 class UserPositionRepository(
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val positionJpaRepository: PositionJpaRepository,
     private val userPositionJpaRepository: UserPositionJpaRepository,

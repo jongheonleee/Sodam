@@ -6,7 +6,7 @@ import com.backend.sodam.domain.comments.model.SodamComment
 import com.backend.sodam.domain.comments.service.command.CommentCreateCommand
 import com.backend.sodam.domain.comments.service.command.CommentUpdateCommand
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.global.utils.Formatter
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 class CommentRepository(
     private val articleJpaRepository: ArticleJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val commentJpaRepository: CommentJpaRepository,
     private val commentLikeJpaRepository: UsersCommentLikeJpaRepository,
     private val commentDislikeJpaRepository: UsersCommentDislikeJpaRepository,

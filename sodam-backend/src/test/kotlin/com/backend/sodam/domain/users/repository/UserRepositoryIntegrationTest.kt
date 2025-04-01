@@ -14,20 +14,15 @@ import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionReposit
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import io.kotest.extensions.spring.SpringExtension
 import com.backend.sodam.domain.users.entity.UsersEntity
-import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
-import com.backend.sodam.global.config.PersistenceJpaConfig
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 import java.util.*
 
 
@@ -40,10 +35,10 @@ import java.util.*
 @SpringBootTest // 현재 스프링 컨테이너 업로드해서 서비스에서 사용하는 빈들을 모두 관리해서 테스트 코드를 구동하고 있음 -> 이 부분 추후에 효율적으로 구성하기
 class UserRepositoryIntegrationTest(
     // - 테스트 대상
-    private val sut: UserRepository,
+    private val sut: NormalUserRepository,
 
     // - 의존하고 있는 오브젝트
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository,
 
@@ -57,7 +52,7 @@ class UserRepositoryIntegrationTest(
     private val userGradeJpaRepository: UserGradeJpaRepository,
     private val userPositionsJpaRepository: UserPositionJpaRepository,
     private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
-) : DescribeSpec({
+): DescribeSpec({
 
     // 테스트 과정에서 사용할 목 데이터
     val mockPosition = PositionsEntity( positionId = UUID.randomUUID().toString(),
@@ -166,66 +161,35 @@ class UserRepositoryIntegrationTest(
             }
         }
 
-        context("일반회원 이메일로 조회할 때") {
-            // 회원 등록 처리
-            val command = UserSignupCommand(  email = "test@test.com",
-                name = "테스트 유저",
-                password = "asdf1234",
-                positionId = mockPosition.positionId,
-                profileImage = "테스트 유저 프로필 사진 url",
-                introduce = "테스트 유저 입니다.")
 
+        context("소셜회원 providerId로 조회할 때") {
+            val command = SocialUserSignupCommand(  username = "테스트 유저",
+                provider = "kakao",
+                providerId = UUID.randomUUID().toString())
 
-            it("해당 이메일관련 일반회원이 존재한다면, true를 반환한다.") {
-                assertDoesNotThrow { sut.create(command) }
-
-                val optional = sut.findByUserEmail(command.email)
+            it("해당 providerId관련 소셜회원이 존재한다면, true를 반환한다.") {
+                sut.createSocialUser(command)
+                val optional = sut.findSocialUserByProviderId(command.providerId)
                 optional.isPresent shouldBe true
+
 
                 val actual = optional.get()
                 val expected = SodamUser(
-                    username = command.name,
-                    email = command.email,
-                    encryptedPassword = command.password,
-                    profileImageUrl = command.profileImage,
-                    introduce = command.introduce,
+                    provider = command.provider,
+                    username = command.username,
+                    providerId = command.providerId,
                 )
 
-                actual.email shouldBe expected.email
+                actual.provider shouldBe expected.provider
+                actual.providerId shouldBe expected.providerId
                 actual.username shouldBe expected.username
-                actual.introduce shouldBe command.introduce
-                actual.profileImageUrl shouldBe command.profileImage
-                actual.encryptedPassword shouldBe expected.encryptedPassword
-
-            }
-
-            it("해당 이메일관련 일반회원이 존재하지 않는다면, false를 반환한다.") {
-                assertDoesNotThrow { sut.create(command) }
-
-                val optional = sut.findByUserEmail("notExists@test.com")
-                optional.isPresent shouldBe false
-            }
-        }
-
-        context("소셜회원 이메일로 조회할 때") {
-
-            it("해당 이메일관련 소셜회원이 존재한다면, true를 반환한다.") {
-
-            }
-
-            it("해당 이메일관련 소셜회원이 존재하지 않는다면, false를 반환한다.") {
-
-            }
-        }
-
-        context("소셜회원 providerId로 조회할 때") {
-
-            it("해당 providerId관련 소셜회원이 존재한다면, true를 반환한다.") {
-
             }
 
             it("해당 providerId관련 소셜회원이 존재하지 않는다면, false를 반환한다.") {
-
+                val notExistsProviderId = "dwadwadaw"
+                sut.createSocialUser(command)
+                val optional = sut.findSocialUserByProviderId(notExistsProviderId)
+                optional.isEmpty shouldBe true
             }
         }
 
@@ -238,7 +202,7 @@ class UserRepositoryIntegrationTest(
                                               introduce = "테스트 유저 입니다.")
 
             it("일반회원을 성공적으로 등록한다") {
-                val actual = sut.create(command)
+                val actual = sut.createNormalUser(command)
                 val expected = SodamUser(
                     username = command.name,
                     email = command.email,
@@ -288,7 +252,7 @@ class UserRepositoryIntegrationTest(
 
             it("업데이트 데이터와 userId를 제대로 전달했으면, 정상적으로 업데이트가 되야한다.") {
                 // 변경할 대상 등록
-                val target = sut.create(command)
+                val target = sut.createNormalUser(command)
 
                 // 업데이트용 데이터, userId 사용
                 val userId = target.userId
@@ -366,10 +330,11 @@ class UserRepositoryIntegrationTest(
                 profileImage = "테스트 유저 프로필 사진 url",
                 introduce = "테스트 유저 입니다.")
 
-            it("일반 회원 중에 존재하는 userId로 조회하면 정상적으로 조회가 되야한다.") {
-                val target = sut.create(command)
+            it("일반 회원 중에 존재하는 userId로 조회하면 정상적으로 조회가 되야한다.") { // 해당 부분은 구독권도 같이 등록해야함
+                val target = sut.createNormalUser(command)
+                userSubscriptionRepository.createSubscriptionForUser(target.userId)
 
-                val optional = sut.findUserByUserId(userId = target.userId)
+                val optional = sut.findByUserId(userId = target.userId)
                 optional.isPresent shouldBe true
 
                 val actual = optional.get()

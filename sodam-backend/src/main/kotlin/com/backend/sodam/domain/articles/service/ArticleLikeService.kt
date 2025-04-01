@@ -4,14 +4,14 @@ import com.backend.sodam.domain.articles.repository.ArticleRepository
 import com.backend.sodam.domain.articles.repository.UsersArticleLikeRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.UserRepository
+import com.backend.sodam.domain.users.repository.NormalUserRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
 @Service
 @RequiredArgsConstructor
 class ArticleLikeService(
-    private val userRepository: UserRepository,
+    private val normalUserRepository: NormalUserRepository,
     private val articleRepository: ArticleRepository,
     private val usersArticleLikeRepository: UsersArticleLikeRepository
 ) {
@@ -26,7 +26,7 @@ class ArticleLikeService(
         // 해당 게시글의 좋아요수 1 증가
         // 근데 유저 타입마다 다르게 처리해야함
 
-        val sodamUserOptional = userRepository.findByUserId(userId)
+        val sodamUserOptional = normalUserRepository.findByUserId(userId)
         if (sodamUserOptional.isEmpty) {
             throw UserException.UserNotFoundException()
         }

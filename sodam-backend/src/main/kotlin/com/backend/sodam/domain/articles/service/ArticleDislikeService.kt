@@ -4,14 +4,14 @@ import com.backend.sodam.domain.articles.repository.ArticleRepository
 import com.backend.sodam.domain.articles.repository.UsersArticleDislikeRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.UserRepository
+import com.backend.sodam.domain.users.repository.NormalUserRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
 @Service
 @RequiredArgsConstructor
 class ArticleDislikeService(
-    private val userRepository: UserRepository,
+    private val normalUserRepository: NormalUserRepository,
     private val articleRepository: ArticleRepository,
     private val usersArticleDislikeRepository: UsersArticleDislikeRepository
 ) {
@@ -24,7 +24,7 @@ class ArticleDislikeService(
         // 그렇지 않다면, 게시글 유저 싫어요 테이블에 행을 추가함
         // 해당 게시글의 실헝요수 1 증가
 
-        val sodamUserOptional = userRepository.findByUserId(userId)
+        val sodamUserOptional = normalUserRepository.findByUserId(userId)
         if (sodamUserOptional.isEmpty) {
             throw UserException.UserNotFoundException()
         }

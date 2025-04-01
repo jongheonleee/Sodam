@@ -4,7 +4,7 @@ import com.backend.sodam.domain.grades.exception.GradeException
 import com.backend.sodam.domain.users.entity.UsersGradeEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -14,7 +14,7 @@ import java.util.*
 @Repository
 @RequiredArgsConstructor
 class UserGradeRepository(
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val gradeJpaRepository: GradesJpaRepository,
     private val useGradeJpaRepository: UserGradeJpaRepository,

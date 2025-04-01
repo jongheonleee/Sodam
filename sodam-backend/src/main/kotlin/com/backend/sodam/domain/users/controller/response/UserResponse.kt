@@ -12,7 +12,7 @@ data class UserResponse(
     val role: String = ""
 ) {
     companion object {
-        fun toUserResponse(sodamUser: SodamUser): UserResponse {
+        fun toResponse(sodamUser: SodamUser): UserResponse {
             return UserResponse(
                 userId = sodamUser.userId,
                 email = sodamUser.email,

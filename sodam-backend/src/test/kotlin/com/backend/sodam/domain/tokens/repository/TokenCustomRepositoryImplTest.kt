@@ -4,7 +4,7 @@ import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
@@ -15,7 +15,7 @@ import java.util.*
 class TokenCustomRepositoryImplTest(
     private val sut: TokenCustomRepositoryImpl,
     private val tokenJpaRepository: TokenJpaRepository,
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository
 ) : DescribeSpec({
 

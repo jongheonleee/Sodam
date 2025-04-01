@@ -5,7 +5,7 @@ import com.backend.sodam.domain.articles.exception.ArticleException
 import com.backend.sodam.domain.articles.exception.UsersArticleLikeException
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 @RequiredArgsConstructor
 class UsersArticleLikeRepository(
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val articleJpaRepository: ArticleJpaRepository,
     private val usersArticleLikeJpaRepository: UsersArticleLikeJpaRepository

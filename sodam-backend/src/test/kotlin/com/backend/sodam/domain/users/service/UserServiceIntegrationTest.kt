@@ -12,7 +12,7 @@ import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
@@ -20,7 +20,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 
@@ -48,7 +47,7 @@ class UserServiceIntegrationTest(
     private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
 
     // - 3. 회원 테이블
-    private val normalUserJpaRepository: UserJpaRepository,
+    private val normalUserJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
 ): BehaviorSpec({
 

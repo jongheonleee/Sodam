@@ -13,7 +13,7 @@ import com.backend.sodam.domain.articles.controller.response.ArticleUpdateRespon
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.SocialUserRepository
-import com.backend.sodam.domain.users.repository.UserRepository
+import com.backend.sodam.domain.users.repository.NormalUserRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class ArticleService(
-    private val userRepository: UserRepository,
+    private val normalUserRepository: NormalUserRepository,
     private val socialUserRepository: SocialUserRepository,
     private val articleRepository: ArticleRepository
 ) {
@@ -30,7 +30,7 @@ class ArticleService(
     fun create(userId: String, articleCreateCommand: ArticleCreateCommand): ArticleCreateResponse {
         val sodamUser = socialUserRepository.findBySocialUserId(userId)
             .orElseGet {
-                userRepository.findUserByUserId(userId)
+                normalUserRepository.findUserByUserId(userId)
                     .orElseThrow { UserException.UserNotFoundException() }
             }
 

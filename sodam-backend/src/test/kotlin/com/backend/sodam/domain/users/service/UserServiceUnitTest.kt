@@ -164,49 +164,6 @@ class UserServiceUnitTest : BehaviorSpec({
         }
     }
 
-    // - 3. 이메일로 단순 유저 조회
-    // - 단순 유저 조회 성공
-    // - 전달받은 이메일이 없는 경우 UserNotFoundException 예외 발생
-    given("클라이언트로부터 이메일로 단순 유저 조회 요청을 받았을 때") {
-
-        `when`("이메일에 대한 유저가 존재한다면") {
-            val email = "asdf1234@gmail.com"
-            val expected = SimpleUserResponse(
-                username = "테스트 유저",
-                email = "asdf1234@gmail.com"
-            )
-
-            every { sut.findByUserEmail(email) }.returns(expected)
-
-            then("단순 유저 정보를 반환한다.") {
-                val actual = sut.findByUserEmail(email)
-
-                actual shouldBe expected
-
-                verify {
-                    sut.findByUserEmail(email)
-                }
-            }
-        }
-
-        `when`("이메일에 대한 유저가 존재하지 않는다면") {
-            val email = "asdf1234@gmail.com"
-            val expected = UserException.UserNotFoundException()
-
-            every { sut.findByUserEmail(email) }.throws(expected)
-
-            then("UserNotFoundException 예외가 발생한다.") {
-                assertThrows<UserException.UserNotFoundException> {
-                    sut.findByUserEmail(email)
-                }
-
-                verify {
-                    sut.findByUserEmail(email)
-                }
-            }
-        }
-    }
-
     // - 4. 소셜 유저 조회(카카오)
     // - 소셜 유저 조회 성공
     given("클라이언트로부터 accessToken으로 소셜 유저 조회 요청을 받았을 때") {

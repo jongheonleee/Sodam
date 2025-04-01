@@ -4,7 +4,7 @@ import com.backend.sodam.domain.comments.entity.UsersLikeCommentEntity
 import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 @RequiredArgsConstructor
 class UsersCommentLikeRepository(
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val commentJpaRepository: CommentJpaRepository,
     private val usersCommentLikeJpaRepository: UsersCommentLikeJpaRepository

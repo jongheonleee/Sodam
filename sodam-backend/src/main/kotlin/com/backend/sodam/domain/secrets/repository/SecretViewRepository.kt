@@ -2,7 +2,7 @@ package com.backend.sodam.domain.secrets.repository
 
 import com.backend.sodam.domain.secrets.entity.ViewSecretsEntity
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -12,7 +12,7 @@ import java.util.UUID
 @RequiredArgsConstructor
 class SecretViewRepository(
     private val secretJpaRepository: SecretJpaRepository,
-    private val normalUserJpaRepository: UserJpaRepository,
+    private val normalUserJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val secretViewJpaRepository: SecretViewJpaRepository,
 ) {

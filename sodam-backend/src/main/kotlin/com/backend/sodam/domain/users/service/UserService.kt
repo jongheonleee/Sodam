@@ -7,10 +7,9 @@ import com.backend.sodam.domain.positions.model.PositionsType
 import com.backend.sodam.domain.positions.repository.UserPositionRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.exception.UserException
-import com.backend.sodam.domain.users.repository.UserRepository
+import com.backend.sodam.domain.users.repository.NormalUserRepository
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
-import com.backend.sodam.domain.users.controller.response.SimpleUserResponse
 import com.backend.sodam.domain.users.controller.response.SocialUserResponse
 import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 import com.backend.sodam.domain.users.controller.response.UserResponse
@@ -18,6 +17,7 @@ import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
+import com.backend.sodam.domain.users.service.port.FetchUserPort
 import com.backend.sodam.global.port.KakaoUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
@@ -29,7 +29,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @RequiredArgsConstructor
 class UserService(
-    private val userRepository: UserRepository,
+    private val fetchUserPorts: List<FetchUserPort>,
+    private val normalUserRepository: NormalUserRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository,
     private val kakaoUserPort: KakaoUserPort,
     private val userGradeRepository: UserGradeRepository,
@@ -41,11 +42,11 @@ class UserService(
         rollbackFor = [Exception::class]
     )
     fun signupUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
-        if (userRepository.isExistsByEmail(userSignupCommand.email)) {
+        if (isDuplicatedEmail(userSignupCommand.email)) {
             throw UserException.UserAlreadyExistsException()
         }
 
-        val sodamUser = userRepository.create(userSignupCommand)
+        val sodamUser = normalUserRepository.createNormalUser(userSignupCommand)
         userPositionRepository.createPositionForUser(sodamUser.userId, userSignupCommand.positionId)
         userSubscriptionRepository.createSubscriptionForUser(sodamUser.userId)
         userGradeRepository.createGradeForUser(sodamUser.userId, GradesType.ENTRY.name)
@@ -57,11 +58,11 @@ class UserService(
         rollbackFor = [Exception::class]
     )
     fun signupSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse {
-        if (userRepository.isExistsByProviderId(socialUserSignupCommand.providerId)) {
+        if (normalUserRepository.isExistsByProviderId(socialUserSignupCommand.providerId)) {
             throw UserException.SocialUserAlreadyExistsException()
         }
 
-        val sodamUser = userRepository.createSocialUser(socialUserSignupCommand)
+        val sodamUser = normalUserRepository.createSocialUser(socialUserSignupCommand)
         userPositionRepository.createPositionForSocialUser(sodamUser.userId, PositionsType.TBD.fullName)
         userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
         userGradeRepository.createGradeForSocialUser(sodamUser.userId, GradesType.ENTRY.name)
@@ -74,13 +75,12 @@ class UserService(
     )
     fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): UserUpdateResponse {
         // 이메일 중복 확인
-        if (userRepository.isExistsByEmail(userUpdateCommand.email)) {
+        if (normalUserRepository.isExistsByEmail(userUpdateCommand.email)) {
             throw UserException.UserAlreadyExistsException()
         }
 
-        val byUserId = userRepository.findByUserId(userId)
+        val byUserId = normalUserRepository.findByUserId(userId)
         if (byUserId.isEmpty) {
-            println("여기입니다.")
             throw UserException.UserNotFoundException()
         }
 
@@ -88,7 +88,7 @@ class UserService(
         when(sodamUser.userType) {
             UserType.SOCIAL -> {
                 // 기본 회원 정보를 업데이트한다.
-                val updatedSodamUser = userRepository.updateSocialUser(
+                val updatedSodamUser = normalUserRepository.updateSocialUser(
                     socialUserId = sodamUser.userId,
                     userUpdateCommand = userUpdateCommand,
                 )
@@ -107,7 +107,7 @@ class UserService(
             }
 
             else -> {
-                val updatedSodamUser = userRepository.updateNormalUser(
+                val updatedSodamUser = normalUserRepository.updateNormalUser(
                     userId = sodamUser.userId,
                     userUpdateCommand = userUpdateCommand,
                 )
@@ -128,74 +128,64 @@ class UserService(
         }
     }
 
-    fun findByUserEmail(email: String): SimpleUserResponse {
-        val foundOptionalSodamUserByEmail = userRepository.findByUserEmail(email)
-        if (foundOptionalSodamUserByEmail.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
-        val sodamUser = foundOptionalSodamUserByEmail.get()
-
-        return SimpleUserResponse(
-            username = sodamUser.username,
-            email = sodamUser.email
-        )
+    fun findByEmail(email: String): UserResponse {
+        val fetchPort = getFetchPortByEmail(email)
+        return UserResponse.toResponse(sodamUser = fetchPort.findByEmail(email))
     }
 
     fun findByUserId(userId: String): UserResponse {
-        val foundOptionalSodamUserByUserId = userRepository.findByUserId(userId)
-        if (foundOptionalSodamUserByUserId.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
-        val sodamUser = foundOptionalSodamUserByUserId.get()
-        return UserResponse.toUserResponse(
-            sodamUser = sodamUser
-        )
+        val fetchPort = getFetchPortByUserId(userId)
+        return UserResponse.toResponse(sodamUser = fetchPort.findByUserId(userId).get())
     }
 
     fun findKakaoUser(accessToken: String): SocialUserResponse {
         val foundUserFromKakao = kakaoUserPort.findUserFromKakao(accessToken)
-        return SocialUserResponse(
-            name = foundUserFromKakao.username,
-            provider = "kakao",
-            providerId = foundUserFromKakao.providerId
-        )
+        return SocialUserResponse(name = foundUserFromKakao.username, provider = "kakao", providerId = foundUserFromKakao.providerId)
     }
 
     fun findByProviderId(providerId: String): UserResponse? {
-        return userRepository.findSocialUserByProviderId(providerId) // socialUser
-            .map { UserResponse.toUserResponse(it) }
+        return normalUserRepository.findSocialUserByProviderId(providerId) // socialUser
+            .map { UserResponse.toResponse(it) }
             .orElse(null)
     }
 
-    fun findByEmail(email: String): UserResponse? {
-        return userRepository.findByUserEmail(email)
-            .map { UserResponse.toUserResponse(it) }
-            .orElse(null)
-    }
 
     fun findUserProfileInfo(userId: String): UserProfileResponse {
-        val sodamUserDetailOptional = userRepository.findProfileInfo(userId)
-        if (sodamUserDetailOptional.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
-        val sodamUserDetail = sodamUserDetailOptional.get()
+        val fetchPort = getFetchPortByUserId(userId)
+        val sodamUserDetail = fetchPort.findProfileInfo(userId).get()
         return sodamUserDetail.toResponse()
     }
 
     fun getOwnArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
-        return userRepository.findOwnArticlesByPageBy(
-            pageable = pageable,
-            userId = userId
-        )
+        val fetchPort = getFetchPortByUserId(userId)
+        return fetchPort.findOwnArticlesByPageBy(pageable = pageable, userId = userId)
     }
 
     fun getOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
-        return userRepository.findOwnLikeArticles(
-            pageable = pageable,
-            userId = userId
-        )
+        val fetchPort = getFetchPortByUserId(userId)
+        return fetchPort.findOwnLikeArticles(pageable = pageable, userId = userId)
     }
+
+    private fun getFetchPortByUserType(userType: UserType): FetchUserPort
+        = fetchUserPorts.stream()
+                        .filter { it.isTarget(userType) }
+                        .findFirst()
+                        .orElseThrow { IllegalStateException() }
+
+    private fun getFetchPortByEmail(email: String): FetchUserPort
+        = fetchUserPorts.stream()
+                        .filter { it.isExistsByEmail(email) }
+                        .findFirst()
+                        .orElseThrow { UserException.UserNotFoundException() }
+    
+    private fun getFetchPortByUserId(userId: String): FetchUserPort
+        = fetchUserPorts.stream()
+                        .filter { it.isExistsByUserId(userId) }
+                        .findFirst()
+                        .orElseThrow { UserException.UserNotFoundException() }
+
+    private fun isDuplicatedEmail(email: String): Boolean
+        = fetchUserPorts.stream()
+                        .anyMatch { it.isExistsByEmail(email) }
+
 }

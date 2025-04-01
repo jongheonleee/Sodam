@@ -4,14 +4,14 @@ import com.backend.sodam.domain.comments.repository.CommentRepository
 import com.backend.sodam.domain.comments.repository.UsersCommentDislikeRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.UserRepository
+import com.backend.sodam.domain.users.repository.NormalUserRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
 @Service
 @RequiredArgsConstructor
 class CommentDislikeService(
-    private val userRepository: UserRepository,
+    private val normalUserRepository: NormalUserRepository,
     private val commentRepository: CommentRepository,
     private val usersDislikeCommentRepository: UsersCommentDislikeRepository
 ) {
@@ -19,7 +19,7 @@ class CommentDislikeService(
         // [비즈니스 로직]
         // 유저 정보를 조회한다
         // 유저 타입에 따라서 다르게 서로 다르게 적용한다.
-        val sodamUserOptional = userRepository.findByUserId(userId)
+        val sodamUserOptional = normalUserRepository.findByUserId(userId)
         if (sodamUserOptional.isEmpty) {
             throw UserException.UserNotFoundException()
         }

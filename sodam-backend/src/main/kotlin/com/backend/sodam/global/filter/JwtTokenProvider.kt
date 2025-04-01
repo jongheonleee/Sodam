@@ -18,6 +18,8 @@ class JwtTokenProvider(
     fun getAuthentication(accessToken: String): Authentication {
         val foundUserByAccessToken = tokenService.findUserByAccessToken(accessToken)
 
+        println("foundUserByAccessToken: $foundUserByAccessToken")
+        println("foundUserByAccessToken.role: ${foundUserByAccessToken.role}")
         val authorities = listOf<SimpleGrantedAuthority>(
             SimpleGrantedAuthority(foundUserByAccessToken.role)
         )

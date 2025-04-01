@@ -3,7 +3,7 @@ package com.backend.sodam.domain.subscriptions.repository
 import com.backend.sodam.domain.subscriptions.model.UserSubscription
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -12,7 +12,7 @@ import java.util.Optional
 @Repository
 @RequiredArgsConstructor
 class UserSubscriptionRepository(
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val subscriptionJpaRepository: SubscriptionJpaRepository
@@ -25,6 +25,7 @@ class UserSubscriptionRepository(
     // 생성한 엔티티를 저장하고 리스폰스로 반환한다.
     @Transactional
     fun createSubscriptionForUser(userId: String): UserSubscription { // 매개변수로 subscriptionName 전달받게 구성하기
+        println("여기여기")
         val userSubscription = UserSubscription.newSubscription(userId)
 
         val foundUserOptionalEntity = userJpaRepository.findByUserId(userId)

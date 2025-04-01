@@ -12,7 +12,7 @@ import com.backend.sodam.domain.comments.repository.CommentJpaRepository
 import com.backend.sodam.domain.comments.repository.CommentRepository
 import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 class ArticleRepository(
     private val articleJpaRepository: ArticleJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
     private val commentRepository: CommentRepository,
     private val commentJpaRepository: CommentJpaRepository,

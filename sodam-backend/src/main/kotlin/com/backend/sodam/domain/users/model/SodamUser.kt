@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.users.model
 
+import com.backend.sodam.domain.users.controller.response.UserResponse
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 
 // oauth로 등록된 회원의 경우 username, provioderId만 필요하기 때문에
@@ -14,7 +15,8 @@ data class SodamUser( // 추후에 SodamUser, SodamSocialUser 구분해서 정�
     val role: String = "",
     val introduce: String = "",
     val profileImageUrl: String = "",
-    val userType: UserType? = null
+    val userType: UserType? = null,
+    val position: String = "",
 ) {
     fun toSignupResponse(): UserSignupResponse {
         return UserSignupResponse(
@@ -24,4 +26,5 @@ data class SodamUser( // 추후에 SodamUser, SodamSocialUser 구분해서 정�
             introduce = this.introduce
         )
     }
+
 }

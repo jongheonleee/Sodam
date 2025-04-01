@@ -5,7 +5,7 @@ import com.backend.sodam.domain.tokens.exception.TokenException
 import com.backend.sodam.domain.tokens.controller.response.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.UserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -14,7 +14,7 @@ import java.util.*
 @Repository
 @RequiredArgsConstructor
 class TokenRepository(
-    private val userJpaRepository: UserJpaRepository,
+    private val userJpaRepository: NormalUserJpaRepository,
     private val tokenJpaRepository: TokenJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository
 ) {

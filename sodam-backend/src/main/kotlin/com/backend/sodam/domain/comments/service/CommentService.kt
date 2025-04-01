@@ -10,7 +10,7 @@ import com.backend.sodam.domain.comments.controller.response.CommentCreateRespon
 import com.backend.sodam.domain.comments.controller.response.CommentSimpleResponse
 import com.backend.sodam.domain.comments.controller.response.CommentUpdateResponse
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.UserRepository
+import com.backend.sodam.domain.users.repository.NormalUserRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service
 class CommentService(
     private val articleRepository: ArticleRepository,
     private val commentRepository: CommentRepository,
-    private val userRepository: UserRepository
+    private val normalUserRepository: NormalUserRepository
 ) {
 
     fun create(articleId: Long, commentCreateCommand: CommentCreateCommand): CommentCreateResponse {
@@ -27,7 +27,7 @@ class CommentService(
             throw ArticleException.ArticleNotFoundException()
         }
 
-        val sodamUser = userRepository.findByUserId(commentCreateCommand.userId).get()
+        val sodamUser = normalUserRepository.findByUserId(commentCreateCommand.userId).get()
         val sodamComment = when (sodamUser.userType) {
             UserType.SOCIAL -> {
                 commentCreateCommand.profileImageUrl = commentCreateCommand.profileImageUrl
