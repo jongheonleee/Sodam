@@ -26,7 +26,6 @@ class UserRepository(
     private val userJpaRepository: UserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository,
-    private val positionJpaRepository: PositionJpaRepository,
 ) {
 
     @Transactional(readOnly = true)
@@ -182,6 +181,7 @@ class UserRepository(
         )
     }
 
+    // 문제있는 부분 - 테스트 코드에서 해당 부분 제대로 안돌아감
     @Transactional(readOnly = true)
     fun findByUserId(userId: String): Optional<SodamUser> {
         val existsUserByUserId = userJpaRepository.existsByUserId(userId)
@@ -199,7 +199,7 @@ class UserRepository(
             return findSocialUserByProviderId(userId)
         }
 
-        throw UserException.UserNotFoundException()
+        return Optional.empty()
     }
 
     @Transactional(readOnly = true)

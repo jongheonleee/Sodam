@@ -80,6 +80,7 @@ class UserService(
 
         val byUserId = userRepository.findByUserId(userId)
         if (byUserId.isEmpty) {
+            println("여기입니다.")
             throw UserException.UserNotFoundException()
         }
 

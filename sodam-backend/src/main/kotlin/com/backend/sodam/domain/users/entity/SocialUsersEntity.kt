@@ -73,10 +73,12 @@ class SocialUsersEntity(
     fun toDomain(): SodamUser {
         return SodamUser(
             userId = this.socialUserId,
+            email = this.email,
             username = this.userName,
             provider = this.provider,
             providerId = this.providerId,
-            userType = UserType.SOCIAL
+            userType = UserType.SOCIAL,
+            introduce = this.introduce,
         )
     }
 

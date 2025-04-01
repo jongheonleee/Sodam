@@ -3,13 +3,11 @@ import com.backend.sodam.domain.grades.entity.GradesEntity
 import com.backend.sodam.domain.grades.repository.GradesJpaRepository
 import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
 import com.backend.sodam.domain.positions.entity.PositionsEntity
-import com.backend.sodam.domain.positions.model.PositionsType
 import com.backend.sodam.domain.positions.repository.PositionJpaRepository
 import com.backend.sodam.domain.positions.repository.UserPositionJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
-import com.backend.sodam.domain.users.controller.response.SocialUserResponse
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
 import com.backend.sodam.domain.users.exception.UserException
@@ -20,33 +18,38 @@ import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 
+/**
+ * 통합 테스트를 작성한 이유
+ * - 현재 비즈니스 로직이 완전히 정의된게 아님
+ * - 하지만, Mockito 를 활용한 단위 테스트를 작성할 경우 내부의 비즈니스 로직이 해당 테스트 코드에 노출됨
+ * - 그래서 비즈니스 로직이 변경될 때 마다 테스트 코드에도 영향이 미침
+ * - 따라서, 개발 초기에는 비즈니스 로직의 변동이 자주 일어나기 때문에 내부 비즈니스 로직을 노출시키지 않는 통합 테스트로 테스트 코드 작성
+ */
 @SpringBootTest
 class UserServiceIntegrationTest(
     // 테스트 대상
-    @Autowired private val sut: UserService,
+    private val sut: UserService,
 
     // 테스트 환경 구축에 필요한 오브젝트
     // - 1. 기본적으로 세팅되어야 하는 데이터
-    @Autowired private val positionsJpaRepository: PositionJpaRepository,
-    @Autowired private val gradesJpaRepository: GradesJpaRepository,
-    @Autowired private val subscriptionJpaRepository: SubscriptionJpaRepository,
+    private val positionsJpaRepository: PositionJpaRepository,
+    private val gradesJpaRepository: GradesJpaRepository,
+    private val subscriptionJpaRepository: SubscriptionJpaRepository,
 
     // - 2. 회원과 연관된 교차 테이블
-    @Autowired private val userPositionsJpaRepository: UserPositionJpaRepository,
-    @Autowired private val userGradeJpaRepository: UserGradeJpaRepository,
-    @Autowired private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
+    private val userPositionsJpaRepository: UserPositionJpaRepository,
+    private val userGradeJpaRepository: UserGradeJpaRepository,
+    private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
 
     // - 3. 회원 테이블
-    @Autowired private val normalUserJpaRepository: UserJpaRepository,
-    @Autowired private val socialUserJpaRepository: SocialUserJpaRepository,
+    private val normalUserJpaRepository: UserJpaRepository,
+    private val socialUserJpaRepository: SocialUserJpaRepository,
 ): BehaviorSpec({
 
     // 테스트 과정에서 사용할 목 데이터
@@ -66,6 +69,8 @@ class UserServiceIntegrationTest(
                                   gradeDescription = "테스트용 등급데이터입니다.",
                                   validYN = 0 )
 
+    // kotest에서 트랜잭션을 적용하려면 SpringExtension을 사용해야함
+    extension(SpringExtension)
 
     // 서비스 통합 테스트 환경 구축
     beforeTest {
@@ -89,7 +94,6 @@ class UserServiceIntegrationTest(
         gradesJpaRepository.save(mockGrade)
         subscriptionJpaRepository.save(mockSubscription)
 
-        // 테스트 DB에 등록
     }
 
 
@@ -241,20 +245,73 @@ class UserServiceIntegrationTest(
     }
 
     given("[일반회원](2) 사용자가 전달한 데이터에서 userId에 해당하는 유저가 없는 경우") {
-        `when`("회원 수정 메서드를 호출하면", {
+        val notExistsUserId = "dwalfnrg123"
+        val updateCommand = UserUpdateCommand(
+            email = "new@test.com",
+            name = "업데이트된 테스트용 이름",
+            encryptedPassword = "password123",
+            positionId = mockPosition.positionId,
+            introduce = "업데이트된 테스트용 더미 데이터"
+        )
 
+        `when`("회원 수정 메서드를 호출하면", {
+            val actual = shouldThrow<UserException.UserNotFoundException> {
+                sut.updateUserInfo(
+                    userId = notExistsUserId,
+                    userUpdateCommand = updateCommand,
+                )
+            }
 
             then("UserNotFoundException 예외가 발생한다.") {
-
+                actual shouldBe UserException.UserNotFoundException()
             }
         })
     }
 
     given("[일반회원](3) 사용자가 중복된 이메일을 전달한 경우") {
+        val commandFirstUser = UserSignupCommand(
+            email = "test@test.com",
+            name = "테스트용 이름",
+            password = "password123",
+            positionId = mockPosition.positionId,
+            profileImage = "이미지 url",
+            introduce = "테스트용 더미 데이터"
+        )
+
+        val commandSecondUser = UserSignupCommand(
+            email = "duplicatedemail@test.com",
+            name = "테스트용 이름",
+            password = "password123",
+            positionId = mockPosition.positionId,
+            profileImage = "이미지 url",
+            introduce = "테스트용 더미 데이터"
+        )
+
+
         `when`("회원 수정 메서드를 호출하면", {
+            // 회원 등록
+            val response = sut.signupUser(commandFirstUser)
+            sut.signupUser(commandSecondUser)
+            val target = normalUserJpaRepository.findByUserEmail(response.email).get()
+
+            // 회원 수정을 위한 작업 세팅
+            val updateCommandWithDuplicatedEmail = UserUpdateCommand(
+                email = "duplicatedemail@test.com",
+                name = "업데이트된 테스트용 이름",
+                encryptedPassword = "password123",
+                positionId = mockPosition.positionId,
+                introduce = "업데이트된 테스트용 더미 데이터"
+            )
+
+            val actual = shouldThrow<UserException.UserAlreadyExistsException> {
+                sut.updateUserInfo(
+                    userId = target.userId,
+                    userUpdateCommand = updateCommandWithDuplicatedEmail,
+                )
+            }
 
             then("UserAlreadyExistsException 예외가 발생한다.") {
-
+                actual shouldBe UserException.UserAlreadyExistsException()
             }
         })
     }
@@ -263,11 +320,51 @@ class UserServiceIntegrationTest(
     given("[소셜회원](1) 사용자가 올바른 데이터를 전달했고") {
         `when`("회원 수정 메서드를 호출하면", {
             // 회원 등록
+            val command = SocialUserSignupCommand(
+                username = "테스트용 이름",
+                provider = "kakao",
+                providerId = "213957292"
+            )
 
             // 회원 수정을 위한 작업 세팅
+            val updateCommand = UserUpdateCommand(
+                email = "new@test.com",
+                name = "업데이트된 테스트용 이름",
+                encryptedPassword = "password123",
+                positionId = mockPosition.positionId,
+                introduce = "업데이트된 테스트용 더미 데이터"
+            )
+
+            // 회원 등록 및 해당 회원 조회
+            sut.signupSocialUser(command)
+            val target = socialUserJpaRepository.findByProviderId(providerId = command.providerId).get()
+            socialUserJpaRepository.findAll().forEach {
+                println("여기다")
+                println("it's socialId : " + it.socialUserId)
+                println("it's providerId : " + it.providerId)
+                println("target's socialId : " + target.socialUserId)
+                println("target's providerId : " + target.providerId)
+                println("is exists? : " + socialUserJpaRepository.existsBySocialUserId(target.socialUserId))
+            }
+
+            // 기대한 결과
+            val expected = UserUpdateResponse(
+                email = "new@test.com",
+                username = "업데이트된 테스트용 이름",
+                encryptedPassword = "password123",
+                introduce = "업데이트된 테스트용 더미 데이터"
+            )
 
             then("수정된 회원 정보가 성공적으로 반환된다.") {
+                val actual = sut.updateUserInfo(
+                    userId = target.socialUserId,
+                    userUpdateCommand = updateCommand,
+                )
 
+                actual.email shouldBe expected.email
+                actual.username shouldBe expected.username
+                actual.introduce shouldBe expected.introduce
+                actual.encryptedPassword shouldBe expected.encryptedPassword
             }
         })
     }
