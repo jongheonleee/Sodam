@@ -17,7 +17,14 @@ import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
+import com.backend.sodam.domain.users.service.port.CreateNormalUserPort
+import com.backend.sodam.domain.users.service.port.CreateSocialUserPort
+import com.backend.sodam.domain.users.service.port.FetchSocialUserPort
 import com.backend.sodam.domain.users.service.port.FetchUserPort
+import com.backend.sodam.domain.users.service.usescase.DeleteUserUseCase
+import com.backend.sodam.domain.users.service.usescase.FetchUserUseCase
+import com.backend.sodam.domain.users.service.usescase.RegisterUserUseCase
+import com.backend.sodam.domain.users.service.usescase.UpdateUserUseCase
 import com.backend.sodam.global.port.KakaoUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
@@ -29,24 +36,33 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @RequiredArgsConstructor
 class UserService(
+    // 1. 회원
+    // 조회용 빈 DI
+    private val fetchSocialUserPort: FetchSocialUserPort, // 소셜회원의 경우, 일반 회원가 다른 조회 부분이 존재함
     private val fetchUserPorts: List<FetchUserPort>,
+
+    // 생성용 빈 DI
+    private val createNormalUserPort: CreateNormalUserPort,
+    private val createSocialUserPort: CreateSocialUserPort,
+
     private val normalUserRepository: NormalUserRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository,
     private val kakaoUserPort: KakaoUserPort,
     private val userGradeRepository: UserGradeRepository,
     private val userPositionRepository: UserPositionRepository,
-) {
+): FetchUserUseCase, RegisterUserUseCase, UpdateUserUseCase, DeleteUserUseCase {
 
+    // 밑에 두 메서드 해당 메서드 하나로 구현하기
     @Transactional(
         propagation = Propagation.REQUIRED,
         rollbackFor = [Exception::class]
     )
-    fun signupUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
-        if (isDuplicatedEmail(userSignupCommand.email)) {
+    override fun registerNormalUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
+        if (isDuplicatedEmail(userSignupCommand.email))  // 이메일 중복 여부 확인
             throw UserException.UserAlreadyExistsException()
-        }
 
-        val sodamUser = normalUserRepository.createNormalUser(userSignupCommand)
+        // 일반 회원 등록처리 진행
+        val sodamUser = createNormalUserPort.createUser(userSignupCommand)
         userPositionRepository.createPositionForUser(sodamUser.userId, userSignupCommand.positionId)
         userSubscriptionRepository.createSubscriptionForUser(sodamUser.userId)
         userGradeRepository.createGradeForUser(sodamUser.userId, GradesType.ENTRY.name)
@@ -57,12 +73,9 @@ class UserService(
         propagation = Propagation.REQUIRED,
         rollbackFor = [Exception::class]
     )
-    fun signupSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse {
-        if (normalUserRepository.isExistsByProviderId(socialUserSignupCommand.providerId)) {
-            throw UserException.SocialUserAlreadyExistsException()
-        }
-
-        val sodamUser = normalUserRepository.createSocialUser(socialUserSignupCommand)
+    override fun registerSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse {
+        // 소셜 회원 등록처리 진행
+        val sodamUser = createSocialUserPort.createSocialUser(socialUserSignupCommand)
         userPositionRepository.createPositionForSocialUser(sodamUser.userId, PositionsType.TBD.fullName)
         userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
         userGradeRepository.createGradeForSocialUser(sodamUser.userId, GradesType.ENTRY.name)
@@ -74,27 +87,25 @@ class UserService(
         rollbackFor = [Exception::class]
     )
     fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): UserUpdateResponse {
-        // 이메일 중복 확인
-        if (normalUserRepository.isExistsByEmail(userUpdateCommand.email)) {
+        if (isDuplicatedEmail(userUpdateCommand.email))
             throw UserException.UserAlreadyExistsException()
-        }
 
-        val byUserId = normalUserRepository.findByUserId(userId)
-        if (byUserId.isEmpty) {
+        if (!isExistsByUSerId(userId))
             throw UserException.UserNotFoundException()
-        }
 
-        val sodamUser = byUserId.get()
-        when(sodamUser.userType) {
+        val fetchPort = getFetchPortByUserId(userId)
+        val target = fetchPort.findByUserId(userId).get()
+
+        when(target.userType) {
             UserType.SOCIAL -> {
                 // 기본 회원 정보를 업데이트한다.
                 val updatedSodamUser = normalUserRepository.updateSocialUser(
-                    socialUserId = sodamUser.userId,
+                    socialUserId = target.userId,
                     userUpdateCommand = userUpdateCommand,
                 )
                 // 포지션을 재등록한다.
                 userPositionRepository.upsertPositionForSocialUser(
-                    socialUserId = sodamUser.userId,
+                    socialUserId = target.userId,
                     positionId = userUpdateCommand.positionId
                 )
 
@@ -108,13 +119,13 @@ class UserService(
 
             else -> {
                 val updatedSodamUser = normalUserRepository.updateNormalUser(
-                    userId = sodamUser.userId,
+                    userId = target.userId,
                     userUpdateCommand = userUpdateCommand,
                 )
 
                 // 포지션을 재등록한다.
                 userPositionRepository.upsertPositionForUser(
-                    userId = sodamUser.userId,
+                    userId = target.userId,
                     positionId = userUpdateCommand.positionId
                 )
 
@@ -144,7 +155,7 @@ class UserService(
     }
 
     fun findByProviderId(providerId: String): UserResponse? {
-        return normalUserRepository.findSocialUserByProviderId(providerId) // socialUser
+        return fetchSocialUserPort.findByProviderId(providerId) // socialUser
             .map { UserResponse.toResponse(it) }
             .orElse(null)
     }
@@ -170,7 +181,7 @@ class UserService(
         = fetchUserPorts.stream()
                         .filter { it.isTarget(userType) }
                         .findFirst()
-                        .orElseThrow { IllegalStateException() }
+                        .orElseThrow { IllegalArgumentException() }
 
     private fun getFetchPortByEmail(email: String): FetchUserPort
         = fetchUserPorts.stream()
@@ -187,5 +198,9 @@ class UserService(
     private fun isDuplicatedEmail(email: String): Boolean
         = fetchUserPorts.stream()
                         .anyMatch { it.isExistsByEmail(email) }
+
+    private fun isExistsByUSerId(userId: String): Boolean
+        = fetchUserPorts.stream()
+                        .anyMatch { it.isExistsByUserId(userId) }
 
 }

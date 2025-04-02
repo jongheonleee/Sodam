@@ -7,9 +7,11 @@ import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.service.port.CreateUserPort
+import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
+import com.backend.sodam.domain.users.service.port.CreateNormalUserPort
+import com.backend.sodam.domain.users.service.port.CreateSocialUserPort
 import com.backend.sodam.domain.users.service.port.DeleteUserPort
-import com.backend.sodam.domain.users.service.port.FetchUserPort
+import com.backend.sodam.domain.users.service.port.FetchSocialUserPort
 import com.backend.sodam.domain.users.service.port.UpdateUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
@@ -23,7 +25,7 @@ import java.util.*
  class SocialUserRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository
-): CreateUserPort, FetchUserPort, UpdateUserPort, DeleteUserPort {
+): CreateSocialUserPort, FetchSocialUserPort, UpdateUserPort, DeleteUserPort {
 
     override fun isTarget(userType: UserType): Boolean
         = UserType.SOCIAL == userType
@@ -41,6 +43,9 @@ import java.util.*
     override fun findByUserId(userId: String): Optional<SodamUser>
         = socialUserJpaRepository.findSodamUserByUserId(userId)
 
+    @Transactional(readOnly = true)
+    override fun isExistsByProviderId(providerId: String): Boolean
+        = socialUserJpaRepository.existsByProviderId(providerId)
 
     @Transactional(readOnly = true)
     override fun findByEmail(email: String): SodamUser {
@@ -74,9 +79,44 @@ import java.util.*
                                                                                createdAt = it.createdAt,
                                                                                tags = it.tags)
         }
+
     @Transactional(readOnly = true)
-    fun findByProviderId(providerId: String): Optional<SocialUsersEntity> {
+    override fun findEntityByProviderId(providerId: String): Optional<SocialUsersEntity> {
         return socialUserJpaRepository.findByProviderId(providerId)
+    }
+
+    // 추후에 QueryDSL로 바꾸기
+    @Transactional(readOnly = true)
+    override fun findByProviderId(providerId: String): Optional<SodamUser> {
+        val foundSocialUsersEntityOptionalByProviderId = socialUserJpaRepository.findByProviderId(providerId)
+        if (foundSocialUsersEntityOptionalByProviderId.isEmpty) {
+            return Optional.empty()
+        }
+
+        val socialUserEntity = foundSocialUsersEntityOptionalByProviderId.get()
+        val foundUserSubscriptionOptionalByProviderId = userSubscriptionRepository.findByUserId(providerId)
+
+        return Optional.of(
+            SodamUser(
+                userId = socialUserEntity.socialUserId,
+                username = socialUserEntity.userName,
+                provider = socialUserEntity.provider,
+                providerId = socialUserEntity.providerId,
+                role = if (foundUserSubscriptionOptionalByProviderId.isPresent) {
+                    foundUserSubscriptionOptionalByProviderId.get().subscriptionType.toRole()
+                } else {
+                    UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole()
+                },
+                userType = UserType.SOCIAL
+            )
+        )
+    }
+
+    @Transactional
+    override fun createSocialUser(socialUserSignupCommand: SocialUserSignupCommand): SodamUser {
+        val socialUsersEntity = socialUserSignupCommand.toEntity()
+        return socialUserJpaRepository.save(socialUsersEntity)
+                                      .toDomain()
     }
 
     @Transactional(readOnly = true)

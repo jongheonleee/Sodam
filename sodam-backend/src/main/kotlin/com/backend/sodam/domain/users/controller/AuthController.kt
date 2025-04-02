@@ -7,6 +7,7 @@ import com.backend.sodam.domain.users.controller.request.SignupRequest
 import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
+import com.backend.sodam.domain.users.service.usescase.RegisterUserUseCase
 import com.backend.sodam.global.commons.ErrorCode
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.security.SodamAuthUser
@@ -24,9 +25,16 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequiredArgsConstructor
 class AuthController(
+    // 1. 회원
+    // 생성용 빈 DI
+    private val registerUserUseCase: RegisterUserUseCase,
+
     private val userService: UserService,
     private val authenticationManagerBuilder: AuthenticationManagerBuilder,
     private val tokenService: TokenService
+    // 2. 토큰
+
+    // 3. 인증
 ) {
 
     // 회원가입
@@ -36,21 +44,17 @@ class AuthController(
         signupRequest: SignupRequest
     ): SodamApiResponse<UserSignupResponse> {
         val command = signupRequest.toCommand()
-        return SodamApiResponse.ok(
-            userService.signupUser(command)
-        )
+        return SodamApiResponse.ok(registerUserUseCase.registerNormalUser(command))
     }
 
     // 로그인
     @PostMapping("/api/v1/auth/login")
     fun login(
-        @RequestBody @Valid
-        loginRequest: LoginRequest
+        @RequestBody @Valid loginRequest: LoginRequest
     ): SodamApiResponse<TokenResponse> {
         val token = UsernamePasswordAuthenticationToken(loginRequest.email, loginRequest.password)
         val authenticate = authenticationManagerBuilder.`object`.authenticate(token)
         val principal = authenticate.principal as SodamAuthUser
-
         return SodamApiResponse.ok(tokenService.upsertTokenForUser(principal.email))
     }
 
@@ -65,7 +69,7 @@ class AuthController(
         val foundUserByProviderId = userService.findByProviderId(foundKakaoUser.providerId)
 
         if (ObjectUtils.isEmpty(foundUserByProviderId)) {
-            userService.signupSocialUser(
+            registerUserUseCase.registerSocialUser(
                 SocialUserSignupCommand(
                     username = foundKakaoUser.name,
                     provider = foundKakaoUser.provider,

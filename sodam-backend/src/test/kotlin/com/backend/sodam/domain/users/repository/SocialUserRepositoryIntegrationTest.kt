@@ -22,7 +22,6 @@ import java.util.*
 class SocialUserRepositoryIntegrationTest(
     // - 테스트 대상
     private val sut: SocialUserRepository,
-    private val sut2: NormalUserRepository,
 
     // - 의존하고 있는 오브젝트
     private val userJpaRepository: NormalUserJpaRepository,
@@ -96,8 +95,8 @@ class SocialUserRepositoryIntegrationTest(
             providerId = UUID.randomUUID().toString())
 
         it("해당 providerId관련 소셜회원이 존재한다면, true를 반환한다.") {
-            sut2.createSocialUser(command) // 이 부분도 옮길 것
-            val optional = sut.findByProviderId(command.providerId)
+            sut.createSocialUser(command) // 이 부분도 옮길 것
+            val optional = sut.findEntityByProviderId(command.providerId)
             optional.isPresent shouldBe true
 
 
@@ -115,11 +114,68 @@ class SocialUserRepositoryIntegrationTest(
 
         it("해당 providerId관련 소셜회원이 존재하지 않는다면, false를 반환한다.") {
             val notExistsProviderId = "dwadwadaw"
-            sut2.createSocialUser(command)
-            val optional = sut.findByProviderId(notExistsProviderId)
+            sut.createSocialUser(command)
+            val optional = sut.findEntityByProviderId(notExistsProviderId)
             optional.isEmpty shouldBe true
         }
     }
+
+    context("소셜회원 등록할 때") {
+        val command = SocialUserSignupCommand(  username = "테스트 유저",
+            provider = "kakao",
+            providerId = UUID.randomUUID().toString())
+
+        it("소셜회원을 성공적으로 등록한다") {
+            val actual = sut.createSocialUser(command)
+            val expected = SodamUser(
+                provider = command.provider,
+                username = command.username,
+                providerId = command.providerId,
+            )
+
+            actual.provider shouldBe expected.provider
+            actual.providerId shouldBe expected.providerId
+            actual.username shouldBe expected.username
+        }
+    }
+
+//    context("소셜회원 업데이트할 때") {
+//        val command = SocialUserSignupCommand(  username = "테스트 유저",
+//            provider = "kakao",
+//            providerId = UUID.randomUUID().toString())
+//
+//        it("업데이트 데이터와 userId를 제대로 전달했으면, 정상적으로 업데이트가 되야한다.") {
+//            val target = sut.createSocialUser(command)
+//
+//            val socialUserId = target.userId
+//            val updateCommand = UserUpdateCommand(
+//                email = "update@test.com",
+//                name = "홍길동",
+//                encryptedPassword = "asdf1234",
+//                positionId = mockPosition.positionId,
+//                introduce = "업데이트했습니다."
+//            )
+//
+//            val actual = sut.updateSocialUser(  socialUserId = socialUserId,
+//                userUpdateCommand = updateCommand)
+//            val expected = SodamUser(
+//                userId = socialUserId,
+//                email = updateCommand.email,
+//                username = updateCommand.name,
+//                introduce = updateCommand.introduce,
+//            )
+//
+//            // 내용 비교
+//            actual.userId shouldBe expected.userId
+//            actual.email shouldBe expected.email
+//            actual.username shouldBe expected.username
+//            actual.introduce shouldBe expected.introduce
+//            actual.encryptedPassword shouldBe expected.encryptedPassword
+//        }
+//
+//    }
+
+
 
 
 })
