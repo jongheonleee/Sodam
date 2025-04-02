@@ -336,7 +336,7 @@ class UserServiceIntegrationTest(
 
             // 회원 등록 및 해당 회원 조회
             sut.signupSocialUser(command)
-            val target = socialUserJpaRepository.findByProviderId(providerId = command.providerId).get()
+            val target = socialUserJpaRepository.findByProviderIdWithSubscription(providerId = command.providerId).get()
             socialUserJpaRepository.findAll().forEach {
                 println("여기다")
                 println("it's socialId : " + it.socialUserId)

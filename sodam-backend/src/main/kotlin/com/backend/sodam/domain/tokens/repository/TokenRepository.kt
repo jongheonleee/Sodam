@@ -84,12 +84,12 @@ class TokenRepository(
     @Transactional
     fun updateTokenForSocialUser(providerId: String, accessToken: String, refreshToken: String) {
         // 추후 리팩토링 대상
-        val foundSocialUserByProviderId = socialUserJpaRepository.findByProviderId(providerId)
+        val foundSocialUserByProviderId = socialUserJpaRepository.findByProviderIdWithSubscription(providerId)
         if (foundSocialUserByProviderId.isEmpty) {
             throw UserException.UserNotFoundException()
         }
 
-        val foundTokenByProviderId = tokenJpaRepository.findBySocialUserId(foundSocialUserByProviderId.get().socialUserId)
+        val foundTokenByProviderId = tokenJpaRepository.findBySocialUserId(foundSocialUserByProviderId.get().userId)
             .orElseThrow { TokenException.UserTokenNotFoundException() } // 추후에 예외 정의하기
 
         foundTokenByProviderId.updateToken(accessToken, refreshToken)

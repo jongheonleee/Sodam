@@ -36,7 +36,7 @@ class SecretViewRepository(
 
             secretViewJpaRepository.save(viewSecretsEntity)
         } else if (socialUserJpaRepository.existsByProviderId(userId)) {
-            val bySocialUserId = socialUserJpaRepository.findByProviderId(userId).get()
+            val bySocialUserId = socialUserJpaRepository.findBySocialUserId(userId).get()
             val bySecretId = secretJpaRepository.findById(secretId).get()
 
             val viewSecretsEntity = ViewSecretsEntity(

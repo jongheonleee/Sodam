@@ -15,49 +15,51 @@ export default function UserUpdateForm() {
     const [positionId, setPositionId] = useState<string>('')
     const [error, setError] = useState<string>('')
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         // 필드값 유효성 검증
         // - 이메일 유효성 검증
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-        if (!emailPattern.test(email)) {
-            setError('유효하지 않은 이메일입니다.')
-            return;
-        }
+        // const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        // if (!emailPattern.test(email)) {
+        //     setError('유효하지 않은 이메일입니다.')
+        //     return;
+        // }
+        //
+        // // - 이름 유효성 검증 => (1) 길이 확인(1~20), (2) 특수문자, 공백 확인
+        // if (!(1 <= name.length && name.length <= 20)) {
+        //     setError('유효하지 않은 이름입니다. 이름은 최소 1자에서 최대 20자까지 허용합니다.')
+        //     return;
+        // }
+        //
+        // const namePattern = /^[a-zA-Z0-9가-힣]+$/;
+        // if (!namePattern.test(name)) {
+        //     setError('이름에는 공백이나 특수문자가 포함될 수 없습니다.')
+        //     return;
+        // }
+        //
+        //
+        // // - 비밀번호 유효성 검증 => (1) 길이 확인(8~20), (2) 숫자, 특수문자 포함 여부
+        // if (!(8 <= password.length && password.length <= 20)) {
+        //     setError('유효하지 않는 비밀번호입니다. 비밀번호의 길이는 최소 8자에서 최대 20자까지 허용합니다.')
+        //     return;
+        // }
+        //
+        // const hasNumberOrSpecialChar = /[0-9!@#$%^&*(),.?":{}|<>]/;
+        // if (!(hasNumberOrSpecialChar.test(password))) {
+        //     setError('유효하지 않은 비밀번호입니다. 비밀번호에는 숫자와 특수문자가 포함되어야 합니다.')
+        //     return;
+        // }
+        //
+        //
+        // // - 자기소개 유효성 검증
+        // if (!(10 <= introduce.length && introduce.length <= 1000)) {
+        //     setError('유효하지 않은 자기소개글입니다. 자기소개글은 최소 10자에서 최대 1000자로 작성되야 합니다.')
+        //     return;
+        // }
 
-        // - 이름 유효성 검증 => (1) 길이 확인(1~20), (2) 특수문자, 공백 확인
-        if (!(1 <= name.length && name.length <= 20)) {
-            setError('유효하지 않은 이름입니다. 이름은 최소 1자에서 최대 20자까지 허용합니다.')
-            return;
-        }
 
-        const namePattern = /^[a-zA-Z0-9가-힣]+$/;
-        if (!namePattern.test(name)) {
-            setError('이름에는 공백이나 특수문자가 포함될 수 없습니다.')
-            return;
-        }
-
-
-        // - 비밀번호 유효성 검증 => (1) 길이 확인(8~20), (2) 숫자, 특수문자 포함 여부
-        if (!(8 <= password.length && password.length <= 20)) {
-            setError('유효하지 않는 비밀번호입니다. 비밀번호의 길이는 최소 8자에서 최대 20자까지 허용합니다.')
-            return;
-        }
-
-        const hasNumberOrSpecialChar = /[0-9!@#$%^&*(),.?":{}|<>]/;
-        if (!(hasNumberOrSpecialChar.test(password))) {
-            setError('유효하지 않은 비밀번호입니다. 비밀번호에는 숫자와 특수문자가 포함되어야 합니다.')
-            return;
-        }
-
-
-        // - 자기소개 유효성 검증
-        if (!(10 <= introduce.length && introduce.length <= 1000)) {
-            setError('유효하지 않은 자기소개글입니다. 자기소개글은 최소 10자에서 최대 1000자로 작성되야 합니다.')
-            return;
-        }
-
-        await updateUserInfo({email, name, password, introduce, positionId})
+         updateUserInfo({email, name, password, introduce, positionId})
             .then((res) => {
+                console.log(res)
                 if (res.status === 200) {
                     alert('프로필 수정 성공')
                     navigate('/')

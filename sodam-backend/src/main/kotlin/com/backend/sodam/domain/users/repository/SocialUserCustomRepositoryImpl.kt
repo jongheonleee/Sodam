@@ -12,6 +12,7 @@ import com.backend.sodam.domain.users.entity.QUsersPositionsEntity.usersPosition
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
+import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.global.utils.Formatter
 import com.querydsl.jpa.impl.JPAQueryFactory
 import lombok.RequiredArgsConstructor
@@ -30,17 +31,51 @@ class SocialUserCustomRepositoryImpl(
     private val formatter: Formatter
 ) : SocialUserCustomRepository {
 
-    override fun findByProviderId(providerId: String): Optional<SocialUsersEntity> {
-        return jpaQueryFactory.selectFrom(socialUsersEntity)
-            .where(socialUsersEntity.providerId.eq(providerId))
-            .fetch()
-            .stream()
-            .findFirst()
+    override fun findByProviderIdWithSubscription(providerId: String): Optional<SodamUser>  {
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(socialUsersEntity)
+            .leftJoin(socialUsersEntity.subscriptions, usersSubscriptionsEntity)
+            .where(socialUsersEntity.providerId.eq(providerId)
+                .and(usersSubscriptionsEntity.validYN.eq(0))
+            )
+            .fetchOne()
+            ?. let {
+                SodamUser(
+                    userId = it.socialUserId,
+                    username = it.userName,
+                    encryptedPassword = "", // 이 부분 어케할지 고민하기
+                    introduce = it.introduce,
+                    profileImageUrl = "", // 이 부분 어케할지 고민하기
+                    email = it.email,
+                    role = it.subscriptions.first().subscriptionName.toRole(),
+                    userType = UserType.SOCIAL
+                )
+            }
+        )
     }
 
     @Transactional(readOnly = true)
     override fun findSodamUserByUserId(userId: String): Optional<SodamUser> {
-        TODO("Not yet implemented")
+        return Optional.ofNullable(
+            jpaQueryFactory.selectFrom(socialUsersEntity)
+                .leftJoin(socialUsersEntity.subscriptions, usersSubscriptionsEntity)
+                .where(socialUsersEntity.socialUserId.eq(userId)
+                    .and(usersSubscriptionsEntity.validYN.eq(0))
+                )
+                .fetchOne()
+                ?. let {
+                    SodamUser(
+                        userId = it.socialUserId,
+                        username = it.userName,
+                        encryptedPassword = "", // 이 부분 어케할지 고민하기
+                        introduce = it.introduce,
+                        profileImageUrl = "", // 이 부분 어케할지 고민하기
+                        email = it.email,
+                        role = it.subscriptions.first().subscriptionName.toRole(),
+                        userType = UserType.SOCIAL
+                    )
+                }
+
+        )
     }
 
     @Transactional(readOnly = true)

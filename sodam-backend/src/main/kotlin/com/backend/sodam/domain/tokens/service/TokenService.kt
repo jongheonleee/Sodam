@@ -39,10 +39,11 @@ class TokenService(
         val claims = parseClaims(token)
         val userId = claims["userId"] ?: throw TokenException.InvalidTokenException() // 여기서 사용하는 userId는 email을 의미함
 
+        println("userId : $userId")
+
         // 소셜 회원 먼저 조회, 없으면 일반 회원 조회. 그래도 없으면 예외 발생
         return userService.findByProviderId(userId.toString())
             ?: userService.findByEmail(userId.toString())
-            ?: throw UserException.UserNotFoundException()
     }
 
     // 카카오로부터 토큰을 받을 수 있음

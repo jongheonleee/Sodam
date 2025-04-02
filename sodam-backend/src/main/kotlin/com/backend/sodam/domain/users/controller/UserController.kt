@@ -5,6 +5,8 @@ import com.backend.sodam.domain.users.controller.request.UserUpdateRequest
 import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
+import com.backend.sodam.domain.users.service.usescase.FetchUserUseCase
+import com.backend.sodam.domain.users.service.usescase.UpdateUserUseCase
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import jakarta.validation.Valid
@@ -19,6 +21,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequiredArgsConstructor
 class UserController(
+    // 회원 조회용 유스케이스
+    private val fetchUserUseCase: FetchUserUseCase,
+
+    // 회원 업데이트용 유스케이스
+    private val updateUserUseCase: UpdateUserUseCase,
     private val userService: UserService,
     private val tokenProvider: JwtTokenProvider
 ) {
@@ -38,10 +45,7 @@ class UserController(
     ): SodamApiResponse<Page<ArticleSummaryResponse>> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
-            userService.getOwnArticles(
-                userId = userId,
-                pageable = pageable
-            )
+            userService.getOwnArticles(userId = userId, pageable = pageable)
         )
     }
 
@@ -51,10 +55,7 @@ class UserController(
     ): SodamApiResponse<Page<ArticleSummaryResponse>> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
-            userService.getOwnLikeArticles(
-                userId = userId,
-                pageable = pageable
-            )
+            userService.getOwnLikeArticles(userId = userId, pageable = pageable)
         )
     }
 
@@ -65,10 +66,7 @@ class UserController(
     ): SodamApiResponse<UserUpdateResponse> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(
-            userService.updateUserInfo(
-                userId = userId,
-                userUpdateCommand = userUpdateRequest.toCommand()
-            )
+            updateUserUseCase.updateUserInfo(userId = userId, userUpdateCommand = userUpdateRequest.toCommand())
         )
     }
 }

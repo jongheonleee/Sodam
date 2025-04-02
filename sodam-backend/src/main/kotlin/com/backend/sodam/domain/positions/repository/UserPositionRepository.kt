@@ -45,7 +45,7 @@ class UserPositionRepository(
     }
 
     @Transactional
-    fun upsertPositionForUser(userId: String, positionId: String): UsersPositionsEntity {
+    fun upsertPositionForNormalUser(userId: String, positionId: String): UsersPositionsEntity {
         val byUserId = userJpaRepository.findByUserId(userId)
         if (byUserId.isEmpty) {
             throw UserException.UserNotFoundException()

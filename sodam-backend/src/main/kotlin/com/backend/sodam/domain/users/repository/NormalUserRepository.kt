@@ -23,7 +23,6 @@ import java.util.*
 @RequiredArgsConstructor
 class NormalUserRepository(
     private val normalUserJpaRepository: NormalUserJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository,
 ): CreateNormalUserPort, FetchUserPort, UpdateUserPort, DeleteUserPort {
 
     override fun isTarget(userType: UserType): Boolean
@@ -43,8 +42,7 @@ class NormalUserRepository(
     // 이 부분 role까지 조회해오게 만들어야함
     @Transactional(readOnly = true)
     override fun findByEmail(email: String): SodamUser {
-        val normalUsersEntity = normalUserJpaRepository.findByUserEmail(email).get()
-        return normalUsersEntity.toDomain()
+        return normalUserJpaRepository.findByEmailWithRole(email).get()
     }
 
     @Transactional
@@ -54,25 +52,6 @@ class NormalUserRepository(
                                       .toDomain()
     }
 
-//    @Transactional
-//    fun createNormalUser(userSignupCommand: UserSignupCommand): SodamUser {
-//        val signupRequestUserEntity = userSignupCommand.toEntity()
-//        return normalUserJpaRepository.save(signupRequestUserEntity)
-//                                      .toDomain()
-//    }
-
-//    @Transactional
-//    fun createSocialUser(
-//        socialUserSignupCommand: SocialUserSignupCommand
-//    ): SodamUser {
-//        val socialUsersEntity = SocialUsersEntity.newEntity(
-//            userName = socialUserSignupCommand.username,
-//            provider = socialUserSignupCommand.provider,
-//            providerId = socialUserSignupCommand.providerId
-//        )
-//        return socialUserJpaRepository.save(socialUsersEntity)
-//            .toDomain()
-//    }
 
     // QueryDSL로 바꾸기
     @Transactional(readOnly = true)
@@ -81,22 +60,11 @@ class NormalUserRepository(
     }
 
     @Transactional
-    fun updateSocialUser(socialUserId: String, userUpdateCommand: UserUpdateCommand): SodamUser {
-        // 아이디로 해당 엔티티를 조회한다.
-        val socialUserEntity = socialUserJpaRepository.findBySocialUserId(socialUserId).get()
-        // 엔티티를 업데이트 한다
-        socialUserEntity.update(userUpdateCommand)
-        // 이를 저장하고 도메인으로 반환한다.
-        return socialUserJpaRepository.save(socialUserEntity)
-                                      .toDomain()
-    }
-
-    @Transactional
-    fun updateNormalUser(userId: String, userUpdateCommand: UserUpdateCommand): SodamUser {
+    override fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): SodamUser {
         val normalUserEntity = normalUserJpaRepository.findByUserId(userId).get()
         normalUserEntity.update(userUpdateCommand)
         return normalUserJpaRepository.save(normalUserEntity)
-                                .toDomain()
+                                      .toDomain()
     }
 
     // 문제있는 부분 - 테스트 코드에서 해당 부분 제대로 안돌아감

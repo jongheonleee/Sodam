@@ -8,7 +8,7 @@ import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
-import com.backend.sodam.domain.users.service.port.CreateNormalUserPort
+import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import com.backend.sodam.domain.users.service.port.CreateSocialUserPort
 import com.backend.sodam.domain.users.service.port.DeleteUserPort
 import com.backend.sodam.domain.users.service.port.FetchSocialUserPort
@@ -116,6 +116,17 @@ import java.util.*
     override fun createSocialUser(socialUserSignupCommand: SocialUserSignupCommand): SodamUser {
         val socialUsersEntity = socialUserSignupCommand.toEntity()
         return socialUserJpaRepository.save(socialUsersEntity)
+                                      .toDomain()
+    }
+
+    @Transactional
+    override fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): SodamUser {
+        // 기본 테이블 업데이트
+        val socialUserEntity = socialUserJpaRepository.findBySocialUserId(userId).get()
+        socialUserEntity.update(userUpdateCommand)
+        // 등록된 포지션 비우기
+        socialUserEntity.positions.clear()
+        return socialUserJpaRepository.save(socialUserEntity)
                                       .toDomain()
     }
 
