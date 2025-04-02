@@ -81,7 +81,7 @@ class UsersEntity(
             encryptedPassword = this.password,
             email = this.userEmail,
             introduce = this.userIntroduce,
-            profileImageUrl = this.userImage
+            profileImageUrl = this.userImage,
         )
     }
 }

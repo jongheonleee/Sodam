@@ -61,19 +61,8 @@ class ArticleService(
     }
 
     fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand): Page<ArticleSummaryResponse> {
-        return articleRepository.findByPageBy(
-            pageRequest = pageable,
-            articleSearchCommand = articleSearchCommand
-        ).map {
-            ArticleSummaryResponse(
-                articleId = it.articleId,
-                title = it.title,
-                username = it.author,
-                summary = it.summary,
-                createdAt = it.createdAt,
-                tags = it.tags
-            )
-        }
+        return articleRepository.findByPageBy(pageRequest = pageable, articleSearchCommand = articleSearchCommand)
+                                .map { it.toSummaryResponse() }
     }
 
     fun getArticleDetail(articleId: Long): ArticleDetailResponse {

@@ -62,7 +62,7 @@ class NormalUserCustomRepositoryImpl(
             jpaQueryFactory.selectFrom(usersEntity)
                 .leftJoin(usersEntity.subscriptions, usersSubscriptionsEntity)
                 .where(usersEntity.userId.eq(userId)
-                        .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
+                    .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
                 )
                 .fetchOne()
                 ?. let {

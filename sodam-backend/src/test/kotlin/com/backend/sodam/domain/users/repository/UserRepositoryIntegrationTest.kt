@@ -187,8 +187,7 @@ class UserRepositoryIntegrationTest(
                 )
 
                 // 업데이트 처리
-                val actual = sut.updateNormalUser(  userId = userId,
-                                                                userUpdateCommand = updateCommand)
+                val actual = sut.updateUserInfo(  userId = userId, userUpdateCommand = updateCommand)
                 val expected = SodamUser(
                     userId = userId,
                     email = updateCommand.email,

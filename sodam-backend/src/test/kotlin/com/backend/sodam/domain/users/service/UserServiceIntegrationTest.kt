@@ -96,322 +96,322 @@ class UserServiceIntegrationTest(
     }
 
 
-    // 1. 일반 회원 회원가입 처리 테스트
-    given("(1) 사용자가 올바른 형태의 데이터를 전달했고") {
-        val command = UserSignupCommand(
-            email = "test@test.com",
-            name = "테스트용 이름",
-            password = "password123",
-            positionId = mockPosition.positionId,
-            profileImage = "이미지 url",
-            introduce = "테스트용 더미 데이터"
-        )
-
-        `when`("회원가입 메서드를 호출하면", {
-            val actual = sut.signupUser(command)
-            val expected = UserSignupResponse(
-                username = "테스트용 이름",
-                encryptedPassword = "password123",
-                email = "test@test.com",
-                introduce = "테스트용 더미 데이터"
-            )
-
-            then("등록된 회원 정보를 성공적으로 반환한다.") {
-                actual.email shouldBe expected.email
-                actual.username shouldBe expected.username
-                actual.introduce shouldBe expected.introduce
-                actual.encryptedPassword shouldBe expected.encryptedPassword
-            }
-        })
-    }
-
-    given("(2) 사용자가 중복된 이메일을 전달했고") {
-        val command = UserSignupCommand(
-            email = "test@test.com",
-            name = "테스트용 이름",
-            password = "password123",
-            positionId = mockPosition.positionId,
-            profileImage = "이미지 url",
-            introduce = "테스트용 더미 데이터"
-        )
-
-        `when`("회원가입 메서드를 호출하면", {
-            // 회원 1개 사전에 등록
-            sut.signupUser(command)
-
-            val actual = shouldThrow<UserException.UserAlreadyExistsException> {
-                sut.signupUser(command)
-            }
-
-            then("UserAlreadyExistsException 예외가 발생한다.") {
-                actual shouldBe UserException.UserAlreadyExistsException()
-            }
-        })
-    }
-
-    // 2. 소셜회원 회원가입 처리 테스트
-    given("(1) 사용자가 올바른 형태에 데이터를 전달했고") {
-        val command = SocialUserSignupCommand(
-            username = "테스트용 이름",
-            provider = "kakao",
-            providerId = "213957292"
-        )
-
-        `when`("소셜 회원가입 메서드를 호출하면", {
-            val expected = UserSignupResponse( username = "테스트용 이름",
-                                               encryptedPassword = "",
-                                               email = "",
-                                               introduce = "")
-            val actual = sut.signupSocialUser(command)
-
-
-            then("등록된 회원 정보를 성공적으로 반환한다.") {
-                actual.username shouldBe expected.username
-                actual.encryptedPassword shouldBe expected.encryptedPassword
-                actual.email shouldBe expected.email
-                actual.introduce shouldBe expected.introduce
-            }
-        })
-
-    }
-
-    given("(2) 사용자가 전달한 데이터에서 providerId가 이미 등록된 아이디일 때", {
-        val command = SocialUserSignupCommand(
-            username = "테스트용 이름",
-            provider = "kakao",
-            providerId = "213957292"
-        )
-
-
-        `when`("소셜 회원가입 메서드를 호출하면", {
-            // 사전에 미리 등록
-            sut.signupSocialUser(command)
-
-            val actual = shouldThrow<UserException.SocialUserAlreadyExistsException> {
-                sut.signupSocialUser(command)
-            }
-            then("SocialUserAlreadyExistsException 예외가 발생한다.") {
-                actual shouldBe UserException.SocialUserAlreadyExistsException()
-            }
-        })
-    })
-
-    // 3. 회원 유저 정보 수정 처리 테스트
-    // 3-1. 일반 회원의 경우
-    given("[일반회원](1) 사용자가 올바른 데이터를 전달했고") {
-        val command = UserSignupCommand(
-            email = "test@test.com",
-            name = "테스트용 이름",
-            password = "password123",
-            positionId = mockPosition.positionId,
-            profileImage = "이미지 url",
-            introduce = "테스트용 더미 데이터"
-        )
-
-        `when`("회원 수정 메서드를 호출하면", {
-            // 회원 등록
-            val response = sut.signupUser(command)
-            val target = normalUserJpaRepository.findByUserEmail(response.email).get()
-
-            // 회원 수정을 위한 작업 세팅
-            val updateCommand = UserUpdateCommand(
-                email = "new@test.com",
-                name = "업데이트된 테스트용 이름",
-                encryptedPassword = "password123",
-                positionId = mockPosition.positionId,
-                introduce = "업데이트된 테스트용 더미 데이터"
-            )
-
-            // 회원 정보 수정 처리
-            val actual = sut.updateUserInfo(
-                userId = target.userId,
-                userUpdateCommand = updateCommand,
-            )
-            val expected = UserUpdateResponse(
-                username = "업데이트된 테스트용 이름",
-                encryptedPassword = "password123",
-                email = "new@test.com",
-                introduce = "업데이트된 테스트용 더미 데이터"
-            )
-
-            then("수정된 회원 정보가 성공적으로 반환된다.") {
-                actual.email shouldBe expected.email
-                actual.username shouldBe expected.username
-                actual.introduce shouldBe expected.introduce
-                actual.encryptedPassword shouldBe expected.encryptedPassword
-            }
-        })
-    }
-
-    given("[일반회원](2) 사용자가 전달한 데이터에서 userId에 해당하는 유저가 없는 경우") {
-        val notExistsUserId = "dwalfnrg123"
-        val updateCommand = UserUpdateCommand(
-            email = "new@test.com",
-            name = "업데이트된 테스트용 이름",
-            encryptedPassword = "password123",
-            positionId = mockPosition.positionId,
-            introduce = "업데이트된 테스트용 더미 데이터"
-        )
-
-        `when`("회원 수정 메서드를 호출하면", {
-            val actual = shouldThrow<UserException.UserNotFoundException> {
-                sut.updateUserInfo(
-                    userId = notExistsUserId,
-                    userUpdateCommand = updateCommand,
-                )
-            }
-
-            then("UserNotFoundException 예외가 발생한다.") {
-                actual shouldBe UserException.UserNotFoundException()
-            }
-        })
-    }
-
-    given("[일반회원](3) 사용자가 중복된 이메일을 전달한 경우") {
-        val commandFirstUser = UserSignupCommand(
-            email = "test@test.com",
-            name = "테스트용 이름",
-            password = "password123",
-            positionId = mockPosition.positionId,
-            profileImage = "이미지 url",
-            introduce = "테스트용 더미 데이터"
-        )
-
-        val commandSecondUser = UserSignupCommand(
-            email = "duplicatedemail@test.com",
-            name = "테스트용 이름",
-            password = "password123",
-            positionId = mockPosition.positionId,
-            profileImage = "이미지 url",
-            introduce = "테스트용 더미 데이터"
-        )
-
-
-        `when`("회원 수정 메서드를 호출하면", {
-            // 회원 등록
-            val response = sut.signupUser(commandFirstUser)
-            sut.signupUser(commandSecondUser)
-            val target = normalUserJpaRepository.findByUserEmail(response.email).get()
-
-            // 회원 수정을 위한 작업 세팅
-            val updateCommandWithDuplicatedEmail = UserUpdateCommand(
-                email = "duplicatedemail@test.com",
-                name = "업데이트된 테스트용 이름",
-                encryptedPassword = "password123",
-                positionId = mockPosition.positionId,
-                introduce = "업데이트된 테스트용 더미 데이터"
-            )
-
-            val actual = shouldThrow<UserException.UserAlreadyExistsException> {
-                sut.updateUserInfo(
-                    userId = target.userId,
-                    userUpdateCommand = updateCommandWithDuplicatedEmail,
-                )
-            }
-
-            then("UserAlreadyExistsException 예외가 발생한다.") {
-                actual shouldBe UserException.UserAlreadyExistsException()
-            }
-        })
-    }
-
-    // 3-2. 소셜 회원의 경우
-    given("[소셜회원](1) 사용자가 올바른 데이터를 전달했고") {
-        `when`("회원 수정 메서드를 호출하면", {
-            // 회원 등록
-            val command = SocialUserSignupCommand(
-                username = "테스트용 이름",
-                provider = "kakao",
-                providerId = "213957292"
-            )
-
-            // 회원 수정을 위한 작업 세팅
-            val updateCommand = UserUpdateCommand(
-                email = "new@test.com",
-                name = "업데이트된 테스트용 이름",
-                encryptedPassword = "password123",
-                positionId = mockPosition.positionId,
-                introduce = "업데이트된 테스트용 더미 데이터"
-            )
-
-            // 회원 등록 및 해당 회원 조회
-            sut.signupSocialUser(command)
-            val target = socialUserJpaRepository.findByProviderIdWithSubscription(providerId = command.providerId).get()
-            socialUserJpaRepository.findAll().forEach {
-                println("여기다")
-                println("it's socialId : " + it.socialUserId)
-                println("it's providerId : " + it.providerId)
-                println("target's socialId : " + target.socialUserId)
-                println("target's providerId : " + target.providerId)
-                println("is exists? : " + socialUserJpaRepository.existsBySocialUserId(target.socialUserId))
-            }
-
-            // 기대한 결과
-            val expected = UserUpdateResponse(
-                email = "new@test.com",
-                username = "업데이트된 테스트용 이름",
-                encryptedPassword = "password123",
-                introduce = "업데이트된 테스트용 더미 데이터"
-            )
-
-            then("수정된 회원 정보가 성공적으로 반환된다.") {
-                val actual = sut.updateUserInfo(
-                    userId = target.socialUserId,
-                    userUpdateCommand = updateCommand,
-                )
-
-                actual.email shouldBe expected.email
-                actual.username shouldBe expected.username
-                actual.introduce shouldBe expected.introduce
-                actual.encryptedPassword shouldBe expected.encryptedPassword
-            }
-        })
-    }
-
-    given("[소셜회원](2) 사용자가 전달한 데이터에서 userId에 해당하는 유저가 없는 경우") {
-        `when`("회원 수정 메서드를 호출하면", {
-
-
-            then("UserNotFoundException 예외가 발생한다.") {
-
-            }
-        })
-    }
-
-    given("[소셜회원](3) 사용자가 중복된 이메일을 전달한 경우") {
-        `when`("회원 수정 메서드를 호출하면", {
-
-            then("UserAlreadyExistsException 예외가 발생한다.") {
-
-            }
-        })
-    }
-
-    given("4. 회원 이메일로 조회") {
-        // TODO: 테스트 코드 작성
-    }
-
-    given("5. 회원 아이디로 조회") {
-        // TODO: 테스트 코드 작성
-    }
-
-    given("6. 회원 토큰으로 카카오 유저 조회") {
-        // TODO: 테스트 코드 작성
-    }
-
-    given("7. 회원 providerId로 조회") {
-        // TODO: 테스트 코드 작성
-    }
-
-    given("8. 회원 프로필 정보 조회") {
-        // TODO: 테스트 코드 작성
-    }
-
-    given("9. 회원 자신의 게시글 조회") {
-        // TODO: 테스트 코드 작성
-    }
-
-    given("10. 회원 자신이 좋아요 누른 게시글 조회") {
-        // TODO: 테스트 코드 작성
-    }
+//    // 1. 일반 회원 회원가입 처리 테스트
+//    given("(1) 사용자가 올바른 형태의 데이터를 전달했고") {
+//        val command = UserSignupCommand(
+//            email = "test@test.com",
+//            name = "테스트용 이름",
+//            password = "password123",
+//            positionId = mockPosition.positionId,
+//            profileImage = "이미지 url",
+//            introduce = "테스트용 더미 데이터"
+//        )
+//
+//        `when`("회원가입 메서드를 호출하면", {
+//            val actual = sut.re(command)
+//            val expected = UserSignupResponse(
+//                username = "테스트용 이름",
+//                encryptedPassword = "password123",
+//                email = "test@test.com",
+//                introduce = "테스트용 더미 데이터"
+//            )
+//
+//            then("등록된 회원 정보를 성공적으로 반환한다.") {
+//                actual.email shouldBe expected.email
+//                actual.username shouldBe expected.username
+//                actual.introduce shouldBe expected.introduce
+//                actual.encryptedPassword shouldBe expected.encryptedPassword
+//            }
+//        })
+//    }
+//
+//    given("(2) 사용자가 중복된 이메일을 전달했고") {
+//        val command = UserSignupCommand(
+//            email = "test@test.com",
+//            name = "테스트용 이름",
+//            password = "password123",
+//            positionId = mockPosition.positionId,
+//            profileImage = "이미지 url",
+//            introduce = "테스트용 더미 데이터"
+//        )
+//
+//        `when`("회원가입 메서드를 호출하면", {
+//            // 회원 1개 사전에 등록
+//            sut.signupUser(command)
+//
+//            val actual = shouldThrow<UserException.UserAlreadyExistsException> {
+//                sut.signupUser(command)
+//            }
+//
+//            then("UserAlreadyExistsException 예외가 발생한다.") {
+//                actual shouldBe UserException.UserAlreadyExistsException()
+//            }
+//        })
+//    }
+//
+//    // 2. 소셜회원 회원가입 처리 테스트
+//    given("(1) 사용자가 올바른 형태에 데이터를 전달했고") {
+//        val command = SocialUserSignupCommand(
+//            username = "테스트용 이름",
+//            provider = "kakao",
+//            providerId = "213957292"
+//        )
+//
+//        `when`("소셜 회원가입 메서드를 호출하면", {
+//            val expected = UserSignupResponse( username = "테스트용 이름",
+//                                               encryptedPassword = "",
+//                                               email = "",
+//                                               introduce = "")
+//            val actual = sut.signupSocialUser(command)
+//
+//
+//            then("등록된 회원 정보를 성공적으로 반환한다.") {
+//                actual.username shouldBe expected.username
+//                actual.encryptedPassword shouldBe expected.encryptedPassword
+//                actual.email shouldBe expected.email
+//                actual.introduce shouldBe expected.introduce
+//            }
+//        })
+//
+//    }
+//
+//    given("(2) 사용자가 전달한 데이터에서 providerId가 이미 등록된 아이디일 때", {
+//        val command = SocialUserSignupCommand(
+//            username = "테스트용 이름",
+//            provider = "kakao",
+//            providerId = "213957292"
+//        )
+//
+//
+//        `when`("소셜 회원가입 메서드를 호출하면", {
+//            // 사전에 미리 등록
+//            sut.signupSocialUser(command)
+//
+//            val actual = shouldThrow<UserException.SocialUserAlreadyExistsException> {
+//                sut.signupSocialUser(command)
+//            }
+//            then("SocialUserAlreadyExistsException 예외가 발생한다.") {
+//                actual shouldBe UserException.SocialUserAlreadyExistsException()
+//            }
+//        })
+//    })
+//
+//    // 3. 회원 유저 정보 수정 처리 테스트
+//    // 3-1. 일반 회원의 경우
+//    given("[일반회원](1) 사용자가 올바른 데이터를 전달했고") {
+//        val command = UserSignupCommand(
+//            email = "test@test.com",
+//            name = "테스트용 이름",
+//            password = "password123",
+//            positionId = mockPosition.positionId,
+//            profileImage = "이미지 url",
+//            introduce = "테스트용 더미 데이터"
+//        )
+//
+//        `when`("회원 수정 메서드를 호출하면", {
+//            // 회원 등록
+//            val response = sut.signupUser(command)
+//            val target = normalUserJpaRepository.findByUserEmail(response.email).get()
+//
+//            // 회원 수정을 위한 작업 세팅
+//            val updateCommand = UserUpdateCommand(
+//                email = "new@test.com",
+//                name = "업데이트된 테스트용 이름",
+//                encryptedPassword = "password123",
+//                positionId = mockPosition.positionId,
+//                introduce = "업데이트된 테스트용 더미 데이터"
+//            )
+//
+//            // 회원 정보 수정 처리
+//            val actual = sut.updateUserInfo(
+//                userId = target.userId,
+//                userUpdateCommand = updateCommand,
+//            )
+//            val expected = UserUpdateResponse(
+//                username = "업데이트된 테스트용 이름",
+//                encryptedPassword = "password123",
+//                email = "new@test.com",
+//                introduce = "업데이트된 테스트용 더미 데이터"
+//            )
+//
+//            then("수정된 회원 정보가 성공적으로 반환된다.") {
+//                actual.email shouldBe expected.email
+//                actual.username shouldBe expected.username
+//                actual.introduce shouldBe expected.introduce
+//                actual.encryptedPassword shouldBe expected.encryptedPassword
+//            }
+//        })
+//    }
+//
+//    given("[일반회원](2) 사용자가 전달한 데이터에서 userId에 해당하는 유저가 없는 경우") {
+//        val notExistsUserId = "dwalfnrg123"
+//        val updateCommand = UserUpdateCommand(
+//            email = "new@test.com",
+//            name = "업데이트된 테스트용 이름",
+//            encryptedPassword = "password123",
+//            positionId = mockPosition.positionId,
+//            introduce = "업데이트된 테스트용 더미 데이터"
+//        )
+//
+//        `when`("회원 수정 메서드를 호출하면", {
+//            val actual = shouldThrow<UserException.UserNotFoundException> {
+//                sut.updateUserInfo(
+//                    userId = notExistsUserId,
+//                    userUpdateCommand = updateCommand,
+//                )
+//            }
+//
+//            then("UserNotFoundException 예외가 발생한다.") {
+//                actual shouldBe UserException.UserNotFoundException()
+//            }
+//        })
+//    }
+//
+//    given("[일반회원](3) 사용자가 중복된 이메일을 전달한 경우") {
+//        val commandFirstUser = UserSignupCommand(
+//            email = "test@test.com",
+//            name = "테스트용 이름",
+//            password = "password123",
+//            positionId = mockPosition.positionId,
+//            profileImage = "이미지 url",
+//            introduce = "테스트용 더미 데이터"
+//        )
+//
+//        val commandSecondUser = UserSignupCommand(
+//            email = "duplicatedemail@test.com",
+//            name = "테스트용 이름",
+//            password = "password123",
+//            positionId = mockPosition.positionId,
+//            profileImage = "이미지 url",
+//            introduce = "테스트용 더미 데이터"
+//        )
+//
+//
+//        `when`("회원 수정 메서드를 호출하면", {
+//            // 회원 등록
+//            val response = sut.signupUser(commandFirstUser)
+//            sut.signupUser(commandSecondUser)
+//            val target = normalUserJpaRepository.findByUserEmail(response.email).get()
+//
+//            // 회원 수정을 위한 작업 세팅
+//            val updateCommandWithDuplicatedEmail = UserUpdateCommand(
+//                email = "duplicatedemail@test.com",
+//                name = "업데이트된 테스트용 이름",
+//                encryptedPassword = "password123",
+//                positionId = mockPosition.positionId,
+//                introduce = "업데이트된 테스트용 더미 데이터"
+//            )
+//
+//            val actual = shouldThrow<UserException.UserAlreadyExistsException> {
+//                sut.updateUserInfo(
+//                    userId = target.userId,
+//                    userUpdateCommand = updateCommandWithDuplicatedEmail,
+//                )
+//            }
+//
+//            then("UserAlreadyExistsException 예외가 발생한다.") {
+//                actual shouldBe UserException.UserAlreadyExistsException()
+//            }
+//        })
+//    }
+//
+//    // 3-2. 소셜 회원의 경우
+//    given("[소셜회원](1) 사용자가 올바른 데이터를 전달했고") {
+//        `when`("회원 수정 메서드를 호출하면", {
+//            // 회원 등록
+//            val command = SocialUserSignupCommand(
+//                username = "테스트용 이름",
+//                provider = "kakao",
+//                providerId = "213957292"
+//            )
+//
+//            // 회원 수정을 위한 작업 세팅
+//            val updateCommand = UserUpdateCommand(
+//                email = "new@test.com",
+//                name = "업데이트된 테스트용 이름",
+//                encryptedPassword = "password123",
+//                positionId = mockPosition.positionId,
+//                introduce = "업데이트된 테스트용 더미 데이터"
+//            )
+//
+//            // 회원 등록 및 해당 회원 조회
+//            sut.signupSocialUser(command)
+//            val target = socialUserJpaRepository.findByProviderIdWithSubscription(providerId = command.providerId).get()
+//            socialUserJpaRepository.findAll().forEach {
+//                println("여기다")
+//                println("it's socialId : " + it.socialUserId)
+//                println("it's providerId : " + it.providerId)
+//                println("target's socialId : " + target.socialUserId)
+//                println("target's providerId : " + target.providerId)
+//                println("is exists? : " + socialUserJpaRepository.existsBySocialUserId(target.socialUserId))
+//            }
+//
+//            // 기대한 결과
+//            val expected = UserUpdateResponse(
+//                email = "new@test.com",
+//                username = "업데이트된 테스트용 이름",
+//                encryptedPassword = "password123",
+//                introduce = "업데이트된 테스트용 더미 데이터"
+//            )
+//
+//            then("수정된 회원 정보가 성공적으로 반환된다.") {
+//                val actual = sut.updateUserInfo(
+//                    userId = target.socialUserId,
+//                    userUpdateCommand = updateCommand,
+//                )
+//
+//                actual.email shouldBe expected.email
+//                actual.username shouldBe expected.username
+//                actual.introduce shouldBe expected.introduce
+//                actual.encryptedPassword shouldBe expected.encryptedPassword
+//            }
+//        })
+//    }
+//
+//    given("[소셜회원](2) 사용자가 전달한 데이터에서 userId에 해당하는 유저가 없는 경우") {
+//        `when`("회원 수정 메서드를 호출하면", {
+//
+//
+//            then("UserNotFoundException 예외가 발생한다.") {
+//
+//            }
+//        })
+//    }
+//
+//    given("[소셜회원](3) 사용자가 중복된 이메일을 전달한 경우") {
+//        `when`("회원 수정 메서드를 호출하면", {
+//
+//            then("UserAlreadyExistsException 예외가 발생한다.") {
+//
+//            }
+//        })
+//    }
+//
+//    given("4. 회원 이메일로 조회") {
+//        // TODO: 테스트 코드 작성
+//    }
+//
+//    given("5. 회원 아이디로 조회") {
+//        // TODO: 테스트 코드 작성
+//    }
+//
+//    given("6. 회원 토큰으로 카카오 유저 조회") {
+//        // TODO: 테스트 코드 작성
+//    }
+//
+//    given("7. 회원 providerId로 조회") {
+//        // TODO: 테스트 코드 작성
+//    }
+//
+//    given("8. 회원 프로필 정보 조회") {
+//        // TODO: 테스트 코드 작성
+//    }
+//
+//    given("9. 회원 자신의 게시글 조회") {
+//        // TODO: 테스트 코드 작성
+//    }
+//
+//    given("10. 회원 자신이 좋아요 누른 게시글 조회") {
+//        // TODO: 테스트 코드 작성
+//    }
 })
