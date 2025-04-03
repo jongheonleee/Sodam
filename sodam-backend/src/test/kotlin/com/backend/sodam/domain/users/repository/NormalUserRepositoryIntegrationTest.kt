@@ -41,7 +41,6 @@ class NormalUserRepositoryIntegrationTest(
 
     // - 의존하고 있는 오브젝트
     private val userJpaRepository: NormalUserJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository,
     private val normalUserPositionRepository: NormalUserPositionRepository,
     private val userGradeRepository: UserGradeRepository,
@@ -86,14 +85,11 @@ class NormalUserRepositoryIntegrationTest(
         userGradeJpaRepository.deleteAll()
         userSubscriptionJpaRepository.deleteAll()
 
-        // 일반회원 및 소셜회원 테이블 비우기
+        // 일반회원 테이블 비우기
         userJpaRepository.deleteAll()
-        socialUserJpaRepository.deleteAll()
-
 
         // 테이블 초기화 되었는지 확인
         userJpaRepository.count().shouldBe(0)
-        socialUserJpaRepository.count().shouldBe(0)
 
         // 회원가입 처리 등에서 요구되는 기본 데이터 셋 추가 - 1. 포지션, 2. 구독권, 3. 등급
         positionsJpaRepository.save(mockPosition)
@@ -103,7 +99,28 @@ class NormalUserRepositoryIntegrationTest(
 
     // 테스트 환경 정리
     afterTest {
-        // 테스트 DB 정리하기
+        // 회원 교차 테이블 비우기
+        userPositionsJpaRepository.deleteAll()
+        userGradeJpaRepository.deleteAll()
+        userSubscriptionJpaRepository.deleteAll()
+
+        // 회원과 연관되는 테이블 비우기
+        positionsJpaRepository.deleteAll()
+        gradesJpaRepository.deleteAll()
+        subscriptionJpaRepository.deleteAll()
+
+        // 일반회원 및 소셜회원 테이블 비우기
+        userJpaRepository.deleteAll()
+
+
+        // 테이블 초기화 되었는지 확인
+        userJpaRepository.count().shouldBe(0)
+        userPositionsJpaRepository.count().shouldBe(0)
+        userGradeJpaRepository.count().shouldBe(0)
+        userSubscriptionJpaRepository.count().shouldBe(0)
+        positionsJpaRepository.count().shouldBe(0)
+        gradesJpaRepository.count().shouldBe(0)
+        subscriptionJpaRepository.count().shouldBe(0)
     }
 
 
@@ -266,7 +283,7 @@ class NormalUserRepositoryIntegrationTest(
             it ("일반회원이 정상적으로 등록되었다면, 회원 정보, 포지션, 등급, 구독권을 정상적으로 조회해야한다.") {
                 // 📌 회원 등록 처리 - 이 부분 비즈니스 로직이 노출되는데 이러면 안좋음
                 val target = sut.createUser(command)
-                normalUserPositionRepository.createPositionForUser(target.userId, command.positionId)
+                normalUserPositionRepository.createByPositionId(target.userId, command.positionId)
                 userGradeRepository.createGradeForUser(target.userId, GradesType.ENTRY.name)
                 userSubscriptionRepository.createSubscriptionForUser(target.userId)
 

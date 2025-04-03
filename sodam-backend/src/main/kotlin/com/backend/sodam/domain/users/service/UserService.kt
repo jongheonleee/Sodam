@@ -3,8 +3,13 @@ package com.backend.sodam.domain.users.service
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.grades.model.GradesType
 import com.backend.sodam.domain.grades.repository.UserGradeRepository
+import com.backend.sodam.domain.positions.exception.PositionException
 import com.backend.sodam.domain.positions.model.PositionsType
 import com.backend.sodam.domain.positions.repository.NormalUserPositionRepository
+import com.backend.sodam.domain.positions.service.port.CreateUserPositionPort
+import com.backend.sodam.domain.positions.service.port.DeleteUserPositionPort
+import com.backend.sodam.domain.positions.service.port.FetchPositionPort
+import com.backend.sodam.domain.positions.service.port.FetchUserPositionPort
 import com.backend.sodam.domain.positions.service.port.UpdateUserPositionPort
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.exception.UserException
@@ -47,38 +52,56 @@ class UserService(
     private val deleteUserPorts: List<DeleteUserPort>,
 
     // 2. 그외의 연관되어 있는 포트들 DI
+    // - 1. 포지션
+    private val fetchPositionPort: FetchPositionPort,
+    private val fetchUserPositionPorts: List<FetchUserPositionPort>,
+    private val createUserPositionPorts: List<CreateUserPositionPort>,
     private val updateUserPositionPorts: List<UpdateUserPositionPort>,
+    private val deleteUserPositionPorts: List<DeleteUserPositionPort>,
+
+    // - 2. 구독권
+    // - 3. 등급
     private val userSubscriptionRepository: UserSubscriptionRepository,
     private val kakaoUserPort: KakaoUserPort,
     private val userGradeRepository: UserGradeRepository,
     private val normalUserPositionRepository: NormalUserPositionRepository,
 ): FetchUserUseCase, RegisterUserUseCase, UpdateUserUseCase, DeleteUserUseCase {
 
+    // 📌 실제 핵심 비즈니스 로직
     @Transactional(
         propagation = Propagation.REQUIRED,
         rollbackFor = [Exception::class]
     )
     override fun registerNormalUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
+        // 회원유형에 맞는 포트 조회 - 일반회원
+        val positionCreatePort = getCreatePositionPortByUserType(UserType.NORMAL)
+
         // 회원등록 작업 전 유효성 검증
         checkDuplicatedEmail(userSignupCommand.email)
+        checkExistsPosition(userSignupCommand.positionId)
 
-        // 회원등록 처리
+        // 회원등록 처리 비즈니스 로직
         val sodamUser = createNormalUserPort.createUser(userSignupCommand)
-        normalUserPositionRepository.createPositionForUser(sodamUser.userId, userSignupCommand.positionId)
+        positionCreatePort.createByPositionId(sodamUser.userId, userSignupCommand.positionId)
         userSubscriptionRepository.createSubscriptionForUser(sodamUser.userId)
         userGradeRepository.createGradeForUser(sodamUser.userId, GradesType.ENTRY.name)
         return sodamUser.toSignupResponse()
     }
-
 
     @Transactional(
         propagation = Propagation.REQUIRED,
         rollbackFor = [Exception::class]
     )
     override fun registerSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse {
-        // 소셜 회원 등록처리
+        // 회원유형에 맞는 포트 조회 - 소셜회원
+        val positionCreatePort = getCreatePositionPortByUserType(UserType.SOCIAL)
+
+        // 회원등록 작업 전 유효성 검증
+        checkExistsPositionByName(PositionsType.TBD.fullName)
+
+        // 소셜 회원 등록 비즈니스 로직
         val sodamUser = createSocialUserPort.createSocialUser(socialUserSignupCommand)
-        normalUserPositionRepository.createPositionForSocialUser(sodamUser.userId, PositionsType.TBD.fullName)
+        positionCreatePort.createByPositionName(sodamUser.userId, PositionsType.TBD.fullName)
         userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
         userGradeRepository.createGradeForSocialUser(sodamUser.userId, GradesType.ENTRY.name)
         return sodamUser.toSignupResponse()
@@ -97,8 +120,9 @@ class UserService(
         // 업데이트 작업 전 유효성 검증
         checkDuplicatedEmail(userUpdateCommand.email) // 이메일 중복 여부
         checkExistsUser(userId) // 아이디 존재 여부
+        checkExistsPosition(userUpdateCommand.positionId) // 포지션 존재 여부
 
-        // 업데이트 작업 처리
+        // 업데이트 작업 비즈니스 로직
         val updatedSodamUser = updatePort.updateUserInfo(userId = userId, userUpdateCommand = userUpdateCommand) // 회원 필드 업데이트(이때, 포지션 비움)
         updatePositionPort.upsertUserPosition(userId = userId, positionId = userUpdateCommand.positionId)
         return updatedSodamUser.toUpdateResponse()
@@ -150,7 +174,7 @@ class UserService(
         return sodamUser.userType
     }
 
-    // 비즈니스 로직 적용전 유효성 검증 메서드
+    // 📌 비즈니스 로직 적용전 유효성 검증 메서드
     private fun checkDuplicatedEmail(email: String) {
         if (isDuplicatedEmail(email))  // 이메일 중복 여부 확인
             throw UserException.UserAlreadyExistsException()
@@ -161,7 +185,31 @@ class UserService(
             throw UserException.UserNotFoundException()
     }
 
-    // 특정 조건에 부합한 포트 조회용 메서드
+    private fun checkExistsPosition(positionId: String) {
+        if (!isExistsPositionByPositionId(positionId))
+            throw PositionException.PositionNotFoundException()
+    }
+
+    private fun checkExistsPositionByName(positionName: String) {
+        if (!isExistsPositionByPositionName(positionName))
+            throw PositionException.PositionNotFoundException()
+    }
+
+    private fun isDuplicatedEmail(email: String): Boolean
+            = fetchUserPorts.stream()
+                            .anyMatch { it.isExistsByEmail(email) }
+
+    private fun isExistsByUSerId(userId: String): Boolean
+            = fetchUserPorts.stream()
+        .anyMatch { it.isExistsByUserId(userId) }
+
+    private fun isExistsPositionByPositionId(positionId: String): Boolean
+        = fetchPositionPort.isExistsByPositionId(positionId)
+
+    private fun isExistsPositionByPositionName(positionName: String): Boolean
+        = fetchPositionPort.isExistsByPositionName(positionName)
+
+    // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
     private fun getFetchPortByUserType(userType: UserType): FetchUserPort
         = fetchUserPorts.stream()
                         .filter { it.isTarget(userType) }
@@ -180,13 +228,6 @@ class UserService(
                         .findFirst()
                         .orElseThrow { UserException.UserNotFoundException() }
 
-    private fun isDuplicatedEmail(email: String): Boolean
-        = fetchUserPorts.stream()
-                        .anyMatch { it.isExistsByEmail(email) }
-
-    private fun isExistsByUSerId(userId: String): Boolean
-        = fetchUserPorts.stream()
-                        .anyMatch { it.isExistsByUserId(userId) }
 
     private fun getUpdatePortByUserType(userType: UserType): UpdateUserPort
         = updateUserPorts.stream()
@@ -196,6 +237,12 @@ class UserService(
 
     private fun getUpdatePositionPortByUserType(userType: UserType): UpdateUserPositionPort
         = updateUserPositionPorts.stream()
+                                 .filter { it.isTarget(userType) }
+                                 .findFirst()
+                                 .orElseThrow { IllegalArgumentException() }
+
+    private fun getCreatePositionPortByUserType(userType: UserType): CreateUserPositionPort
+        = createUserPositionPorts.stream()
                                  .filter { it.isTarget(userType) }
                                  .findFirst()
                                  .orElseThrow { IllegalArgumentException() }

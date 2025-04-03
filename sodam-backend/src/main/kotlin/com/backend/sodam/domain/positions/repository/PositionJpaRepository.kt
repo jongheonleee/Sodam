@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.Optional
 
 interface PositionJpaRepository : JpaRepository<PositionsEntity, String>, PositionsCustomRepository{
+    fun existsByPositionId(positionId: String): Boolean
+    fun existsByPositionName(positionName: String): Boolean
     fun findByPositionId(positionId: String): Optional<PositionsEntity>
     fun findByPositionName(positionName: String): Optional<PositionsEntity>
 }

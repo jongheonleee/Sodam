@@ -124,7 +124,6 @@ import java.util.*
     override fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): SodamUser {
         val socialUserEntity = socialUserJpaRepository.findBySocialUserId(userId).get()
         socialUserEntity.update(userUpdateCommand)
-        socialUserEntity.positions.clear()
         return socialUserJpaRepository.save(socialUserEntity)
                                       .toDomain()
     }
