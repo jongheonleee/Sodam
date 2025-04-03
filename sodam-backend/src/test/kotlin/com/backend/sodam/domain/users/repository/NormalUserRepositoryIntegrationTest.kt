@@ -1,22 +1,24 @@
 package com.backend.sodam.domain.users.repository
 
 import com.backend.sodam.domain.grades.entity.GradesEntity
+import com.backend.sodam.domain.grades.model.GradesType
 import com.backend.sodam.domain.grades.repository.GradesJpaRepository
 import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
+import com.backend.sodam.domain.grades.repository.UserGradeRepository
 import com.backend.sodam.domain.positions.entity.PositionsEntity
 import com.backend.sodam.domain.positions.repository.PositionJpaRepository
-import com.backend.sodam.domain.positions.repository.UserPositionJpaRepository
+import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
+import com.backend.sodam.domain.positions.repository.NormalUserPositionRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
-import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import io.kotest.extensions.spring.SpringExtension
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
+import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import io.kotest.core.spec.style.DescribeSpec
@@ -33,7 +35,7 @@ import java.util.*
  * - 각 인터페이스에는 isTarget, isExistsByUserId와 같은 메서드가 반드시 포함되어야함
  */
 @SpringBootTest // 현재 스프링 컨테이너 업로드해서 서비스에서 사용하는 빈들을 모두 관리해서 테스트 코드를 구동하고 있음 -> 이 부분 추후에 효율적으로 구성하기
-class UserRepositoryIntegrationTest(
+class NormalUserRepositoryIntegrationTest(
     // - 테스트 대상
     private val sut: NormalUserRepository,
 
@@ -41,6 +43,8 @@ class UserRepositoryIntegrationTest(
     private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userSubscriptionRepository: UserSubscriptionRepository,
+    private val normalUserPositionRepository: NormalUserPositionRepository,
+    private val userGradeRepository: UserGradeRepository,
 
     // 테스트 환경 구축에 필요한 오브젝트
     // - 1. 기본적으로 세팅되어야 하는 데이터
@@ -50,7 +54,7 @@ class UserRepositoryIntegrationTest(
 
     // - 2. 회원과 연관된 교차 테이블
     private val userGradeJpaRepository: UserGradeJpaRepository,
-    private val userPositionsJpaRepository: UserPositionJpaRepository,
+    private val userPositionsJpaRepository: UsersPositionJpaRepository,
     private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
 ): DescribeSpec({
 
@@ -247,16 +251,83 @@ class UserRepositoryIntegrationTest(
             }
         }
 
-        context("회원 프로필 정보 조회할 때") {
+        context("일반회원 프로필 정보 조회할 때") {
+            // 일반회원 등록
+            // - 일반회원, 포지션, 등급, 구독권
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                introduce = "테스트 유저 입니다."
+            )
+
+            it ("일반회원이 정상적으로 등록되었다면, 회원 정보, 포지션, 등급, 구독권을 정상적으로 조회해야한다.") {
+                // 📌 회원 등록 처리 - 이 부분 비즈니스 로직이 노출되는데 이러면 안좋음
+                val target = sut.createUser(command)
+                normalUserPositionRepository.createPositionForUser(target.userId, command.positionId)
+                userGradeRepository.createGradeForUser(target.userId, GradesType.ENTRY.name)
+                userSubscriptionRepository.createSubscriptionForUser(target.userId)
+
+                val optional = sut.findProfileInfo(target.userId)
+                optional.isPresent shouldBe true
+
+                val actual = optional.get()
+
+                val subscriptionByUserId = userSubscriptionRepository.findByUserId(target.userId)
+                subscriptionByUserId.isPresent shouldBe true
+                val subscription = subscriptionByUserId.get()
+
+                val positionByPositionId = positionsJpaRepository.findByPositionId(command.positionId)
+                positionByPositionId.isPresent shouldBe true
+                val position = positionByPositionId.get()
+
+                val gradeByName = gradesJpaRepository.findByGradeName(GradesType.ENTRY.name)
+                gradeByName.isPresent shouldBe true
+                val grade = gradeByName.get()
+
+                val expected = SodamUserDetail(
+                    userId = target.userId,
+                    name = target.username,
+                    email = target.email,
+                    introduce = target.introduce,
+                    profileImageUrl = target.profileImageUrl,
+                    subscription = subscription.subscriptionType,
+                    positions = listOf(position.positionName),
+                    articleTotalCnt = 0,
+                    grade = grade.gradeName,
+                    ranking = 1, // 랭킹부분 추후에 처리하기
+                )
+
+                actual.userId shouldBe expected.userId
+                actual.email shouldBe expected.email
+                actual.name shouldBe expected.name
+                actual.introduce shouldBe expected.introduce
+                actual.profileImageUrl shouldBe expected.profileImageUrl
+                actual.subscription shouldBe expected.subscription
+                actual.positions[0] shouldBe expected.positions[0]
+                actual.articleTotalCnt shouldBe expected.articleTotalCnt
+                actual.grade shouldBe expected.grade
+            }
 
         }
 
-        context("회원 자신이 작성한 게시글 조회할 때") {
+        // 밑에 부분은 여기서 다루면 테스트 코드가 너무 엉켜버릴 것 같기에 Article 부분에서 다루기
+        context("일반회원 자신이 작성한 게시글 조회할 때") {
+            // 일반회원 등록(단순 등록)
+            // 게시글 3개 등록
 
+            it("일반회원이 게시글 3개를 작성한 경우, 해당 게시글을 조회할 수 있어야한다.") {
+
+            }
         }
 
-        context("회원 좋아요 게시글 조회할 때") {
+        context("일반회원 좋아요 게시글 조회할 때") {
 
+            it("일반회원의 좋아요 게시글이 3개인 경우, 해당 게시글을 조회할 수 있어야한다.") {
+
+            }
         }
     }
 

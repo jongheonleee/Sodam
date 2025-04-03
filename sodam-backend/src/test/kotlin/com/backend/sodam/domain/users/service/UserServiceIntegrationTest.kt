@@ -4,22 +4,14 @@ import com.backend.sodam.domain.grades.repository.GradesJpaRepository
 import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
 import com.backend.sodam.domain.positions.entity.PositionsEntity
 import com.backend.sodam.domain.positions.repository.PositionJpaRepository
-import com.backend.sodam.domain.positions.repository.UserPositionJpaRepository
+import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
-import com.backend.sodam.domain.users.controller.response.UserSignupResponse
-import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
-import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
-import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
-import com.backend.sodam.domain.users.service.command.UserSignupCommand
-import com.backend.sodam.domain.users.service.command.UserUpdateCommand
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
-import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 
@@ -42,7 +34,7 @@ class UserServiceIntegrationTest(
     private val subscriptionJpaRepository: SubscriptionJpaRepository,
 
     // - 2. 회원과 연관된 교차 테이블
-    private val userPositionsJpaRepository: UserPositionJpaRepository,
+    private val userPositionsJpaRepository: UsersPositionJpaRepository,
     private val userGradeJpaRepository: UserGradeJpaRepository,
     private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
 

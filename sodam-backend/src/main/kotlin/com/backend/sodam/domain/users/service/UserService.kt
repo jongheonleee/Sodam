@@ -4,10 +4,10 @@ import com.backend.sodam.domain.articles.controller.response.ArticleSummaryRespo
 import com.backend.sodam.domain.grades.model.GradesType
 import com.backend.sodam.domain.grades.repository.UserGradeRepository
 import com.backend.sodam.domain.positions.model.PositionsType
-import com.backend.sodam.domain.positions.repository.UserPositionRepository
+import com.backend.sodam.domain.positions.repository.NormalUserPositionRepository
+import com.backend.sodam.domain.positions.service.port.UpdateUserPositionPort
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
 import com.backend.sodam.domain.users.exception.UserException
-import com.backend.sodam.domain.users.repository.NormalUserRepository
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.controller.response.SocialUserResponse
@@ -19,6 +19,7 @@ import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import com.backend.sodam.domain.users.service.port.CreateNormalUserPort
 import com.backend.sodam.domain.users.service.port.CreateSocialUserPort
+import com.backend.sodam.domain.users.service.port.DeleteUserPort
 import com.backend.sodam.domain.users.service.port.FetchSocialUserPort
 import com.backend.sodam.domain.users.service.port.FetchUserPort
 import com.backend.sodam.domain.users.service.port.UpdateUserPort
@@ -37,23 +38,20 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @RequiredArgsConstructor
 class UserService(
-    // 1. 회원
-    // 조회용 빈 DI
-    private val fetchSocialUserPort: FetchSocialUserPort, // 소셜회원의 경우, 일반 회원가 다른 조회 부분이 존재함
+    // 1. 회원 관련 빈 DI
+    private val fetchSocialUserPort: FetchSocialUserPort,
     private val fetchUserPorts: List<FetchUserPort>,
-
-    // 생성용 빈 DI
     private val createNormalUserPort: CreateNormalUserPort,
     private val createSocialUserPort: CreateSocialUserPort,
-
-    // 업데이트용 빈 DI
     private val updateUserPorts: List<UpdateUserPort>,
+    private val deleteUserPorts: List<DeleteUserPort>,
 
-    private val normalUserRepository: NormalUserRepository,
+    // 2. 그외의 연관되어 있는 포트들 DI
+    private val updateUserPositionPorts: List<UpdateUserPositionPort>,
     private val userSubscriptionRepository: UserSubscriptionRepository,
     private val kakaoUserPort: KakaoUserPort,
     private val userGradeRepository: UserGradeRepository,
-    private val userPositionRepository: UserPositionRepository,
+    private val normalUserPositionRepository: NormalUserPositionRepository,
 ): FetchUserUseCase, RegisterUserUseCase, UpdateUserUseCase, DeleteUserUseCase {
 
     @Transactional(
@@ -61,9 +59,12 @@ class UserService(
         rollbackFor = [Exception::class]
     )
     override fun registerNormalUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
+        // 회원등록 작업 전 유효성 검증
         checkDuplicatedEmail(userSignupCommand.email)
+
+        // 회원등록 처리
         val sodamUser = createNormalUserPort.createUser(userSignupCommand)
-        userPositionRepository.createPositionForUser(sodamUser.userId, userSignupCommand.positionId)
+        normalUserPositionRepository.createPositionForUser(sodamUser.userId, userSignupCommand.positionId)
         userSubscriptionRepository.createSubscriptionForUser(sodamUser.userId)
         userGradeRepository.createGradeForUser(sodamUser.userId, GradesType.ENTRY.name)
         return sodamUser.toSignupResponse()
@@ -75,9 +76,9 @@ class UserService(
         rollbackFor = [Exception::class]
     )
     override fun registerSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse {
-        // 소셜 회원 등록처리 진행
+        // 소셜 회원 등록처리
         val sodamUser = createSocialUserPort.createSocialUser(socialUserSignupCommand)
-        userPositionRepository.createPositionForSocialUser(sodamUser.userId, PositionsType.TBD.fullName)
+        normalUserPositionRepository.createPositionForSocialUser(sodamUser.userId, PositionsType.TBD.fullName)
         userSubscriptionRepository.createUserSubscriptionForSocialUser(sodamUser.userId)
         userGradeRepository.createGradeForSocialUser(sodamUser.userId, GradesType.ENTRY.name)
         return sodamUser.toSignupResponse()
@@ -89,33 +90,17 @@ class UserService(
     )
     override fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): UserUpdateResponse {
         // 회원 유형에 맞는 포트 조회
-        val userType = extractUserType(userId)
-        val updatePort = getUpdatePortByUserType(userType)
-        // 포지션 업설트하는 부분도 포트로 조회해서 사용하게 만들기
+        val userType = extractUserType(userId) // 회원의 유형 추출
+        val updatePort = getUpdatePortByUserType(userType) // 회원의 유형을 다룰 수 있는 포트 조회
+        val updatePositionPort = getUpdatePositionPortByUserType(userType)
 
-        // 업데이트 작업 전 작업 유효성 검증
-        checkDuplicatedEmail(userUpdateCommand.email)
-        checkExistsUser(userId)
+        // 업데이트 작업 전 유효성 검증
+        checkDuplicatedEmail(userUpdateCommand.email) // 이메일 중복 여부
+        checkExistsUser(userId) // 아이디 존재 여부
 
-
-        val updatedSodamUser = updatePort.updateUserInfo(userId = userId, userUpdateCommand = userUpdateCommand)
-        // 업데이트 작업 진행 - 이 부분 추후에 포트로 빼버리기
-        when (userType) {
-            UserType.NORMAL -> {
-                userPositionRepository.upsertPositionForNormalUser(
-                    userId = userId,
-                    positionId = userUpdateCommand.positionId
-                )
-            }
-
-            else -> {
-                userPositionRepository.upsertPositionForSocialUser(
-                    socialUserId = userId,
-                    positionId = userUpdateCommand.positionId
-                )
-            }
-        }
-
+        // 업데이트 작업 처리
+        val updatedSodamUser = updatePort.updateUserInfo(userId = userId, userUpdateCommand = userUpdateCommand) // 회원 필드 업데이트(이때, 포지션 비움)
+        updatePositionPort.upsertUserPosition(userId = userId, positionId = userUpdateCommand.positionId)
         return updatedSodamUser.toUpdateResponse()
     }
 
@@ -208,5 +193,11 @@ class UserService(
                          .filter { it.isTarget(userType) }
                          .findFirst()
                          .orElseThrow { IllegalArgumentException() }
+
+    private fun getUpdatePositionPortByUserType(userType: UserType): UpdateUserPositionPort
+        = updateUserPositionPorts.stream()
+                                 .filter { it.isTarget(userType) }
+                                 .findFirst()
+                                 .orElseThrow { IllegalArgumentException() }
 
 }

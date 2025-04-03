@@ -5,7 +5,9 @@ import com.backend.sodam.domain.users.controller.request.UserUpdateRequest
 import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
+import com.backend.sodam.domain.users.service.usescase.DeleteUserUseCase
 import com.backend.sodam.domain.users.service.usescase.FetchUserUseCase
+import com.backend.sodam.domain.users.service.usescase.RegisterUserUseCase
 import com.backend.sodam.domain.users.service.usescase.UpdateUserUseCase
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
@@ -21,12 +23,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequiredArgsConstructor
 class UserController(
-    // 회원 조회용 유스케이스
+    // 회원 관련 빈 DI
     private val fetchUserUseCase: FetchUserUseCase,
-
-    // 회원 업데이트용 유스케이스
+    private val registerUserUseCase: RegisterUserUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
-    private val userService: UserService,
+    private val deleteUserUseCase: DeleteUserUseCase,
+
+    private val userService: UserService, // 해당 부분 위같은 형태로 쪼개기
     private val tokenProvider: JwtTokenProvider
 ) {
 
