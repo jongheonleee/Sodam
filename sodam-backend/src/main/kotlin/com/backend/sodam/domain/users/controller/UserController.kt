@@ -29,6 +29,7 @@ class UserController(
     private val updateUserUseCase: UpdateUserUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
 
+    // 토큰 관련 빈 DI
     private val userService: UserService, // 해당 부분 위같은 형태로 쪼개기
     private val tokenProvider: JwtTokenProvider
 ) {

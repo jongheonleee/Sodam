@@ -1,8 +1,11 @@
 package com.backend.sodam.domain.users.service
 
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.grades.exception.GradeException
 import com.backend.sodam.domain.grades.model.GradesType
 import com.backend.sodam.domain.grades.repository.NormalUserGradeRepository
+import com.backend.sodam.domain.grades.service.port.CreateUserGradePort
+import com.backend.sodam.domain.grades.service.port.FetchGradePort
 import com.backend.sodam.domain.positions.exception.PositionException
 import com.backend.sodam.domain.positions.model.PositionsType
 import com.backend.sodam.domain.positions.service.port.CreateUserPositionPort
@@ -63,7 +66,8 @@ class UserService(
     private val createUserSubscriptionPorts: List<CreateUserSubscriptionPort>,
 
     // - 3. 등급
-    private val normalUserGradeRepository: NormalUserGradeRepository,
+    private val fetchGradePort: FetchGradePort,
+    private val createUserGradePorts: List<CreateUserGradePort>,
 
     // - 4. 그외 시스템 외부 포트
     private val kakaoUserPort: KakaoUserPort,
@@ -79,16 +83,18 @@ class UserService(
         checkDuplicatedEmail(userSignupCommand.email)
         checkExistsPosition(userSignupCommand.positionId)
         checkExistsSubscription(SubscriptionsType.FREE.name)
+        checkExistsGrade(GradesType.ENTRY.name)
 
         // 회원유형에 맞는 포트 조회 - 일반회원
         val userPositionCreatePort = getCreateUserPositionPortByUserType(UserType.NORMAL)
         val userSubscriptionCreatePort = getCreateUserSubscriptionPort(UserType.NORMAL)
+        val userGraderCreatePort = getCreateUserGradePort(UserType.NORMAL)
 
         // 회원등록 처리 비즈니스 로직
         val sodamUser = createNormalUserPort.createUser(userSignupCommand)
         userPositionCreatePort.createByPositionId(userId = sodamUser.userId, positionId = userSignupCommand.positionId)
         userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId, subscriptionType = SubscriptionsType.FREE)
-        normalUserGradeRepository.createGradeForUser(sodamUser.userId, GradesType.ENTRY.name)
+        userGraderCreatePort.createGrade(sodamUser.userId, GradesType.ENTRY)
         return sodamUser.toSignupResponse()
     }
 
@@ -100,16 +106,18 @@ class UserService(
         // 회원등록 작업 전 유효성 검증
         checkExistsPositionByName(PositionsType.TBD.fullName)
         checkExistsSubscription(SubscriptionsType.FREE.name)
+        checkExistsGrade(GradesType.ENTRY.name)
 
         // 회원유형에 맞는 포트 조회 - 소셜회원
         val userPositionCreatePort = getCreateUserPositionPortByUserType(UserType.SOCIAL)
         val userSubscriptionCreatePort = getCreateUserSubscriptionPort(UserType.SOCIAL)
+        val userGradeCreatePort = getCreateUserGradePort(UserType.SOCIAL)
 
         // 소셜 회원 등록 비즈니스 로직
         val sodamUser = createSocialUserPort.createSocialUser(socialUserSignupCommand)
         userPositionCreatePort.createByPositionName(userId = sodamUser.userId, positionName = PositionsType.TBD.fullName)
         userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId, subscriptionType = SubscriptionsType.FREE)
-        normalUserGradeRepository.createGradeForSocialUser(sodamUser.userId, GradesType.ENTRY.name)
+        userGradeCreatePort.createGrade(sodamUser.userId, GradesType.ENTRY)
         return sodamUser.toSignupResponse()
     }
 
@@ -219,6 +227,11 @@ class UserService(
             throw SubscriptionException.SubscriptionNotFoundException()
     }
 
+    private fun checkExistsGrade(gradeName: String) {
+        if (!isExistsGradeByName(gradeName))
+            throw GradeException.GradeNotFoundException()
+    }
+
     private fun isDuplicatedEmail(email: String): Boolean
         = fetchUserPorts.stream()
                         .anyMatch { it.isExistsByEmail(email) }
@@ -235,6 +248,9 @@ class UserService(
 
     private fun isExistsSubscriptionByName(subscriptionName: String): Boolean
         = fetchSubscriptionPort.isExistsBySubscriptionName(subscriptionName)
+
+    private fun isExistsGradeByName(subscriptionName: String): Boolean
+        = fetchGradePort.isExistsByGradeName(subscriptionName)
 
     // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
     private fun getFetchPortByUserType(userType: UserType): FetchUserPort
@@ -280,5 +296,10 @@ class UserService(
                                      .findFirst()
                                      .orElseThrow { IllegalArgumentException() }
 
+    private fun getCreateUserGradePort(userType: UserType): CreateUserGradePort
+        = createUserGradePorts.stream()
+                              .filter { it.isTarget(userType) }
+                              .findFirst()
+                              .orElseThrow { IllegalArgumentException() }
 
 }

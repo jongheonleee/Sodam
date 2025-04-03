@@ -1,8 +1,14 @@
 package com.backend.sodam.domain.grades.repository
 
 import com.backend.sodam.domain.grades.exception.GradeException
+import com.backend.sodam.domain.grades.model.GradesType
+import com.backend.sodam.domain.grades.service.port.CreateUserGradePort
+import com.backend.sodam.domain.grades.service.port.DeleteUserGradePort
+import com.backend.sodam.domain.grades.service.port.FetchUserGradePort
+import com.backend.sodam.domain.grades.service.port.UpdateUserGradePort
 import com.backend.sodam.domain.users.entity.UsersGradeEntity
 import com.backend.sodam.domain.users.exception.UserException
+import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
@@ -14,64 +20,19 @@ import java.util.*
 @Repository
 @RequiredArgsConstructor
 class SocialUserGradeRepository(
-    private val userJpaRepository: NormalUserJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository,
     private val gradeJpaRepository: GradesJpaRepository,
     private val useGradeJpaRepository: UserGradeJpaRepository,
-) {
+    private val socialUserJpaRepository: SocialUserJpaRepository,
+): CreateUserGradePort, FetchUserGradePort, UpdateUserGradePort, DeleteUserGradePort {
+
+    override fun isTarget(userType: UserType): Boolean
+        = UserType.SOCIAL == userType
 
     @Transactional
-    fun createGradeForUser(userId: String, gradeName: String): UsersGradeEntity { // 상황봐서 도메인 객체 넘길지 판단
-        val byUserId = userJpaRepository.findByUserId(userId)
-        if (byUserId.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
-        val userEntity = byUserId.get()
-        val byGradeName = gradeJpaRepository.findByGradeName(gradeName)
-        if (byGradeName.isEmpty) {
-            throw GradeException.GradeNotFoundException()
-        }
-        val gradeEntity = byGradeName.get()
-
-        val useGradeEntity = UsersGradeEntity(
-            userGradeId = UUID.randomUUID().toString(),
-            user = userEntity,
-            grade = gradeEntity,
-            startAt = LocalDateTime.now(),
-            endAt = LocalDateTime.of(9999, 12, 31, 23, 59, 59),
-            validYN = 0,
-        )
-
-        return useGradeJpaRepository.save(useGradeEntity)
-
-    }
-
-    @Transactional
-    fun createGradeForSocialUser(socialUserId: String, gradeName: String): UsersGradeEntity {
-        val bySocialUserId = socialUserJpaRepository.findBySocialUserId(socialUserId)
-        if (bySocialUserId.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-        val socialUserEntity = bySocialUserId.get()
-
-        val byGradeName = gradeJpaRepository.findByGradeName(gradeName)
-        if (byGradeName.isEmpty) {
-            throw GradeException.GradeNotFoundException()
-        }
-        val gradeEntity = byGradeName.get()
-
-
-        val useGradeEntity = UsersGradeEntity(
-            userGradeId = UUID.randomUUID().toString(),
-            socialUser = socialUserEntity,
-            grade = gradeEntity,
-            startAt = LocalDateTime.now(),
-            endAt = LocalDateTime.of(9999, 12, 31, 23, 59, 59),
-            validYN = 0,
-        )
-
-        return useGradeJpaRepository.save(useGradeEntity)
-
+    override fun createGrade(userId: String, gradeType: GradesType) {
+        val socialUserEntity = socialUserJpaRepository.findBySocialUserId(userId).get()
+        val gradeEntity = gradeJpaRepository.findByGradeName(gradeType.name).get()
+        val useGradeEntity = UsersGradeEntity(userGradeId = UUID.randomUUID().toString(), socialUser = socialUserEntity, grade = gradeEntity, startAt = LocalDateTime.now(), endAt = LocalDateTime.of(9999, 12, 31, 23, 59, 59), validYN = 0)
+        useGradeJpaRepository.save(useGradeEntity)
     }
 }
