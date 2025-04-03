@@ -49,22 +49,19 @@ class UserService(
     private val createNormalUserPort: CreateNormalUserPort,
     private val createSocialUserPort: CreateSocialUserPort,
     private val updateUserPorts: List<UpdateUserPort>,
-    private val deleteUserPorts: List<DeleteUserPort>,
 
     // 2. 그외의 연관되어 있는 포트들 DI
     // - 1. 포지션
     private val fetchPositionPort: FetchPositionPort,
-    private val fetchUserPositionPorts: List<FetchUserPositionPort>,
     private val createUserPositionPorts: List<CreateUserPositionPort>,
     private val updateUserPositionPorts: List<UpdateUserPositionPort>,
-    private val deleteUserPositionPorts: List<DeleteUserPositionPort>,
 
     // - 2. 구독권
-    // - 3. 등급
     private val userSubscriptionRepository: UserSubscriptionRepository,
+
+    // - 3. 등급
     private val kakaoUserPort: KakaoUserPort,
     private val userGradeRepository: UserGradeRepository,
-    private val normalUserPositionRepository: NormalUserPositionRepository,
 ): FetchUserUseCase, RegisterUserUseCase, UpdateUserUseCase, DeleteUserUseCase {
 
     // 📌 실제 핵심 비즈니스 로직
