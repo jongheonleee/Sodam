@@ -1,8 +1,7 @@
 package com.backend.sodam.domain.users.repository
 
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
-import com.backend.sodam.domain.subscriptions.model.UserSubscription
-import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
+import com.backend.sodam.domain.subscriptions.repository.NormalUserSubscriptionRepository
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
@@ -24,7 +23,7 @@ import java.util.*
 @RequiredArgsConstructor
  class SocialUserRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
-    private val userSubscriptionRepository: UserSubscriptionRepository
+    private val userSubscriptionRepository: NormalUserSubscriptionRepository
 ): CreateSocialUserPort, FetchSocialUserPort, UpdateUserPort, DeleteUserPort {
 
     override fun isTarget(userType: UserType): Boolean
@@ -94,7 +93,7 @@ import java.util.*
         }
 
         val socialUserEntity = foundSocialUsersEntityOptionalByProviderId.get()
-        val foundUserSubscriptionOptionalByProviderId = userSubscriptionRepository.findByUserId(providerId)
+        val userSubscription = userSubscriptionRepository.findByUserId(providerId)
 
         return Optional.of(
             SodamUser(
@@ -102,11 +101,7 @@ import java.util.*
                 username = socialUserEntity.userName,
                 provider = socialUserEntity.provider,
                 providerId = socialUserEntity.providerId,
-                role = if (foundUserSubscriptionOptionalByProviderId.isPresent) {
-                    foundUserSubscriptionOptionalByProviderId.get().subscriptionType.toRole()
-                } else {
-                    UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole()
-                },
+                role = userSubscription.subscriptionType.toRole(),
                 userType = UserType.SOCIAL
             )
         )
@@ -137,7 +132,7 @@ import java.util.*
         }
 
         val socialUserEntity = foundSocialUserEntity.get()
-        val foundUserSubscriptionOptionalByProviderId = userSubscriptionRepository.findByUserId(socialUserEntity.providerId)
+        val userSubscription = userSubscriptionRepository.findByUserId(socialUserEntity.providerId)
 
         return Optional.of(
             SodamUser(
@@ -145,11 +140,7 @@ import java.util.*
                 username = socialUserEntity.userName,
                 provider = socialUserEntity.provider,
                 providerId = socialUserEntity.providerId,
-                role = if (foundUserSubscriptionOptionalByProviderId.isPresent) {
-                    foundUserSubscriptionOptionalByProviderId.get().subscriptionType.toRole()
-                } else {
-                    UserSubscription.newSubscription(socialUserEntity.socialUserId).subscriptionType.toRole()
-                },
+                role = userSubscription.subscriptionType.toRole(),
                 userType = UserType.SOCIAL
             )
         )

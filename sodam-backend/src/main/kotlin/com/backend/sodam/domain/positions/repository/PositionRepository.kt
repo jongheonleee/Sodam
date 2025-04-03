@@ -13,7 +13,7 @@ class PositionRepository(
 ): FetchPositionPort {
 
     @Transactional(readOnly = true)
-    fun fetchValidPositionsInOrder(): List<SodamPosition> {
+    override fun fetchValidPositions(): List<SodamPosition> {
         return positionJpaRepository.fetchValidPositionsInOrder()
             .map { it.toDomain() }
     }

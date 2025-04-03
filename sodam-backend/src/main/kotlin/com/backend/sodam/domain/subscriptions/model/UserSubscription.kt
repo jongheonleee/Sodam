@@ -63,11 +63,11 @@ data class UserSubscription(
     }
 
     companion object {
-        fun newSubscription(userId: String): UserSubscription {
+        fun newSubscription(userId: String, subscriptionType: SubscriptionsType): UserSubscription {
             val now = LocalDateTime.now()
             return UserSubscription(
                 userId = userId,
-                subscriptionType = SubscriptionsType.FREE,
+                subscriptionType = subscriptionType,
                 startAt = now,
                 endAt = getEndAt(now),
                 validYn = true

@@ -2,19 +2,22 @@ package com.backend.sodam.domain.positions.service
 
 import com.backend.sodam.domain.positions.repository.PositionRepository
 import com.backend.sodam.domain.positions.controller.response.PositionsResponse
+import com.backend.sodam.domain.positions.service.port.FetchPositionPort
+import com.backend.sodam.domain.positions.service.usecase.DeletePositionUseCase
+import com.backend.sodam.domain.positions.service.usecase.FetchPositionUseCase
+import com.backend.sodam.domain.positions.service.usecase.RegisterPositionUseCase
+import com.backend.sodam.domain.positions.service.usecase.UpdatePositionUseCase
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
 @Service
 @RequiredArgsConstructor
 class PositionService(
-    private val positionRepository: PositionRepository
-) {
+    private val fetchPositionPort: FetchPositionPort,
+): FetchPositionUseCase, RegisterPositionUseCase, UpdatePositionUseCase, DeletePositionUseCase {
 
-    fun fetchValidPositions(): PositionsResponse {
-        val fetchedValidSodamPositions = positionRepository.fetchValidPositionsInOrder()
-        return PositionsResponse(
-            fetchedValidSodamPositions.map { it.toResponse() }
-        )
+    override fun fetchValidPositions(): PositionsResponse {
+        val fetchedValidSodamPositions = fetchPositionPort.fetchValidPositions()
+        return PositionsResponse(fetchedValidSodamPositions.map { it.toResponse() })
     }
 }

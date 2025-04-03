@@ -1,0 +1,43 @@
+package com.backend.sodam.domain.subscriptions.repository
+
+import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
+import com.backend.sodam.domain.subscriptions.model.UserSubscription
+import com.backend.sodam.domain.subscriptions.service.port.CreateUserSubscriptionPort
+import com.backend.sodam.domain.subscriptions.service.port.DeleteUserSubscriptionPort
+import com.backend.sodam.domain.subscriptions.service.port.FetchUserSubscriptionPort
+import com.backend.sodam.domain.subscriptions.service.port.UpdateUserSubscriptionPort
+import com.backend.sodam.domain.users.exception.UserException
+import com.backend.sodam.domain.users.model.UserType
+import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
+import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
+import lombok.RequiredArgsConstructor
+import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
+import java.util.Optional
+
+@Repository
+@RequiredArgsConstructor
+class NormalUserSubscriptionRepository(
+    private val userJpaRepository: NormalUserJpaRepository,
+    private val subscriptionJpaRepository: SubscriptionJpaRepository,
+    private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
+): CreateUserSubscriptionPort, FetchUserSubscriptionPort, UpdateUserSubscriptionPort, DeleteUserSubscriptionPort {
+
+    override fun isTarget(userType: UserType): Boolean
+        = UserType.NORMAL == userType
+
+    @Transactional
+    override fun createSubscription(userId: String, subscriptionType: SubscriptionsType): UserSubscription {
+        val userSubscription = UserSubscription.newSubscription(userId = userId, subscriptionType = subscriptionType)
+        val normalUserEntity = userJpaRepository.findByUserId(userId).get()
+        val subscriptionEntity = subscriptionJpaRepository.findBySubscriptionName(subscriptionName = subscriptionType.name).get()
+        val userSubscriptionEntity = userSubscription.toEntity(user = normalUserEntity, subscription = subscriptionEntity)
+        userSubscriptionJpaRepository.save(userSubscriptionEntity)
+        return userSubscription
+    }
+
+    @Transactional(readOnly = true)
+    override fun findByUserId(userId: String): UserSubscription
+        = userSubscriptionJpaRepository.findByUserId(userId).get()
+
+}

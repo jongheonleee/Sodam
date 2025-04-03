@@ -13,7 +13,7 @@ import java.util.*
 
 @Repository
 @RequiredArgsConstructor
-class UserGradeRepository(
+class NormalUserGradeRepository(
     private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val gradeJpaRepository: GradesJpaRepository,

@@ -4,7 +4,7 @@ import com.backend.sodam.domain.grades.entity.GradesEntity
 import com.backend.sodam.domain.grades.model.GradesType
 import com.backend.sodam.domain.grades.repository.GradesJpaRepository
 import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
-import com.backend.sodam.domain.grades.repository.UserGradeRepository
+import com.backend.sodam.domain.grades.repository.NormalUserGradeRepository
 import com.backend.sodam.domain.positions.entity.PositionsEntity
 import com.backend.sodam.domain.positions.repository.PositionJpaRepository
 import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
@@ -13,7 +13,7 @@ import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
-import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionRepository
+import com.backend.sodam.domain.subscriptions.repository.NormalUserSubscriptionRepository
 import io.kotest.extensions.spring.SpringExtension
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
@@ -41,9 +41,9 @@ class NormalUserRepositoryIntegrationTest(
 
     // - 의존하고 있는 오브젝트
     private val userJpaRepository: NormalUserJpaRepository,
-    private val userSubscriptionRepository: UserSubscriptionRepository,
+    private val userSubscriptionRepository: NormalUserSubscriptionRepository,
     private val normalUserPositionRepository: NormalUserPositionRepository,
-    private val userGradeRepository: UserGradeRepository,
+    private val normalUserGradeRepository: NormalUserGradeRepository,
 
     // 테스트 환경 구축에 필요한 오브젝트
     // - 1. 기본적으로 세팅되어야 하는 데이터
@@ -240,7 +240,7 @@ class NormalUserRepositoryIntegrationTest(
 
             it("일반 회원 중에 존재하는 userId로 조회하면 정상적으로 조회가 되야한다.") { // 해당 부분은 구독권도 같이 등록해야함
                 val target = sut.createUser(command)
-                userSubscriptionRepository.createSubscriptionForUser(target.userId)
+                userSubscriptionRepository.createSubscription(target.userId, SubscriptionsType.FREE)
 
                 val optional = sut.findByUserId(userId = target.userId)
                 optional.isPresent shouldBe true
@@ -284,17 +284,15 @@ class NormalUserRepositoryIntegrationTest(
                 // 📌 회원 등록 처리 - 이 부분 비즈니스 로직이 노출되는데 이러면 안좋음
                 val target = sut.createUser(command)
                 normalUserPositionRepository.createByPositionId(target.userId, command.positionId)
-                userGradeRepository.createGradeForUser(target.userId, GradesType.ENTRY.name)
-                userSubscriptionRepository.createSubscriptionForUser(target.userId)
+                normalUserGradeRepository.createGradeForUser(target.userId, GradesType.ENTRY.name)
+                userSubscriptionRepository.createSubscription(target.userId, SubscriptionsType.FREE)
 
                 val optional = sut.findProfileInfo(target.userId)
                 optional.isPresent shouldBe true
 
                 val actual = optional.get()
 
-                val subscriptionByUserId = userSubscriptionRepository.findByUserId(target.userId)
-                subscriptionByUserId.isPresent shouldBe true
-                val subscription = subscriptionByUserId.get()
+                val subscription = userSubscriptionRepository.findByUserId(target.userId)
 
                 val positionByPositionId = positionsJpaRepository.findByPositionId(command.positionId)
                 positionByPositionId.isPresent shouldBe true

@@ -70,7 +70,7 @@ class NormalUserPositionRepositoryIntegrationTest(
     // 테스트 진행
     describe("일반회원에게 positionId에 해당하는 포지션을 등록할 때") {
 
-        it("일반회원에 포지션이 정상적으로 등록돼야 한다.") {
+        it("포지션이 정상적으로 등록돼야 한다.") {
             assertDoesNotThrow {
                 sut.createByPositionId(userId = mockNormalUser.userId, positionId = mockPosition.positionId)
             }
@@ -80,7 +80,9 @@ class NormalUserPositionRepositoryIntegrationTest(
     describe("일반회원이 회원 정보를 수정할 때") {
 
         it("일반회원에 포지션이 정상적으로 수정되야 한다.") {
-
+            assertDoesNotThrow {
+                sut.upsertUserPosition(userId = mockNormalUser.userId, positionId = mockPosition.positionId)
+            }
         }
     }
 })
