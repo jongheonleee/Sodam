@@ -5,8 +5,8 @@ import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.comments.model.SodamComment
 import com.backend.sodam.domain.comments.service.command.CommentCreateCommand
 import com.backend.sodam.domain.comments.service.command.CommentUpdateCommand
-import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
+import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.global.utils.Formatter
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository

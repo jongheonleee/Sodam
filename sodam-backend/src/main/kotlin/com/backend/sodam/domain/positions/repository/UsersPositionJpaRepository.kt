@@ -3,4 +3,4 @@ package com.backend.sodam.domain.positions.repository
 import com.backend.sodam.domain.users.entity.UsersPositionsEntity
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface UsersPositionJpaRepository: JpaRepository<UsersPositionsEntity, String>, UsersPositionCustomRepository
+interface UsersPositionJpaRepository : JpaRepository<UsersPositionsEntity, String>, UsersPositionCustomRepository

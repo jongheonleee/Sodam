@@ -1,8 +1,8 @@
 package com.backend.sodam.domain.grades.model
 
 enum class GradesType(
-    val desc: String,
-){
+    val desc: String
+) {
     ENTRY("입문자_등급"),
     JUNIOR("초급_등급"),
     INTERMEDIATE("중급_등급"),

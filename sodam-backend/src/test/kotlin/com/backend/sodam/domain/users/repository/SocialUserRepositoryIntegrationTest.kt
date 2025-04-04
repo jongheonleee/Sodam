@@ -3,19 +3,18 @@ package com.backend.sodam.domain.users.repository
 import com.backend.sodam.domain.grades.entity.GradesEntity
 import com.backend.sodam.domain.grades.model.GradesType
 import com.backend.sodam.domain.grades.repository.GradesJpaRepository
-import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
-import com.backend.sodam.domain.grades.repository.NormalUserGradeRepository
 import com.backend.sodam.domain.grades.repository.SocialUserGradeRepository
+import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
 import com.backend.sodam.domain.positions.entity.PositionsEntity
 import com.backend.sodam.domain.positions.model.PositionsType
 import com.backend.sodam.domain.positions.repository.PositionJpaRepository
-import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
 import com.backend.sodam.domain.positions.repository.SocialUserPositionRepository
+import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
+import com.backend.sodam.domain.subscriptions.repository.SocialUserSubscriptionRepository
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
-import com.backend.sodam.domain.subscriptions.repository.SocialUserSubscriptionRepository
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
@@ -46,25 +45,31 @@ class SocialUserRepositoryIntegrationTest(
     // - 2. 회원과 연관된 교차 테이블
     private val userGradeJpaRepository: UserGradeJpaRepository,
     private val userPositionsJpaRepository: UsersPositionJpaRepository,
-    private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
-): DescribeSpec( {
+    private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository
+) : DescribeSpec({
 
     // 테스트 과정에서 사용할 목 데이터
-    val mockPosition = PositionsEntity( positionId = UUID.randomUUID().toString(),
+    val mockPosition = PositionsEntity(
+        positionId = UUID.randomUUID().toString(),
         positionName = "미정", // PositionsType.TBD.fullName
         ord = 1,
-        validYN = 0 )
-    val mockSubscription = SubscriptionsEntity( subscriptionId = UUID.randomUUID().toString(),
+        validYN = 0
+    )
+    val mockSubscription = SubscriptionsEntity(
+        subscriptionId = UUID.randomUUID().toString(),
         subscriptionName = "FREE",
         subscriptionContent = "테스트용 구독권입니다.",
         viewCnt = 0,
-        downCnt = 0 )
-    val mockGrade = GradesEntity( gradeId = UUID.randomUUID().toString(),
+        downCnt = 0
+    )
+    val mockGrade = GradesEntity(
+        gradeId = UUID.randomUUID().toString(),
         gradeName = "ENTRY",
         gradeOrd = 1,
         gradeSummary = "테스트용 등급 데이터입니다.",
         gradeDescription = "테스트용 등급데이터입니다.",
-        validYN = 0 )
+        validYN = 0
+    )
 
     // kotest에서 트랜잭션을 적용하려면 SpringExtension을 사용해야함
     extension(SpringExtension)
@@ -80,7 +85,6 @@ class SocialUserRepositoryIntegrationTest(
         // 일반회원 및 소셜회원 테이블 비우기
         socialUserJpaRepository.deleteAll()
 
-
         // 테이블 초기화 되었는지 확인
         socialUserJpaRepository.count().shouldBe(0)
 
@@ -90,28 +94,28 @@ class SocialUserRepositoryIntegrationTest(
         subscriptionJpaRepository.save(mockSubscription)
     }
 
-
     // 테스트 환경 정리
     afterTest {
         // 테스트 DB 정리하기
     }
 
     context("소셜회원 providerId로 조회할 때") {
-        val command = SocialUserSignupCommand(  username = "테스트 유저",
+        val command = SocialUserSignupCommand(
+            username = "테스트 유저",
             provider = "kakao",
-            providerId = UUID.randomUUID().toString())
+            providerId = UUID.randomUUID().toString()
+        )
 
         it("해당 providerId관련 소셜회원이 존재한다면, true를 반환한다.") {
             sut.createSocialUser(command) // 이 부분도 옮길 것
             val optional = sut.findEntityByProviderId(command.providerId)
             optional.isPresent shouldBe true
 
-
             val actual = optional.get()
             val expected = SodamUser(
                 provider = command.provider,
                 username = command.username,
-                providerId = command.providerId,
+                providerId = command.providerId
             )
 
             actual.provider shouldBe expected.provider
@@ -128,16 +132,18 @@ class SocialUserRepositoryIntegrationTest(
     }
 
     context("소셜회원 등록할 때") {
-        val command = SocialUserSignupCommand(  username = "테스트 유저",
+        val command = SocialUserSignupCommand(
+            username = "테스트 유저",
             provider = "kakao",
-            providerId = UUID.randomUUID().toString())
+            providerId = UUID.randomUUID().toString()
+        )
 
         it("소셜회원을 성공적으로 등록한다") {
             val actual = sut.createSocialUser(command)
             val expected = SodamUser(
                 provider = command.provider,
                 username = command.username,
-                providerId = command.providerId,
+                providerId = command.providerId
             )
 
             actual.provider shouldBe expected.provider
@@ -165,13 +171,15 @@ class SocialUserRepositoryIntegrationTest(
                 introduce = "업데이트했습니다."
             )
 
-            val actual = sut.updateUserInfo( userId = socialUserId,
-                                                         userUpdateCommand = updateCommand)
+            val actual = sut.updateUserInfo(
+                userId = socialUserId,
+                userUpdateCommand = updateCommand
+            )
             val expected = SodamUser(
                 userId = socialUserId,
                 email = updateCommand.email,
                 username = updateCommand.name,
-                introduce = updateCommand.introduce,
+                introduce = updateCommand.introduce
             )
 
             // 내용 비교
@@ -181,7 +189,6 @@ class SocialUserRepositoryIntegrationTest(
             actual.introduce shouldBe expected.introduce
             actual.encryptedPassword shouldBe expected.encryptedPassword
         }
-
     }
 
     context("소셜회원 프로필 정보 조회할 때") {
@@ -193,7 +200,7 @@ class SocialUserRepositoryIntegrationTest(
             providerId = UUID.randomUUID().toString()
         )
 
-        it ("소셜회원이 정상적으로 등록되었다면, 회원 정보, 포지션, 등급, 구독권을 정상적으로 조회해야한다.") {
+        it("소셜회원이 정상적으로 등록되었다면, 회원 정보, 포지션, 등급, 구독권을 정상적으로 조회해야한다.") {
             val target = sut.createSocialUser(command)
             socialUserPositionRepository.createByPositionName(target.userId, PositionsType.TBD.fullName)
             socialUserGradeRepositiory.createGrade(target.userId, GradesType.ENTRY)
@@ -224,7 +231,7 @@ class SocialUserRepositoryIntegrationTest(
                 positions = listOf(position.positionName),
                 articleTotalCnt = 0,
                 grade = grade.gradeName,
-                ranking = 1, // 랭킹부분 추후에 처리하기
+                ranking = 1 // 랭킹부분 추후에 처리하기
             )
 
             actual.userId shouldBe expected.userId
@@ -236,7 +243,6 @@ class SocialUserRepositoryIntegrationTest(
             actual.articleTotalCnt shouldBe expected.articleTotalCnt
             actual.grade shouldBe expected.grade
         }
-
     }
 
     // 밑에 부분은 여기서 다루면 테스트 코드가 너무 엉켜버릴 것 같기에 Article 부분에서 다루기
@@ -245,16 +251,12 @@ class SocialUserRepositoryIntegrationTest(
         // 게시글 3개 등록
 
         it("소셜회원이 게시글 3개를 작성한 경우, 해당 게시글을 조회할 수 있어야한다.") {
-
         }
     }
 
     context("소셜회원 좋아요 게시글 조회할 때") {
 
         it("소셜회원의 좋아요 게시글이 3개인 경우, 해당 게시글을 조회할 수 있어야한다.") {
-
         }
     }
-
-
 })

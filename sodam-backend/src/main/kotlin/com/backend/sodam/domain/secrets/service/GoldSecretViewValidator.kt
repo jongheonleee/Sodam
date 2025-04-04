@@ -3,7 +3,7 @@ package com.backend.sodam.domain.secrets.service
 import org.springframework.stereotype.Component
 
 @Component
-class GoldSecretViewValidator: SecretViewValidator {
+class GoldSecretViewValidator : SecretViewValidator {
     override fun isTarget(role: String): Boolean {
         return "[ROLE_GOLD]" == role
     }

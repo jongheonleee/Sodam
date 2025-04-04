@@ -11,8 +11,8 @@ import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
 import com.backend.sodam.domain.comments.repository.CommentJpaRepository
 import com.backend.sodam.domain.comments.repository.CommentRepository
 import com.backend.sodam.domain.tags.entity.TagsEntity
-import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
+import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository

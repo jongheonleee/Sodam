@@ -37,8 +37,8 @@ class SubscriptionPriceEntity(
 
     validYN: Int,
     startAt: LocalDateTime,
-    endAt: LocalDateTime,
-): MutableBaseEntity() {
+    endAt: LocalDateTime
+) : MutableBaseEntity() {
 
     @Column(name = "VALID_YN")
     var validYN: Int = validYN
@@ -51,5 +51,4 @@ class SubscriptionPriceEntity(
     @Column(name = "END_AT")
     var endAt: LocalDateTime = endAt
         protected set
-
 }

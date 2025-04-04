@@ -4,7 +4,7 @@ import com.backend.sodam.domain.grades.entity.GradesEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
-interface GradesJpaRepository: JpaRepository<GradesEntity, String>, GradesCustomRepository {
+interface GradesJpaRepository : JpaRepository<GradesEntity, String>, GradesCustomRepository {
     fun existsByGradeName(gradeName: String): Boolean
     fun findByGradeName(gradeName: String): Optional<GradesEntity>
 }

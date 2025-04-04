@@ -1,4 +1,3 @@
 package com.backend.sodam.domain.grades.service.port
 
-interface FetchUserGradePort {
-}
+interface FetchUserGradePort

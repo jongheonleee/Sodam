@@ -1,19 +1,19 @@
 package com.backend.sodam.domain.articles.service
 
-import com.backend.sodam.domain.articles.exception.ArticleException
-import com.backend.sodam.domain.articles.repository.ArticleRepository
-import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
-import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
-import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleDetailResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleSimpleResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
+import com.backend.sodam.domain.articles.exception.ArticleException
+import com.backend.sodam.domain.articles.repository.ArticleRepository
+import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
+import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
+import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.SocialUserRepository
 import com.backend.sodam.domain.users.repository.NormalUserRepository
+import com.backend.sodam.domain.users.repository.SocialUserRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -62,7 +62,7 @@ class ArticleService(
 
     fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand): Page<ArticleSummaryResponse> {
         return articleRepository.findByPageBy(pageRequest = pageable, articleSearchCommand = articleSearchCommand)
-                                .map { it.toSummaryResponse() }
+            .map { it.toSummaryResponse() }
     }
 
     fun getArticleDetail(articleId: Long): ArticleDetailResponse {

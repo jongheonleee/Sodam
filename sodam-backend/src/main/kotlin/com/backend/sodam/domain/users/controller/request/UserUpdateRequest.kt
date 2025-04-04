@@ -35,7 +35,7 @@ data class UserUpdateRequest(
             name = name,
             positionId = positionId,
             encryptedPassword = password,
-            introduce = introduce,
+            introduce = introduce
         )
     }
 }

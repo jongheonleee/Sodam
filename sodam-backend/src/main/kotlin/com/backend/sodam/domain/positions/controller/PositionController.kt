@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequiredArgsConstructor
 class PositionController(
-    private val fetchPositionUseCase: FetchPositionUseCase,
+    private val fetchPositionUseCase: FetchPositionUseCase
 ) {
 
     @GetMapping("/api/v1/positions")

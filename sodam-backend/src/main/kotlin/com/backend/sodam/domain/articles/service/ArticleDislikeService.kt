@@ -4,7 +4,6 @@ import com.backend.sodam.domain.articles.repository.ArticleRepository
 import com.backend.sodam.domain.articles.repository.UsersArticleDislikeRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.NormalUserRepository
 import com.backend.sodam.domain.users.service.port.FetchUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
@@ -79,15 +78,15 @@ class ArticleDislikeService(
     }
 
     // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
-    private fun getFetchPortByUserType(userType: UserType): FetchUserPort
-            = fetchUserPorts.stream()
-                            .filter { it.isTarget(userType) }
-                            .findFirst()
-                            .orElseThrow { IllegalArgumentException() }
+    private fun getFetchPortByUserType(userType: UserType): FetchUserPort =
+        fetchUserPorts.stream()
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
-    private fun getFetchPortByUserId(userId: String): FetchUserPort
-            = fetchUserPorts.stream()
-                            .filter { it.isExistsByUserId(userId) }
-                            .findFirst()
-                            .orElseThrow { UserException.UserNotFoundException() }
+    private fun getFetchPortByUserId(userId: String): FetchUserPort =
+        fetchUserPorts.stream()
+            .filter { it.isExistsByUserId(userId) }
+            .findFirst()
+            .orElseThrow { UserException.UserNotFoundException() }
 }

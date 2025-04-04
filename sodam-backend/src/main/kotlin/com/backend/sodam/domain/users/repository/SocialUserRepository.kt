@@ -21,30 +21,30 @@ import java.util.*
 
 @Repository
 @RequiredArgsConstructor
- class SocialUserRepository(
+class SocialUserRepository(
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val userSubscriptionRepository: NormalUserSubscriptionRepository
-): CreateSocialUserPort, FetchSocialUserPort, UpdateUserPort, DeleteUserPort {
+) : CreateSocialUserPort, FetchSocialUserPort, UpdateUserPort, DeleteUserPort {
 
-    override fun isTarget(userType: UserType): Boolean
-        = UserType.SOCIAL == userType
+    override fun isTarget(userType: UserType): Boolean =
+        UserType.SOCIAL == userType
 
     // providerId는 어떻게 처리할 것인가?
     @Transactional(readOnly = true)
-    override fun isExistsByUserId(userId: String): Boolean
-        = socialUserJpaRepository.existsBySocialUserId(userId)
+    override fun isExistsByUserId(userId: String): Boolean =
+        socialUserJpaRepository.existsBySocialUserId(userId)
 
     @Transactional(readOnly = true)
-    override fun isExistsByEmail(email: String): Boolean
-        = socialUserJpaRepository.existsByEmail(email)
+    override fun isExistsByEmail(email: String): Boolean =
+        socialUserJpaRepository.existsByEmail(email)
 
     @Transactional(readOnly = true)
-    override fun findByUserId(userId: String): Optional<SodamUser>
-        = socialUserJpaRepository.findSodamUserByUserId(userId)
+    override fun findByUserId(userId: String): Optional<SodamUser> =
+        socialUserJpaRepository.findSodamUserByUserId(userId)
 
     @Transactional(readOnly = true)
-    override fun isExistsByProviderId(providerId: String): Boolean
-        = socialUserJpaRepository.existsByProviderId(providerId)
+    override fun isExistsByProviderId(providerId: String): Boolean =
+        socialUserJpaRepository.existsByProviderId(providerId)
 
     @Transactional(readOnly = true)
     override fun findByEmail(email: String): SodamUser {
@@ -53,31 +53,36 @@ import java.util.*
     }
 
     @Transactional(readOnly = true)
-    override fun findProfileInfo(userId: String): Optional<SodamUserDetail>
-        = socialUserJpaRepository.findProfileInfoForSocialUser(userId)
-
-
-    @Transactional(readOnly = true)
-    override fun findOwnArticlesByPageBy(pageable: Pageable, userId: String): Page<ArticleSummaryResponse>
-        = socialUserJpaRepository.findSocialUserOwnArticlesByPageBy( socialUserId = userId, pageable = pageable)
-                                 .map { ArticleSummaryResponse(  articleId = it.articleId,
-                                                                                title = it.title,
-                                                                                username = it.author,
-                                                                                summary = it.summary,
-                                                                                createdAt = it.createdAt,
-                                                                                tags = it.tags)
-        }
+    override fun findProfileInfo(userId: String): Optional<SodamUserDetail> =
+        socialUserJpaRepository.findProfileInfoForSocialUser(userId)
 
     @Transactional(readOnly = true)
-    override fun findOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse>
-        = socialUserJpaRepository.findSocialUserOwnLikeArticlesByPageBy( socialUserId = userId, pageable = pageable)
-                                 .map { ArticleSummaryResponse( articleId = it.articleId,
-                                                                               title = it.title,
-                                                                               username = it.author,
-                                                                               summary = it.summary,
-                                                                               createdAt = it.createdAt,
-                                                                               tags = it.tags)
-        }
+    override fun findOwnArticlesByPageBy(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> =
+        socialUserJpaRepository.findSocialUserOwnArticlesByPageBy(socialUserId = userId, pageable = pageable)
+            .map {
+                ArticleSummaryResponse(
+                    articleId = it.articleId,
+                    title = it.title,
+                    username = it.author,
+                    summary = it.summary,
+                    createdAt = it.createdAt,
+                    tags = it.tags
+                )
+            }
+
+    @Transactional(readOnly = true)
+    override fun findOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> =
+        socialUserJpaRepository.findSocialUserOwnLikeArticlesByPageBy(socialUserId = userId, pageable = pageable)
+            .map {
+                ArticleSummaryResponse(
+                    articleId = it.articleId,
+                    title = it.title,
+                    username = it.author,
+                    summary = it.summary,
+                    createdAt = it.createdAt,
+                    tags = it.tags
+                )
+            }
 
     @Transactional(readOnly = true)
     override fun findEntityByProviderId(providerId: String): Optional<SocialUsersEntity> {
@@ -111,7 +116,7 @@ import java.util.*
     override fun createSocialUser(socialUserSignupCommand: SocialUserSignupCommand): SodamUser {
         val socialUsersEntity = socialUserSignupCommand.toEntity()
         return socialUserJpaRepository.save(socialUsersEntity)
-                                      .toDomain()
+            .toDomain()
     }
 
     // 회원 테이블을 업데이트하고 포지션 부분은 지운다.
@@ -120,7 +125,7 @@ import java.util.*
         val socialUserEntity = socialUserJpaRepository.findBySocialUserId(userId).get()
         socialUserEntity.update(userUpdateCommand)
         return socialUserJpaRepository.save(socialUserEntity)
-                                      .toDomain()
+            .toDomain()
     }
 
     @Transactional(readOnly = true)

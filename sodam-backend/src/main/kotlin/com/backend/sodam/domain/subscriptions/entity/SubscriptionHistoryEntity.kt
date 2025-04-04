@@ -38,9 +38,7 @@ class SubscriptionHistoryEntity(
     @Column(name = "VIEW_CNT")
     var viewCnt: Long,
 
-
     startAt: LocalDateTime,
-    endAt: LocalDateTime,
+    endAt: LocalDateTime
 
-): MutableBaseEntity() {
-}
+) : MutableBaseEntity()

@@ -31,7 +31,7 @@ class SubscriptionStatusEntity(
     startAt: LocalDateTime,
     endAt: LocalDateTime,
     validYN: Int
-): MutableBaseEntity() {
+) : MutableBaseEntity() {
 
     @Column(name = "SUBSCRIPTION_STATUS")
     var subscriptionStatus: Int = subscriptionStatus

@@ -3,6 +3,7 @@ package com.backend.sodam.domain.users.entity
 import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.subscriptions.entity.UsersSubscriptionsEntity
 import com.backend.sodam.domain.users.model.SodamUser
+import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import com.backend.sodam.global.audit.MutableBaseEntity
 import jakarta.persistence.CascadeType
@@ -82,6 +83,7 @@ class UsersEntity(
             email = this.userEmail,
             introduce = this.userIntroduce,
             profileImageUrl = this.userImage,
+            userType = UserType.NORMAL
         )
     }
 }

@@ -29,11 +29,9 @@ class SecretsHistoryEntity(
 
     // 추후에 Enum으로 구성
     validStep: Int
-): MutableBaseEntity() {
+) : MutableBaseEntity() {
 
     @Column(name = "VALID_STEP")
     var validStep: Int = validStep
         protected set
-
-
 }

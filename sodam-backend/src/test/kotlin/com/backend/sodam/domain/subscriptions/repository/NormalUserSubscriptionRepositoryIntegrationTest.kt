@@ -17,16 +17,18 @@ class NormalUserSubscriptionRepositoryIntegrationTest(
     // 의존 대상
     private val normalUserJpaRepository: NormalUserJpaRepository,
     private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
-    private val subscriptionJpaRepository: SubscriptionJpaRepository,
+    private val subscriptionJpaRepository: SubscriptionJpaRepository
 
     // 테스트 환경에 필요한 오브젝트
-): DescribeSpec({
+) : DescribeSpec({
 
-    val mockSubscription = SubscriptionsEntity( subscriptionId = UUID.randomUUID().toString(),
+    val mockSubscription = SubscriptionsEntity(
+        subscriptionId = UUID.randomUUID().toString(),
         subscriptionName = "FREE",
         subscriptionContent = "테스트용 구독권입니다.",
         viewCnt = 0,
-        downCnt = 0 )
+        downCnt = 0
+    )
 
     val mockNormalUser = UsersEntity(
         userId = UUID.randomUUID().toString(),
@@ -34,7 +36,7 @@ class NormalUserSubscriptionRepositoryIntegrationTest(
         userName = "test",
         introduce = "test",
         profileImageUrl = "test",
-        password = "test",
+        password = "test"
     )
 
     // kotest에서 트랜잭션을 적용하려면 SpringExtension을 사용해야함
@@ -54,9 +56,7 @@ class NormalUserSubscriptionRepositoryIntegrationTest(
         // 목 데이터 등록
         subscriptionJpaRepository.save(mockSubscription)
         normalUserJpaRepository.save(mockNormalUser)
-
     }
-
 
     // 테스트 환경 정리
     afterTest {
@@ -70,19 +70,16 @@ class NormalUserSubscriptionRepositoryIntegrationTest(
         subscriptionJpaRepository.deleteAll()
     }
 
-
     describe("사용자가 일반회원으로 회원가입할 때") {
 
         it("무료 구독권을 정상 발급한다.") {
             sut.createSubscription(mockNormalUser.userId, SubscriptionsType.FREE)
         }
-
     }
 
     describe("일반회원의 아이디로 해당 회원의 구독권을 조회할 때") {
 
         it("발급되어 있으며 유효한 구독권을 조회한다.") {
-
         }
     }
 })

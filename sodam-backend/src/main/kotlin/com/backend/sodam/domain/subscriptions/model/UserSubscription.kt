@@ -7,7 +7,7 @@ import com.backend.sodam.domain.users.entity.UsersEntity
 import java.time.LocalDateTime
 import java.util.*
 
-// 추후에 class 로 바꾸기 
+// 추후에 class 로 바꾸기
 data class UserSubscription(
     val userId: String,
     var subscriptionType: SubscriptionsType,
@@ -79,4 +79,3 @@ data class UserSubscription(
         }
     }
 }
-

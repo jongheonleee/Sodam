@@ -3,12 +3,12 @@ package com.backend.sodam.domain.articles.controller
 import com.backend.sodam.domain.articles.controller.request.ArticleCreateRequest
 import com.backend.sodam.domain.articles.controller.request.ArticleSearchRequest
 import com.backend.sodam.domain.articles.controller.request.ArticleUpdateRequest
-import com.backend.sodam.domain.articles.service.ArticleService
 import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleDetailResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleSimpleResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
+import com.backend.sodam.domain.articles.service.ArticleService
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import jakarta.validation.Valid

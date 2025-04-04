@@ -1,7 +1,6 @@
 package com.backend.sodam.domain.users.repository
 
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
-import com.backend.sodam.domain.users.model.SodamUser
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 

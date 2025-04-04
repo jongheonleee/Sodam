@@ -1,6 +1,5 @@
 package com.backend.sodam.domain.users.model
 
-import com.backend.sodam.domain.positions.model.PositionsType
 import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
 import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 
@@ -28,7 +27,7 @@ class SodamUserDetail(
             articleTotalCnt = this.articleTotalCnt,
             grade = this.grade,
             ranking = this.ranking,
-            positions = this.positions,
+            positions = this.positions
         )
     }
 }

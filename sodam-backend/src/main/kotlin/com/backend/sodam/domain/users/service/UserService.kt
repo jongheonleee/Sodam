@@ -3,7 +3,6 @@ package com.backend.sodam.domain.users.service
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.grades.exception.GradeException
 import com.backend.sodam.domain.grades.model.GradesType
-import com.backend.sodam.domain.grades.repository.NormalUserGradeRepository
 import com.backend.sodam.domain.grades.service.port.CreateUserGradePort
 import com.backend.sodam.domain.grades.service.port.FetchGradePort
 import com.backend.sodam.domain.positions.exception.PositionException
@@ -16,15 +15,15 @@ import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
 import com.backend.sodam.domain.subscriptions.service.port.CreateUserSubscriptionPort
 import com.backend.sodam.domain.subscriptions.service.port.FetchSubscriptionPort
 import com.backend.sodam.domain.subscriptions.service.port.FetchUserSubscriptionPort
-import com.backend.sodam.domain.users.exception.UserException
-import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
-import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.controller.response.SocialUserResponse
 import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 import com.backend.sodam.domain.users.controller.response.UserResponse
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
+import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
+import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
+import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import com.backend.sodam.domain.users.service.port.CreateNormalUserPort
 import com.backend.sodam.domain.users.service.port.CreateSocialUserPort
@@ -70,8 +69,8 @@ class UserService(
     private val createUserGradePorts: List<CreateUserGradePort>,
 
     // - 4. 그외 시스템 외부 포트
-    private val kakaoUserPort: KakaoUserPort,
-): FetchUserUseCase, RegisterUserUseCase, UpdateUserUseCase, DeleteUserUseCase {
+    private val kakaoUserPort: KakaoUserPort
+) : FetchUserUseCase, RegisterUserUseCase, UpdateUserUseCase, DeleteUserUseCase {
 
     // 📌 실제 핵심 비즈니스 로직
     @Transactional(
@@ -164,10 +163,9 @@ class UserService(
             .orElse(null)
     }
 
-
     @Transactional(
         readOnly = true,
-        isolation = Isolation.READ_COMMITTED,
+        isolation = Isolation.READ_COMMITTED
     )
     override fun findUserProfileInfo(userId: String): UserProfileResponse {
         val fetchPort = getFetchPortByUserId(userId)
@@ -177,7 +175,7 @@ class UserService(
 
     @Transactional(
         readOnly = true,
-        isolation = Isolation.READ_COMMITTED,
+        isolation = Isolation.READ_COMMITTED
     )
     override fun getOwnArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
         val fetchPort = getFetchPortByUserId(userId)
@@ -186,7 +184,7 @@ class UserService(
 
     @Transactional(
         readOnly = true,
-        isolation = Isolation.READ_COMMITTED,
+        isolation = Isolation.READ_COMMITTED
     )
     override fun getOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
         val fetchPort = getFetchPortByUserId(userId)
@@ -197,108 +195,114 @@ class UserService(
     private fun extractUserType(userId: String): UserType {
         val fetchPort = getFetchPortByUserId(userId)
         val sodamUser = fetchPort.findByUserId(userId).get()
+        println("sodamUser: $sodamUser")
         return sodamUser.userType
     }
 
     // 📌 비즈니스 로직 적용전 유효성 검증 메서드
     private fun checkDuplicatedEmail(email: String) {
-        if (isDuplicatedEmail(email))  // 이메일 중복 여부 확인
+        if (isDuplicatedEmail(email)) {
+            // 이메일 중복 여부 확인
             throw UserException.UserAlreadyExistsException()
+        }
     }
 
     private fun checkExistsUser(userId: String) {
-        if (!isExistsByUSerId(userId))
+        if (!isExistsByUserId(userId)) {
             throw UserException.UserNotFoundException()
+        }
     }
 
     private fun checkExistsPosition(positionId: String) {
-        if (!isExistsPositionByPositionId(positionId))
+        if (!isExistsPositionByPositionId(positionId)) {
             throw PositionException.PositionNotFoundException()
+        }
     }
 
     private fun checkExistsPositionByName(positionName: String) {
-        if (!isExistsPositionByPositionName(positionName))
+        if (!isExistsPositionByPositionName(positionName)) {
             throw PositionException.PositionNotFoundException()
+        }
     }
 
     private fun checkExistsSubscription(subscriptionName: String) {
-        if (!isExistsSubscriptionByName(subscriptionName))
+        if (!isExistsSubscriptionByName(subscriptionName)) {
             throw SubscriptionException.SubscriptionNotFoundException()
+        }
     }
 
     private fun checkExistsGrade(gradeName: String) {
-        if (!isExistsGradeByName(gradeName))
+        if (!isExistsGradeByName(gradeName)) {
             throw GradeException.GradeNotFoundException()
+        }
     }
 
-    private fun isDuplicatedEmail(email: String): Boolean
-        = fetchUserPorts.stream()
-                        .anyMatch { it.isExistsByEmail(email) }
+    private fun isDuplicatedEmail(email: String): Boolean =
+        fetchUserPorts.stream()
+            .anyMatch { it.isExistsByEmail(email) }
 
-    private fun isExistsByUSerId(userId: String): Boolean
-        = fetchUserPorts.stream()
-                        .anyMatch { it.isExistsByUserId(userId) }
+    private fun isExistsByUserId(userId: String): Boolean =
+        fetchUserPorts.stream()
+            .anyMatch { it.isExistsByUserId(userId) }
 
-    private fun isExistsPositionByPositionId(positionId: String): Boolean
-        = fetchPositionPort.isExistsByPositionId(positionId)
+    private fun isExistsPositionByPositionId(positionId: String): Boolean =
+        fetchPositionPort.isExistsByPositionId(positionId)
 
-    private fun isExistsPositionByPositionName(positionName: String): Boolean
-        = fetchPositionPort.isExistsByPositionName(positionName)
+    private fun isExistsPositionByPositionName(positionName: String): Boolean =
+        fetchPositionPort.isExistsByPositionName(positionName)
 
-    private fun isExistsSubscriptionByName(subscriptionName: String): Boolean
-        = fetchSubscriptionPort.isExistsBySubscriptionName(subscriptionName)
+    private fun isExistsSubscriptionByName(subscriptionName: String): Boolean =
+        fetchSubscriptionPort.isExistsBySubscriptionName(subscriptionName)
 
-    private fun isExistsGradeByName(subscriptionName: String): Boolean
-        = fetchGradePort.isExistsByGradeName(subscriptionName)
+    private fun isExistsGradeByName(subscriptionName: String): Boolean =
+        fetchGradePort.isExistsByGradeName(subscriptionName)
 
     // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
-    private fun getFetchPortByUserType(userType: UserType): FetchUserPort
-        = fetchUserPorts.stream()
-                        .filter { it.isTarget(userType) }
-                        .findFirst()
-                        .orElseThrow { IllegalArgumentException() }
+    private fun getFetchPortByUserType(userType: UserType): FetchUserPort =
+        fetchUserPorts.stream()
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
-    private fun getFetchPortByEmail(email: String): FetchUserPort
-        = fetchUserPorts.stream()
-                        .filter { it.isExistsByEmail(email) }
-                        .findFirst()
-                        .orElseThrow { UserException.UserNotFoundException() }
-    
-    private fun getFetchPortByUserId(userId: String): FetchUserPort
-        = fetchUserPorts.stream()
-                        .filter { it.isExistsByUserId(userId) }
-                        .findFirst()
-                        .orElseThrow { UserException.UserNotFoundException() }
+    private fun getFetchPortByEmail(email: String): FetchUserPort =
+        fetchUserPorts.stream()
+            .filter { it.isExistsByEmail(email) }
+            .findFirst()
+            .orElseThrow { UserException.UserNotFoundException() }
 
+    private fun getFetchPortByUserId(userId: String): FetchUserPort =
+        fetchUserPorts.stream()
+            .filter { it.isExistsByUserId(userId) }
+            .findFirst()
+            .orElseThrow { UserException.UserNotFoundException() }
 
-    private fun getUpdatePortByUserType(userType: UserType): UpdateUserPort
-        = updateUserPorts.stream()
-                         .filter { it.isTarget(userType) }
-                         .findFirst()
-                         .orElseThrow { IllegalArgumentException() }
+    private fun getUpdatePortByUserType(userType: UserType): UpdateUserPort =
+        updateUserPorts.stream()
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
-    private fun getUpdatePositionPortByUserType(userType: UserType): UpdateUserPositionPort
-        = updateUserPositionPorts.stream()
-                                 .filter { it.isTarget(userType) }
-                                 .findFirst()
-                                 .orElseThrow { IllegalArgumentException() }
+    private fun getUpdatePositionPortByUserType(userType: UserType): UpdateUserPositionPort =
+        updateUserPositionPorts.stream()
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
-    private fun getCreateUserPositionPortByUserType(userType: UserType): CreateUserPositionPort
-        = createUserPositionPorts.stream()
-                                 .filter { it.isTarget(userType) }
-                                 .findFirst()
-                                 .orElseThrow { IllegalArgumentException() }
+    private fun getCreateUserPositionPortByUserType(userType: UserType): CreateUserPositionPort =
+        createUserPositionPorts.stream()
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
-    private fun getCreateUserSubscriptionPort(userType: UserType): CreateUserSubscriptionPort
-        = createUserSubscriptionPorts.stream()
-                                     .filter { it.isTarget(userType) }
-                                     .findFirst()
-                                     .orElseThrow { IllegalArgumentException() }
+    private fun getCreateUserSubscriptionPort(userType: UserType): CreateUserSubscriptionPort =
+        createUserSubscriptionPorts.stream()
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
-    private fun getCreateUserGradePort(userType: UserType): CreateUserGradePort
-        = createUserGradePorts.stream()
-                              .filter { it.isTarget(userType) }
-                              .findFirst()
-                              .orElseThrow { IllegalArgumentException() }
-
+    private fun getCreateUserGradePort(userType: UserType): CreateUserGradePort =
+        createUserGradePorts.stream()
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 }

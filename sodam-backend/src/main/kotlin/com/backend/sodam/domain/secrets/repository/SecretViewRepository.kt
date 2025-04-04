@@ -1,8 +1,8 @@
 package com.backend.sodam.domain.secrets.repository
 
 import com.backend.sodam.domain.secrets.entity.ViewSecretsEntity
-import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
+import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -14,7 +14,7 @@ class SecretViewRepository(
     private val secretJpaRepository: SecretJpaRepository,
     private val normalUserJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
-    private val secretViewJpaRepository: SecretViewJpaRepository,
+    private val secretViewJpaRepository: SecretViewJpaRepository
 ) {
 
     @Transactional(readOnly = true)
@@ -31,7 +31,7 @@ class SecretViewRepository(
             val viewSecretsEntity = ViewSecretsEntity(
                 userViewId = UUID.randomUUID().toString(),
                 socialUser = bySocialUserId,
-                secret = bySecretId,
+                secret = bySecretId
             )
 
             secretViewJpaRepository.save(viewSecretsEntity)
@@ -42,7 +42,7 @@ class SecretViewRepository(
             val viewSecretsEntity = ViewSecretsEntity(
                 userViewId = UUID.randomUUID().toString(),
                 socialUser = bySocialUserId,
-                secret = bySecretId,
+                secret = bySecretId
             )
 
             secretViewJpaRepository.save(viewSecretsEntity)
@@ -53,7 +53,7 @@ class SecretViewRepository(
             val viewSecretsEntity = ViewSecretsEntity(
                 userViewId = UUID.randomUUID().toString(),
                 user = byUserId,
-                secret = bySecretId,
+                secret = bySecretId
             )
 
             secretViewJpaRepository.save(viewSecretsEntity)

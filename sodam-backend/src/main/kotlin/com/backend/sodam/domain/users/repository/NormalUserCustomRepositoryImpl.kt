@@ -10,7 +10,6 @@ import com.backend.sodam.domain.users.entity.QSocialUsersEntity.socialUsersEntit
 import com.backend.sodam.domain.users.entity.QUsersEntity.usersEntity
 import com.backend.sodam.domain.users.entity.QUsersGradeEntity.*
 import com.backend.sodam.domain.users.entity.QUsersPositionsEntity.*
-import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType
@@ -37,8 +36,9 @@ class NormalUserCustomRepositoryImpl(
         return Optional.ofNullable(
             jpaQueryFactory.selectFrom(usersEntity)
                 .leftJoin(usersEntity.subscriptions, usersSubscriptionsEntity)
-                .where(usersEntity.userEmail.eq(email)
-                    .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
+                .where(
+                    usersEntity.userEmail.eq(email)
+                        .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
                 )
                 .fetchOne()
                 ?. let {
@@ -61,8 +61,9 @@ class NormalUserCustomRepositoryImpl(
         return Optional.ofNullable(
             jpaQueryFactory.selectFrom(usersEntity)
                 .leftJoin(usersEntity.subscriptions, usersSubscriptionsEntity)
-                .where(usersEntity.userId.eq(userId)
-                    .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
+                .where(
+                    usersEntity.userId.eq(userId)
+                        .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
                 )
                 .fetchOne()
                 ?. let {
@@ -89,7 +90,7 @@ class NormalUserCustomRepositoryImpl(
                 .leftJoin(socialUsersEntity.positions, usersPositionsEntity)
                 .leftJoin(socialUsersEntity.grades, usersGradeEntity)
                 .where(
-                    socialUsersEntity.socialUserId.eq(socialUserId)  // 아이디 비교
+                    socialUsersEntity.socialUserId.eq(socialUserId) // 아이디 비교
                         .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
                         .and(usersPositionsEntity.position.validYN.eq(0)) // 포지션 사용 가능한 것
                         .and(usersGradeEntity.validYN.eq(0)) // 사용 가능한 등급
@@ -304,6 +305,4 @@ class NormalUserCustomRepositoryImpl(
             totalArticleCount.toLong()
         )
     }
-
-
 }

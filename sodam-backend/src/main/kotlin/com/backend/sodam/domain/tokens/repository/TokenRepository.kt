@@ -1,11 +1,11 @@
 package com.backend.sodam.domain.tokens.repository
 
+import com.backend.sodam.domain.tokens.controller.response.TokenResponse
 import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
 import com.backend.sodam.domain.tokens.exception.TokenException
-import com.backend.sodam.domain.tokens.controller.response.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
-import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
+import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional

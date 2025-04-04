@@ -11,7 +11,7 @@ import java.util.*
 @RequiredArgsConstructor
 class GradesCustomRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory
-): GradesCustomRepository {
+) : GradesCustomRepository {
 
     @Transactional(readOnly = true)
     override fun findValidGradeByName(name: String): Optional<SodamGrade> {

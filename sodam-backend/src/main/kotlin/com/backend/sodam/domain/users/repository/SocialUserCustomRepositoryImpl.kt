@@ -9,7 +9,6 @@ import com.backend.sodam.domain.tags.entity.QTagsEntity.tagsEntity
 import com.backend.sodam.domain.users.entity.QSocialUsersEntity.*
 import com.backend.sodam.domain.users.entity.QUsersGradeEntity.usersGradeEntity
 import com.backend.sodam.domain.users.entity.QUsersPositionsEntity.usersPositionsEntity
-import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType
@@ -31,25 +30,27 @@ class SocialUserCustomRepositoryImpl(
     private val formatter: Formatter
 ) : SocialUserCustomRepository {
 
-    override fun findByProviderIdWithSubscription(providerId: String): Optional<SodamUser>  {
-        return Optional.ofNullable(jpaQueryFactory.selectFrom(socialUsersEntity)
-            .leftJoin(socialUsersEntity.subscriptions, usersSubscriptionsEntity)
-            .where(socialUsersEntity.providerId.eq(providerId)
-                .and(usersSubscriptionsEntity.validYN.eq(0))
-            )
-            .fetchOne()
-            ?. let {
-                SodamUser(
-                    userId = it.socialUserId,
-                    username = it.userName,
-                    encryptedPassword = "", // 이 부분 어케할지 고민하기
-                    introduce = it.introduce,
-                    profileImageUrl = "", // 이 부분 어케할지 고민하기
-                    email = it.email,
-                    role = it.subscriptions.first().subscriptionName.toRole(),
-                    userType = UserType.SOCIAL
+    override fun findByProviderIdWithSubscription(providerId: String): Optional<SodamUser> {
+        return Optional.ofNullable(
+            jpaQueryFactory.selectFrom(socialUsersEntity)
+                .leftJoin(socialUsersEntity.subscriptions, usersSubscriptionsEntity)
+                .where(
+                    socialUsersEntity.providerId.eq(providerId)
+                        .and(usersSubscriptionsEntity.validYN.eq(0))
                 )
-            }
+                .fetchOne()
+                ?. let {
+                    SodamUser(
+                        userId = it.socialUserId,
+                        username = it.userName,
+                        encryptedPassword = "", // 이 부분 어케할지 고민하기
+                        introduce = it.introduce,
+                        profileImageUrl = "", // 이 부분 어케할지 고민하기
+                        email = it.email,
+                        role = it.subscriptions.first().subscriptionName.toRole(),
+                        userType = UserType.SOCIAL
+                    )
+                }
         )
     }
 
@@ -58,8 +59,9 @@ class SocialUserCustomRepositoryImpl(
         return Optional.ofNullable(
             jpaQueryFactory.selectFrom(socialUsersEntity)
                 .leftJoin(socialUsersEntity.subscriptions, usersSubscriptionsEntity)
-                .where(socialUsersEntity.socialUserId.eq(userId)
-                    .and(usersSubscriptionsEntity.validYN.eq(0))
+                .where(
+                    socialUsersEntity.socialUserId.eq(userId)
+                        .and(usersSubscriptionsEntity.validYN.eq(0))
                 )
                 .fetchOne()
                 ?. let {
@@ -87,14 +89,17 @@ class SocialUserCustomRepositoryImpl(
                 .leftJoin(socialUsersEntity.positions, usersPositionsEntity)
                 .leftJoin(socialUsersEntity.grades, usersGradeEntity)
                 .where(
-                    socialUsersEntity.socialUserId.eq(socialUserId)  // 아이디 비교
+                    socialUsersEntity.socialUserId.eq(socialUserId) // 아이디 비교
                         .and(usersSubscriptionsEntity.validYN.eq(0)) // 구독권 사용 가능한 것
                         .and(usersPositionsEntity.position.validYN.eq(0)) // 포지션 사용 가능한 것
                         .and(usersGradeEntity.validYN.eq(0)) // 사용 가능한 등급
                         .and(
                             usersGradeEntity.startAt.loe(LocalDateTime.now()).and(
                                 usersGradeEntity.endAt.goe(
-                                    LocalDateTime.now()))) // 현재 시점에 적용되고 있는 등급(선분이력으로 저장)
+                                    LocalDateTime.now()
+                                )
+                            )
+                        ) // 현재 시점에 적용되고 있는 등급(선분이력으로 저장)
                 )
                 .fetchOne()
                 ?. let {

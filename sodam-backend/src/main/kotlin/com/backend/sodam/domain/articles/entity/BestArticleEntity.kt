@@ -47,7 +47,6 @@ class BestArticleEntity(
     @Column(name = "TAG3")
     val tag3: String,
 
-
     // 가변 필드
     startAt: LocalDateTime,
     endAt: LocalDateTime

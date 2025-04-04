@@ -1,16 +1,13 @@
 package com.backend.sodam.domain.grades.repository
 
-import com.backend.sodam.domain.grades.exception.GradeException
 import com.backend.sodam.domain.grades.model.GradesType
 import com.backend.sodam.domain.grades.service.port.CreateUserGradePort
 import com.backend.sodam.domain.grades.service.port.DeleteUserGradePort
 import com.backend.sodam.domain.grades.service.port.FetchUserGradePort
 import com.backend.sodam.domain.grades.service.port.UpdateUserGradePort
 import com.backend.sodam.domain.users.entity.UsersGradeEntity
-import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
-import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -22,11 +19,11 @@ import java.util.*
 class SocialUserGradeRepository(
     private val gradeJpaRepository: GradesJpaRepository,
     private val useGradeJpaRepository: UserGradeJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository,
-): CreateUserGradePort, FetchUserGradePort, UpdateUserGradePort, DeleteUserGradePort {
+    private val socialUserJpaRepository: SocialUserJpaRepository
+) : CreateUserGradePort, FetchUserGradePort, UpdateUserGradePort, DeleteUserGradePort {
 
-    override fun isTarget(userType: UserType): Boolean
-        = UserType.SOCIAL == userType
+    override fun isTarget(userType: UserType): Boolean =
+        UserType.SOCIAL == userType
 
     @Transactional
     override fun createGrade(userId: String, gradeType: GradesType) {

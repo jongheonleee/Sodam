@@ -30,6 +30,6 @@ class ViewSecretsEntity(
 
     @ManyToOne
     @JoinColumn(name = "SECRETE_ID")
-    val secret: SecretsEntity? = null,
+    val secret: SecretsEntity? = null
 
-): MutableBaseEntity()
+) : MutableBaseEntity()

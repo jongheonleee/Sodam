@@ -10,16 +10,15 @@ import java.util.*
 @Repository
 @RequiredArgsConstructor
 class GradesRepository(
-    private val gradeJpaRepository: GradesJpaRepository,
-): FetchGradePort {
+    private val gradeJpaRepository: GradesJpaRepository
+) : FetchGradePort {
 
     @Transactional(readOnly = true)
-    override fun isExistsByGradeName(gradeName: String): Boolean
-        = gradeJpaRepository.existsByGradeName(gradeName)
+    override fun isExistsByGradeName(gradeName: String): Boolean =
+        gradeJpaRepository.existsByGradeName(gradeName)
 
     @Transactional(readOnly = true)
     override fun findValidGradeByName(name: String): Optional<SodamGrade> {
         return gradeJpaRepository.findValidGradeByName(name)
     }
-
 }

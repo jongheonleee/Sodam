@@ -6,25 +6,22 @@ import com.backend.sodam.domain.subscriptions.service.port.CreateUserSubscriptio
 import com.backend.sodam.domain.subscriptions.service.port.DeleteUserSubscriptionPort
 import com.backend.sodam.domain.subscriptions.service.port.FetchUserSubscriptionPort
 import com.backend.sodam.domain.subscriptions.service.port.UpdateUserSubscriptionPort
-import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
 
 @Repository
 @RequiredArgsConstructor
 class NormalUserSubscriptionRepository(
     private val userJpaRepository: NormalUserJpaRepository,
     private val subscriptionJpaRepository: SubscriptionJpaRepository,
-    private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
-): CreateUserSubscriptionPort, FetchUserSubscriptionPort, UpdateUserSubscriptionPort, DeleteUserSubscriptionPort {
+    private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository
+) : CreateUserSubscriptionPort, FetchUserSubscriptionPort, UpdateUserSubscriptionPort, DeleteUserSubscriptionPort {
 
-    override fun isTarget(userType: UserType): Boolean
-        = UserType.NORMAL == userType
+    override fun isTarget(userType: UserType): Boolean =
+        UserType.NORMAL == userType
 
     @Transactional
     override fun createSubscription(userId: String, subscriptionType: SubscriptionsType): UserSubscription {
@@ -37,7 +34,6 @@ class NormalUserSubscriptionRepository(
     }
 
     @Transactional(readOnly = true)
-    override fun findByUserId(userId: String): UserSubscription
-        = userSubscriptionJpaRepository.findByUserId(userId).get()
-
+    override fun findByUserId(userId: String): UserSubscription =
+        userSubscriptionJpaRepository.findByUserId(userId).get()
 }

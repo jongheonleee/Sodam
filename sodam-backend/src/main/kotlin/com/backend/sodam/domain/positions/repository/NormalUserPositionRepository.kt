@@ -19,11 +19,11 @@ import java.util.*
 class NormalUserPositionRepository(
     private val userJpaRepository: NormalUserJpaRepository,
     private val positionJpaRepository: PositionJpaRepository,
-    private val userPositionJpaRepository: UsersPositionJpaRepository,
-): CreateUserPositionPort, DeleteUserPositionPort, FetchUserPositionPort, UpdateUserPositionPort {
+    private val userPositionJpaRepository: UsersPositionJpaRepository
+) : CreateUserPositionPort, DeleteUserPositionPort, FetchUserPositionPort, UpdateUserPositionPort {
 
-    override fun isTarget(userType: UserType): Boolean
-        = UserType.NORMAL == userType
+    override fun isTarget(userType: UserType): Boolean =
+        UserType.NORMAL == userType
 
     @Transactional
     override fun createByPositionId(userId: String, positionId: String) {
@@ -49,7 +49,4 @@ class NormalUserPositionRepository(
         val userPositionEntity = UsersPositionsEntity(userPositionId = UUID.randomUUID().toString(), user = userEntity, position = positionEntity)
         return userPositionJpaRepository.save(userPositionEntity)
     }
-
-
-
 }

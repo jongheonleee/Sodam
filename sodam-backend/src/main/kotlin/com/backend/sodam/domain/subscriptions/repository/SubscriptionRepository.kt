@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository
 @Repository
 @RequiredArgsConstructor
 class SubscriptionRepository(
-    private val subscriptionJpaRepository: SubscriptionJpaRepository,
-): FetchSubscriptionPort {
+    private val subscriptionJpaRepository: SubscriptionJpaRepository
+) : FetchSubscriptionPort {
 
-    override fun isExistsBySubscriptionName(subscriptionName: String): Boolean
-        = subscriptionJpaRepository.existsBySubscriptionName(subscriptionName)
+    override fun isExistsBySubscriptionName(subscriptionName: String): Boolean =
+        subscriptionJpaRepository.existsBySubscriptionName(subscriptionName)
 }

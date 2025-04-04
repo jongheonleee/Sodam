@@ -47,9 +47,9 @@ class SocialUsersEntity(
     @OneToMany(mappedBy = "socialUser", cascade = [CascadeType.ALL], orphanRemoval = true)
     var certifications: MutableList<OfficialUsersStatusEntity> = mutableListOf(),
 
-    email: String = "-",
-    userName: String = "-",
-    introduce: String = "-",
+    email: String = "",
+    userName: String = "",
+    introduce: String = ""
 ) : MutableBaseEntity() {
 
     @Column(name = "USER_EMAIL")
@@ -78,7 +78,7 @@ class SocialUsersEntity(
             provider = this.provider,
             providerId = this.providerId,
             userType = UserType.SOCIAL,
-            introduce = this.introduce,
+            introduce = this.introduce
         )
     }
 
@@ -88,7 +88,7 @@ class SocialUsersEntity(
                 socialUserId = UUID.randomUUID().toString(),
                 provider = provider,
                 providerId = providerId,
-                userName = userName,
+                userName = userName
             )
         }
     }

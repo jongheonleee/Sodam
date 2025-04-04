@@ -31,7 +31,7 @@ class DownloadSecretsEntity(
 
     @ManyToOne
     @JoinColumn(name = "SECRETE_ID")
-    val secret: SecretsEntity? = null,
+    val secret: SecretsEntity? = null
 
     // 가변 필드
 ) : MutableBaseEntity()

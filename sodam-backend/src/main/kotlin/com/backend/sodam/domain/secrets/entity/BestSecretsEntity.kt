@@ -41,7 +41,6 @@ class BestSecretsEntity(
     val tag2: String,
 
     @Column(name = "TAG3")
-    val tag3: String,
+    val tag3: String
 
-): MutableBaseEntity() {
-}
+) : MutableBaseEntity()

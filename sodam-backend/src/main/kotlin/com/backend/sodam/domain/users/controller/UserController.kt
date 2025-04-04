@@ -2,12 +2,9 @@ package com.backend.sodam.domain.users.controller
 
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.users.controller.request.UserUpdateRequest
-import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
-import com.backend.sodam.domain.users.service.usescase.DeleteUserUseCase
 import com.backend.sodam.domain.users.service.usescase.FetchUserUseCase
-import com.backend.sodam.domain.users.service.usescase.RegisterUserUseCase
 import com.backend.sodam.domain.users.service.usescase.UpdateUserUseCase
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
@@ -57,7 +54,8 @@ class UserController(
     // 회원 정보 수정 처리
     @PutMapping("/api/v1/users/info")
     fun updateUserInfo(
-        @RequestBody @Valid userUpdateRequest: UserUpdateRequest,
+        @RequestBody @Valid
+        userUpdateRequest: UserUpdateRequest
     ): SodamApiResponse<UserUpdateResponse> {
         val userId = tokenProvider.getUserId()
         return SodamApiResponse.ok(updateUserUseCase.updateUserInfo(userId = userId, userUpdateCommand = userUpdateRequest.toCommand()))

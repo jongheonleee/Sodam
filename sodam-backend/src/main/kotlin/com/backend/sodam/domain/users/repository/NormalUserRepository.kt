@@ -1,11 +1,9 @@
 package com.backend.sodam.domain.users.repository
 
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
-import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import com.backend.sodam.domain.users.service.port.CreateNormalUserPort
@@ -22,11 +20,11 @@ import java.util.*
 @Repository
 @RequiredArgsConstructor
 class NormalUserRepository(
-    private val normalUserJpaRepository: NormalUserJpaRepository,
-): CreateNormalUserPort, FetchUserPort, UpdateUserPort, DeleteUserPort {
+    private val normalUserJpaRepository: NormalUserJpaRepository
+) : CreateNormalUserPort, FetchUserPort, UpdateUserPort, DeleteUserPort {
 
-    override fun isTarget(userType: UserType): Boolean
-        = UserType.NORMAL == userType
+    override fun isTarget(userType: UserType): Boolean =
+        UserType.NORMAL == userType
 
     @Transactional(readOnly = true)
     override fun isExistsByUserId(userId: String): Boolean {
@@ -38,7 +36,6 @@ class NormalUserRepository(
         return normalUserJpaRepository.existsByUserEmail(email)
     }
 
-
     // 이 부분 role까지 조회해오게 만들어야함
     @Transactional(readOnly = true)
     override fun findByEmail(email: String): SodamUser {
@@ -49,9 +46,8 @@ class NormalUserRepository(
     override fun createUser(userSignupCommand: UserSignupCommand): SodamUser {
         val signupRequestUserEntity = userSignupCommand.toEntity()
         return normalUserJpaRepository.save(signupRequestUserEntity)
-                                      .toDomain()
+            .toDomain()
     }
-
 
     // QueryDSL로 바꾸기
     @Transactional(readOnly = true)
@@ -64,14 +60,13 @@ class NormalUserRepository(
         val normalUserEntity = normalUserJpaRepository.findByUserId(userId).get()
         normalUserEntity.update(userUpdateCommand)
         return normalUserJpaRepository.save(normalUserEntity)
-                                      .toDomain()
+            .toDomain()
     }
 
     // 문제있는 부분 - 테스트 코드에서 해당 부분 제대로 안돌아감
     @Transactional(readOnly = true)
-    override fun findByUserId(userId: String): Optional<SodamUser>
-        = normalUserJpaRepository.findSodamUserByUserId(userId)
-
+    override fun findByUserId(userId: String): Optional<SodamUser> =
+        normalUserJpaRepository.findSodamUserByUserId(userId)
 
     @Transactional(readOnly = true)
     override fun findProfileInfo(userId: String): Optional<SodamUserDetail> {
@@ -80,31 +75,31 @@ class NormalUserRepository(
 
     @Transactional(readOnly = true)
     override fun findOwnArticlesByPageBy(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
-        return normalUserJpaRepository.findUserOwnArticlesByPageBy( pageable = pageable, userId = userId)
-                                      .map {
-                                          ArticleSummaryResponse(
-                                              articleId = it.articleId,
-                                              title = it.title,
-                                              username = it.author,
-                                              summary = it.summary,
-                                              createdAt = it.createdAt,
-                                              tags = it.tags
-                                          )
-                                      }
+        return normalUserJpaRepository.findUserOwnArticlesByPageBy(pageable = pageable, userId = userId)
+            .map {
+                ArticleSummaryResponse(
+                    articleId = it.articleId,
+                    title = it.title,
+                    username = it.author,
+                    summary = it.summary,
+                    createdAt = it.createdAt,
+                    tags = it.tags
+                )
+            }
     }
 
     @Transactional(readOnly = true)
     override fun findOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
-        return normalUserJpaRepository.findUserOwnLikeArticlesByPageBy( pageable = pageable, userId = userId)
-                                      .map {
-                                          ArticleSummaryResponse(
-                                              articleId = it.articleId,
-                                              title = it.title,
-                                              username = it.author,
-                                              summary = it.summary,
-                                              createdAt = it.createdAt,
-                                              tags = it.tags
-                                    )
-                                }
+        return normalUserJpaRepository.findUserOwnLikeArticlesByPageBy(pageable = pageable, userId = userId)
+            .map {
+                ArticleSummaryResponse(
+                    articleId = it.articleId,
+                    title = it.title,
+                    username = it.author,
+                    summary = it.summary,
+                    createdAt = it.createdAt,
+                    tags = it.tags
+                )
+            }
     }
 }

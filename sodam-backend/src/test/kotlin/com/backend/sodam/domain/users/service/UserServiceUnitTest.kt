@@ -1,21 +1,21 @@
-//package com.backend.sodam.domain.users.service
+// package com.backend.sodam.domain.users.service
 //
-//import com.backend.sodam.domain.subscriptions.exception.SubscriptionException
-//import com.backend.sodam.domain.users.exception.UserException
-//import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
-//import com.backend.sodam.domain.users.service.command.UserSignupCommand
-//import com.backend.sodam.domain.users.controller.response.SimpleUserResponse
-//import com.backend.sodam.domain.users.controller.response.SocialUserResponse
-//import com.backend.sodam.domain.users.controller.response.UserResponse
-//import com.backend.sodam.domain.users.controller.response.UserSignupResponse
-//import io.kotest.core.spec.style.BehaviorSpec
-//import io.kotest.matchers.shouldBe
-//import io.mockk.every
-//import io.mockk.mockk
-//import io.mockk.verify
-//import org.junit.jupiter.api.assertThrows
+// import com.backend.sodam.domain.subscriptions.exception.SubscriptionException
+// import com.backend.sodam.domain.users.exception.UserException
+// import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
+// import com.backend.sodam.domain.users.service.command.UserSignupCommand
+// import com.backend.sodam.domain.users.controller.response.SimpleUserResponse
+// import com.backend.sodam.domain.users.controller.response.SocialUserResponse
+// import com.backend.sodam.domain.users.controller.response.UserResponse
+// import com.backend.sodam.domain.users.controller.response.UserSignupResponse
+// import io.kotest.core.spec.style.BehaviorSpec
+// import io.kotest.matchers.shouldBe
+// import io.mockk.every
+// import io.mockk.mockk
+// import io.mockk.verify
+// import org.junit.jupiter.api.assertThrows
 //
-//class UserServiceUnitTest : BehaviorSpec({
+// class UserServiceUnitTest : BehaviorSpec({
 //
 //    // 제공되는 기능
 //    // - 1. 회원가입
@@ -235,4 +235,4 @@
 //            }
 //        }
 //    }
-//})
+// })

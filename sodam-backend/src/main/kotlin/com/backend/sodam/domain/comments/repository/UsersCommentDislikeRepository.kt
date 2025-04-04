@@ -3,8 +3,8 @@ package com.backend.sodam.domain.comments.repository
 import com.backend.sodam.domain.comments.entity.UsersDislikeCommentEntity
 import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.users.exception.UserException
-import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
+import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional

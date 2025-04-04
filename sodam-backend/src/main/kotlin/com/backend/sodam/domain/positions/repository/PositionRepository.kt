@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 @RequiredArgsConstructor
 class PositionRepository(
     private val positionJpaRepository: PositionJpaRepository
-): FetchPositionPort {
+) : FetchPositionPort {
 
     @Transactional(readOnly = true)
     override fun fetchValidPositions(): List<SodamPosition> {

@@ -13,7 +13,7 @@ data class SocialUserSignupCommand(
             socialUserId = UUID.randomUUID().toString(),
             userName = this.username,
             provider = this.provider,
-            providerId = this.providerId,
+            providerId = this.providerId
         )
     }
 }

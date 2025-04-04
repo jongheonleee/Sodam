@@ -1,12 +1,11 @@
 package com.backend.sodam.domain.users.controller
 
-import com.backend.sodam.domain.tokens.service.TokenService
 import com.backend.sodam.domain.tokens.controller.response.TokenResponse
+import com.backend.sodam.domain.tokens.service.TokenService
 import com.backend.sodam.domain.users.controller.request.LoginRequest
 import com.backend.sodam.domain.users.controller.request.SignupRequest
-import com.backend.sodam.domain.users.service.UserService
-import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
+import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.usescase.FetchUserUseCase
 import com.backend.sodam.domain.users.service.usescase.RegisterUserUseCase
 import com.backend.sodam.global.commons.ErrorCode
@@ -33,7 +32,7 @@ class AuthController(
     // 2. 토큰
     private val tokenService: TokenService,
     // 3. 인증
-    private val authenticationManagerBuilder: AuthenticationManagerBuilder,
+    private val authenticationManagerBuilder: AuthenticationManagerBuilder
 ) {
 
     // 회원가입
@@ -49,7 +48,8 @@ class AuthController(
     // 로그인
     @PostMapping("/api/v1/auth/login")
     fun login(
-        @RequestBody @Valid loginRequest: LoginRequest
+        @RequestBody @Valid
+        loginRequest: LoginRequest
     ): SodamApiResponse<TokenResponse> {
         val token = UsernamePasswordAuthenticationToken(loginRequest.email, loginRequest.password)
         val authenticate = authenticationManagerBuilder.`object`.authenticate(token)

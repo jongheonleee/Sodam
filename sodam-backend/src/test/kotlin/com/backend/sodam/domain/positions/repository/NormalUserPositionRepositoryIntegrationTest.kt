@@ -19,21 +19,23 @@ class NormalUserPositionRepositoryIntegrationTest(
     private val positionsJpaRepository: PositionJpaRepository,
 
     // 테스트 환경 구축에 필요한 오브젝트
-    private val userPositionsJpaRepository: UsersPositionJpaRepository,
+    private val userPositionsJpaRepository: UsersPositionJpaRepository
 ) : DescribeSpec({
 
     // 테스트 과정에서 사용할 목 데이터
-    val mockPosition = PositionsEntity( positionId = UUID.randomUUID().toString(),
+    val mockPosition = PositionsEntity(
+        positionId = UUID.randomUUID().toString(),
         positionName = "미정", // PositionsType.TBD.fullName
         ord = 1,
-        validYN = 0 )
+        validYN = 0
+    )
     val mockNormalUser = UsersEntity(
         userId = UUID.randomUUID().toString(),
         userEmail = "test@test.com",
         userName = "test",
         introduce = "test",
         profileImageUrl = "test",
-        password = "test",
+        password = "test"
     )
 
     // kotest에서 트랜잭션을 적용하려면 SpringExtension을 사용해야함

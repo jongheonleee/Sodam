@@ -1,4 +1,3 @@
 package com.backend.sodam.domain.positions.repository
 
-interface UsersPositionCustomRepository {
-}
+interface UsersPositionCustomRepository

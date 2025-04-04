@@ -1,5 +1,4 @@
-package com.backend.sodam.domain.users.service 
-import com.backend.sodam.domain.grades.entity.GradesEntity
+package com.backend.sodam.domain.users.service import com.backend.sodam.domain.grades.entity.GradesEntity
 import com.backend.sodam.domain.grades.repository.GradesJpaRepository
 import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
 import com.backend.sodam.domain.positions.entity.PositionsEntity
@@ -10,17 +9,17 @@ import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
+import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.domain.users.exception.UserException
-import com.backend.sodam.domain.users.model.SodamUser
-import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
+import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
+import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
+import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
-import jakarta.persistence.EntityManager
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
@@ -50,35 +49,42 @@ class UserServiceIntegrationTest(
 
     // - 3. 회원 테이블
     private val normalUserJpaRepository: NormalUserJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository,
+    private val socialUserJpaRepository: SocialUserJpaRepository
 
     // - 4. 그외 오브젝트
-): BehaviorSpec({
+) : BehaviorSpec({
 
     // 테스트 과정에서 사용할 목 데이터
-    val mockPosition = PositionsEntity( positionId = UUID.randomUUID().toString(),
-                                        positionName = "미정", // PositionsType.TBD.fullName
-                                        ord = 1,
-                                        validYN = 0 )
-    val mockSubscription = SubscriptionsEntity( subscriptionId = UUID.randomUUID().toString(),
-                                                subscriptionName = "FREE",
-                                                subscriptionContent = "테스트용 구독권입니다.",
-                                                viewCnt = 0,
-                                                downCnt = 0 )
-    val mockGrade = GradesEntity( gradeId = UUID.randomUUID().toString(),
-                                  gradeName = "ENTRY",
-                                  gradeOrd = 1,
-                                  gradeSummary = "테스트용 등급 데이터입니다.",
-                                  gradeDescription = "테스트용 등급데이터입니다.",
-                                  validYN = 0 )
+    val mockPosition = PositionsEntity(
+        positionId = UUID.randomUUID().toString(),
+        positionName = "미정", // PositionsType.TBD.fullName
+        ord = 1,
+        validYN = 0
+    )
+    val mockSubscription = SubscriptionsEntity(
+        subscriptionId = UUID.randomUUID().toString(),
+        subscriptionName = "FREE",
+        subscriptionContent = "테스트용 구독권입니다.",
+        viewCnt = 0,
+        downCnt = 0
+    )
+    val mockGrade = GradesEntity(
+        gradeId = UUID.randomUUID().toString(),
+        gradeName = "ENTRY",
+        gradeOrd = 1,
+        gradeSummary = "테스트용 등급 데이터입니다.",
+        gradeDescription = "테스트용 등급데이터입니다.",
+        validYN = 0
+    )
 
-    val mockNormalUserForDuplicatedEmail = UsersEntity( userId = UUID.randomUUID().toString(),
-                                                        userName = "테스트 유저",
-                                                        userEmail = "duplicated@email.com",
-                                                        introduce = "테스트 유저",
-                                                        password = "password",
-                                                        profileImageUrl = "dedede")
-
+    val mockNormalUser = UsersEntity(
+        userId = UUID.randomUUID().toString(),
+        userName = "테스트 유저",
+        userEmail = "duplicated@email.com",
+        introduce = "테스트 유저",
+        password = "password",
+        profileImageUrl = "dedede"
+    )
 
     // kotest에서 트랜잭션을 적용하려면 SpringExtension을 사용해야함
     extension(SpringExtension)
@@ -104,8 +110,7 @@ class UserServiceIntegrationTest(
         positionsJpaRepository.save(mockPosition)
         gradesJpaRepository.save(mockGrade)
         subscriptionJpaRepository.save(mockSubscription)
-        normalUserJpaRepository.save(mockNormalUserForDuplicatedEmail)
-
+        normalUserJpaRepository.save(mockNormalUser)
     }
 
     // 테스트 환경 정리
@@ -168,7 +173,7 @@ class UserServiceIntegrationTest(
                 username = command.name,
                 email = command.email,
                 encryptedPassword = command.password,
-                introduce = command.introduce,
+                introduce = command.introduce
             )
             then("성공적으로 회원가입이 되고 등록된 회원 정보의 일부를 반환한다.") {
                 actual.email shouldBe expected.email
@@ -178,11 +183,10 @@ class UserServiceIntegrationTest(
             }
         })
 
-
         `when`("사용자가 중복된 이메일을 전달하면", {
             // 중복된 이메일이 담긴 command
             val commandWithDuplicatedEmail = UserSignupCommand(
-                email = mockNormalUserForDuplicatedEmail.userEmail,
+                email = mockNormalUser.userEmail,
                 name = "테스트 유저",
                 password = "asdf1234",
                 positionId = mockPosition.positionId,
@@ -195,7 +199,6 @@ class UserServiceIntegrationTest(
                 }
             }
         })
-
 
         `when`("사용자가 존재하지 않는 positionId를 전달하면", {
             val commandWithNotExistsPositionId = UserSignupCommand(
@@ -217,40 +220,189 @@ class UserServiceIntegrationTest(
     given("소셜회원 회원가입을 할 때") {
 
         `when`("사용자가 유효한 데이터를 전달하면", {
+            val command = SocialUserSignupCommand(
+                username = "테스트 유저",
+                provider = "kakao",
+                providerId = UUID.randomUUID().toString()
+            )
+
+            val actual = sut.registerSocialUser(socialUserSignupCommand = command)
+            val expected = UserSignupResponse(
+                username = command.username,
+                encryptedPassword = "",
+                email = "",
+                introduce = ""
+            )
 
             then("성공적으로 회원가입이 되고 등록된 회원 정보의 일부를 반환한다.") {
-
+                actual.email shouldBe expected.email
+                actual.username shouldBe expected.username
+                actual.introduce shouldBe expected.introduce
+                actual.encryptedPassword shouldBe expected.encryptedPassword
             }
         })
     }
 
     given("회원정보를 업데이트할 때") {
 
+
+        // 1. 일반 회원
+        `when`("사용자가 유효한 데이터를 전달하면", {
+            // 업데이트 처리용 데이터
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+
+            // 회원가입 처리
+            sut.registerNormalUser(userSignupCommand = command)
+            val target = sut.findByEmail(command.email)
+
+            // 업데이트 처리용 데이터
+            val updateCommand = UserUpdateCommand(
+                email = "test2@gmail.com",
+                name = "새로운 이름",
+                encryptedPassword = "asdf1234",
+                positionId = mockPosition.positionId,
+                introduce = "업데이트용 테스트 유저"
+            )
+
+            // 업데이트 처리
+            val actual = sut.updateUserInfo(userId = target.userId, userUpdateCommand = updateCommand)
+            val expected = UserUpdateResponse(
+                email = updateCommand.email,
+                username = updateCommand.name,
+                introduce = updateCommand.introduce,
+                encryptedPassword = updateCommand.encryptedPassword
+            )
+
+            then("성공적으로 회원정보를 업데이트하고 변경된 회원 정보의 일부를 반환한다.") {
+                actual.email shouldBe expected.email
+                actual.username shouldBe expected.username
+                actual.introduce shouldBe expected.introduce
+                actual.encryptedPassword shouldBe expected.encryptedPassword
+            }
+        })
+
+        `when`("사용자가 중복된 이메일을 전달하면", {
+            // 업데이트 처리용 데이터
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+
+            // 회원가입 처리
+            sut.registerNormalUser(userSignupCommand = command)
+            val target = sut.findByEmail(command.email)
+
+            // 업데이트 처리용 데이터
+            val updateCommandWithDuplicatedEmail = UserUpdateCommand(
+                email = mockNormalUser.userEmail,
+                name = "새로운 이름",
+                encryptedPassword = "asdf1234",
+                positionId = mockPosition.positionId,
+                introduce = "업데이트용 테스트 유저"
+            )
+
+            then("UserAlreadyException 예외가 발생한다.") {
+                assertThrows<UserException.UserAlreadyExistsException> {
+                    sut.updateUserInfo(userId = target.userId, userUpdateCommand = updateCommandWithDuplicatedEmail)
+                }
+            }
+        })
+
+        `when`("사용자가 존재하지 않는 userId를 전달하면", {
+            // 업데이트 처리용 데이터
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+
+            // 회원가입 처리
+            sut.registerNormalUser(userSignupCommand = command)
+            val target = sut.findByEmail(command.email)
+
+            // 업데이트 처리용 데이터
+            val updateCommand = UserUpdateCommand(
+                email = "degorso@gmail.com",
+                name = "새로운 이름",
+                encryptedPassword = "asdf1234",
+                positionId = mockPosition.positionId,
+                introduce = "업데이트용 테스트 유저"
+            )
+            val notExistsUserId = "npodawnpdwandaw"
+
+            then("UserNotFoundException 예외가 발생한다.") {
+                assertThrows<UserException.UserNotFoundException> {
+                    sut.updateUserInfo(userId = notExistsUserId, userUpdateCommand = updateCommand)
+                }
+            }
+        })
+
+        `when`("사용자가 존재하지 않는 positionId를 전달하면", {
+            // 업데이트 처리용 데이터
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+
+            // 회원가입 처리
+            sut.registerNormalUser(userSignupCommand = command)
+            val target = sut.findByEmail(command.email)
+
+            // 업데이트 처리용 데이터
+            val updateCommandWithNotExistsPositionId = UserUpdateCommand(
+                email = "degorso@gmail.com",
+                name = "새로운 이름",
+                encryptedPassword = "asdf1234",
+                positionId = "Deafefeagr",
+                introduce = "업데이트용 테스트 유저"
+            )
+
+            assertThrows<PositionException.PositionNotFoundException> {
+                sut.updateUserInfo(userId = target.userId, userUpdateCommand = updateCommandWithNotExistsPositionId)
+            }
+
+        })
+
+        // 2. 소셜 회원
         `when`("사용자가 유효한 데이터를 전달하면", {
 
             then("성공적으로 회원정보를 업데이트하고 변경된 회원 정보의 일부를 반환한다.") {
-
             }
         })
 
         `when`("사용자가 중복된 이메일을 전달하면", {
 
             then("UserAlreadyException 예외가 발생한다.") {
-
             }
         })
 
         `when`("사용자가 존재하지 않는 userId를 전달하면", {
 
             then("UserNotFoundException 예외가 발생한다.") {
-
             }
         })
 
         `when`("사용자가 존재하지 않는 positionId를 전달하면", {
 
             then("PositionNotFoundException 예외가 발생한다.") {
-
             }
         })
     }
@@ -260,14 +412,12 @@ class UserServiceIntegrationTest(
         `when`("존재하는 이메일을 전달하면", {
 
             then("등록된 회원 정보를 반환한다.") {
-
             }
         })
 
         `when`("존재하지 않는 이메일을 전달하면", {
 
             then("UserNotFoundException 예외가 발생한다.") {
-
             }
         })
     }
@@ -277,14 +427,12 @@ class UserServiceIntegrationTest(
         `when`("존재하는 아이디를 전달하면", {
 
             then("등록된 회원 정보를 반환한다.") {
-
             }
         })
 
         `when`("존재하지 않는 아이디를 전달하면", {
 
             then("UserNotFoundException 예외가 발생한다.") {
-
             }
         })
     }
@@ -294,7 +442,6 @@ class UserServiceIntegrationTest(
         `when`("존재하는 토큰이 전달하면", {
 
             then("카카오 회원을 반환한다.") {
-
             }
         })
     }
@@ -304,14 +451,12 @@ class UserServiceIntegrationTest(
         `when`("providerId가 존재하면", {
 
             then("등록되어 있는 소셜회원 정보를 반환한다.") {
-
             }
         })
 
         `when`("providerId가 존재하지 않는다면", {
 
             then("UserNotFoundException 예외가 발생한다.") {
-
             }
         })
     }
@@ -321,14 +466,12 @@ class UserServiceIntegrationTest(
         `when`("존재하는 userId를 전달하면", {
 
             then("해당 유저의 상세 정보(프로필)을 반환한다.") {
-
             }
         })
 
         `when`("존재하지 않는 userId를 전달하면", {
 
             then("UserNotFoundException 예외가 발생한다.") {
-
             }
         })
     }
@@ -338,14 +481,12 @@ class UserServiceIntegrationTest(
         `when`("존재하는 회원이면") {
 
             then("자신이 작성한 게시글을 성공적으로 반환한다.") {
-
             }
         }
 
         `when`("존재하지 않는 회원이라면") {
 
             then("UserNotFoundException 예외가 발생한다.") {
-
             }
         }
     }
@@ -355,17 +496,13 @@ class UserServiceIntegrationTest(
         `when`("존재하는 회원이면") {
 
             then("자신의 좋아요 게시글을 성공적으로 반환한다.") {
-
             }
         }
 
         `when`("존재하지 않는 회원이라면") {
 
             then("UserNotFoundException 예외가 발생한다.") {
-
             }
         }
     }
-
-
 })
