@@ -8,6 +8,7 @@ import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
+import com.backend.sodam.domain.users.controller.response.UserResponse
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
 import com.backend.sodam.domain.users.entity.UsersEntity
@@ -383,26 +384,117 @@ class UserServiceIntegrationTest(
 
         // 2. 소셜 회원
         `when`("사용자가 유효한 데이터를 전달하면", {
+            // 소셜회원 등록
+            val command = SocialUserSignupCommand(
+                username = "테스트 유저",
+                provider = "kakao",
+                providerId = UUID.randomUUID().toString()
+            )
+
+            // 회원가입 처리
+            sut.registerSocialUser(socialUserSignupCommand = command)
+            val target = sut.findByProviderId(command.providerId)
+
+            val updateCommand = UserUpdateCommand(
+                email = "test2@gmail.com",
+                name = "새로운 이름",
+                encryptedPassword = "asdf1234",
+                positionId = mockPosition.positionId,
+                introduce = "업데이트용 테스트 유저"
+            )
+
+            val actual = sut.updateUserInfo(userId = target!!.userId, userUpdateCommand = updateCommand)
+            val expected = UserUpdateResponse(
+                username = updateCommand.name,
+                email = updateCommand.email,
+                introduce = updateCommand.introduce,
+            )
 
             then("성공적으로 회원정보를 업데이트하고 변경된 회원 정보의 일부를 반환한다.") {
+                actual.email shouldBe expected.email
+                actual.username shouldBe expected.username
+                actual.introduce shouldBe expected.introduce
             }
         })
 
         `when`("사용자가 중복된 이메일을 전달하면", {
+            // 소셜회원 등록
+            val command = SocialUserSignupCommand(
+                username = "테스트 유저",
+                provider = "kakao",
+                providerId = UUID.randomUUID().toString()
+            )
+
+            // 회원가입 처리
+            sut.registerSocialUser(socialUserSignupCommand = command)
+            val target = sut.findByProviderId(command.providerId)
+
+            val updateCommand = UserUpdateCommand(
+                email = mockNormalUser.userEmail,
+                name = "새로운 이름",
+                encryptedPassword = "asdf1234",
+                positionId = mockPosition.positionId,
+                introduce = "업데이트용 테스트 유저"
+            )
+
 
             then("UserAlreadyException 예외가 발생한다.") {
+                assertThrows<UserException.UserAlreadyExistsException> {
+                    sut.updateUserInfo(userId = target!!.userId, userUpdateCommand = updateCommand)
+                }
             }
         })
 
         `when`("사용자가 존재하지 않는 userId를 전달하면", {
+            // 소셜회원 등록
+            val command = SocialUserSignupCommand(
+                username = "테스트 유저",
+                provider = "kakao",
+                providerId = UUID.randomUUID().toString()
+            )
+
+            // 회원가입 처리
+            sut.registerSocialUser(socialUserSignupCommand = command)
+            val target = sut.findByProviderId(command.providerId)
+
+            val updateCommand = UserUpdateCommand(
+                email = "test2@gmail.com",
+                name = "새로운 이름",
+                encryptedPassword = "asdf1234",
+                positionId = mockPosition.positionId,
+                introduce = "업데이트용 테스트 유저"
+            )
+            val notExistsUserId = "npodawnpdwandaw"
 
             then("UserNotFoundException 예외가 발생한다.") {
+                assertThrows<UserException.UserNotFoundException> {
+                    sut.updateUserInfo(userId = notExistsUserId, userUpdateCommand = updateCommand)
+                }
             }
         })
 
         `when`("사용자가 존재하지 않는 positionId를 전달하면", {
+            // 소셜회원 등록
+            val command = SocialUserSignupCommand(
+                username = "테스트 유저",
+                provider = "kakao",
+                providerId = UUID.randomUUID().toString()
+            )
 
-            then("PositionNotFoundException 예외가 발생한다.") {
+            // 회원가입 처리
+            sut.registerSocialUser(socialUserSignupCommand = command)
+            val target = sut.findByProviderId(command.providerId)
+
+            val updateCommandWithNotExistsPositionId = UserUpdateCommand(
+                email = "test2@gmail.com",
+                name = "새로운 이름",
+                encryptedPassword = "asdf1234",
+                positionId = "dwadwagr",
+                introduce = "업데이트용 테스트 유저"
+            )
+
+            assertThrows<PositionException.PositionNotFoundException> {
+                sut.updateUserInfo(userId = target!!.userId, userUpdateCommand = updateCommandWithNotExistsPositionId)
             }
         })
     }
@@ -410,14 +502,61 @@ class UserServiceIntegrationTest(
     given("회원 이메일 조회할 때") {
 
         `when`("존재하는 이메일을 전달하면", {
+            // 업데이트 처리용 데이터
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+
+            // 회원가입 처리
+            sut.registerNormalUser(userSignupCommand = command)
+
+            // 이메일 조회
+            val actual = sut.findByEmail(email = command.email)
+            val expected = UserResponse(
+                userId = "dwede",
+                email = command.email,
+                name = command.name,
+                password = command.password,
+                profileImage = command.profileImage,
+                introduce = command.introduce,
+                role = "ROLE_FREE"
+            )
 
             then("등록된 회원 정보를 반환한다.") {
+                actual.email shouldBe expected.email
+                actual.name shouldBe expected.name
+                actual.password shouldBe expected.password
+                actual.profileImage shouldBe expected.profileImage
+                actual.introduce shouldBe expected.introduce
+                actual.role shouldBe expected.role
+
             }
         })
 
         `when`("존재하지 않는 이메일을 전달하면", {
+            // 업데이트 처리용 데이터
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
 
+            // 회원가입 처리
+            sut.registerNormalUser(userSignupCommand = command)
+
+            // 이메일 조회
             then("UserNotFoundException 예외가 발생한다.") {
+                assertThrows<UserException.UserNotFoundException> {
+                    sut.findByEmail(email = "Dedededede")
+                }
             }
         })
     }

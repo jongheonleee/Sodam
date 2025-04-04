@@ -119,13 +119,12 @@ class SocialUserRepository(
             .toDomain()
     }
 
-    // 회원 테이블을 업데이트하고 포지션 부분은 지운다.
     @Transactional
     override fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): SodamUser {
         val socialUserEntity = socialUserJpaRepository.findBySocialUserId(userId).get()
         socialUserEntity.update(userUpdateCommand)
         return socialUserJpaRepository.save(socialUserEntity)
-            .toDomain()
+                                      .toDomain()
     }
 
     @Transactional(readOnly = true)

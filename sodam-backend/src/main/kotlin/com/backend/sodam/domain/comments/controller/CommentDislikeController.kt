@@ -1,6 +1,9 @@
 package com.backend.sodam.domain.comments.controller
 
 import com.backend.sodam.domain.comments.service.CommentDislikeService
+import com.backend.sodam.domain.users.exception.UserException
+import com.backend.sodam.domain.users.model.UserType
+import com.backend.sodam.domain.users.service.port.FetchUserPort
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import lombok.RequiredArgsConstructor

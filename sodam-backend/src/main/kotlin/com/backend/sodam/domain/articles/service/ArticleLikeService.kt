@@ -26,7 +26,6 @@ class ArticleLikeService(
         // 해당 게시글의 좋아요수 1 증가
         // 근데 유저 타입마다 다르게 처리해야함
         val userType = extractUserType(userId = userId)
-
         val isExists = when (userType) {
             UserType.SOCIAL -> {
                 usersArticleLikeRepository.existsArticleLikeForSocialUser(

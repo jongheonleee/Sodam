@@ -249,12 +249,23 @@ input:checked + .carousel__slide-container .nav label {
   margin-top: 1.2rem;
 }
 
+
+
 .article__tag {
   background-color: #f2f2f2;
   color: gray;
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out, background-color 0.2s;
+}
+
+.article__tag:active {
+  color: white;
+  background-color: #4caf50;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.0);
+  transform: translate(3px, 3px);
 }
 
 

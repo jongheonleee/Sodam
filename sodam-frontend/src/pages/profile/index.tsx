@@ -170,7 +170,6 @@ export default function ProfilePage({
             //
             //     }
             // })
-        } else {
         }
     }
 
@@ -194,6 +193,7 @@ export default function ProfilePage({
             <Header
                 handleLogout={handleLogout}
             />
+
             <Profile
                 handleLogout={handleLogout}
                 userProfileInfo={userProfile}
