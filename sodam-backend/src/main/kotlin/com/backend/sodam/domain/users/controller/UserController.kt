@@ -25,21 +25,16 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     // 회원 관련 빈 DI
     private val fetchUserUseCase: FetchUserUseCase,
-    private val registerUserUseCase: RegisterUserUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
-    private val deleteUserUseCase: DeleteUserUseCase,
 
     // 토큰 관련 빈 DI
-    private val userService: UserService, // 해당 부분 위같은 형태로 쪼개기
     private val tokenProvider: JwtTokenProvider
 ) {
 
     @GetMapping("/api/v1/users/info")
     fun getUserInfo(): SodamApiResponse<UserProfileResponse> { // 반환타입 다시 책정하기
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(
-            userService.findUserProfileInfo(userId)
-        )
+        return SodamApiResponse.ok(fetchUserUseCase.findUserProfileInfo(userId))
     }
 
     // 자신이 작성한 게시글 목록 조회
@@ -48,9 +43,7 @@ class UserController(
         pageable: Pageable
     ): SodamApiResponse<Page<ArticleSummaryResponse>> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(
-            userService.getOwnArticles(userId = userId, pageable = pageable)
-        )
+        return SodamApiResponse.ok(fetchUserUseCase.getOwnArticles(userId = userId, pageable = pageable))
     }
 
     @GetMapping("/api/v1/users/like/articles")
@@ -58,9 +51,7 @@ class UserController(
         pageable: Pageable
     ): SodamApiResponse<Page<ArticleSummaryResponse>> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(
-            userService.getOwnLikeArticles(userId = userId, pageable = pageable)
-        )
+        return SodamApiResponse.ok(fetchUserUseCase.getOwnLikeArticles(userId = userId, pageable = pageable))
     }
 
     // 회원 정보 수정 처리
@@ -69,8 +60,6 @@ class UserController(
         @RequestBody @Valid userUpdateRequest: UserUpdateRequest,
     ): SodamApiResponse<UserUpdateResponse> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(
-            updateUserUseCase.updateUserInfo(userId = userId, userUpdateCommand = userUpdateRequest.toCommand())
-        )
+        return SodamApiResponse.ok(updateUserUseCase.updateUserInfo(userId = userId, userUpdateCommand = userUpdateRequest.toCommand()))
     }
 }

@@ -284,7 +284,7 @@ class NormalUserRepositoryIntegrationTest(
                 // 📌 회원 등록 처리 - 이 부분 비즈니스 로직이 노출되는데 이러면 안좋음
                 val target = sut.createUser(command)
                 normalUserPositionRepository.createByPositionId(target.userId, command.positionId)
-                normalUserGradeRepository.createGradeForUser(target.userId, GradesType.ENTRY.name)
+                normalUserGradeRepository.createGrade(target.userId, GradesType.ENTRY)
                 userSubscriptionRepository.createSubscription(target.userId, SubscriptionsType.FREE)
 
                 val optional = sut.findProfileInfo(target.userId)

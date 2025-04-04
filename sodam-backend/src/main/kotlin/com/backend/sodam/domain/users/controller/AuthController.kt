@@ -7,6 +7,7 @@ import com.backend.sodam.domain.users.controller.request.SignupRequest
 import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
+import com.backend.sodam.domain.users.service.usescase.FetchUserUseCase
 import com.backend.sodam.domain.users.service.usescase.RegisterUserUseCase
 import com.backend.sodam.global.commons.ErrorCode
 import com.backend.sodam.global.commons.SodamApiResponse
@@ -28,13 +29,11 @@ class AuthController(
     // 1. 회원
     // 생성용 빈 DI
     private val registerUserUseCase: RegisterUserUseCase,
-
-    private val userService: UserService,
-    private val authenticationManagerBuilder: AuthenticationManagerBuilder,
-    private val tokenService: TokenService
+    private val fetchUserUseCase: FetchUserUseCase,
     // 2. 토큰
-
+    private val tokenService: TokenService,
     // 3. 인증
+    private val authenticationManagerBuilder: AuthenticationManagerBuilder,
 ) {
 
     // 회원가입
@@ -65,22 +64,14 @@ class AuthController(
     ): SodamApiResponse<TokenResponse> {
         val code = request["code"] ?: throw IllegalArgumentException()
         val accessTokenFromKakao = tokenService.getTokenFromKakao(code)
-        val foundKakaoUser = userService.findKakaoUser(accessTokenFromKakao)
-        val foundUserByProviderId = userService.findByProviderId(foundKakaoUser.providerId)
+        val foundKakaoUser = fetchUserUseCase.findKakaoUser(accessTokenFromKakao)
+        val foundUserByProviderId = fetchUserUseCase.findByProviderId(foundKakaoUser.providerId)
 
         if (ObjectUtils.isEmpty(foundUserByProviderId)) {
-            registerUserUseCase.registerSocialUser(
-                SocialUserSignupCommand(
-                    username = foundKakaoUser.name,
-                    provider = foundKakaoUser.provider,
-                    providerId = foundKakaoUser.providerId
-                )
-            )
+            registerUserUseCase.registerSocialUser(SocialUserSignupCommand(username = foundKakaoUser.name, provider = foundKakaoUser.provider, providerId = foundKakaoUser.providerId))
         }
 
-        return SodamApiResponse.ok(
-            tokenService.upsertTokenForSocialUser(foundKakaoUser.providerId)
-        )
+        return SodamApiResponse.ok(tokenService.upsertTokenForSocialUser(foundKakaoUser.providerId))
     }
 
     @PostMapping("/api/v1/reissue")
@@ -93,8 +84,6 @@ class AuthController(
         if (StringUtils.isBlank(refreshToken) || StringUtils.isBlank(accessToken)) {
             return SodamApiResponse.fail(ErrorCode.DEFAULT_ERROR, "토큰이 없습니다.")
         }
-        return SodamApiResponse.ok(
-            tokenService.reissueToken(accessToken, refreshToken)
-        )
+        return SodamApiResponse.ok(tokenService.reissueToken(accessToken, refreshToken))
     }
 }

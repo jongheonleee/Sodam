@@ -5,6 +5,7 @@ import com.backend.sodam.domain.grades.model.GradesType
 import com.backend.sodam.domain.grades.repository.GradesJpaRepository
 import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
 import com.backend.sodam.domain.grades.repository.NormalUserGradeRepository
+import com.backend.sodam.domain.grades.repository.SocialUserGradeRepository
 import com.backend.sodam.domain.positions.entity.PositionsEntity
 import com.backend.sodam.domain.positions.model.PositionsType
 import com.backend.sodam.domain.positions.repository.PositionJpaRepository
@@ -33,7 +34,7 @@ class SocialUserRepositoryIntegrationTest(
     // - 의존하고 있는 오브젝트
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val socialUserPositionRepository: SocialUserPositionRepository,
-    private val normalUserGradeRepository: NormalUserGradeRepository,
+    private val socialUserGradeRepositiory: SocialUserGradeRepository,
     private val socialUserSubscriptionRepository: SocialUserSubscriptionRepository,
 
     // 테스트 환경 구축에 필요한 오브젝트
@@ -195,7 +196,7 @@ class SocialUserRepositoryIntegrationTest(
         it ("소셜회원이 정상적으로 등록되었다면, 회원 정보, 포지션, 등급, 구독권을 정상적으로 조회해야한다.") {
             val target = sut.createSocialUser(command)
             socialUserPositionRepository.createByPositionName(target.userId, PositionsType.TBD.fullName)
-            normalUserGradeRepository.createGradeForSocialUser(target.userId, GradesType.ENTRY.name)
+            socialUserGradeRepositiory.createGrade(target.userId, GradesType.ENTRY)
             socialUserSubscriptionRepository.createSubscription(target.userId, SubscriptionsType.FREE)
 
             val optional = sut.findProfileInfo(target.userId)

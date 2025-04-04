@@ -18,8 +18,6 @@ class ArticleDislikeController(
     @GetMapping("/api/v1/articles/{articleId}/dislike")
     fun dislikeArticle(@PathVariable("articleId") articleId: Long): SodamApiResponse<Unit> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(
-            articleDislikeService.handleDislike(userId, articleId)
-        )
+        return SodamApiResponse.ok(articleDislikeService.handleDislike(userId, articleId))
     }
 }

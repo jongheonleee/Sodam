@@ -3,15 +3,25 @@ import com.backend.sodam.domain.grades.entity.GradesEntity
 import com.backend.sodam.domain.grades.repository.GradesJpaRepository
 import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
 import com.backend.sodam.domain.positions.entity.PositionsEntity
+import com.backend.sodam.domain.positions.exception.PositionException
 import com.backend.sodam.domain.positions.repository.PositionJpaRepository
 import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
+import com.backend.sodam.domain.users.controller.response.UserSignupResponse
+import com.backend.sodam.domain.users.entity.UsersEntity
+import com.backend.sodam.domain.users.exception.UserException
+import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
+import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.kotest.matchers.shouldBe
+import jakarta.persistence.EntityManager
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 
@@ -29,18 +39,20 @@ class UserServiceIntegrationTest(
 
     // 테스트 환경 구축에 필요한 오브젝트
     // - 1. 기본적으로 세팅되어야 하는 데이터
-    private val positionsJpaRepository: PositionJpaRepository,
     private val gradesJpaRepository: GradesJpaRepository,
+    private val positionsJpaRepository: PositionJpaRepository,
     private val subscriptionJpaRepository: SubscriptionJpaRepository,
 
     // - 2. 회원과 연관된 교차 테이블
-    private val userPositionsJpaRepository: UsersPositionJpaRepository,
     private val userGradeJpaRepository: UserGradeJpaRepository,
+    private val userPositionsJpaRepository: UsersPositionJpaRepository,
     private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
 
     // - 3. 회원 테이블
     private val normalUserJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
+
+    // - 4. 그외 오브젝트
 ): BehaviorSpec({
 
     // 테스트 과정에서 사용할 목 데이터
@@ -59,6 +71,14 @@ class UserServiceIntegrationTest(
                                   gradeSummary = "테스트용 등급 데이터입니다.",
                                   gradeDescription = "테스트용 등급데이터입니다.",
                                   validYN = 0 )
+
+    val mockNormalUserForDuplicatedEmail = UsersEntity( userId = UUID.randomUUID().toString(),
+                                                        userName = "테스트 유저",
+                                                        userEmail = "duplicated@email.com",
+                                                        introduce = "테스트 유저",
+                                                        password = "password",
+                                                        profileImageUrl = "dedede")
+
 
     // kotest에서 트랜잭션을 적용하려면 SpringExtension을 사용해야함
     extension(SpringExtension)
@@ -84,326 +104,268 @@ class UserServiceIntegrationTest(
         positionsJpaRepository.save(mockPosition)
         gradesJpaRepository.save(mockGrade)
         subscriptionJpaRepository.save(mockSubscription)
+        normalUserJpaRepository.save(mockNormalUserForDuplicatedEmail)
 
     }
 
+    // 테스트 환경 정리
+    afterTest {
+        // 회원 교차 테이블 비우기
+        userPositionsJpaRepository.deleteAll()
+        userGradeJpaRepository.deleteAll()
+        userSubscriptionJpaRepository.deleteAll()
 
-//    // 1. 일반 회원 회원가입 처리 테스트
-//    given("(1) 사용자가 올바른 형태의 데이터를 전달했고") {
-//        val command = UserSignupCommand(
-//            email = "test@test.com",
-//            name = "테스트용 이름",
-//            password = "password123",
-//            positionId = mockPosition.positionId,
-//            profileImage = "이미지 url",
-//            introduce = "테스트용 더미 데이터"
-//        )
-//
-//        `when`("회원가입 메서드를 호출하면", {
-//            val actual = sut.re(command)
-//            val expected = UserSignupResponse(
-//                username = "테스트용 이름",
-//                encryptedPassword = "password123",
-//                email = "test@test.com",
-//                introduce = "테스트용 더미 데이터"
-//            )
-//
-//            then("등록된 회원 정보를 성공적으로 반환한다.") {
-//                actual.email shouldBe expected.email
-//                actual.username shouldBe expected.username
-//                actual.introduce shouldBe expected.introduce
-//                actual.encryptedPassword shouldBe expected.encryptedPassword
-//            }
-//        })
-//    }
-//
-//    given("(2) 사용자가 중복된 이메일을 전달했고") {
-//        val command = UserSignupCommand(
-//            email = "test@test.com",
-//            name = "테스트용 이름",
-//            password = "password123",
-//            positionId = mockPosition.positionId,
-//            profileImage = "이미지 url",
-//            introduce = "테스트용 더미 데이터"
-//        )
-//
-//        `when`("회원가입 메서드를 호출하면", {
-//            // 회원 1개 사전에 등록
-//            sut.signupUser(command)
-//
-//            val actual = shouldThrow<UserException.UserAlreadyExistsException> {
-//                sut.signupUser(command)
-//            }
-//
-//            then("UserAlreadyExistsException 예외가 발생한다.") {
-//                actual shouldBe UserException.UserAlreadyExistsException()
-//            }
-//        })
-//    }
-//
-//    // 2. 소셜회원 회원가입 처리 테스트
-//    given("(1) 사용자가 올바른 형태에 데이터를 전달했고") {
-//        val command = SocialUserSignupCommand(
-//            username = "테스트용 이름",
-//            provider = "kakao",
-//            providerId = "213957292"
-//        )
-//
-//        `when`("소셜 회원가입 메서드를 호출하면", {
-//            val expected = UserSignupResponse( username = "테스트용 이름",
-//                                               encryptedPassword = "",
-//                                               email = "",
-//                                               introduce = "")
-//            val actual = sut.signupSocialUser(command)
-//
-//
-//            then("등록된 회원 정보를 성공적으로 반환한다.") {
-//                actual.username shouldBe expected.username
-//                actual.encryptedPassword shouldBe expected.encryptedPassword
-//                actual.email shouldBe expected.email
-//                actual.introduce shouldBe expected.introduce
-//            }
-//        })
-//
-//    }
-//
-//    given("(2) 사용자가 전달한 데이터에서 providerId가 이미 등록된 아이디일 때", {
-//        val command = SocialUserSignupCommand(
-//            username = "테스트용 이름",
-//            provider = "kakao",
-//            providerId = "213957292"
-//        )
-//
-//
-//        `when`("소셜 회원가입 메서드를 호출하면", {
-//            // 사전에 미리 등록
-//            sut.signupSocialUser(command)
-//
-//            val actual = shouldThrow<UserException.SocialUserAlreadyExistsException> {
-//                sut.signupSocialUser(command)
-//            }
-//            then("SocialUserAlreadyExistsException 예외가 발생한다.") {
-//                actual shouldBe UserException.SocialUserAlreadyExistsException()
-//            }
-//        })
-//    })
-//
-//    // 3. 회원 유저 정보 수정 처리 테스트
-//    // 3-1. 일반 회원의 경우
-//    given("[일반회원](1) 사용자가 올바른 데이터를 전달했고") {
-//        val command = UserSignupCommand(
-//            email = "test@test.com",
-//            name = "테스트용 이름",
-//            password = "password123",
-//            positionId = mockPosition.positionId,
-//            profileImage = "이미지 url",
-//            introduce = "테스트용 더미 데이터"
-//        )
-//
-//        `when`("회원 수정 메서드를 호출하면", {
-//            // 회원 등록
-//            val response = sut.signupUser(command)
-//            val target = normalUserJpaRepository.findByUserEmail(response.email).get()
-//
-//            // 회원 수정을 위한 작업 세팅
-//            val updateCommand = UserUpdateCommand(
-//                email = "new@test.com",
-//                name = "업데이트된 테스트용 이름",
-//                encryptedPassword = "password123",
-//                positionId = mockPosition.positionId,
-//                introduce = "업데이트된 테스트용 더미 데이터"
-//            )
-//
-//            // 회원 정보 수정 처리
-//            val actual = sut.updateUserInfo(
-//                userId = target.userId,
-//                userUpdateCommand = updateCommand,
-//            )
-//            val expected = UserUpdateResponse(
-//                username = "업데이트된 테스트용 이름",
-//                encryptedPassword = "password123",
-//                email = "new@test.com",
-//                introduce = "업데이트된 테스트용 더미 데이터"
-//            )
-//
-//            then("수정된 회원 정보가 성공적으로 반환된다.") {
-//                actual.email shouldBe expected.email
-//                actual.username shouldBe expected.username
-//                actual.introduce shouldBe expected.introduce
-//                actual.encryptedPassword shouldBe expected.encryptedPassword
-//            }
-//        })
-//    }
-//
-//    given("[일반회원](2) 사용자가 전달한 데이터에서 userId에 해당하는 유저가 없는 경우") {
-//        val notExistsUserId = "dwalfnrg123"
-//        val updateCommand = UserUpdateCommand(
-//            email = "new@test.com",
-//            name = "업데이트된 테스트용 이름",
-//            encryptedPassword = "password123",
-//            positionId = mockPosition.positionId,
-//            introduce = "업데이트된 테스트용 더미 데이터"
-//        )
-//
-//        `when`("회원 수정 메서드를 호출하면", {
-//            val actual = shouldThrow<UserException.UserNotFoundException> {
-//                sut.updateUserInfo(
-//                    userId = notExistsUserId,
-//                    userUpdateCommand = updateCommand,
-//                )
-//            }
-//
-//            then("UserNotFoundException 예외가 발생한다.") {
-//                actual shouldBe UserException.UserNotFoundException()
-//            }
-//        })
-//    }
-//
-//    given("[일반회원](3) 사용자가 중복된 이메일을 전달한 경우") {
-//        val commandFirstUser = UserSignupCommand(
-//            email = "test@test.com",
-//            name = "테스트용 이름",
-//            password = "password123",
-//            positionId = mockPosition.positionId,
-//            profileImage = "이미지 url",
-//            introduce = "테스트용 더미 데이터"
-//        )
-//
-//        val commandSecondUser = UserSignupCommand(
-//            email = "duplicatedemail@test.com",
-//            name = "테스트용 이름",
-//            password = "password123",
-//            positionId = mockPosition.positionId,
-//            profileImage = "이미지 url",
-//            introduce = "테스트용 더미 데이터"
-//        )
-//
-//
-//        `when`("회원 수정 메서드를 호출하면", {
-//            // 회원 등록
-//            val response = sut.signupUser(commandFirstUser)
-//            sut.signupUser(commandSecondUser)
-//            val target = normalUserJpaRepository.findByUserEmail(response.email).get()
-//
-//            // 회원 수정을 위한 작업 세팅
-//            val updateCommandWithDuplicatedEmail = UserUpdateCommand(
-//                email = "duplicatedemail@test.com",
-//                name = "업데이트된 테스트용 이름",
-//                encryptedPassword = "password123",
-//                positionId = mockPosition.positionId,
-//                introduce = "업데이트된 테스트용 더미 데이터"
-//            )
-//
-//            val actual = shouldThrow<UserException.UserAlreadyExistsException> {
-//                sut.updateUserInfo(
-//                    userId = target.userId,
-//                    userUpdateCommand = updateCommandWithDuplicatedEmail,
-//                )
-//            }
-//
-//            then("UserAlreadyExistsException 예외가 발생한다.") {
-//                actual shouldBe UserException.UserAlreadyExistsException()
-//            }
-//        })
-//    }
-//
-//    // 3-2. 소셜 회원의 경우
-//    given("[소셜회원](1) 사용자가 올바른 데이터를 전달했고") {
-//        `when`("회원 수정 메서드를 호출하면", {
-//            // 회원 등록
-//            val command = SocialUserSignupCommand(
-//                username = "테스트용 이름",
-//                provider = "kakao",
-//                providerId = "213957292"
-//            )
-//
-//            // 회원 수정을 위한 작업 세팅
-//            val updateCommand = UserUpdateCommand(
-//                email = "new@test.com",
-//                name = "업데이트된 테스트용 이름",
-//                encryptedPassword = "password123",
-//                positionId = mockPosition.positionId,
-//                introduce = "업데이트된 테스트용 더미 데이터"
-//            )
-//
-//            // 회원 등록 및 해당 회원 조회
-//            sut.signupSocialUser(command)
-//            val target = socialUserJpaRepository.findByProviderIdWithSubscription(providerId = command.providerId).get()
-//            socialUserJpaRepository.findAll().forEach {
-//                println("여기다")
-//                println("it's socialId : " + it.socialUserId)
-//                println("it's providerId : " + it.providerId)
-//                println("target's socialId : " + target.socialUserId)
-//                println("target's providerId : " + target.providerId)
-//                println("is exists? : " + socialUserJpaRepository.existsBySocialUserId(target.socialUserId))
-//            }
-//
-//            // 기대한 결과
-//            val expected = UserUpdateResponse(
-//                email = "new@test.com",
-//                username = "업데이트된 테스트용 이름",
-//                encryptedPassword = "password123",
-//                introduce = "업데이트된 테스트용 더미 데이터"
-//            )
-//
-//            then("수정된 회원 정보가 성공적으로 반환된다.") {
-//                val actual = sut.updateUserInfo(
-//                    userId = target.socialUserId,
-//                    userUpdateCommand = updateCommand,
-//                )
-//
-//                actual.email shouldBe expected.email
-//                actual.username shouldBe expected.username
-//                actual.introduce shouldBe expected.introduce
-//                actual.encryptedPassword shouldBe expected.encryptedPassword
-//            }
-//        })
-//    }
-//
-//    given("[소셜회원](2) 사용자가 전달한 데이터에서 userId에 해당하는 유저가 없는 경우") {
-//        `when`("회원 수정 메서드를 호출하면", {
-//
-//
-//            then("UserNotFoundException 예외가 발생한다.") {
-//
-//            }
-//        })
-//    }
-//
-//    given("[소셜회원](3) 사용자가 중복된 이메일을 전달한 경우") {
-//        `when`("회원 수정 메서드를 호출하면", {
-//
-//            then("UserAlreadyExistsException 예외가 발생한다.") {
-//
-//            }
-//        })
-//    }
-//
-//    given("4. 회원 이메일로 조회") {
-//        // TODO: 테스트 코드 작성
-//    }
-//
-//    given("5. 회원 아이디로 조회") {
-//        // TODO: 테스트 코드 작성
-//    }
-//
-//    given("6. 회원 토큰으로 카카오 유저 조회") {
-//        // TODO: 테스트 코드 작성
-//    }
-//
-//    given("7. 회원 providerId로 조회") {
-//        // TODO: 테스트 코드 작성
-//    }
-//
-//    given("8. 회원 프로필 정보 조회") {
-//        // TODO: 테스트 코드 작성
-//    }
-//
-//    given("9. 회원 자신의 게시글 조회") {
-//        // TODO: 테스트 코드 작성
-//    }
-//
-//    given("10. 회원 자신이 좋아요 누른 게시글 조회") {
-//        // TODO: 테스트 코드 작성
-//    }
+        // 회원과 연관되는 테이블 비우기
+        positionsJpaRepository.deleteAll()
+        gradesJpaRepository.deleteAll()
+        subscriptionJpaRepository.deleteAll()
+
+        // 일반회원 및 소셜회원 테이블 비우기
+        normalUserJpaRepository.deleteAll()
+        socialUserJpaRepository.deleteAll()
+
+        // 테이블 초기화 되었는지 확인
+        normalUserJpaRepository.count().shouldBe(0)
+        socialUserJpaRepository.count().shouldBe(0)
+        userPositionsJpaRepository.count().shouldBe(0)
+        userGradeJpaRepository.count().shouldBe(0)
+        userSubscriptionJpaRepository.count().shouldBe(0)
+        positionsJpaRepository.count().shouldBe(0)
+        gradesJpaRepository.count().shouldBe(0)
+        subscriptionJpaRepository.count().shouldBe(0)
+    }
+
+    /**
+     * UserService 지원 기능
+     * - 1. 일반회원 회원가입 => 성공/실패(중복된 이메일, 존재하지 않는 positionId)
+     * - 2. 소셜회원 회원가입 => 성공
+     * - 3. 회원정보 업데이트 => 성공/실패(중복된 이메일, 존재하지 않는 userId, 존재하지 않는 positionId)
+     * - 4. 회원 이메일 조회 => 성공/실패(존재하지 않는 이메일)
+     * - 5. 회원 아이디 조회 => 성공/실패(존재하지 않는 userId)
+     * - 6. 카카오 회원 조회 => 보류
+     * - 7. providerId로 조회 => 성공/실패(존재하지 않는 providerId -> null)
+     * - 8. 회원 상세(프로필) 조회 => 설공/실패(존재하지 않는 userId)
+     * - 9. 자신이 작성한 게시글 조회 => 성공
+     * - 10. 자신의 좋아요 게시글 조회  => 성공
+     */
+
+    // 1. 일반 회원 회원가입 처리 테스트
+    given("일반회원 회원가입을 할 때") {
+
+        `when`("사용자가 유효한 데이터를 전달하면", {
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+
+            val actual = sut.registerNormalUser(userSignupCommand = command)
+
+            val expected = UserSignupResponse(
+                username = command.name,
+                email = command.email,
+                encryptedPassword = command.password,
+                introduce = command.introduce,
+            )
+            then("성공적으로 회원가입이 되고 등록된 회원 정보의 일부를 반환한다.") {
+                actual.email shouldBe expected.email
+                actual.username shouldBe expected.username
+                actual.introduce shouldBe command.introduce
+                actual.encryptedPassword shouldBe expected.encryptedPassword
+            }
+        })
+
+
+        `when`("사용자가 중복된 이메일을 전달하면", {
+            // 중복된 이메일이 담긴 command
+            val commandWithDuplicatedEmail = UserSignupCommand(
+                email = mockNormalUserForDuplicatedEmail.userEmail,
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+            then("UserAlreadyExistsException 예외가 발생한다.") {
+                assertThrows<UserException.UserAlreadyExistsException> {
+                    sut.registerNormalUser(userSignupCommand = commandWithDuplicatedEmail)
+                }
+            }
+        })
+
+
+        `when`("사용자가 존재하지 않는 positionId를 전달하면", {
+            val commandWithNotExistsPositionId = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = "존재하지 않는 positionId",
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+            then("PositionNotFoundException 예외가 발생한다.") {
+                assertThrows<PositionException.PositionNotFoundException> {
+                    sut.registerNormalUser(userSignupCommand = commandWithNotExistsPositionId)
+                }
+            }
+        })
+    }
+
+    given("소셜회원 회원가입을 할 때") {
+
+        `when`("사용자가 유효한 데이터를 전달하면", {
+
+            then("성공적으로 회원가입이 되고 등록된 회원 정보의 일부를 반환한다.") {
+
+            }
+        })
+    }
+
+    given("회원정보를 업데이트할 때") {
+
+        `when`("사용자가 유효한 데이터를 전달하면", {
+
+            then("성공적으로 회원정보를 업데이트하고 변경된 회원 정보의 일부를 반환한다.") {
+
+            }
+        })
+
+        `when`("사용자가 중복된 이메일을 전달하면", {
+
+            then("UserAlreadyException 예외가 발생한다.") {
+
+            }
+        })
+
+        `when`("사용자가 존재하지 않는 userId를 전달하면", {
+
+            then("UserNotFoundException 예외가 발생한다.") {
+
+            }
+        })
+
+        `when`("사용자가 존재하지 않는 positionId를 전달하면", {
+
+            then("PositionNotFoundException 예외가 발생한다.") {
+
+            }
+        })
+    }
+
+    given("회원 이메일 조회할 때") {
+
+        `when`("존재하는 이메일을 전달하면", {
+
+            then("등록된 회원 정보를 반환한다.") {
+
+            }
+        })
+
+        `when`("존재하지 않는 이메일을 전달하면", {
+
+            then("UserNotFoundException 예외가 발생한다.") {
+
+            }
+        })
+    }
+
+    given("회원 아이디 조회할 때") {
+
+        `when`("존재하는 아이디를 전달하면", {
+
+            then("등록된 회원 정보를 반환한다.") {
+
+            }
+        })
+
+        `when`("존재하지 않는 아이디를 전달하면", {
+
+            then("UserNotFoundException 예외가 발생한다.") {
+
+            }
+        })
+    }
+
+    given("키키오 회원 조회를 할 때") {
+
+        `when`("존재하는 토큰이 전달하면", {
+
+            then("카카오 회원을 반환한다.") {
+
+            }
+        })
+    }
+
+    given("providerId로 회원을 조회할 때") {
+
+        `when`("providerId가 존재하면", {
+
+            then("등록되어 있는 소셜회원 정보를 반환한다.") {
+
+            }
+        })
+
+        `when`("providerId가 존재하지 않는다면", {
+
+            then("UserNotFoundException 예외가 발생한다.") {
+
+            }
+        })
+    }
+
+    given("회원 상세(프로필) 조회할 때") {
+
+        `when`("존재하는 userId를 전달하면", {
+
+            then("해당 유저의 상세 정보(프로필)을 반환한다.") {
+
+            }
+        })
+
+        `when`("존재하지 않는 userId를 전달하면", {
+
+            then("UserNotFoundException 예외가 발생한다.") {
+
+            }
+        })
+    }
+
+    given("회원이 작성한 게시글 조회할 때") {
+
+        `when`("존재하는 회원이면") {
+
+            then("자신이 작성한 게시글을 성공적으로 반환한다.") {
+
+            }
+        }
+
+        `when`("존재하지 않는 회원이라면") {
+
+            then("UserNotFoundException 예외가 발생한다.") {
+
+            }
+        }
+    }
+
+    given("회원의 좋아요 게시글을 조회할 때") {
+
+        `when`("존재하는 회원이면") {
+
+            then("자신의 좋아요 게시글을 성공적으로 반환한다.") {
+
+            }
+        }
+
+        `when`("존재하지 않는 회원이라면") {
+
+            then("UserNotFoundException 예외가 발생한다.") {
+
+            }
+        }
+    }
+
+
 })

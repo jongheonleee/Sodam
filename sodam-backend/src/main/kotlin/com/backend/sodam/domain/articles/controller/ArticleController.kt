@@ -38,9 +38,7 @@ class ArticleController(
     ): SodamApiResponse<ArticleCreateResponse> {
         val userId = tokenProvider.getUserId()
         val command = request.toCommand()
-        return SodamApiResponse.ok(
-            articleService.create(userId, command)
-        )
+        return SodamApiResponse.ok(articleService.create(userId, command))
     }
 
     // 게시글 여러개 조회
@@ -49,11 +47,8 @@ class ArticleController(
         pageable: Pageable,
         articleSearchRequest: ArticleSearchRequest
     ): SodamApiResponse<Page<ArticleSummaryResponse>> {
-        println(articleSearchRequest.toString())
         val command = articleSearchRequest.toCommand()
-        return SodamApiResponse.ok(
-            articleService.fetchFromClient(pageable, command)
-        )
+        return SodamApiResponse.ok(articleService.fetchFromClient(pageable, command))
     }
 
     // 게시글 상세 조회
@@ -61,9 +56,7 @@ class ArticleController(
     fun getArticle(
         @PathVariable("articleId") articleId: Long
     ): SodamApiResponse<ArticleDetailResponse> {
-        return SodamApiResponse.ok(
-            articleService.getArticleDetail(articleId)
-        )
+        return SodamApiResponse.ok(articleService.getArticleDetail(articleId))
     }
 
     // 게시글 단순 조회 - 게시글 수정 처리용
@@ -72,9 +65,7 @@ class ArticleController(
         @PathVariable("articleId") articleId: Long
     ): SodamApiResponse<ArticleSimpleResponse> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(
-            articleService.getArticleSimple(userId, articleId)
-        )
+        return SodamApiResponse.ok(articleService.getArticleSimple(userId, articleId))
     }
 
     // 게시글 수정
@@ -86,17 +77,13 @@ class ArticleController(
     ): SodamApiResponse<ArticleUpdateResponse> {
         val userId = tokenProvider.getUserId()
         val command = request.toCommand(userId)
-        return SodamApiResponse.ok(
-            articleService.update(articleId, command)
-        )
+        return SodamApiResponse.ok(articleService.update(articleId, command))
     }
 
     // 게시글 삭제
     @DeleteMapping("/api/v1/articles/{articleId}")
     fun deleteArticle(@PathVariable("articleId") articleId: Long): SodamApiResponse<Unit> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(
-            articleService.delete(userId, articleId)
-        )
+        return SodamApiResponse.ok(articleService.delete(userId, articleId))
     }
 }

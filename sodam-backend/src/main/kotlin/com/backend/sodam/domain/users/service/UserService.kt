@@ -94,7 +94,7 @@ class UserService(
         val sodamUser = createNormalUserPort.createUser(userSignupCommand)
         userPositionCreatePort.createByPositionId(userId = sodamUser.userId, positionId = userSignupCommand.positionId)
         userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId, subscriptionType = SubscriptionsType.FREE)
-        userGraderCreatePort.createGrade(sodamUser.userId, GradesType.ENTRY)
+        userGraderCreatePort.createGrade(userId = sodamUser.userId, gradeType = GradesType.ENTRY)
         return sodamUser.toSignupResponse()
     }
 
@@ -117,7 +117,7 @@ class UserService(
         val sodamUser = createSocialUserPort.createSocialUser(socialUserSignupCommand)
         userPositionCreatePort.createByPositionName(userId = sodamUser.userId, positionName = PositionsType.TBD.fullName)
         userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId, subscriptionType = SubscriptionsType.FREE)
-        userGradeCreatePort.createGrade(sodamUser.userId, GradesType.ENTRY)
+        userGradeCreatePort.createGrade(userId = sodamUser.userId, gradeType = GradesType.ENTRY)
         return sodamUser.toSignupResponse()
     }
 
@@ -143,23 +143,22 @@ class UserService(
         return updatedSodamUser.toUpdateResponse()
     }
 
-
-    fun findByEmail(email: String): UserResponse {
+    override fun findByEmail(email: String): UserResponse {
         val fetchPort = getFetchPortByEmail(email)
         return UserResponse.toResponse(sodamUser = fetchPort.findByEmail(email))
     }
 
-    fun findByUserId(userId: String): UserResponse {
+    override fun findByUserId(userId: String): UserResponse {
         val fetchPort = getFetchPortByUserId(userId)
         return UserResponse.toResponse(sodamUser = fetchPort.findByUserId(userId).get())
     }
 
-    fun findKakaoUser(accessToken: String): SocialUserResponse {
+    override fun findKakaoUser(accessToken: String): SocialUserResponse {
         val foundUserFromKakao = kakaoUserPort.findUserFromKakao(accessToken)
         return SocialUserResponse(name = foundUserFromKakao.username, provider = "kakao", providerId = foundUserFromKakao.providerId)
     }
 
-    fun findByProviderId(providerId: String): UserResponse? {
+    override fun findByProviderId(providerId: String): UserResponse? {
         return fetchSocialUserPort.findByProviderId(providerId) // socialUser
             .map { UserResponse.toResponse(it) }
             .orElse(null)
@@ -170,7 +169,7 @@ class UserService(
         readOnly = true,
         isolation = Isolation.READ_COMMITTED,
     )
-    fun findUserProfileInfo(userId: String): UserProfileResponse {
+    override fun findUserProfileInfo(userId: String): UserProfileResponse {
         val fetchPort = getFetchPortByUserId(userId)
         val sodamUserDetail = fetchPort.findProfileInfo(userId).get()
         return sodamUserDetail.toResponse()
@@ -180,7 +179,7 @@ class UserService(
         readOnly = true,
         isolation = Isolation.READ_COMMITTED,
     )
-    fun getOwnArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
+    override fun getOwnArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
         val fetchPort = getFetchPortByUserId(userId)
         return fetchPort.findOwnArticlesByPageBy(pageable = pageable, userId = userId)
     }
@@ -189,12 +188,12 @@ class UserService(
         readOnly = true,
         isolation = Isolation.READ_COMMITTED,
     )
-    fun getOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
+    override fun getOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
         val fetchPort = getFetchPortByUserId(userId)
         return fetchPort.findOwnLikeArticles(pageable = pageable, userId = userId)
     }
 
-    // 특정 유저의 부가정보를 조회하는 추출 메서드
+    // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
     private fun extractUserType(userId: String): UserType {
         val fetchPort = getFetchPortByUserId(userId)
         val sodamUser = fetchPort.findByUserId(userId).get()
