@@ -1,4 +1,22 @@
-package com.backend.sodam.domain.users.service import com.backend.sodam.domain.grades.entity.GradesEntity
+import java.time.LocalDateTime
+import java.util.*
+
+import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.extensions.spring.SpringExtension
+import io.kotest.matchers.shouldBe
+
+import org.junit.jupiter.api.assertThrows
+
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+
+import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.entity.ArticleEntity
+import com.backend.sodam.domain.articles.repository.ArticleJpaRepository
+import com.backend.sodam.domain.categories.entity.CategoryEntity
+import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
+import com.backend.sodam.domain.grades.entity.GradesEntity
 import com.backend.sodam.domain.grades.repository.GradesJpaRepository
 import com.backend.sodam.domain.grades.repository.UserGradeJpaRepository
 import com.backend.sodam.domain.positions.entity.PositionsEntity
@@ -8,6 +26,7 @@ import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
+import com.backend.sodam.domain.users.controller.response.UserProfileResponse
 import com.backend.sodam.domain.users.controller.response.UserResponse
 import com.backend.sodam.domain.users.controller.response.UserSignupResponse
 import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
@@ -15,15 +34,12 @@ import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
+import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
-import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.extensions.spring.SpringExtension
-import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.assertThrows
-import org.springframework.boot.test.context.SpringBootTest
-import java.util.*
+
+
 
 /**
  * 통합 테스트를 작성한 이유
@@ -50,9 +66,11 @@ class UserServiceIntegrationTest(
 
     // - 3. 회원 테이블
     private val normalUserJpaRepository: NormalUserJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository
+    private val socialUserJpaRepository: SocialUserJpaRepository,
 
     // - 4. 그외 오브젝트
+    private val articleJpaRepository: ArticleJpaRepository,
+    private val categoryJpaRepository: CategoryJpaRepository,
 ) : BehaviorSpec({
 
     // 테스트 과정에서 사용할 목 데이터
@@ -87,6 +105,14 @@ class UserServiceIntegrationTest(
         profileImageUrl = "dedede"
     )
 
+    val mockCategory = CategoryEntity(
+        categoryId = UUID.randomUUID().toString(),
+        topCategoryId = UUID.randomUUID().toString(),
+        categoryName = "테스트용 카테고리",
+        categoryOrd = 1,
+        validYN = 0
+    )
+
     // kotest에서 트랜잭션을 적용하려면 SpringExtension을 사용해야함
     extension(SpringExtension)
 
@@ -106,12 +132,15 @@ class UserServiceIntegrationTest(
         positionsJpaRepository.deleteAll()
         gradesJpaRepository.deleteAll()
         subscriptionJpaRepository.deleteAll()
+        articleJpaRepository.deleteAll()
+        categoryJpaRepository.deleteAll()
 
         // 회원가입 처리 등에서 요구되는 기본 데이터 셋 추가 - 1. 포지션, 2. 구독권, 3. 등급
         positionsJpaRepository.save(mockPosition)
         gradesJpaRepository.save(mockGrade)
         subscriptionJpaRepository.save(mockSubscription)
         normalUserJpaRepository.save(mockNormalUser)
+        categoryJpaRepository.save(mockCategory)
     }
 
     // 테스트 환경 정리
@@ -130,6 +159,10 @@ class UserServiceIntegrationTest(
         normalUserJpaRepository.deleteAll()
         socialUserJpaRepository.deleteAll()
 
+        // 게시글 테이블 지우기
+        articleJpaRepository.deleteAll()
+        categoryJpaRepository.deleteAll()
+
         // 테이블 초기화 되었는지 확인
         normalUserJpaRepository.count().shouldBe(0)
         socialUserJpaRepository.count().shouldBe(0)
@@ -139,6 +172,8 @@ class UserServiceIntegrationTest(
         positionsJpaRepository.count().shouldBe(0)
         gradesJpaRepository.count().shouldBe(0)
         subscriptionJpaRepository.count().shouldBe(0)
+        articleJpaRepository.count().shouldBe(0)
+        categoryJpaRepository.count().shouldBe(0)
     }
 
     /**
@@ -561,6 +596,8 @@ class UserServiceIntegrationTest(
         })
     }
 
+    // 이 부분은 추후에 단위 테스트에서 진행
+    // - userId는 uuid이기 때문임
     given("회원 아이디 조회할 때") {
 
         `when`("존재하는 아이디를 전달하면", {
@@ -588,14 +625,47 @@ class UserServiceIntegrationTest(
     given("providerId로 회원을 조회할 때") {
 
         `when`("providerId가 존재하면", {
+            val command = SocialUserSignupCommand(
+                username = "테스트 유저",
+                provider = "kakao",
+                providerId = UUID.randomUUID().toString()
+            )
+
+            sut.registerSocialUser(socialUserSignupCommand = command)
+
+            val actual = sut.findByProviderId(providerId = command.providerId)!!
+            val expected = UserResponse(
+                userId = "",
+                email = "",
+                name = command.username,
+                password = "",
+                profileImage = "",
+                introduce = "",
+                role = "ROLE_FREE"
+            )
 
             then("등록되어 있는 소셜회원 정보를 반환한다.") {
+                actual.email shouldBe expected.email
+                actual.name shouldBe expected.name
+                actual.introduce shouldBe expected.introduce
+                actual.role shouldBe expected.role
             }
         })
 
         `when`("providerId가 존재하지 않는다면", {
+            val command = SocialUserSignupCommand(
+                username = "테스트 유저",
+                provider = "kakao",
+                providerId = UUID.randomUUID().toString()
+            )
 
-            then("UserNotFoundException 예외가 발생한다.") {
+            sut.registerSocialUser(socialUserSignupCommand = command)
+            val notExistsProviderId = "dwadwadwa"
+            val actual = sut.findByProviderId(providerId = notExistsProviderId)
+
+
+            then("Null이 반환된다.") {
+                actual shouldBe null
             }
         })
     }
@@ -604,43 +674,162 @@ class UserServiceIntegrationTest(
 
         `when`("존재하는 userId를 전달하면", {
 
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+
+            val result = sut.registerNormalUser(userSignupCommand = command)
+            val target = sut.findByEmail(result.email)
+            val actual = sut.findUserProfileInfo(userId = target.userId)
+
+            val expected = UserProfileResponse(
+                userId = target.userId,
+                name = command.name,
+                email = command.email,
+                introduce = command.introduce,
+                profileImageUrl = "",
+                subscription = "FREE",
+                articleTotalCnt = 0,
+                grade = "ENTRY",
+                ranking = 5000,
+                positions = listOf("미정"),
+            )
+
             then("해당 유저의 상세 정보(프로필)을 반환한다.") {
+                actual.userId shouldBe expected.userId
+                actual.email shouldBe expected.email
+                actual.name shouldBe expected.name
+                actual.introduce shouldBe expected.introduce
+                actual.grade shouldBe expected.grade
+                actual.articleTotalCnt shouldBe expected.articleTotalCnt
+                actual.ranking shouldBe expected.ranking
+                actual.positions[0] shouldBe expected.positions[0]
+
             }
         })
 
         `when`("존재하지 않는 userId를 전달하면", {
+            val command = UserSignupCommand(
+                email = "test@test.com",
+                name = "테스트 유저",
+                password = "asdf1234",
+                positionId = mockPosition.positionId,
+                profileImage = "테스트 유저 프로필 사진 url",
+                introduce = "테스트 유저 입니다."
+            )
+
+            val result = sut.registerNormalUser(userSignupCommand = command)
+            val notExistsUserId = "dwadwadw"
+
 
             then("UserNotFoundException 예외가 발생한다.") {
+                assertThrows<UserException.UserNotFoundException> {
+                    sut.findUserProfileInfo(userId = notExistsUserId)
+                }
             }
         })
     }
 
+
     given("회원이 작성한 게시글 조회할 때") {
+        // 1. 일반회원
 
         `when`("존재하는 회원이면") {
+            // 목 회원, 목 카테고리 활용
 
+            // 게시글 여러개 등록
+            for (i in 1..5) {
+                val mockArticle = ArticleEntity(
+                    name = mockNormalUser.userName,
+                    user = mockNormalUser,
+                    articleTitle = "테스트 제목$i",
+                    articleSummary = "테스트 서머리$i",
+                    articleContent = "테스트 내용$i",
+                    articleViewCnt = 0,
+                    articleLikeCnt = 0,
+                    articleDislikeCnt = 0,
+                    category = mockCategory,
+                )
+                articleJpaRepository.save(mockArticle)
+            }
+
+            // 조회 처리
+            val pageable = PageRequest.of(0, 20)
+            val actual = sut.getOwnArticles(pageable = pageable, userId = mockNormalUser.userId)
+            val expected = PageImpl(
+                listOf(
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목1", summary = "테스트 서머리1", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목2", summary = "테스트 서머리2", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목3", summary = "테스트 서머리3", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목4", summary = "테스트 서머리4", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목5", summary = "테스트 서머리5", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    )
+                ),
+                pageable,
+                5
+            )
+
+            // 내용 비교 데이터 생성
             then("자신이 작성한 게시글을 성공적으로 반환한다.") {
+                // 내용 비교
+                actual.totalPages shouldBe expected.totalPages
+                val actualResults = actual.get().toList()
+                val expectedResults = expected.toList()
+
+                for (i in 0..4) {
+                    val a = actualResults[i]
+                    val b = expectedResults[i]
+
+                    a.title shouldBe a.title
+                    a.summary shouldBe a.summary
+                    a.username shouldBe a.username
+                }
             }
         }
 
         `when`("존재하지 않는 회원이라면") {
-
-            then("UserNotFoundException 예외가 발생한다.") {
+            for (i in 1..5) {
+                val mockArticle = ArticleEntity(
+                    name = mockNormalUser.userName,
+                    user = mockNormalUser,
+                    articleTitle = "테스트 제목$i",
+                    articleSummary = "테스트 서머리$i",
+                    articleContent = "테스트 내용$i",
+                    articleViewCnt = 0,
+                    articleLikeCnt = 0,
+                    articleDislikeCnt = 0,
+                    category = mockCategory,
+                )
+                articleJpaRepository.save(mockArticle)
             }
-        }
-    }
 
-    given("회원의 좋아요 게시글을 조회할 때") {
-
-        `when`("존재하는 회원이면") {
-
-            then("자신의 좋아요 게시글을 성공적으로 반환한다.") {
-            }
-        }
-
-        `when`("존재하지 않는 회원이라면") {
-
+            // 조회 처리
+            val pageable = PageRequest.of(0, 20)
+            val notExistsUserId = "dwadwadaw"
             then("UserNotFoundException 예외가 발생한다.") {
+                // 예외 발생 여부 확인
+                assertThrows<UserException.UserNotFoundException> {
+                    sut.getOwnArticles(pageable = pageable, userId = notExistsUserId)
+                }
             }
         }
     }

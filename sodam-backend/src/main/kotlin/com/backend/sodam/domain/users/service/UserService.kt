@@ -61,7 +61,6 @@ class UserService(
 
     // - 2. 구독권
     private val fetchSubscriptionPort: FetchSubscriptionPort,
-    private val fetchUserSubscriptionPorts: List<FetchUserSubscriptionPort>,
     private val createUserSubscriptionPorts: List<CreateUserSubscriptionPort>,
 
     // - 3. 등급
