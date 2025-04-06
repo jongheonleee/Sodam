@@ -1,7 +1,10 @@
 package com.backend.sodam.domain.articles.service
 
+import com.backend.sodam.domain.articles.exception.ArticleException
 import com.backend.sodam.domain.articles.repository.ArticleRepository
-import com.backend.sodam.domain.articles.repository.UsersArticleDislikeRepository
+import com.backend.sodam.domain.articles.service.port.CreateUserArticleDislikePort
+import com.backend.sodam.domain.articles.service.port.DeleteUserArticleDislikePort
+import com.backend.sodam.domain.articles.service.port.FetchUserArticleDislikePort
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
@@ -12,81 +15,78 @@ import org.springframework.stereotype.Service
 @RequiredArgsConstructor
 class ArticleDislikeService(
     private val fetchUserPorts: List<FetchUserPort>,
+    private val fetchUserArticleDislikePorts: List<FetchUserArticleDislikePort>,
+    private val deleteUserArticleDislikePorts: List<DeleteUserArticleDislikePort>,
+    private val createUserArticleDislikePorts: List<CreateUserArticleDislikePort>,
     private val articleRepository: ArticleRepository,
-    private val usersArticleDislikeRepository: UsersArticleDislikeRepository
 ) {
 
     fun handleDislike(userId: String, articleId: Long) {
-        // 사용자가 이미 싫어요를 누른 게시글인지 확인
-        // 만약 이미 눌렀던 싫어요 게시글의 경우
-        // 게시글 유저 싫어요 테이블에서 행을 삭제함
-        // 해당 게시글의 싫어요수 1 빼기
-        // 그렇지 않다면, 게시글 유저 싫어요 테이블에 행을 추가함
-        // 해당 게시글의 실헝요수 1 증가
-        val userType = extractUserType(userId = userId)
+        // 작업 유효성 검증
+        checkExistsArticle(articleId = articleId)
 
-        val isExists = when (userType) {
-            UserType.SOCIAL -> {
-                usersArticleDislikeRepository.existsArticleDislikeForSocialUser(
-                    articleId = articleId,
-                    socialUserId = userId
-                )
+        // 회원 유형 추출
+        val userType = extractUserType(userId)
+
+        // 해당 회원 유형을 처리할 수 있는 포트 조회
+        val fetchUserArticleDislikePort = getFetchUserArticleDislikePort(userType)
+        val deleteUserArticleDislikePort = getDeleteUserArticleDislikePort(userType)
+        val createUserArticleDislikePort = getCreateUserArticleDislikePort(userType)
+
+        // 싫어요 비즈니스 로직
+        val isExists = fetchUserArticleDislikePort.existsArticleDislike(articleId = articleId, userId = userId)
+        when(isExists) {
+            true -> {
+                deleteUserArticleDislikePort.deleteDislike(articleId = articleId, userId = userId)
+                articleRepository.decreaseDislikeCnt(articleId = articleId)
             }
 
-            else -> {
-                usersArticleDislikeRepository.existsArticleDislikeForUser(
-                    articleId = articleId,
-                    userId = userId
-                )
+            false -> {
+                createUserArticleDislikePort.createDislike(articleId = articleId, userId = userId)
+                articleRepository.increaseDislikeCnt(articleId = articleId)
             }
-        }
-
-        if (isExists) {
-            // 이것도 유저 유형마다 다르게 처리해야함
-            // 만약 이미 눌렀던 좋아요 게시글의 경우
-            // 게시글 유저 좋아요 테이블에서 행을 삭제함
-            when (userType) {
-                UserType.SOCIAL -> {
-                    usersArticleDislikeRepository.deleteForSocialUser(articleId, userId)
-                }
-                else -> {
-                    usersArticleDislikeRepository.deleteForUser(articleId, userId)
-                }
-            }
-            // 해당 게시글의 좋아요수 1 빼기
-            articleRepository.decreaseDislikeCnt(articleId)
-        } else {
-            // 그렇지 않다면, 게시글 유저 싫어요 테이블에 행을 추가함
-            when (userType) {
-                UserType.SOCIAL -> {
-                    usersArticleDislikeRepository.createForSocialUser(articleId, userId)
-                }
-                else -> {
-                    usersArticleDislikeRepository.createForUser(articleId, userId)
-                }
-            }
-            // 해당 게시글의 좋아요수 1 증가
-            articleRepository.increaseDislikeCnt(articleId)
         }
     }
 
+    // 📌 작업 유효성을 검증하는 메서드
+    private fun checkExistsArticle(articleId: Long) {
+        if (!isExistsArticle(articleId))
+            throw ArticleException.ArticleNotFoundException()
+    }
+
+    private fun isExistsArticle(articleId: Long): Boolean =
+        articleRepository.isExistsByArticleId(articleId)
+
     // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
     private fun extractUserType(userId: String): UserType {
-        val fetchPort = getFetchPortByUserId(userId)
+        val fetchPort = getFetchUserPortByUserId(userId)
         val sodamUser = fetchPort.findByUserId(userId).get()
         return sodamUser.userType
     }
 
     // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
-    private fun getFetchPortByUserType(userType: UserType): FetchUserPort =
+    private fun getFetchUserPortByUserId(userId: String): FetchUserPort =
         fetchUserPorts.stream()
-            .filter { it.isTarget(userType) }
-            .findFirst()
-            .orElseThrow { IllegalArgumentException() }
+                      .filter { it.isExistsByUserId(userId) }
+                      .findFirst()
+                      .orElseThrow { UserException.UserNotFoundException() }
 
-    private fun getFetchPortByUserId(userId: String): FetchUserPort =
-        fetchUserPorts.stream()
-            .filter { it.isExistsByUserId(userId) }
-            .findFirst()
-            .orElseThrow { UserException.UserNotFoundException() }
+    private fun getFetchUserArticleDislikePort(userType: UserType): FetchUserArticleDislikePort =
+        fetchUserArticleDislikePorts.stream()
+                                    .filter { it.isTarget(userType) }
+                                    .findFirst()
+                                    .orElseThrow { IllegalArgumentException() }
+
+    private fun getCreateUserArticleDislikePort(userType: UserType): CreateUserArticleDislikePort =
+        createUserArticleDislikePorts.stream()
+                                     .filter { it.isTarget(userType) }
+                                     .findFirst()
+                                     .orElseThrow { IllegalArgumentException() }
+
+
+    private fun getDeleteUserArticleDislikePort(userType: UserType): DeleteUserArticleDislikePort =
+        deleteUserArticleDislikePorts.stream()
+                                     .filter { it.isTarget(userType) }
+                                     .findFirst()
+                                     .orElseThrow { IllegalArgumentException() }
 }
