@@ -11,6 +11,7 @@ import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 import com.backend.sodam.domain.articles.service.port.CreateArticlePort
+import com.backend.sodam.domain.articles.service.port.FetchArticlePort
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
@@ -24,9 +25,9 @@ import org.springframework.stereotype.Service
 class ArticleService(
     // 회원
     private val fetchUserPorts: List<FetchUserPort>,
-
     // 게시글
-    private val createArticlePort: List<CreateArticlePort>,
+    private val fetchArticlePorts: List<FetchArticlePort>,
+    private val createArticlePorts: List<CreateArticlePort>,
 
     private val articleRepositoryForNormalUser: ArticleRepositoryForNormalUser
 ) {
@@ -110,7 +111,7 @@ class ArticleService(
             .orElseThrow { UserException.UserNotFoundException() }
 
     private fun getArticleCreatePortByUserType(userType: UserType): CreateArticlePort =
-        createArticlePort.stream()
+        createArticlePorts.stream()
             .filter { it.isTarget(userType) }
             .findFirst()
             .orElseThrow{ IllegalArgumentException() }
