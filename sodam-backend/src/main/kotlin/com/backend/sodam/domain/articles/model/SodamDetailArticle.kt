@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.articles.model
 
+import com.backend.sodam.domain.articles.controller.response.ArticleDetailResponse
 import com.backend.sodam.domain.comments.controller.response.CommentResponse
 import com.backend.sodam.domain.tags.controller.response.TagResponse
 
@@ -17,4 +18,22 @@ class SodamDetailArticle(
     val articleLikeCnt: Long,
     val articleDislikeCnt: Long,
     val articleViewCnt: Long
-)
+) {
+    fun toResponse(): ArticleDetailResponse {
+        return ArticleDetailResponse(
+            userId = this.userId,
+            articleId = this.articleId,
+            title = this.title,
+            profileImageUrl = this.profileImageUrl,
+            author = this.author,
+            content = this.content,
+            createdAt = this.createdAt,
+            tags = this.tags,
+            comments = this.comments,
+            images = this.images,
+            articleLikeCnt = this.articleLikeCnt,
+            articleDislikeCnt = this.articleDislikeCnt,
+            articleViewCnt = this.articleViewCnt
+        )
+    }
+}

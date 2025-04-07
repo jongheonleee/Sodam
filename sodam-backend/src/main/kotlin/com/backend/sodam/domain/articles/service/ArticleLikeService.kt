@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.articles.service
 
 import com.backend.sodam.domain.articles.exception.ArticleException
-import com.backend.sodam.domain.articles.repository.ArticleRepository
+import com.backend.sodam.domain.articles.repository.ArticleRepositoryForNormalUser
 import com.backend.sodam.domain.articles.service.port.CreateUserArticleLikePort
 import com.backend.sodam.domain.articles.service.port.DeleteUserArticleLikePort
 import com.backend.sodam.domain.articles.service.port.FetchUserArticleLikePort
@@ -18,7 +18,7 @@ class ArticleLikeService(
     private val fetchUserArticleLikePorts: List<FetchUserArticleLikePort>,
     private val deleteUserArticleLikePorts: List<DeleteUserArticleLikePort>,
     private val createUserArticleLikePorts: List<CreateUserArticleLikePort>,
-    private val articleRepository: ArticleRepository, // 이 부분도 추후에 port로 바꿀 예정
+    private val articleRepositoryForNormalUser: ArticleRepositoryForNormalUser, // 이 부분도 추후에 port로 바꿀 예정
 ) {
 
     // 📌 실제 비즈니스 로직
@@ -39,12 +39,12 @@ class ArticleLikeService(
         when(isExists) {
             true -> {
                 deleteUserArticleLikePort.deleteLike(articleId = articleId, userId = userId)
-                articleRepository.decreaseLikeCnt(articleId)
+                articleRepositoryForNormalUser.decreaseLikeCnt(articleId)
             }
 
             false -> {
                 createUserArticleLikePort.createLike(articleId = articleId, userId = userId)
-                articleRepository.increaseLikeCnt(articleId)
+                articleRepositoryForNormalUser.increaseLikeCnt(articleId)
             }
         }
     }
@@ -56,7 +56,7 @@ class ArticleLikeService(
     }
 
     private fun isExistsArticle(articleId: Long): Boolean =
-        articleRepository.isExistsByArticleId(articleId)
+        articleRepositoryForNormalUser.isExistsByArticleId(articleId)
 
     // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
     private fun extractUserType(userId: String): UserType {
@@ -66,12 +66,6 @@ class ArticleLikeService(
     }
 
     // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
-    private fun getFetchPortByUserType(userType: UserType): FetchUserPort =
-        fetchUserPorts.stream()
-                      .filter { it.isTarget(userType) }
-                      .findFirst()
-                      .orElseThrow { IllegalArgumentException() }
-
     private fun getFetchUserPortByUserId(userId: String): FetchUserPort =
         fetchUserPorts.stream()
                       .filter { it.isExistsByUserId(userId) }

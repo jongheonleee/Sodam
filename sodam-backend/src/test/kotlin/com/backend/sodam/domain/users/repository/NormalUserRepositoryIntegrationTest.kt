@@ -56,6 +56,9 @@ class NormalUserRepositoryIntegrationTest(
     private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository
 ) : DescribeSpec({
 
+    // kotest에서 트랜잭션을 적용하려면 SpringExtension을 사용해야함
+    extension(SpringExtension)
+
     // 테스트 과정에서 사용할 목 데이터
     val mockPosition = PositionsEntity(
         positionId = UUID.randomUUID().toString(),
@@ -79,8 +82,6 @@ class NormalUserRepositoryIntegrationTest(
         validYN = 0
     )
 
-    // kotest에서 트랜잭션을 적용하려면 SpringExtension을 사용해야함
-    extension(SpringExtension)
 
     // 테스트 환경 세팅
     beforeTest {

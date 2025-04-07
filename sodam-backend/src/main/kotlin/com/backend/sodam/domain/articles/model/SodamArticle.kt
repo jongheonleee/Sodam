@@ -1,5 +1,6 @@
 package com.backend.sodam.domain.articles.model
 
+import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 
 class SodamArticle(
@@ -26,6 +27,18 @@ class SodamArticle(
             summary = this.summary,
             createdAt = this.createdAt,
             tags = this.tags
+        )
+    }
+
+    fun toArticleCreateResponse(): ArticleCreateResponse {
+        return ArticleCreateResponse(
+            articleId = this.articleId,
+            title = this.title,
+            author = this.author,
+            summary = this.summary,
+            content = this.content,
+            tags = this.tags,
+            createdAt = this.createdAt
         )
     }
 }

@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.comments.service
 
 import com.backend.sodam.domain.articles.exception.ArticleException
-import com.backend.sodam.domain.articles.repository.ArticleRepository
+import com.backend.sodam.domain.articles.repository.ArticleRepositoryForNormalUser
 import com.backend.sodam.domain.comments.controller.response.CommentCreateResponse
 import com.backend.sodam.domain.comments.controller.response.CommentSimpleResponse
 import com.backend.sodam.domain.comments.controller.response.CommentUpdateResponse
@@ -17,13 +17,13 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class CommentService(
-    private val articleRepository: ArticleRepository,
+    private val articleRepositoryForNormalUser: ArticleRepositoryForNormalUser,
     private val commentRepository: CommentRepository,
     private val normalUserRepository: NormalUserRepository
 ) {
 
     fun create(articleId: Long, commentCreateCommand: CommentCreateCommand): CommentCreateResponse {
-        if (!articleRepository.isExistsByArticleId(articleId)) {
+        if (!articleRepositoryForNormalUser.isExistsByArticleId(articleId)) {
             throw ArticleException.ArticleNotFoundException()
         }
 

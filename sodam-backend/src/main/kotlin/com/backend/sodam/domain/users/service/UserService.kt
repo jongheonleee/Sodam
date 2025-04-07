@@ -194,7 +194,6 @@ class UserService(
     private fun extractUserType(userId: String): UserType {
         val fetchPort = getFetchPortByUserId(userId)
         val sodamUser = fetchPort.findByUserId(userId).get()
-        println("sodamUser: $sodamUser")
         return sodamUser.userType
     }
 
@@ -257,12 +256,6 @@ class UserService(
         fetchGradePort.isExistsByGradeName(subscriptionName)
 
     // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
-    private fun getFetchPortByUserType(userType: UserType): FetchUserPort =
-        fetchUserPorts.stream()
-            .filter { it.isTarget(userType) }
-            .findFirst()
-            .orElseThrow { IllegalArgumentException() }
-
     private fun getFetchPortByEmail(email: String): FetchUserPort =
         fetchUserPorts.stream()
             .filter { it.isExistsByEmail(email) }

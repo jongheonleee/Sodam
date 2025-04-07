@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.articles.service
 
 import com.backend.sodam.domain.articles.exception.ArticleException
-import com.backend.sodam.domain.articles.repository.ArticleRepository
+import com.backend.sodam.domain.articles.repository.ArticleRepositoryForNormalUser
 import com.backend.sodam.domain.articles.service.port.CreateUserArticleDislikePort
 import com.backend.sodam.domain.articles.service.port.DeleteUserArticleDislikePort
 import com.backend.sodam.domain.articles.service.port.FetchUserArticleDislikePort
@@ -18,7 +18,7 @@ class ArticleDislikeService(
     private val fetchUserArticleDislikePorts: List<FetchUserArticleDislikePort>,
     private val deleteUserArticleDislikePorts: List<DeleteUserArticleDislikePort>,
     private val createUserArticleDislikePorts: List<CreateUserArticleDislikePort>,
-    private val articleRepository: ArticleRepository,
+    private val articleRepositoryForNormalUser: ArticleRepositoryForNormalUser,
 ) {
 
     fun handleDislike(userId: String, articleId: Long) {
@@ -38,12 +38,12 @@ class ArticleDislikeService(
         when(isExists) {
             true -> {
                 deleteUserArticleDislikePort.deleteDislike(articleId = articleId, userId = userId)
-                articleRepository.decreaseDislikeCnt(articleId = articleId)
+                articleRepositoryForNormalUser.decreaseDislikeCnt(articleId = articleId)
             }
 
             false -> {
                 createUserArticleDislikePort.createDislike(articleId = articleId, userId = userId)
-                articleRepository.increaseDislikeCnt(articleId = articleId)
+                articleRepositoryForNormalUser.increaseDislikeCnt(articleId = articleId)
             }
         }
     }
@@ -55,7 +55,7 @@ class ArticleDislikeService(
     }
 
     private fun isExistsArticle(articleId: Long): Boolean =
-        articleRepository.isExistsByArticleId(articleId)
+        articleRepositoryForNormalUser.isExistsByArticleId(articleId)
 
     // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
     private fun extractUserType(userId: String): UserType {

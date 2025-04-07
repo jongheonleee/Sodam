@@ -6,11 +6,16 @@ import com.backend.sodam.domain.articles.model.SodamDetailArticle
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
+import com.backend.sodam.domain.articles.service.port.CreateArticlePort
+import com.backend.sodam.domain.articles.service.port.DeleteArticlePort
+import com.backend.sodam.domain.articles.service.port.FetchArticlePort
+import com.backend.sodam.domain.articles.service.port.UpdateArticlePort
 import com.backend.sodam.domain.categories.exception.CategoryException
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
 import com.backend.sodam.domain.comments.repository.CommentJpaRepository
 import com.backend.sodam.domain.comments.repository.CommentRepository
 import com.backend.sodam.domain.tags.entity.TagsEntity
+import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import org.springframework.data.domain.Page
@@ -19,16 +24,32 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-class ArticleRepository(
+class ArticleRepositoryForNormalUser(
     private val articleJpaRepository: ArticleJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
-    private val userJpaRepository: NormalUserJpaRepository,
+    private val normalUserJpaRepository: NormalUserJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
     private val commentRepository: CommentRepository,
     private val commentJpaRepository: CommentJpaRepository,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
     private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository
-) {
+): CreateArticlePort, FetchArticlePort, UpdateArticlePort, DeleteArticlePort {
+
+    override fun isTarget(userType: UserType): Boolean =
+        UserType.NORMAL == userType
+
+    @Transactional
+    override fun createArticle(userId: String, articleCreateCommand: ArticleCreateCommand): SodamArticle {
+        val normalUserEntity = normalUserJpaRepository.findByUserId(userId).get()
+        val categoryEntity =  categoryJpaRepository.findByCategoryId(articleCreateCommand.categoryId).get()
+        val articleCreateRequestEntity = articleCreateCommand.toEntity(userEntity = normalUserEntity, categoryEntity = categoryEntity)
+        articleCreateCommand.tags.map {
+            val tagEntity = TagsEntity(tagName = it)
+            articleCreateRequestEntity.addTag(tagEntity)
+        }
+        return articleJpaRepository.save(articleCreateRequestEntity)
+                                   .toDomain()
+    }
 
     @Transactional
     fun createArticleForSocialUser(userId: String, articleCreateCommand: ArticleCreateCommand): SodamArticle {
@@ -51,7 +72,7 @@ class ArticleRepository(
 
     @Transactional
     fun createArticleForUser(userId: String, articleCreateCommand: ArticleCreateCommand): SodamArticle {
-        val foundUserEntity = userJpaRepository.findByUserId(userId).get()
+        val foundUserEntity = normalUserJpaRepository.findByUserId(userId).get()
         val foundCategoryEntity = categoryJpaRepository.findByCategoryId(articleCreateCommand.categoryId).get()
 
         val articleCreateRequestEntity = articleCreateCommand.toEntity(

@@ -6,14 +6,14 @@ import com.backend.sodam.domain.articles.controller.response.ArticleSimpleRespon
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
 import com.backend.sodam.domain.articles.exception.ArticleException
-import com.backend.sodam.domain.articles.repository.ArticleRepository
+import com.backend.sodam.domain.articles.repository.ArticleRepositoryForNormalUser
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
+import com.backend.sodam.domain.articles.service.port.CreateArticlePort
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.NormalUserRepository
-import com.backend.sodam.domain.users.repository.SocialUserRepository
+import com.backend.sodam.domain.users.service.port.FetchUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,72 +22,35 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class ArticleService(
-    private val normalUserRepository: NormalUserRepository,
-    private val socialUserRepository: SocialUserRepository,
-    private val articleRepository: ArticleRepository
+    // 회원
+    private val fetchUserPorts: List<FetchUserPort>,
+
+    // 게시글
+    private val createArticlePort: List<CreateArticlePort>,
+
+    private val articleRepositoryForNormalUser: ArticleRepositoryForNormalUser
 ) {
 
     fun create(userId: String, articleCreateCommand: ArticleCreateCommand): ArticleCreateResponse {
-        val sodamUser = socialUserRepository.findBySocialUserId(userId)
-            .orElseGet {
-                normalUserRepository.findUserByUserId(userId)
-                    .orElseThrow { UserException.UserNotFoundException() }
-            }
-
-        val sodamArticle = when (sodamUser.userType) {
-            UserType.SOCIAL -> {
-                articleRepository.createArticleForSocialUser(
-                    userId,
-                    articleCreateCommand
-                )
-            }
-            else -> {
-                articleRepository.createArticleForUser(
-                    userId,
-                    articleCreateCommand
-                )
-            }
-        }
-
-        return ArticleCreateResponse(
-            articleId = sodamArticle.articleId,
-            title = articleCreateCommand.title,
-            author = sodamArticle.author,
-            summary = sodamArticle.summary,
-            content = sodamArticle.content,
-            tags = sodamArticle.tags,
-            createdAt = sodamArticle.createdAt
-        )
+        val userType = extractUserType(userId)
+        val articleCreatePort = getArticleCreatePortByUserType(userType)
+        val sodamArticle  = articleCreatePort.createArticle(userId = userId, articleCreateCommand = articleCreateCommand)
+        return sodamArticle.toArticleCreateResponse()
     }
 
     fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand): Page<ArticleSummaryResponse> {
-        return articleRepository.findByPageBy(pageRequest = pageable, articleSearchCommand = articleSearchCommand)
-            .map { it.toSummaryResponse() }
+        return articleRepositoryForNormalUser.findByPageBy(pageRequest = pageable, articleSearchCommand = articleSearchCommand)
+                                             .map { it.toSummaryResponse() }
     }
 
     fun getArticleDetail(articleId: Long): ArticleDetailResponse {
-        // 조회수 증가 시키기
-        articleRepository.increaseViewCnt(articleId)
-        val sodamDetailArticle = articleRepository.findDetailByArticleId(articleId)
-        return ArticleDetailResponse(
-            userId = sodamDetailArticle.userId,
-            articleId = sodamDetailArticle.articleId,
-            title = sodamDetailArticle.title,
-            profileImageUrl = sodamDetailArticle.profileImageUrl,
-            author = sodamDetailArticle.author,
-            content = sodamDetailArticle.content,
-            createdAt = sodamDetailArticle.createdAt,
-            tags = sodamDetailArticle.tags,
-            comments = sodamDetailArticle.comments,
-            images = sodamDetailArticle.images,
-            articleLikeCnt = sodamDetailArticle.articleLikeCnt,
-            articleDislikeCnt = sodamDetailArticle.articleDislikeCnt,
-            articleViewCnt = sodamDetailArticle.articleViewCnt
-        )
+        articleRepositoryForNormalUser.increaseViewCnt(articleId)
+        val sodamDetailArticle = articleRepositoryForNormalUser.findDetailByArticleId(articleId)
+        return sodamDetailArticle.toResponse()
     }
 
     fun getArticleSimple(userId: String, articleId: Long): ArticleSimpleResponse {
-        val sodamArticle = articleRepository.findArticleByArticleId(articleId)
+        val sodamArticle = articleRepositoryForNormalUser.findArticleByArticleId(articleId)
         if (!sodamArticle.canAccess(userId)) {
             throw ArticleException.ArticleAccessDeniedException()
         }
@@ -101,12 +64,12 @@ class ArticleService(
     }
 
     fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): ArticleUpdateResponse {
-        val sodamArticle = articleRepository.findArticleByArticleId(articleId)
+        val sodamArticle = articleRepositoryForNormalUser.findArticleByArticleId(articleId)
         if (!sodamArticle.canAccess(articleUpdateCommand.userId)) { // 수정 권한이 있는지 확인한다.
             throw ArticleException.ArticleAccessDeniedException()
         }
 
-        val sodamUpdatedArticle = articleRepository.update(articleId, articleUpdateCommand) // 해당 게시글을 수정한다.
+        val sodamUpdatedArticle = articleRepositoryForNormalUser.update(articleId, articleUpdateCommand) // 해당 게시글을 수정한다.
 
         return ArticleUpdateResponse( // 수정된 결과를 반환한다.
             articleId = sodamUpdatedArticle.articleId,
@@ -121,13 +84,35 @@ class ArticleService(
 
     fun delete(userId: String, articleId: Long) {
         // userId 가 작성한 글이 맞는지 확인
-        val sodamArticle = articleRepository.findArticleByArticleId(articleId)
+        val sodamArticle = articleRepositoryForNormalUser.findArticleByArticleId(articleId)
         if (!sodamArticle.canAccess(userId)) {
             throw ArticleException.ArticleAccessDeniedException()
         }
 
         // 맞다면 삭제 처리
         // - 연관되어 있는 테이블부터 지움(태그, 좋아요, 싫어요, 댓글)
-        articleRepository.delete(articleId)
+        articleRepositoryForNormalUser.delete(articleId)
     }
+
+    // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
+    private fun extractUserType(userId: String): UserType {
+        val fetchPort = getFetchPortByUserId(userId)
+        val sodamUser = fetchPort.findByUserId(userId).get()
+        return sodamUser.userType
+    }
+
+
+    // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
+    private fun getFetchPortByUserId(userId: String): FetchUserPort =
+        fetchUserPorts.stream()
+            .filter { it.isExistsByUserId(userId) }
+            .findFirst()
+            .orElseThrow { UserException.UserNotFoundException() }
+
+    private fun getArticleCreatePortByUserType(userType: UserType): CreateArticlePort =
+        createArticlePort.stream()
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow{ IllegalArgumentException() }
+
 }
