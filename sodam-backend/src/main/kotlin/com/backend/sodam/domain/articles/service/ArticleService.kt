@@ -11,7 +11,9 @@ import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 import com.backend.sodam.domain.articles.service.port.CreateArticlePort
+import com.backend.sodam.domain.articles.service.port.DeleteArticlePort
 import com.backend.sodam.domain.articles.service.port.FetchArticlePort
+import com.backend.sodam.domain.articles.service.port.UpdateArticlePort
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
@@ -26,8 +28,10 @@ class ArticleService(
     // 회원
     private val fetchUserPorts: List<FetchUserPort>,
     // 게시글
-    private val fetchArticlePorts: List<FetchArticlePort>,
+    private val fetchArticlePorts: List<FetchArticlePort>, // 이 부분 고민
     private val createArticlePorts: List<CreateArticlePort>,
+    private val updateArticlePorts: List<UpdateArticlePort>,
+    private val deleteArticlePorts: List<DeleteArticlePort>,
 
     private val articleRepositoryForNormalUser: ArticleRepositoryForNormalUser
 ) {
@@ -40,8 +44,9 @@ class ArticleService(
     }
 
     fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand): Page<ArticleSummaryResponse> {
-        return articleRepositoryForNormalUser.findByPageBy(pageRequest = pageable, articleSearchCommand = articleSearchCommand)
-                                             .map { it.toSummaryResponse() }
+        val articleFetchPort = getArticleFetchPort()
+        return articleFetchPort.findByPageBy(pageRequest = pageable, articleSearchCommand = articleSearchCommand)
+                               .map { it.toSummaryResponse() }
     }
 
     fun getArticleDetail(articleId: Long): ArticleDetailResponse {
@@ -115,5 +120,10 @@ class ArticleService(
             .filter { it.isTarget(userType) }
             .findFirst()
             .orElseThrow{ IllegalArgumentException() }
+
+    private fun getArticleFetchPort(): FetchArticlePort =
+        fetchArticlePorts.stream()
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
 }

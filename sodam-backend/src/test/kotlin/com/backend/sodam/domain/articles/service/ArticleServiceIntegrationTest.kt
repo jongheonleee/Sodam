@@ -1,8 +1,11 @@
 package com.backend.sodam.domain.articles.service
 
 import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.articles.repository.ArticleJpaRepository
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
+import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.categories.entity.CategoryEntity
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
@@ -20,6 +23,9 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import java.time.LocalDateTime
 import java.util.*
 
 @SpringBootTest
@@ -44,7 +50,7 @@ class ArticleServiceIntegrationTest(
     val mockNormalUser = UsersEntity(
         userId = UUID.randomUUID().toString(),
         userEmail = "test@test.com",
-        userName = "test",
+        userName = "목일반회원",
         introduce = "테스트용 일반 유저 목 객체입니다.",
         password = "test",
         profileImageUrl = "프로필 이미지 url",
@@ -155,7 +161,7 @@ class ArticleServiceIntegrationTest(
                 summary = command.summary,
                 content = command.content,
                 tags = command.tags,
-                createdAt = "...."
+                createdAt ="..." // 이 부분 초의 소수점자리까지 비교하기 때문에 x
             )
 
             then("게시글을 성공적으로 생성하며 등록된 데이터 일부를 반환한다.") {
@@ -171,16 +177,140 @@ class ArticleServiceIntegrationTest(
 
     given("사용자가 게시글을 검색할 때") {
         `when`("- 1. 타이틀로 검색할 경우", {
+            // '테스트' 키워드가 포함된 게시글 5개 생성
+            for (i in 1..5) {
+                val mockArticle = ArticleEntity(
+                    name = mockNormalUser.userName,
+                    user = mockNormalUser,
+                    articleTitle = "테스트 제목$i",
+                    articleSummary = "테스트 서머리$i",
+                    articleContent = "테스트 내용$i",
+                    articleViewCnt = 0,
+                    articleLikeCnt = 0,
+                    articleDislikeCnt = 0,
+                    category = mockCategory,
+                )
+                articleJpaRepository.save(mockArticle)
+            }
+
+            // 검색 데이터
+            val pageable = PageRequest.of(0, 20)
+            val searchCommand = ArticleSearchCommand(
+                keyword = "테스트",
+            )
+
+            // 검색 처리
+            val actual = sut.fetchFromClient(pageable = pageable, articleSearchCommand = searchCommand)
+            val expected = PageImpl(
+                listOf(
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목1", summary = "테스트 서머리1", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목2", summary = "테스트 서머리2", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목3", summary = "테스트 서머리3", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목4", summary = "테스트 서머리4", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목5", summary = "테스트 서머리5", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    )
+                ),
+                pageable,
+                5
+            )
 
             then("그와 관련된 데이터가 조회된다.") {
+                // 내용 비교
+                actual.totalPages shouldBe expected.totalPages
+                val actualResults = actual.get().toList()
+                val expectedResults = expected.toList()
 
+                for (i in 0..4) {
+                    val a = actualResults[i]
+                    val b = expectedResults[i]
+
+                    a.title shouldBe a.title
+                    a.summary shouldBe a.summary
+                    a.username shouldBe a.username
+                }
             }
         })
 
         `when`("- 2. 작성자로 검색할 경우", {
+            // 목 일반회원 게시글 5개 생성
+            for (i in 1..5) {
+                val mockArticle = ArticleEntity(
+                    name = mockNormalUser.userName,
+                    user = mockNormalUser,
+                    articleTitle = "테스트 제목$i",
+                    articleSummary = "테스트 서머리$i",
+                    articleContent = "테스트 내용$i",
+                    articleViewCnt = 0,
+                    articleLikeCnt = 0,
+                    articleDislikeCnt = 0,
+                    category = mockCategory,
+                )
+                articleJpaRepository.save(mockArticle)
+            }
+
+            // 검색 데이터
+            val pageable = PageRequest.of(0, 20)
+            val searchCommand = ArticleSearchCommand(
+                keyword = mockNormalUser.userName,
+            )
+
+            // 검색 처리
+            val actual = sut.fetchFromClient(pageable = pageable, articleSearchCommand = searchCommand)
+            val expected = PageImpl(
+                listOf(
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목1", summary = "테스트 서머리1", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목2", summary = "테스트 서머리2", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목3", summary = "테스트 서머리3", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목4", summary = "테스트 서머리4", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목5", summary = "테스트 서머리5", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    )
+                ),
+                pageable,
+                5
+            )
 
             then("그와 관련된 데이터가 조회된다.") {
+                // 내용 비교
+                actual.totalPages shouldBe expected.totalPages
+                val actualResults = actual.get().toList()
+                val expectedResults = expected.toList()
 
+                for (i in 0..4) {
+                    val a = actualResults[i]
+                    val b = expectedResults[i]
+
+                    a.title shouldBe a.title
+                    a.summary shouldBe a.summary
+                    a.username shouldBe a.username
+                }
             }
         })
 
@@ -189,6 +319,75 @@ class ArticleServiceIntegrationTest(
 
             then("그와 관련된 데이터가 조회된다.") {
 
+            }
+        })
+
+        `when`("- 4. 카테고리로 검색할 경우", {
+            // 목 일반회원 게시글 5개 생성
+            for (i in 1..5) {
+                val mockArticle = ArticleEntity(
+                    name = mockNormalUser.userName,
+                    user = mockNormalUser,
+                    articleTitle = "테스트 제목$i",
+                    articleSummary = "테스트 서머리$i",
+                    articleContent = "테스트 내용$i",
+                    articleViewCnt = 0,
+                    articleLikeCnt = 0,
+                    articleDislikeCnt = 0,
+                    category = mockCategory,
+                )
+                articleJpaRepository.save(mockArticle)
+            }
+
+            // 검색 데이터
+            val pageable = PageRequest.of(0, 20)
+            val searchCommand = ArticleSearchCommand(
+                categoryId = mockCategory.categoryId,
+            )
+
+            // 검색 처리
+            val actual = sut.fetchFromClient(pageable = pageable, articleSearchCommand = searchCommand)
+            val expected = PageImpl(
+                listOf(
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목1", summary = "테스트 서머리1", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목2", summary = "테스트 서머리2", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목3", summary = "테스트 서머리3", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목4", summary = "테스트 서머리4", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    ),
+                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                        profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        title = "테스트 제목5", summary = "테스트 서머리5", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                    )
+                ),
+                pageable,
+                5
+            )
+
+            then("그와 관련된 데이터가 조회된다.") {
+                // 내용 비교
+                actual.totalPages shouldBe expected.totalPages
+                val actualResults = actual.get().toList()
+                val expectedResults = expected.toList()
+
+                for (i in 0..4) {
+                    val a = actualResults[i]
+                    val b = expectedResults[i]
+
+                    a.title shouldBe a.title
+                    a.summary shouldBe a.summary
+                    a.username shouldBe a.username
+                }
             }
         })
     }

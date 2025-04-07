@@ -31,7 +31,7 @@ class ArticleRepositoryForNormalUser(
     private val commentRepository: CommentRepository,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
     private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository
-): AbstractArticleRepository(articleJpaRepository, categoryJpaRepository, commentRepository, articleLikeJpaRepository, articleDislikeJpaRepository) {
+): AbstractArticleRepository(commentRepository,articleJpaRepository, categoryJpaRepository, articleLikeJpaRepository, articleDislikeJpaRepository) {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.NORMAL == userType

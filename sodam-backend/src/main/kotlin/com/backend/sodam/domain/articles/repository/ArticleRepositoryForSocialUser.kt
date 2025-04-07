@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
+
 @Repository
 class ArticleRepositoryForSocialUser(
     private val articleJpaRepository: ArticleJpaRepository,
@@ -31,7 +32,7 @@ class ArticleRepositoryForSocialUser(
     private val commentRepository: CommentRepository,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
     private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository
-): AbstractArticleRepository(articleJpaRepository, categoryJpaRepository, commentRepository, articleLikeJpaRepository, articleDislikeJpaRepository) {
+): AbstractArticleRepository(commentRepository, articleJpaRepository, categoryJpaRepository, articleLikeJpaRepository, articleDislikeJpaRepository) {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.SOCIAL == userType

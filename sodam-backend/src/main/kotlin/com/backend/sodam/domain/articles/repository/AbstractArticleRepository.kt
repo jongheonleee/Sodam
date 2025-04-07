@@ -23,10 +23,13 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
+// 템플릿 메서드 패턴 적용
+// - 게시글 생성은 회원 별로 사뭇 다르지만, 그외의 기능은 같음
 abstract class AbstractArticleRepository(
+    private val commentRepository: CommentRepository,
+
     private val articleJpaRepository: ArticleJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
-    private val commentRepository: CommentRepository,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
     private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository
 ): CreateArticlePort, FetchArticlePort, UpdateArticlePort, DeleteArticlePort {
@@ -35,7 +38,7 @@ abstract class AbstractArticleRepository(
     abstract override fun createArticle(userId: String, articleCreateCommand: ArticleCreateCommand): SodamArticle
 
     @Transactional(readOnly = true)
-    open fun findByPageBy(pageRequest: Pageable, articleSearchCommand: ArticleSearchCommand): Page<SodamArticle> = articleJpaRepository.findByPageBy(
+    override fun findByPageBy(pageRequest: Pageable, articleSearchCommand: ArticleSearchCommand): Page<SodamArticle> = articleJpaRepository.findByPageBy(
         pageRequest = pageRequest,
         articleSearchCommand = articleSearchCommand
     )
@@ -126,13 +129,13 @@ abstract class AbstractArticleRepository(
     }
 
     @Transactional(readOnly = true)
-    open fun findDetailByArticleId(articleId: Long): SodamDetailArticle = articleJpaRepository.findDetailByArticleId(articleId)
+    override fun findDetailByArticleId(articleId: Long): SodamDetailArticle = articleJpaRepository.findDetailByArticleId(articleId)
 
     @Transactional(readOnly = true)
-    open fun isExistsByArticleId(articleId: Long): Boolean = articleJpaRepository.findByArticleId(articleId).isPresent
+    override fun isExistsByArticleId(articleId: Long): Boolean = articleJpaRepository.findByArticleId(articleId).isPresent
 
     @Transactional(readOnly = true)
-    open fun findArticleByArticleId(articleId: Long): SodamArticle {
+    override fun findArticleByArticleId(articleId: Long): SodamArticle {
         val foundArticleOptionalEntityByArticleId = articleJpaRepository.findByArticleId(articleId)
         if (foundArticleOptionalEntityByArticleId.isEmpty) {
             throw ArticleException.ArticleNotFoundException()
