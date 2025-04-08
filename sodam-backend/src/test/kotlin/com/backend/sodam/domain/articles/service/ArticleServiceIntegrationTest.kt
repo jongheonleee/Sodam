@@ -2,10 +2,12 @@ package com.backend.sodam.domain.articles.service
 
 import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
 import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.articles.repository.ArticleJpaRepository
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
+import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 import com.backend.sodam.domain.categories.entity.CategoryEntity
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
@@ -412,9 +414,43 @@ class ArticleServiceIntegrationTest(
     given("사용자가 게시글을 수정하는 경우") {
 
         `when`("해당 게시글이 존재하고 올바른 데이터를 전달할 경우", {
+            // 게시글 등록
+            val command = ArticleCreateCommand(
+                categoryId = mockCategory.categoryId,
+                title = "테스트용 게시글",
+                summary = "테스트용 게시글 요약글",
+                content = "테스트용 게시글입니다.",
+                tags = listOf("태그1", "태그2")
+            )
+
+            val target = sut.create(userId = mockNormalUser.userId, articleCreateCommand = command)
+
+            val updateCommand = ArticleUpdateCommand(
+                categoryId = mockCategory.categoryId,
+                userId = mockNormalUser.userId,
+                articleTitle = "새로운 게시글 제목",
+                articleSummary = "새로운 게시글 서머리",
+                articleContent = "새로운 게시글 내용",
+                tags = listOf("새로운 태그", "새로운 태그2")
+            )
+
+            val actual = sut.update(articleId = target.articleId, articleUpdateCommand = updateCommand)
+            val expected = ArticleUpdateResponse(
+                articleId = target.articleId,
+                title = updateCommand.articleTitle,
+                author = mockNormalUser.userName,
+                summary = updateCommand.articleSummary,
+                content = updateCommand.articleContent,
+                tags = updateCommand.tags,
+                createdAt = LocalDateTime.now().toString()
+            )
 
             then("게시글을 성공적으로 수정한다.") {
-
+                // 내용 비교
+                actual.articleId shouldBe expected.articleId
+                actual.title shouldBe expected.title
+                actual.summary shouldBe expected.summary
+                actual.content shouldBe expected.content
             }
         })
 

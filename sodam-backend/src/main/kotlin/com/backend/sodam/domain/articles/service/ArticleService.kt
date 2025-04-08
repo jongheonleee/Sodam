@@ -28,12 +28,10 @@ class ArticleService(
     // 회원
     private val fetchUserPorts: List<FetchUserPort>,
     // 게시글
-    private val fetchArticlePorts: List<FetchArticlePort>, // 이 부분 고민
+    private val fetchArticlePorts: List<FetchArticlePort>,
     private val createArticlePorts: List<CreateArticlePort>,
     private val updateArticlePorts: List<UpdateArticlePort>,
     private val deleteArticlePorts: List<DeleteArticlePort>,
-
-    private val articleRepositoryForNormalUser: ArticleRepositoryForNormalUser
 ) {
 
     fun create(userId: String, articleCreateCommand: ArticleCreateCommand): ArticleCreateResponse {
@@ -50,55 +48,69 @@ class ArticleService(
     }
 
     fun getArticleDetail(articleId: Long): ArticleDetailResponse {
-        articleRepositoryForNormalUser.increaseViewCnt(articleId)
-        val sodamDetailArticle = articleRepositoryForNormalUser.findDetailByArticleId(articleId)
-        return sodamDetailArticle.toResponse()
+        checkExistsArticle(articleId = articleId)
+
+        val articleUpdatePort = getArticleUpdatePort()
+        val articleFetchPort = getArticleFetchPort()
+
+        articleUpdatePort.increaseViewCnt(articleId)
+        return articleFetchPort.findDetailByArticleId(articleId)
+                               .toResponse()
     }
 
     fun getArticleSimple(userId: String, articleId: Long): ArticleSimpleResponse {
-        val sodamArticle = articleRepositoryForNormalUser.findArticleByArticleId(articleId)
+        checkExistsArticle(articleId = articleId)
+
+        val articleFetchPort = getArticleFetchPort()
+        val sodamArticle = articleFetchPort.findArticleByArticleId(articleId)
         if (!sodamArticle.canAccess(userId)) {
             throw ArticleException.ArticleAccessDeniedException()
         }
 
-        return ArticleSimpleResponse(
-            articleId = sodamArticle.articleId,
-            title = sodamArticle.title,
-            summary = sodamArticle.summary,
-            content = sodamArticle.content
-        )
+        return sodamArticle.toArticleSimpleResponse()
     }
 
     fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): ArticleUpdateResponse {
-        val sodamArticle = articleRepositoryForNormalUser.findArticleByArticleId(articleId)
+        checkExistsArticle(articleId = articleId)
+
+        val articleFetchPort = getArticleFetchPort()
+        val articleUpdatePort = getArticleUpdatePort()
+
+        val sodamArticle = articleFetchPort.findArticleByArticleId(articleId)
         if (!sodamArticle.canAccess(articleUpdateCommand.userId)) { // 수정 권한이 있는지 확인한다.
             throw ArticleException.ArticleAccessDeniedException()
         }
 
-        val sodamUpdatedArticle = articleRepositoryForNormalUser.update(articleId, articleUpdateCommand) // 해당 게시글을 수정한다.
-
-        return ArticleUpdateResponse( // 수정된 결과를 반환한다.
-            articleId = sodamUpdatedArticle.articleId,
-            title = sodamUpdatedArticle.title,
-            author = sodamUpdatedArticle.author,
-            summary = sodamUpdatedArticle.summary,
-            content = sodamUpdatedArticle.content,
-            tags = sodamUpdatedArticle.tags,
-            createdAt = sodamUpdatedArticle.createdAt
-        )
+        val sodamUpdatedArticle = articleUpdatePort.update(articleId, articleUpdateCommand)
+        return sodamUpdatedArticle.toArticleUpdateResponse()
     }
 
     fun delete(userId: String, articleId: Long) {
-        // userId 가 작성한 글이 맞는지 확인
-        val sodamArticle = articleRepositoryForNormalUser.findArticleByArticleId(articleId)
+        checkExistsArticle(articleId = articleId)
+
+        val articleFetchPort = getArticleFetchPort()
+        val articleDeletePort = getArticleDeletePort()
+
+        val sodamArticle = articleFetchPort.findArticleByArticleId(articleId)
         if (!sodamArticle.canAccess(userId)) {
             throw ArticleException.ArticleAccessDeniedException()
         }
 
-        // 맞다면 삭제 처리
-        // - 연관되어 있는 테이블부터 지움(태그, 좋아요, 싫어요, 댓글)
-        articleRepositoryForNormalUser.delete(articleId)
+        articleDeletePort.delete(articleId)
     }
+
+    // 📌 비즈니스 로직 적용 전 작업 유효성 따지는 메서드
+    private fun checkExistsArticle(articleId: Long) {
+        if (!isExistsArticle(articleId)) {
+            throw ArticleException.ArticleNotFoundException()
+        }
+    }
+
+    private fun isExistsArticle(articleId: Long): Boolean =
+        fetchArticlePorts.stream()
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+            .isExistsByArticleId(articleId)
 
     // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
     private fun extractUserType(userId: String): UserType {
@@ -123,6 +135,16 @@ class ArticleService(
 
     private fun getArticleFetchPort(): FetchArticlePort =
         fetchArticlePorts.stream()
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+
+    private fun getArticleUpdatePort(): UpdateArticlePort =
+        updateArticlePorts.stream()
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+
+    private fun getArticleDeletePort(): DeleteArticlePort =
+        deleteArticlePorts.stream()
             .findFirst()
             .orElseThrow { IllegalArgumentException() }
 

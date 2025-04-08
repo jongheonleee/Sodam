@@ -181,6 +181,10 @@ export default function ArticleEditPage({
 
     // 새로운 태그 등록 함수
     const addTag = (name : string) => {
+        if (!articleForm.tags) { // 이 부분 추후에 개선
+            articleForm.tags = []
+        }
+
         // 이미 등록된 태그면 호출 중단
         if (name && articleForm.tags.includes(name)) {
             // 에러 알림
@@ -239,6 +243,7 @@ export default function ArticleEditPage({
                 if (res.status === 200) {
                     console.log(res.data.data)
                     setArticleForm(res.data.data)
+                    console.log(articleForm)
                 }
             })
         }

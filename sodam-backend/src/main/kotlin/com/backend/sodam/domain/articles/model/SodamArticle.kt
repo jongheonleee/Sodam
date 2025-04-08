@@ -1,7 +1,9 @@
 package com.backend.sodam.domain.articles.model
 
 import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleSimpleResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
 
 class SodamArticle(
     val userId: String,
@@ -39,6 +41,27 @@ class SodamArticle(
             content = this.content,
             tags = this.tags,
             createdAt = this.createdAt
+        )
+    }
+
+    fun toArticleUpdateResponse(): ArticleUpdateResponse {
+        return ArticleUpdateResponse( // 수정된 결과를 반환한다.
+            articleId = this.articleId,
+            title = this.title,
+            author = this.author,
+            summary = this.summary,
+            content = this.content,
+            tags = this.tags,
+            createdAt = this.createdAt
+        )
+    }
+
+    fun toArticleSimpleResponse(): ArticleSimpleResponse {
+        return ArticleSimpleResponse(
+            articleId = this.articleId,
+            title = this.title,
+            summary = this.summary,
+            content = this.content,
         )
     }
 }

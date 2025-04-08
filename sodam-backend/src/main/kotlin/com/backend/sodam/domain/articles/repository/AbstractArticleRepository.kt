@@ -44,7 +44,7 @@ abstract class AbstractArticleRepository(
     )
 
     @Transactional
-    open fun increaseViewCnt(articleId: Long) {
+    override fun increaseViewCnt(articleId: Long) {
         val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
 
         if (foundArticleOptionalByArticleId.isEmpty) {
@@ -79,7 +79,7 @@ abstract class AbstractArticleRepository(
     }
 
     @Transactional
-    open fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): SodamArticle {
+    override fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): SodamArticle {
         val foundArticleEntityOptional = articleJpaRepository.findByArticleId(articleId)
         if (foundArticleEntityOptional.isEmpty) {
             throw ArticleException.ArticleNotFoundException()
@@ -108,7 +108,7 @@ abstract class AbstractArticleRepository(
     }
 
     @Transactional
-    open fun delete(articleId: Long) {
+    override fun delete(articleId: Long) {
         val foundArticleEntityOptional = articleJpaRepository.findByArticleId(articleId)
         if (foundArticleEntityOptional.isEmpty) {
             throw ArticleException.ArticleNotFoundException()
