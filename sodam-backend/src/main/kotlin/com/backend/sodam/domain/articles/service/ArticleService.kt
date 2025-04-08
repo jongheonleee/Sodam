@@ -35,47 +35,65 @@ class ArticleService(
 ) {
 
     fun create(userId: String, articleCreateCommand: ArticleCreateCommand): ArticleCreateResponse {
+        // 회원 유형 추출
         val userType = extractUserType(userId)
+
+        // 그에 맞는 포트 조회
         val articleCreatePort = getArticleCreatePortByUserType(userType)
+
+        // 게시글 등록 처리
         val sodamArticle  = articleCreatePort.createArticle(userId = userId, articleCreateCommand = articleCreateCommand)
         return sodamArticle.toArticleCreateResponse()
     }
 
     fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand): Page<ArticleSummaryResponse> {
+        // 게시글 조회용 포트 조회
         val articleFetchPort = getArticleFetchPort()
+        // 게시글 조회처리
         return articleFetchPort.findByPageBy(pageRequest = pageable, articleSearchCommand = articleSearchCommand)
                                .map { it.toSummaryResponse() }
     }
 
     fun getArticleDetail(articleId: Long): ArticleDetailResponse {
+        // 작업 처리전 유효성 검증
         checkExistsArticle(articleId = articleId)
 
+        // 수정, 조회용 포트 조회
         val articleUpdatePort = getArticleUpdatePort()
         val articleFetchPort = getArticleFetchPort()
 
+        // 조회수 증가 및 상세 조회 처리
         articleUpdatePort.increaseViewCnt(articleId)
         return articleFetchPort.findDetailByArticleId(articleId)
                                .toResponse()
     }
 
     fun getArticleSimple(userId: String, articleId: Long): ArticleSimpleResponse {
+        // 작업 처리전 유효성 검증
         checkExistsArticle(articleId = articleId)
 
+        // 조회용 포트 조회
         val articleFetchPort = getArticleFetchPort()
         val sodamArticle = articleFetchPort.findArticleByArticleId(articleId)
+
+        // 자신의 게시글인지 확인
         if (!sodamArticle.canAccess(userId)) {
             throw ArticleException.ArticleAccessDeniedException()
         }
 
+        // 반환
         return sodamArticle.toArticleSimpleResponse()
     }
 
     fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): ArticleUpdateResponse {
+        // 작업 처리전 유효성 검증
         checkExistsArticle(articleId = articleId)
 
+        // 조회, 업데이트용 포트 조회
         val articleFetchPort = getArticleFetchPort()
         val articleUpdatePort = getArticleUpdatePort()
 
+        // 게시글 조회 및 업데이트 처리
         val sodamArticle = articleFetchPort.findArticleByArticleId(articleId)
         if (!sodamArticle.canAccess(articleUpdateCommand.userId)) { // 수정 권한이 있는지 확인한다.
             throw ArticleException.ArticleAccessDeniedException()
@@ -86,11 +104,14 @@ class ArticleService(
     }
 
     fun delete(userId: String, articleId: Long) {
+        // 작업 처리전 유효성 검증
         checkExistsArticle(articleId = articleId)
 
+        // 조회, 삭제용 포트 조회
         val articleFetchPort = getArticleFetchPort()
         val articleDeletePort = getArticleDeletePort()
 
+        // 게시글 조회 및 삭제 처리
         val sodamArticle = articleFetchPort.findArticleByArticleId(articleId)
         if (!sodamArticle.canAccess(userId)) {
             throw ArticleException.ArticleAccessDeniedException()
