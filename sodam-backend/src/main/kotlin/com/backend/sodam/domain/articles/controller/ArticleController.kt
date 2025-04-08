@@ -9,6 +9,10 @@ import com.backend.sodam.domain.articles.controller.response.ArticleSimpleRespon
 import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
 import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
 import com.backend.sodam.domain.articles.service.ArticleService
+import com.backend.sodam.domain.articles.service.usecase.CreateArticleUseCase
+import com.backend.sodam.domain.articles.service.usecase.DeleteArticleUseCase
+import com.backend.sodam.domain.articles.service.usecase.FetchArticleUseCase
+import com.backend.sodam.domain.articles.service.usecase.UpdateArticleUseCase
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import jakarta.validation.Valid
@@ -26,7 +30,10 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequiredArgsConstructor
 class ArticleController(
-    private val articleService: ArticleService,
+    private val createArticleUseCase: CreateArticleUseCase,
+    private val updateArticleUseCase: UpdateArticleUseCase,
+    private val deleteArticleUseCase: DeleteArticleUseCase,
+    private val fetchArticleUseCase: FetchArticleUseCase,
     private val tokenProvider: JwtTokenProvider
 ) {
 
@@ -38,7 +45,7 @@ class ArticleController(
     ): SodamApiResponse<ArticleCreateResponse> {
         val userId = tokenProvider.getUserId()
         val command = request.toCommand()
-        return SodamApiResponse.ok(articleService.create(userId, command))
+        return SodamApiResponse.ok(createArticleUseCase.create(userId, command))
     }
 
     // 게시글 여러개 조회
@@ -48,7 +55,7 @@ class ArticleController(
         articleSearchRequest: ArticleSearchRequest
     ): SodamApiResponse<Page<ArticleSummaryResponse>> {
         val command = articleSearchRequest.toCommand()
-        return SodamApiResponse.ok(articleService.fetchFromClient(pageable, command))
+        return SodamApiResponse.ok(fetchArticleUseCase.fetchFromClient(pageable, command))
     }
 
     // 게시글 상세 조회
@@ -56,7 +63,7 @@ class ArticleController(
     fun getArticle(
         @PathVariable("articleId") articleId: Long
     ): SodamApiResponse<ArticleDetailResponse> {
-        return SodamApiResponse.ok(articleService.getArticleDetail(articleId))
+        return SodamApiResponse.ok(fetchArticleUseCase.getArticleDetail(articleId))
     }
 
     // 게시글 단순 조회 - 게시글 수정 처리용
@@ -65,7 +72,7 @@ class ArticleController(
         @PathVariable("articleId") articleId: Long
     ): SodamApiResponse<ArticleSimpleResponse> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(articleService.getArticleSimple(userId, articleId))
+        return SodamApiResponse.ok(fetchArticleUseCase.getArticleSimple(userId, articleId))
     }
 
     // 게시글 수정
@@ -77,13 +84,13 @@ class ArticleController(
     ): SodamApiResponse<ArticleUpdateResponse> {
         val userId = tokenProvider.getUserId()
         val command = request.toCommand(userId)
-        return SodamApiResponse.ok(articleService.update(articleId, command))
+        return SodamApiResponse.ok(updateArticleUseCase.update(articleId, command))
     }
 
     // 게시글 삭제
     @DeleteMapping("/api/v1/articles/{articleId}")
     fun deleteArticle(@PathVariable("articleId") articleId: Long): SodamApiResponse<Unit> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(articleService.delete(userId, articleId))
+        return SodamApiResponse.ok(deleteArticleUseCase.delete(userId, articleId))
     }
 }

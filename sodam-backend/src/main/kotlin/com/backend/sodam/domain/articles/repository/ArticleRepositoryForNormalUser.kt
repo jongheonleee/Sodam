@@ -43,8 +43,9 @@ class ArticleRepositoryForNormalUser(
         val articleCreateRequestEntity = articleCreateCommand.toEntity(userEntity = normalUserEntity, categoryEntity = categoryEntity)
 
         articleCreateCommand.tags.map {
-            val tagEntity = TagsEntity(tagName = it)
-            articleCreateRequestEntity.addTag(tagEntity)
+            articleCreateRequestEntity.addTag(
+                TagsEntity(tagName = it)
+            )
         }
 
         return articleJpaRepository.save(articleCreateRequestEntity)

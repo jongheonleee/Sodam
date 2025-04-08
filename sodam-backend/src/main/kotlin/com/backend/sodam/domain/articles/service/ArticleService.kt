@@ -14,6 +14,12 @@ import com.backend.sodam.domain.articles.service.port.CreateArticlePort
 import com.backend.sodam.domain.articles.service.port.DeleteArticlePort
 import com.backend.sodam.domain.articles.service.port.FetchArticlePort
 import com.backend.sodam.domain.articles.service.port.UpdateArticlePort
+import com.backend.sodam.domain.articles.service.usecase.CreateArticleUseCase
+import com.backend.sodam.domain.articles.service.usecase.DeleteArticleUseCase
+import com.backend.sodam.domain.articles.service.usecase.FetchArticleUseCase
+import com.backend.sodam.domain.articles.service.usecase.UpdateArticleUseCase
+import com.backend.sodam.domain.categories.exception.CategoryException
+import com.backend.sodam.domain.categories.repository.CategoryRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
@@ -32,9 +38,15 @@ class ArticleService(
     private val createArticlePorts: List<CreateArticlePort>,
     private val updateArticlePorts: List<UpdateArticlePort>,
     private val deleteArticlePorts: List<DeleteArticlePort>,
-) {
 
-    fun create(userId: String, articleCreateCommand: ArticleCreateCommand): ArticleCreateResponse {
+    // 카테고리 - 추후에 포트로 빼기
+    private val categoryRepository: CategoryRepository,
+): CreateArticleUseCase, FetchArticleUseCase, UpdateArticleUseCase, DeleteArticleUseCase {
+
+    override fun create(userId: String, articleCreateCommand: ArticleCreateCommand): ArticleCreateResponse {
+        // 비즈니스 로직 처리전 유효성 검증
+        checkExistsCategory(categoryId = articleCreateCommand.categoryId)
+
         // 회원 유형 추출
         val userType = extractUserType(userId)
 
@@ -46,7 +58,7 @@ class ArticleService(
         return sodamArticle.toArticleCreateResponse()
     }
 
-    fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand): Page<ArticleSummaryResponse> {
+    override fun fetchFromClient(pageable: Pageable, articleSearchCommand: ArticleSearchCommand): Page<ArticleSummaryResponse> {
         // 게시글 조회용 포트 조회
         val articleFetchPort = getArticleFetchPort()
         // 게시글 조회처리
@@ -54,7 +66,7 @@ class ArticleService(
                                .map { it.toSummaryResponse() }
     }
 
-    fun getArticleDetail(articleId: Long): ArticleDetailResponse {
+    override fun getArticleDetail(articleId: Long): ArticleDetailResponse {
         // 작업 처리전 유효성 검증
         checkExistsArticle(articleId = articleId)
 
@@ -68,7 +80,7 @@ class ArticleService(
                                .toResponse()
     }
 
-    fun getArticleSimple(userId: String, articleId: Long): ArticleSimpleResponse {
+    override fun getArticleSimple(userId: String, articleId: Long): ArticleSimpleResponse {
         // 작업 처리전 유효성 검증
         checkExistsArticle(articleId = articleId)
 
@@ -85,9 +97,10 @@ class ArticleService(
         return sodamArticle.toArticleSimpleResponse()
     }
 
-    fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): ArticleUpdateResponse {
+    override fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): ArticleUpdateResponse {
         // 작업 처리전 유효성 검증
         checkExistsArticle(articleId = articleId)
+        checkExistsCategory(categoryId = articleUpdateCommand.categoryId)
 
         // 조회, 업데이트용 포트 조회
         val articleFetchPort = getArticleFetchPort()
@@ -103,7 +116,7 @@ class ArticleService(
         return sodamUpdatedArticle.toArticleUpdateResponse()
     }
 
-    fun delete(userId: String, articleId: Long) {
+    override fun delete(userId: String, articleId: Long) {
         // 작업 처리전 유효성 검증
         checkExistsArticle(articleId = articleId)
 
@@ -127,11 +140,21 @@ class ArticleService(
         }
     }
 
+    private fun checkExistsCategory(categoryId: String) {
+        if (!isExistsCategory(categoryId)) {
+            throw CategoryException.CategoryNotFoundException()
+        }
+    }
+
+
     private fun isExistsArticle(articleId: Long): Boolean =
         fetchArticlePorts.stream()
             .findFirst()
             .orElseThrow { IllegalArgumentException() }
             .isExistsByArticleId(articleId)
+
+    private fun isExistsCategory(categoryId: String): Boolean =
+        categoryRepository.isExistsByCategoryId(categoryId = categoryId)
 
     // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
     private fun extractUserType(userId: String): UserType {

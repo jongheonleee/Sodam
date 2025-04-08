@@ -12,22 +12,17 @@ import com.backend.sodam.domain.articles.service.port.FetchArticlePort
 import com.backend.sodam.domain.articles.service.port.UpdateArticlePort
 import com.backend.sodam.domain.categories.exception.CategoryException
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
-import com.backend.sodam.domain.comments.repository.CommentJpaRepository
 import com.backend.sodam.domain.comments.repository.CommentRepository
 import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
-import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 // 템플릿 메서드 패턴 적용
 // - 게시글 생성은 회원 별로 사뭇 다르지만, 그외의 기능은 같음
 abstract class AbstractArticleRepository(
     private val commentRepository: CommentRepository,
-
     private val articleJpaRepository: ArticleJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
@@ -45,66 +40,41 @@ abstract class AbstractArticleRepository(
 
     @Transactional
     override fun increaseViewCnt(articleId: Long) {
-        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
-
-        if (foundArticleOptionalByArticleId.isEmpty) {
-            throw ArticleException.ArticleNotFoundException()
-        }
-        val foundArticleEntity = foundArticleOptionalByArticleId.get()
-        foundArticleEntity.increaseViewCnt()
+        val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
+        articleEntity.increaseViewCnt()
     }
 
     @Transactional
-    open fun decreaseLikeCnt(articleId: Long) {
-        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
-
-        if (foundArticleOptionalByArticleId.isEmpty) {
-            throw ArticleException.ArticleNotFoundException()
-        }
-
-        val foundArticleEntity = foundArticleOptionalByArticleId.get()
-        foundArticleEntity.decreaseLikeCnt()
+    override fun decreaseLikeCnt(articleId: Long) {
+        val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
+        articleEntity.decreaseLikeCnt()
     }
 
     @Transactional
-    open fun increaseLikeCnt(articleId: Long) {
-        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
-
-        if (foundArticleOptionalByArticleId.isEmpty) {
-            throw ArticleException.ArticleNotFoundException()
-        }
-
-        val foundArticleEntity = foundArticleOptionalByArticleId.get()
-        foundArticleEntity.increaseLikeCnt()
+    override fun increaseLikeCnt(articleId: Long) {
+        val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
+        articleEntity.increaseLikeCnt()
     }
 
     @Transactional
     override fun update(articleId: Long, articleUpdateCommand: ArticleUpdateCommand): SodamArticle {
-        val foundArticleEntityOptional = articleJpaRepository.findByArticleId(articleId)
-        if (foundArticleEntityOptional.isEmpty) {
-            throw ArticleException.ArticleNotFoundException()
+        val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
+        val categoryEntity = categoryJpaRepository.findByCategoryId(articleUpdateCommand.categoryId).get()
+
+        articleEntity.tags.clear() // 연관된 모든 태그 삭제
+        articleUpdateCommand.tags.map {
+            articleEntity.addTag(
+                TagsEntity(tagName = it)
+            )
         }
 
-        val foundArticleEntity = foundArticleEntityOptional.get()
-        foundArticleEntity.tags.clear() // 연관된 모든 태그 삭제
-
-        val foundCategoryEntityOptionalByCategoryId = categoryJpaRepository.findByCategoryId(articleUpdateCommand.categoryId)
-        if (foundCategoryEntityOptionalByCategoryId.isEmpty) {
-            throw CategoryException.CategoryNotFoundException()
-        } // 카테고리를 조회한다. 없으면 예외 발생
-
-        articleUpdateCommand.tags.map {
-            val tagEntity = TagsEntity(tagName = it)
-            foundArticleEntity.addTag(tagEntity)
-        } // 태그를 다시 생성하고 추가한다.
-
-        foundArticleEntity.update(
+        articleEntity.update(
             articleUpdateCommand = articleUpdateCommand,
-            categoryEntity = foundCategoryEntityOptionalByCategoryId.get()
-        ) // 해당 게시글을 업데이트한다.
+            categoryEntity = categoryEntity
+        )
 
-        return articleJpaRepository.save(foundArticleEntity)
-            .toDomain() // 도메인 모델로 반환한다.
+        return articleJpaRepository.save(articleEntity)
+                                   .toDomain()
     }
 
     @Transactional
@@ -114,18 +84,18 @@ abstract class AbstractArticleRepository(
             throw ArticleException.ArticleNotFoundException()
         }
 
-        val foundArticleEntity = foundArticleEntityOptional.get()
+        val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
 
-        foundArticleEntity.tags.clear()
-        foundArticleEntity.comments.forEach {
+        articleEntity.tags.clear()
+        articleEntity.comments.forEach {
             commentRepository.delete(it.commentId!!)
         }
 
-        val foundAllArticleLikeByArticle = articleLikeJpaRepository.findByArticle(foundArticleEntity)
+        val foundAllArticleLikeByArticle = articleLikeJpaRepository.findByArticle(articleEntity)
         articleLikeJpaRepository.deleteAll(foundAllArticleLikeByArticle)
-        val foundArticleDislikeByArticle = articleDislikeJpaRepository.findByArticle(foundArticleEntity)
+        val foundArticleDislikeByArticle = articleDislikeJpaRepository.findByArticle(articleEntity)
         articleDislikeJpaRepository.deleteAll(foundArticleDislikeByArticle)
-        articleJpaRepository.delete(foundArticleEntity)
+        articleJpaRepository.delete(articleEntity)
     }
 
     @Transactional(readOnly = true)
@@ -136,36 +106,19 @@ abstract class AbstractArticleRepository(
 
     @Transactional(readOnly = true)
     override fun findArticleByArticleId(articleId: Long): SodamArticle {
-        val foundArticleOptionalEntityByArticleId = articleJpaRepository.findByArticleId(articleId)
-        if (foundArticleOptionalEntityByArticleId.isEmpty) {
-            throw ArticleException.ArticleNotFoundException()
-        }
-
-        return foundArticleOptionalEntityByArticleId.get()
-            .toDomain()
+        val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
+        return articleEntity.toDomain()
     }
 
     @Transactional
-    open fun decreaseDislikeCnt(articleId: Long) {
-        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
-
-        if (foundArticleOptionalByArticleId.isEmpty) {
-            throw ArticleException.ArticleNotFoundException()
-        }
-
-        val foundArticleEntity = foundArticleOptionalByArticleId.get()
-        foundArticleEntity.decreaseDislikeCnt()
+    override fun decreaseDislikeCnt(articleId: Long) {
+        val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
+        articleEntity.decreaseDislikeCnt()
     }
 
     @Transactional
-    open fun increaseDislikeCnt(articleId: Long) {
-        val foundArticleOptionalByArticleId = articleJpaRepository.findByArticleId(articleId)
-
-        if (foundArticleOptionalByArticleId.isEmpty) {
-            throw ArticleException.ArticleNotFoundException()
-        }
-
-        val foundArticleEntity = foundArticleOptionalByArticleId.get()
-        foundArticleEntity.increaseDislikeCnt()
+    override fun increaseDislikeCnt(articleId: Long) {
+        val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
+        articleEntity.increaseDislikeCnt()
     }
 }

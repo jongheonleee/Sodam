@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.articles.controller
 
 import com.backend.sodam.domain.articles.service.ArticleDislikeService
+import com.backend.sodam.domain.articles.service.usecase.HandleArticleDislikeUseCase
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import lombok.RequiredArgsConstructor
@@ -12,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController
 @RequiredArgsConstructor
 class ArticleDislikeController(
     private val tokenProvider: JwtTokenProvider,
-    private val articleDislikeService: ArticleDislikeService
+    private val articleDislikeUseCase: HandleArticleDislikeUseCase,
 ) {
 
     @GetMapping("/api/v1/articles/{articleId}/dislike")
     fun dislikeArticle(@PathVariable("articleId") articleId: Long): SodamApiResponse<Unit> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(articleDislikeService.handleDislike(userId, articleId))
+        return SodamApiResponse.ok(articleDislikeUseCase.handleDislike(userId, articleId))
     }
 }

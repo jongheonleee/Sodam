@@ -6,4 +6,5 @@ import java.util.*
 
 interface CategoryJpaRepository : JpaRepository<CategoryEntity, String>, CategoryCustomRepository {
     fun findByCategoryId(categoryId: String): Optional<CategoryEntity>
+    fun existsByCategoryId(categoryId: String): Boolean
 }

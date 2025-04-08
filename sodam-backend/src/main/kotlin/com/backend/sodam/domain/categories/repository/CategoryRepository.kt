@@ -28,4 +28,8 @@ class CategoryRepository(
             .get()
             .toDomain()
     }
+
+    @Transactional(readOnly = true)
+    fun isExistsByCategoryId(categoryId: String): Boolean =
+        categoryJpaRepository.existsByCategoryId(categoryId)
 }

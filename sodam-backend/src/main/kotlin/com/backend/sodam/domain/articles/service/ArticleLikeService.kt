@@ -4,7 +4,11 @@ import com.backend.sodam.domain.articles.exception.ArticleException
 import com.backend.sodam.domain.articles.repository.ArticleRepositoryForNormalUser
 import com.backend.sodam.domain.articles.service.port.CreateUserArticleLikePort
 import com.backend.sodam.domain.articles.service.port.DeleteUserArticleLikePort
+import com.backend.sodam.domain.articles.service.port.FetchArticlePort
 import com.backend.sodam.domain.articles.service.port.FetchUserArticleLikePort
+import com.backend.sodam.domain.articles.service.port.UpdateArticlePort
+import com.backend.sodam.domain.articles.service.port.UpdateUserArticleLikePort
+import com.backend.sodam.domain.articles.service.usecase.HandleArticleLikeUseCase
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
@@ -18,11 +22,12 @@ class ArticleLikeService(
     private val fetchUserArticleLikePorts: List<FetchUserArticleLikePort>,
     private val deleteUserArticleLikePorts: List<DeleteUserArticleLikePort>,
     private val createUserArticleLikePorts: List<CreateUserArticleLikePort>,
-    private val articleRepositoryForNormalUser: ArticleRepositoryForNormalUser, // 이 부분도 추후에 port로 바꿀 예정
-) {
+    private val updateUserArticleLikePorts: List<UpdateArticlePort>,
+    private val fetchArticlePorts: List<FetchArticlePort>,
+): HandleArticleLikeUseCase {
 
     // 📌 실제 비즈니스 로직
-    fun handleLike(userId: String, articleId: Long) {
+    override fun handleLike(userId: String, articleId: Long) {
         // 작업 유효성 검증
         checkExistsArticle(articleId = articleId)
 
@@ -33,18 +38,19 @@ class ArticleLikeService(
         val fetchUserArticleLikePort = getFetchUserArticleLikePort(userType)
         val deleteUserArticleLikePort = getDeleteUserArticleLikePort(userType)
         val createUserArticleLikePort = getCreateUserArticleLikePort(userType)
+        val updateUserArticleLikePort = getUpdateUserArticleLikePort()
 
         // 좋아요 비즈니스 로직
         val isExists = fetchUserArticleLikePort.existsArticleLike(articleId = articleId, userId = userId)
         when(isExists) {
             true -> {
                 deleteUserArticleLikePort.deleteLike(articleId = articleId, userId = userId)
-                articleRepositoryForNormalUser.decreaseLikeCnt(articleId)
+                updateUserArticleLikePort.decreaseLikeCnt(articleId)
             }
 
             false -> {
                 createUserArticleLikePort.createLike(articleId = articleId, userId = userId)
-                articleRepositoryForNormalUser.increaseLikeCnt(articleId)
+                updateUserArticleLikePort.increaseLikeCnt(articleId)
             }
         }
     }
@@ -56,7 +62,7 @@ class ArticleLikeService(
     }
 
     private fun isExistsArticle(articleId: Long): Boolean =
-        articleRepositoryForNormalUser.isExistsByArticleId(articleId)
+        getFetchArticlePort().isExistsByArticleId(articleId)
 
     // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
     private fun extractUserType(userId: String): UserType {
@@ -84,9 +90,22 @@ class ArticleLikeService(
                                   .findFirst()
                                   .orElseThrow { IllegalArgumentException() }
 
+
     private fun getCreateUserArticleLikePort(userType: UserType): CreateUserArticleLikePort =
         createUserArticleLikePorts.stream()
                                   .filter{ it.isTarget(userType) }
                                   .findFirst()
                                   .orElseThrow { IllegalArgumentException() }
+
+
+    private fun getUpdateUserArticleLikePort(): UpdateArticlePort =
+        updateUserArticleLikePorts.stream()
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+
+
+    private fun getFetchArticlePort(): FetchArticlePort =
+        fetchArticlePorts.stream()
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 }
