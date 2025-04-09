@@ -28,19 +28,14 @@ class ArticleLikeService(
 
     // 📌 실제 비즈니스 로직
     override fun handleLike(userId: String, articleId: Long) {
-        // 작업 유효성 검증
         checkExistsArticle(articleId = articleId)
+        val userType = extractUserType(userId = userId)
 
-        // 회원 유형 추출
-        val userType = extractUserType(userId = userId) // 여기서 회원 존재 여부 검증함
-
-        // 해당 회원 유형을 처리할 수 있는 포트 조회
         val fetchUserArticleLikePort = getFetchUserArticleLikePort(userType)
         val deleteUserArticleLikePort = getDeleteUserArticleLikePort(userType)
         val createUserArticleLikePort = getCreateUserArticleLikePort(userType)
         val updateUserArticleLikePort = getUpdateUserArticleLikePort()
 
-        // 좋아요 비즈니스 로직
         val isExists = fetchUserArticleLikePort.existsArticleLike(articleId = articleId, userId = userId)
         when(isExists) {
             true -> {

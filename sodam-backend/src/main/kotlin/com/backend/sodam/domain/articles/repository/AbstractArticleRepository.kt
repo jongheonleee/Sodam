@@ -10,9 +10,8 @@ import com.backend.sodam.domain.articles.service.port.CreateArticlePort
 import com.backend.sodam.domain.articles.service.port.DeleteArticlePort
 import com.backend.sodam.domain.articles.service.port.FetchArticlePort
 import com.backend.sodam.domain.articles.service.port.UpdateArticlePort
-import com.backend.sodam.domain.categories.exception.CategoryException
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
-import com.backend.sodam.domain.comments.repository.CommentRepository
+import com.backend.sodam.domain.comments.repository.CommentRepositoryForNormalUser
 import com.backend.sodam.domain.tags.entity.TagsEntity
 import com.backend.sodam.domain.users.model.UserType
 import org.springframework.data.domain.Page
@@ -22,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 // 템플릿 메서드 패턴 적용
 // - 게시글 생성은 회원 별로 사뭇 다르지만, 그외의 기능은 같음
 abstract class AbstractArticleRepository(
-    private val commentRepository: CommentRepository,
+    private val commentRepositoryForNormalUser: CommentRepositoryForNormalUser,
     private val articleJpaRepository: ArticleJpaRepository,
     private val categoryJpaRepository: CategoryJpaRepository,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
@@ -88,7 +87,7 @@ abstract class AbstractArticleRepository(
 
         articleEntity.tags.clear()
         articleEntity.comments.forEach {
-            commentRepository.delete(it.commentId!!)
+            commentRepositoryForNormalUser.delete(it.commentId!!)
         }
 
         val foundAllArticleLikeByArticle = articleLikeJpaRepository.findByArticle(articleEntity)

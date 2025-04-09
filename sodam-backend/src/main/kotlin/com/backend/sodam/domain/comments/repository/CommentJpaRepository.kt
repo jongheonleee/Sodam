@@ -6,4 +6,5 @@ import java.util.*
 
 interface CommentJpaRepository : JpaRepository<CommentEntity, Long> {
     fun findByCommentId(commentId: Long): Optional<CommentEntity>
+    fun existsByCommentId(commentId: Long): Boolean
 }

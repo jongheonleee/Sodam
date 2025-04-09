@@ -1,10 +1,9 @@
 package com.backend.sodam.domain.comments.service
 
-import com.backend.sodam.domain.comments.repository.CommentRepository
+import com.backend.sodam.domain.comments.repository.CommentRepositoryForNormalUser
 import com.backend.sodam.domain.comments.repository.UsersCommentLikeRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.NormalUserRepository
 import com.backend.sodam.domain.users.service.port.FetchUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service
 @RequiredArgsConstructor
 class CommentLikeService(
     private val fetchUserPorts: List<FetchUserPort>,
-    private val commentRepository: CommentRepository,
+    private val commentRepositoryForNormalUser: CommentRepositoryForNormalUser,
     private val usersLikeCommentRepository: UsersCommentLikeRepository
 ) {
     fun handleLike(commentId: Long, userId: String) {
@@ -64,7 +63,7 @@ class CommentLikeService(
                     )
                 }
             }
-            commentRepository.decreaseLikeCnt(commentId)
+            commentRepositoryForNormalUser.decreaseLikeCnt(commentId)
         } else {
             // 처음 눌렀거나 좋아요 눌렀던 기록이 없다면, 해당 회원 좋아요 댓글 로우를 생성한다.
             // 해당 댓글의 좋아요 수를 +1 한다.
@@ -84,7 +83,7 @@ class CommentLikeService(
                     )
                 }
             }
-            commentRepository.increaseLikeCnt(commentId)
+            commentRepositoryForNormalUser.increaseLikeCnt(commentId)
         }
     }
 

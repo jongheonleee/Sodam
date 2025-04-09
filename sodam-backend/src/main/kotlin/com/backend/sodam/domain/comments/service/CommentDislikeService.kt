@@ -1,10 +1,9 @@
 package com.backend.sodam.domain.comments.service
 
-import com.backend.sodam.domain.comments.repository.CommentRepository
+import com.backend.sodam.domain.comments.repository.CommentRepositoryForNormalUser
 import com.backend.sodam.domain.comments.repository.UsersCommentDislikeRepository
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.NormalUserRepository
 import com.backend.sodam.domain.users.service.port.FetchUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service
 @RequiredArgsConstructor
 class CommentDislikeService(
     private val fetchUserPorts: List<FetchUserPort>,
-    private val commentRepository: CommentRepository,
+    private val commentRepositoryForNormalUser: CommentRepositoryForNormalUser,
     private val usersDislikeCommentRepository: UsersCommentDislikeRepository
 ) {
     fun handleDislike(commentId: Long, userId: String) {
@@ -63,7 +62,7 @@ class CommentDislikeService(
                 }
             }
 
-            commentRepository.decreaseDislikeCnt(commentId)
+            commentRepositoryForNormalUser.decreaseDislikeCnt(commentId)
         } else {
             when (userType) {
                 UserType.SOCIAL -> {
@@ -81,7 +80,7 @@ class CommentDislikeService(
                 }
             }
 
-            commentRepository.increaseDislikeCnt(commentId)
+            commentRepositoryForNormalUser.increaseDislikeCnt(commentId)
         }
     }
 

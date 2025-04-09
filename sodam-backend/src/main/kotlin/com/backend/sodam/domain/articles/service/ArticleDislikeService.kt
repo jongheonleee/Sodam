@@ -25,19 +25,14 @@ class ArticleDislikeService(
 ): HandleArticleDislikeUseCase {
 
     override fun handleDislike(userId: String, articleId: Long) {
-        // 작업 유효성 검증
         checkExistsArticle(articleId = articleId)
-
-        // 회원 유형 추출
         val userType = extractUserType(userId)
 
-        // 해당 회원 유형을 처리할 수 있는 포트 조회
         val fetchUserArticleDislikePort = getFetchUserArticleDislikePort(userType)
         val deleteUserArticleDislikePort = getDeleteUserArticleDislikePort(userType)
         val createUserArticleDislikePort = getCreateUserArticleDislikePort(userType)
         val updateUserArticleDislikePort = getUpdateUserArticleLikePort()
 
-        // 싫어요 비즈니스 로직
         val isExists = fetchUserArticleDislikePort.existsArticleDislike(articleId = articleId, userId = userId)
         when(isExists) {
             true -> {
