@@ -1,7 +1,8 @@
 package com.backend.sodam.domain.comments.service
 
 import com.backend.sodam.domain.comments.repository.CommentRepositoryForNormalUser
-import com.backend.sodam.domain.comments.repository.UsersCommentDislikeRepository
+import com.backend.sodam.domain.comments.repository.NormalUsersCommentDislikeRepository
+import com.backend.sodam.domain.comments.service.usecase.HandleCommentDislikeUseCase
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
@@ -13,9 +14,9 @@ import org.springframework.stereotype.Service
 class CommentDislikeService(
     private val fetchUserPorts: List<FetchUserPort>,
     private val commentRepositoryForNormalUser: CommentRepositoryForNormalUser,
-    private val usersDislikeCommentRepository: UsersCommentDislikeRepository
-) {
-    fun handleDislike(commentId: Long, userId: String) {
+    private val usersDislikeCommentRepository: NormalUsersCommentDislikeRepository
+): HandleCommentDislikeUseCase {
+    override fun handleDislike(commentId: Long, userId: String) {
         // [비즈니스 로직]
         // 유저 정보를 조회한다
         // 유저 타입에 따라서 다르게 서로 다르게 적용한다.

@@ -1,19 +1,18 @@
 package com.backend.sodam.domain.articles.service
 
 import com.backend.sodam.domain.articles.exception.ArticleException
-import com.backend.sodam.domain.articles.repository.ArticleRepositoryForNormalUser
 import com.backend.sodam.domain.articles.service.port.CreateUserArticleLikePort
 import com.backend.sodam.domain.articles.service.port.DeleteUserArticleLikePort
 import com.backend.sodam.domain.articles.service.port.FetchArticlePort
 import com.backend.sodam.domain.articles.service.port.FetchUserArticleLikePort
 import com.backend.sodam.domain.articles.service.port.UpdateArticlePort
-import com.backend.sodam.domain.articles.service.port.UpdateUserArticleLikePort
 import com.backend.sodam.domain.articles.service.usecase.HandleArticleLikeUseCase
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 @RequiredArgsConstructor
@@ -27,32 +26,34 @@ class ArticleLikeService(
 ): HandleArticleLikeUseCase {
 
     // 📌 실제 비즈니스 로직
+    @Transactional
     override fun handleLike(userId: String, articleId: Long) {
         checkExistsArticle(articleId = articleId)
+
         val userType = extractUserType(userId = userId)
 
         val fetchUserArticleLikePort = getFetchUserArticleLikePort(userType)
-        val deleteUserArticleLikePort = getDeleteUserArticleLikePort(userType)
-        val createUserArticleLikePort = getCreateUserArticleLikePort(userType)
-        val updateUserArticleLikePort = getUpdateUserArticleLikePort()
+        val updateArticlePort = getUpdateUserArticleLikePort()
 
         val isExists = fetchUserArticleLikePort.existsArticleLike(articleId = articleId, userId = userId)
         when(isExists) {
             true -> {
+                val deleteUserArticleLikePort = getDeleteUserArticleLikePort(userType)
                 deleteUserArticleLikePort.deleteLike(articleId = articleId, userId = userId)
-                updateUserArticleLikePort.decreaseLikeCnt(articleId)
+                updateArticlePort.decreaseLikeCnt(articleId = articleId)
             }
 
             false -> {
+                val createUserArticleLikePort = getCreateUserArticleLikePort(userType)
                 createUserArticleLikePort.createLike(articleId = articleId, userId = userId)
-                updateUserArticleLikePort.increaseLikeCnt(articleId)
+                updateArticlePort.increaseLikeCnt(articleId = articleId)
             }
         }
     }
 
     // 📌 작업 유효성을 검증하는 메서드
     private fun checkExistsArticle(articleId: Long) {
-        if (!isExistsArticle(articleId))
+        if ( ! isExistsArticle(articleId) )
             throw ArticleException.ArticleNotFoundException()
     }
 

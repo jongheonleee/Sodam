@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Repository
 @RequiredArgsConstructor
-class UsersCommentDislikeRepository(
+class SocialUsersCommentDislikeRepository(
     private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val commentJpaRepository: CommentJpaRepository,

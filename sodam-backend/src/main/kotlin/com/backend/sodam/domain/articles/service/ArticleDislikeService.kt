@@ -12,6 +12,7 @@ import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 @RequiredArgsConstructor
@@ -24,32 +25,34 @@ class ArticleDislikeService(
     private val fetchArticlePorts: List<FetchArticlePort>,
 ): HandleArticleDislikeUseCase {
 
+    @Transactional
     override fun handleDislike(userId: String, articleId: Long) {
         checkExistsArticle(articleId = articleId)
+
         val userType = extractUserType(userId)
 
         val fetchUserArticleDislikePort = getFetchUserArticleDislikePort(userType)
-        val deleteUserArticleDislikePort = getDeleteUserArticleDislikePort(userType)
-        val createUserArticleDislikePort = getCreateUserArticleDislikePort(userType)
-        val updateUserArticleDislikePort = getUpdateUserArticleLikePort()
+        val updateArticlePort = getUpdateUserArticleLikePort()
 
         val isExists = fetchUserArticleDislikePort.existsArticleDislike(articleId = articleId, userId = userId)
         when(isExists) {
             true -> {
+                val deleteUserArticleDislikePort = getDeleteUserArticleDislikePort(userType)
                 deleteUserArticleDislikePort.deleteDislike(articleId = articleId, userId = userId)
-                updateUserArticleDislikePort.decreaseDislikeCnt(articleId = articleId)
+                updateArticlePort.decreaseDislikeCnt(articleId = articleId)
             }
 
             false -> {
+                val createUserArticleDislikePort = getCreateUserArticleDislikePort(userType)
                 createUserArticleDislikePort.createDislike(articleId = articleId, userId = userId)
-                updateUserArticleDislikePort.increaseDislikeCnt(articleId = articleId)
+                updateArticlePort.increaseDislikeCnt(articleId = articleId)
             }
         }
     }
 
     // 📌 작업 유효성을 검증하는 메서드
     private fun checkExistsArticle(articleId: Long) {
-        if (!isExistsArticle(articleId))
+        if ( ! isExistsArticle(articleId) )
             throw ArticleException.ArticleNotFoundException()
     }
 

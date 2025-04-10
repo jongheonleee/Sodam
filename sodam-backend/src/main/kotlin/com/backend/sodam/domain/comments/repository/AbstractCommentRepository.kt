@@ -58,7 +58,7 @@ abstract class AbstractCommentRepository(
     }
 
     @Transactional
-    open fun decreaseLikeCnt(commentId: Long) {
+    override fun decreaseLikeCnt(commentId: Long) {
         val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
         if (foundCommentEntityOptional.isEmpty) {
             throw CommentException.CommentNotFoundException()
@@ -69,7 +69,7 @@ abstract class AbstractCommentRepository(
     }
 
     @Transactional
-    open fun increaseLikeCnt(commentId: Long) {
+    override fun increaseLikeCnt(commentId: Long) {
         val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
         if (foundCommentEntityOptional.isEmpty) {
             throw CommentException.CommentNotFoundException()
@@ -80,7 +80,7 @@ abstract class AbstractCommentRepository(
     }
 
     @Transactional
-    open fun decreaseDislikeCnt(commentId: Long) {
+    override fun decreaseDislikeCnt(commentId: Long) {
         val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
         if (foundCommentEntityOptional.isEmpty) {
             throw CommentException.CommentNotFoundException()
@@ -91,7 +91,7 @@ abstract class AbstractCommentRepository(
     }
 
     @Transactional
-    open fun increaseDislikeCnt(commentId: Long) {
+    override fun increaseDislikeCnt(commentId: Long) {
         val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
         if (foundCommentEntityOptional.isEmpty) {
             throw CommentException.CommentNotFoundException()
