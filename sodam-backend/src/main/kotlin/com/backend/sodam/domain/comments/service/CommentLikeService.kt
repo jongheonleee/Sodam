@@ -28,12 +28,9 @@ class CommentLikeService(
     @Transactional
     override fun handleLike(commentId: Long, userId: String) {
         checkCommentExists(commentId = commentId)
-
         val userType = extractUserType(userId = userId)
-
         val fetchCommentLikePort = getFetchCommentLikePort(userType)
         val updateCommentPort = getUpdateCommentPort()
-
         val isExists = fetchCommentLikePort.existsCommentLike(commentId = commentId, userId = userId)
         when(isExists) {
             true -> {
@@ -41,7 +38,6 @@ class CommentLikeService(
                 deleteCommentLikePort.deleteLike(commentId = commentId, userId = userId)
                 updateCommentPort.decreaseLikeCnt(commentId = commentId)
             }
-
             false -> {
                 val createCommentLikePort = getCreateCommentLikePort(userType)
                 createCommentLikePort.createLike(commentId = commentId, userId = userId)

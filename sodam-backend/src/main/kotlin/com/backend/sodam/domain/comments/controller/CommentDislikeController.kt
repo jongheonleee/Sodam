@@ -1,6 +1,7 @@
 package com.backend.sodam.domain.comments.controller
 
 import com.backend.sodam.domain.comments.service.CommentDislikeService
+import com.backend.sodam.domain.comments.service.usecase.HandleCommentDislikeUseCase
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequiredArgsConstructor
 class CommentDislikeController(
     private val tokenProvider: JwtTokenProvider,
-    private val commentDislikeService: CommentDislikeService
+    private val commentDislikeUseCase: HandleCommentDislikeUseCase,
 ) {
 
     @GetMapping("/api/v1/comments/{commentId}/dislike")
@@ -23,8 +24,6 @@ class CommentDislikeController(
         @PathVariable("commentId") commentId: Long
     ): SodamApiResponse<Unit> {
         val userId = tokenProvider.getUserId()
-        return SodamApiResponse.ok(
-            commentDislikeService.handleDislike(commentId, userId)
-        )
+        return SodamApiResponse.ok(commentDislikeUseCase.handleDislike(commentId, userId))
     }
 }

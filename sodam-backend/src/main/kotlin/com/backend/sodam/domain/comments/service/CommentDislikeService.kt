@@ -1,89 +1,63 @@
 package com.backend.sodam.domain.comments.service
 
+import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.comments.repository.CommentRepositoryForNormalUser
 import com.backend.sodam.domain.comments.repository.NormalUsersCommentDislikeRepository
+import com.backend.sodam.domain.comments.service.port.CreateUserCommentDislikePort
+import com.backend.sodam.domain.comments.service.port.DeleteCommentPort
+import com.backend.sodam.domain.comments.service.port.DeleteUserCommentDislikePort
+import com.backend.sodam.domain.comments.service.port.FetchCommentPort
+import com.backend.sodam.domain.comments.service.port.FetchUserCommentDislikePort
+import com.backend.sodam.domain.comments.service.port.UpdateCommentPort
 import com.backend.sodam.domain.comments.service.usecase.HandleCommentDislikeUseCase
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 @RequiredArgsConstructor
 class CommentDislikeService(
     private val fetchUserPorts: List<FetchUserPort>,
-    private val commentRepositoryForNormalUser: CommentRepositoryForNormalUser,
-    private val usersDislikeCommentRepository: NormalUsersCommentDislikeRepository
+    private val fetchCommentPorts: List<FetchCommentPort>,
+    private val updateCommentPorts: List<UpdateCommentPort>,
+    private val fetchCommentDislikePorts: List<FetchUserCommentDislikePort>,
+    private val deleteCommentDislikePorts: List<DeleteUserCommentDislikePort>,
+    private val createUserCommentDislikePorts: List<CreateUserCommentDislikePort>,
 ): HandleCommentDislikeUseCase {
+
+    @Transactional
     override fun handleDislike(commentId: Long, userId: String) {
-        // [비즈니스 로직]
-        // 유저 정보를 조회한다
-        // 유저 타입에 따라서 다르게 서로 다르게 적용한다.
+        checkCommentExists(commentId = commentId)
         val userType = extractUserType(userId = userId)
-        // 유저 정보를 조회한다
-        // 유저 타입에 따라서 다르게 서로 다르게 적용한다.
-        // 좋아요 핸들링 처리를 진행한다.
-        // 기존에 눌렀다면, 해당 회원 좋아요 댓글 로우를 삭제한다.
-        // 해당 댓글의 좋아요 수를 -1 한다.
-
-        // 처음 눌렀거나 좋아요 눌렀던 기록이 없다면, 해당 회원 좋아요 댓글 로우를 생성한다.
-        // 해당 댓글의 좋아요 수를 +1 한다.
-
-        val isExists = when (userType) {
-            UserType.SOCIAL -> {
-                usersDislikeCommentRepository.existsByCommentDislikeForSocialUser(
-                    commentId = commentId,
-                    socialUserId = userId
-                )
+        val fetchCommentDislikePort = getFetchCommentDislikePort(userType = userType)
+        val updateCommentPort = getUpdateCommentPort()
+        val isExists = fetchCommentDislikePort.existsCommentDislike(commentId = commentId, userId = userId)
+        when(isExists) {
+            true -> {
+                val deleteCommentDislikePort = getDeleteCommentDislikePort(userType = userType)
+                deleteCommentDislikePort.deleteDislike(commentId = commentId, userId = userId)
+                updateCommentPort.decreaseDislikeCnt(commentId = commentId)
             }
-
-            else -> {
-                usersDislikeCommentRepository.existsByCommentDislikeForUser(
-                    commentId = commentId,
-                    userId = userId
-                )
+            false -> {
+                val createCommentDislikePort = getCreateUserCommentDislikePort(userType = userType)
+                createCommentDislikePort.createDislike(commentId = commentId, userId = userId)
+                updateCommentPort.increaseDislikeCnt(commentId = commentId)
             }
         }
 
-        if (isExists) {
-            when (userType) {
-                UserType.SOCIAL -> {
-                    usersDislikeCommentRepository.deleteForSocialUser(
-                        commentId = commentId,
-                        socialUserId = userId
-                    )
-                }
-
-                else -> {
-                    usersDislikeCommentRepository.deleteForUser(
-                        commentId = commentId,
-                        userId = userId
-                    )
-                }
-            }
-
-            commentRepositoryForNormalUser.decreaseDislikeCnt(commentId)
-        } else {
-            when (userType) {
-                UserType.SOCIAL -> {
-                    usersDislikeCommentRepository.createForSocialUser(
-                        commentId = commentId,
-                        socialUserId = userId
-                    )
-                }
-
-                else -> {
-                    usersDislikeCommentRepository.createForUser(
-                        commentId = commentId,
-                        userId = userId
-                    )
-                }
-            }
-
-            commentRepositoryForNormalUser.increaseDislikeCnt(commentId)
-        }
     }
+
+    // 📌 작업 유효성을 검증하는 메서드
+    private fun checkCommentExists(commentId: Long) {
+        if ( ! isExistsComment(commentId) )
+            throw CommentException.CommentNotFoundException()
+
+    }
+
+    private fun isExistsComment(commentId: Long): Boolean = getFetchCommentPort().isExistsComment(commentId = commentId)
 
     // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
     private fun extractUserType(userId: String): UserType {
@@ -93,15 +67,39 @@ class CommentDislikeService(
     }
 
     // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
-    private fun getFetchPortByUserType(userType: UserType): FetchUserPort =
-        fetchUserPorts.stream()
-            .filter { it.isTarget(userType) }
-            .findFirst()
-            .orElseThrow { IllegalArgumentException() }
-
     private fun getFetchPortByUserId(userId: String): FetchUserPort =
         fetchUserPorts.stream()
             .filter { it.isExistsByUserId(userId) }
             .findFirst()
             .orElseThrow { UserException.UserNotFoundException() }
+
+    private fun getFetchCommentPort(): FetchCommentPort =
+        fetchCommentPorts.stream()
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+
+    private fun getCreateUserCommentDislikePort(userType: UserType): CreateUserCommentDislikePort =
+        createUserCommentDislikePorts.stream()
+            .filter { it.isTarget(userType = userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+
+    private fun getUpdateCommentPort(): UpdateCommentPort =
+        updateCommentPorts.stream()
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+
+    private fun getDeleteCommentDislikePort(userType: UserType): DeleteUserCommentDislikePort =
+        deleteCommentDislikePorts.stream()
+            .filter { it.isTarget(userType = userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+
+    private fun getFetchCommentDislikePort(userType: UserType): FetchUserCommentDislikePort =
+        fetchCommentDislikePorts.stream()
+            .filter { it.isTarget(userType = userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+
+
 }

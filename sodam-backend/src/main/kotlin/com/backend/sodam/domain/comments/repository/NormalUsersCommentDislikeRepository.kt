@@ -7,6 +7,7 @@ import com.backend.sodam.domain.comments.service.port.DeleteUserCommentDislikePo
 import com.backend.sodam.domain.comments.service.port.FetchUserCommentDislikePort
 import com.backend.sodam.domain.comments.service.port.UpdateUserCommentDislikePort
 import com.backend.sodam.domain.users.exception.UserException
+import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
@@ -16,135 +17,43 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 @RequiredArgsConstructor
 class NormalUsersCommentDislikeRepository(
-    private val userJpaRepository: NormalUserJpaRepository,
-    private val socialUserJpaRepository: SocialUserJpaRepository,
     private val commentJpaRepository: CommentJpaRepository,
+    private val normalUserJpaRepository: NormalUserJpaRepository,
     private val usersCommentDislikeJpaRepository: UsersCommentDislikeJpaRepository
 ): CreateUserCommentDislikePort, FetchUserCommentDislikePort, UpdateUserCommentDislikePort, DeleteUserCommentDislikePort {
 
-    @Transactional(readOnly = true)
-    fun existsByCommentDislikeForSocialUser(commentId: Long, socialUserId: String): Boolean {
-        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
-        if (foundCommentEntityOptional.isEmpty) {
-            throw CommentException.CommentNotFoundException()
-        }
+    override fun isTarget(userType: UserType): Boolean =
+        UserType.NORMAL == userType
 
-        val foundSocialUserEntityOptional = socialUserJpaRepository.findBySocialUserId(socialUserId)
-        if (foundSocialUserEntityOptional.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
-        return usersCommentDislikeJpaRepository.existsByCommentAndSocialUser(
-            socialUser = foundSocialUserEntityOptional.get(),
-            comment = foundCommentEntityOptional.get()
+    @Transactional
+    override fun createDislike(userId: String, commentId: Long) {
+        val userEntity = normalUserJpaRepository.findByUserId(userId).get()
+        val commentEntity = commentJpaRepository.findByCommentId(commentId).get()
+        val userCommentDislikeEntity = UsersDislikeCommentEntity(
+            user = userEntity,
+            comment = commentEntity,
         )
+        usersCommentDislikeJpaRepository.save(userCommentDislikeEntity)
     }
 
     @Transactional(readOnly = true)
-    fun existsByCommentDislikeForUser(commentId: Long, userId: String): Boolean {
-        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
-        if (foundCommentEntityOptional.isEmpty) {
-            throw CommentException.CommentNotFoundException()
-        }
-
-        val foundUserEntityOptional = userJpaRepository.findByUserId(userId)
-        if (foundUserEntityOptional.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
+    override fun existsCommentDislike(commentId: Long, userId: String): Boolean {
+        val userEntity = normalUserJpaRepository.findByUserId(userId).get()
+        val commentEntity = commentJpaRepository.findByCommentId(commentId).get()
         return usersCommentDislikeJpaRepository.existsByCommentAndUser(
-            user = foundUserEntityOptional.get(),
-            comment = foundCommentEntityOptional.get()
+            user = userEntity,
+            comment = commentEntity,
         )
     }
 
     @Transactional
-    fun deleteForSocialUser(commentId: Long, socialUserId: String) {
-        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
-        if (foundCommentEntityOptional.isEmpty) {
-            throw CommentException.CommentNotFoundException()
-        }
-
-        val foundSocialUserEntityOptional = socialUserJpaRepository.findBySocialUserId(socialUserId)
-        if (foundSocialUserEntityOptional.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
-        val foundCommentDislikeEntityOptional = usersCommentDislikeJpaRepository.findByCommentAndSocialUser(
-            socialUser = foundSocialUserEntityOptional.get(),
-            comment = foundCommentEntityOptional.get()
-        )
-
-        if (foundCommentDislikeEntityOptional.isEmpty) {
-            throw CommentException.UserDislikeCommentNotFoundException()
-        }
-
-        val foundCommentDislikeEntity = foundCommentDislikeEntityOptional.get()
-        usersCommentDislikeJpaRepository.delete(foundCommentDislikeEntity)
-    }
-
-    @Transactional
-    fun deleteForUser(commentId: Long, userId: String) {
-        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
-        if (foundCommentEntityOptional.isEmpty) {
-            throw CommentException.CommentNotFoundException()
-        }
-
-        val foundUserEntityOptional = userJpaRepository.findByUserId(userId)
-        if (foundUserEntityOptional.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
-        val foundCommentDislikeEntityOptional = usersCommentDislikeJpaRepository.findByCommentAndUser(
-            comment = foundCommentEntityOptional.get(),
-            user = foundUserEntityOptional.get()
-        )
-
-        if (foundCommentDislikeEntityOptional.isEmpty) {
-            throw CommentException.UserDislikeCommentNotFoundException()
-        }
-
-        val foundCommentDislikeEntity = foundCommentDislikeEntityOptional.get()
-        usersCommentDislikeJpaRepository.delete(foundCommentDislikeEntity)
-    }
-
-    @Transactional
-    fun createForSocialUser(commentId: Long, socialUserId: String) {
-        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
-        if (foundCommentEntityOptional.isEmpty) {
-            throw CommentException.CommentNotFoundException()
-        }
-
-        val foundSocialUserEntityOptional = socialUserJpaRepository.findBySocialUserId(socialUserId)
-        if (foundSocialUserEntityOptional.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
-        val usersCommentDislikeEntity = UsersDislikeCommentEntity(
-            comment = foundCommentEntityOptional.get(),
-            socialUser = foundSocialUserEntityOptional.get()
-        )
-
-        usersCommentDislikeJpaRepository.save(usersCommentDislikeEntity)
-    }
-
-    @Transactional
-    fun createForUser(commentId: Long, userId: String) {
-        val foundCommentEntityOptional = commentJpaRepository.findByCommentId(commentId)
-        if (foundCommentEntityOptional.isEmpty) {
-            throw CommentException.CommentNotFoundException()
-        }
-
-        val foundUserEntityOptional = userJpaRepository.findByUserId(userId)
-        if (foundUserEntityOptional.isEmpty) {
-            throw UserException.UserNotFoundException()
-        }
-
-        val usersCommentDislikeEntity = UsersDislikeCommentEntity(
-            comment = foundCommentEntityOptional.get(),
-            user = foundUserEntityOptional.get()
-        )
-
-        usersCommentDislikeJpaRepository.save(usersCommentDislikeEntity)
+    override fun deleteDislike(commentId: Long, userId: String) {
+        val userEntity = normalUserJpaRepository.findByUserId(userId = userId).get()
+        val commentEntity = commentJpaRepository.findByCommentId(commentId = commentId).get()
+        val commentDislikeEntity = usersCommentDislikeJpaRepository.findByCommentAndUser(
+            user = userEntity,
+            comment = commentEntity,
+        ).get()
+        usersCommentDislikeJpaRepository.delete(commentDislikeEntity)
     }
 }
