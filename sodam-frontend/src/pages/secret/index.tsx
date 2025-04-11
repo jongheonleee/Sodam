@@ -17,8 +17,7 @@ import {CategoryType} from "../../types/article";
 import {getCategories} from "../../api/category";
 
 interface SecretesPageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-}
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void}
 
 
 export default function SecretesPage({

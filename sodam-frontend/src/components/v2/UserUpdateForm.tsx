@@ -1,4 +1,4 @@
-import "./UserUpdateForm.css"
+import styles from "./UserUpdateForm.module.css"
 import usePositions from "../../hooks/usePositions";
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
@@ -69,9 +69,9 @@ export default function UserUpdateForm() {
     }
 
     return (
-        <div className="container">
-            <div className="update-container">
-                <div className="update-header">
+        <div className={styles['container']}>
+            <div className={styles['update-container']}>
+                <div className={styles['update-header']}>
                     <h2>프로필 정보 수정</h2>
                     <p>
                         안녕하세요 <strong>우리들의 성장 이야기 Sodam 🍃</strong>입니다.
@@ -79,12 +79,12 @@ export default function UserUpdateForm() {
                         프로필 정보 변경을 위해 변경할 프로필 정보를 입력해주세요
                     </p>
                 </div>
-                <form className="update-form" onSubmit={handleSubmit}>
+                <form className={styles['update-form']} onSubmit={handleSubmit}>
                     <input type="email" placeholder="변경할 이메일을 입력해주세요" onChange={(e) => setEmail(e.target.value)} value={email} required/>
                     <input type="text" placeholder="변경할 회원 이름을 입력해주세요" onChange={(e) => setName(e.target.value)} value={name} required/>
-                    <div className="password-container">
+                    <div className={styles['password-container']}>
                         <input type="password" placeholder="변경할 비밀번호를 입력해주세요" onChange={(e) => setPassword(e.target.value)} value={password} required/>
-                        <span className="eye-icon">👁️</span>
+                        <span className={styles['eye-icon']}>👁️</span>
                     </div>
                     { positions && positions.length > 0
                         ? <select onChange={(e) => setPositionId(e.target.value)}>

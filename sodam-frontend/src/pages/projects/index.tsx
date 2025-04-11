@@ -5,8 +5,7 @@ import React from "react";
 
 
 interface ProjectsProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void
 }
 
 export default function Projects({

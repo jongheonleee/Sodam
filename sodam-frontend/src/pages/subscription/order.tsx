@@ -6,7 +6,7 @@ import SubscriptionOrderForm from "../../components/SubscriptionOrderForm";
 import React from "react";
 
 interface SubscriptionOrderPageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void
 }
 
 

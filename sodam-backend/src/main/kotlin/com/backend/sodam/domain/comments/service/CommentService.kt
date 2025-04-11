@@ -52,7 +52,7 @@ class CommentService(
         val fetchCommentPort = getFetchCommentPort()
         val updateCommentPort = getUpdateCommentPort()
         val sodamComment = fetchCommentPort.findByCommentId(commentId)
-        if (!sodamComment.canAccess(commentUpdateCommand.userId))
+        if ( ! sodamComment.canAccess(commentUpdateCommand.userId) )
             throw CommentException.CommentAccessDeniedException()
         return updateCommentPort.update(commentId, commentUpdateCommand)
                                 .toUpdateResponse()
@@ -70,19 +70,19 @@ class CommentService(
         val fetchCommentPort = getFetchCommentPort()
         val deleteCommentPort = getDeleteCommentPort()
         val sodamComment = fetchCommentPort.findByCommentId(commentId)
-        if (!sodamComment.canAccess(userId))
+        if ( ! sodamComment.canAccess(userId) )
             throw CommentException.CommentAccessDeniedException()
         deleteCommentPort.delete(commentId)
     }
 
     // 📌 비즈니스 로직 적용 전 작업 유효성 따지는 메서드
     private fun checkExistsArticle(articleId: Long) {
-        if (!isExistsArticle(articleId))
+        if ( ! isExistsArticle(articleId) )
             throw ArticleException.ArticleNotFoundException()
     }
 
     private fun checkExistsComment(commentId: Long) {
-        if (!isExistsComment(commentId))
+        if ( ! isExistsComment(commentId) )
             throw CommentException.CommentNotFoundException()
     }
 

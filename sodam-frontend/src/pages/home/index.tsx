@@ -6,11 +6,9 @@ import Categories, {defaultCategory} from "../../components/Categories";
 import React, {useEffect, useState} from "react";
 import {ArticleSummaryType, CategoryType} from "../../types/article";
 import {getArticlesByTag} from "../../api/article";
-import {getReissuedToken} from "../../api/token";
 
 interface HomeProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-}
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void}
 
 export default function Home({
     handleLogout,

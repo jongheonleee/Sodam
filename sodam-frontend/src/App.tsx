@@ -24,7 +24,7 @@ function App() {
     }, []);
 
     // 사용자가 로그아웃 버튼을 클릭하면 로컬 스토리지에 저장된 토큰값을 제거한다
-    const handleLogout = async (e : React.MouseEvent<HTMLButtonElement>) => {
+    const handleLogout = async ( e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
         e.preventDefault()
 
         let token = localStorage.getItem('token')

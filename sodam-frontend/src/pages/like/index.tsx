@@ -4,8 +4,7 @@ import ArticleLikes from "../../components/ArticleLikes";
 import React from "react";
 
 interface LikePageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-}
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void}
 
 export default function LikePage({
     handleLogout

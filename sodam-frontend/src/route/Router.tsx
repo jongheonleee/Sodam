@@ -15,12 +15,12 @@ import ArticlesPage from "../pages/article";
 import ArticleEditPage from "../pages/article/edit";
 import KakaoAuthRedirect from "../pages/login/kakaoAuthRedirect";
 import EditProfile from "../pages/profile/edit";
+import Projects from "../pages/projects";
 
 interface RouterProps {
     isAuthenticated : boolean,
     setIsAuthenticated: (isAuthenticated: boolean) => void;
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-}
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void}
 
 export default function Router({
     isAuthenticated,
@@ -45,6 +45,7 @@ export default function Router({
                         <Route path="/secrets" element={<SecretesPage handleLogout={handleLogout}  />} />
                         <Route path="/secrets/:secretId" element={<SecretDetailPage handleLogout={handleLogout}  />} />
                         <Route path="/subscription/order/:id" element={<SubscriptionOrderPage handleLogout={handleLogout} />} />
+                        <Route path="/projects" element={<Projects handleLogout={handleLogout} />} />
                         <Route path="*" element={<Navigate replace to="/" />} />
                     </>
                 ) : (

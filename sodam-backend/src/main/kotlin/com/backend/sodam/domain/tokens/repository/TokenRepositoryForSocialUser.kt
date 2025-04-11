@@ -3,7 +3,10 @@ package com.backend.sodam.domain.tokens.repository
 import com.backend.sodam.domain.tokens.controller.response.TokenResponse
 import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
 import com.backend.sodam.domain.tokens.exception.TokenException
+import com.backend.sodam.domain.tokens.service.port.CreateTokenPort
+import com.backend.sodam.domain.tokens.service.port.FetchTokenPort
 import com.backend.sodam.domain.users.exception.UserException
+import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
@@ -13,64 +16,39 @@ import java.util.*
 
 @Repository
 @RequiredArgsConstructor
-class TokenRepositoryForNormalUser(
+class TokenRepositoryForSocialUser(
     private val tokenJpaRepository: TokenJpaRepository,
-    private val userJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository
-) {
+): CreateTokenPort, FetchTokenPort {
+
+    override fun isTarget(userType: UserType): Boolean =
+        UserType.SOCIAL == userType
+
+    @Transactional
+    override fun createToken(userId: String, accessToken: String, refreshToken: String): TokenResponse {
+        val socialUserEntity = socialUserJpaRepository.findByProviderId(userId = userId).get()
+        val tokenEntity = UsersTokenEntity.newTokenEntity(
+            socialUsersEntity = socialUserEntity,
+            accessToken = accessToken,
+            refreshToken = refreshToken
+        )
+        tokenJpaRepository.save(tokenEntity)
+        return TokenResponse(
+            accessToken = accessToken,
+            refreshToken = refreshToken
+        )
+    }
+
+    @Transactional(readOnly = true)
+    override fun findTokenByUserId(userId: String): Optional<TokenResponse> =
+        tokenJpaRepository.findBySocialUserId(socialUserId = userId)
+                          .map { TokenResponse(it.accessToken, it.refreshToken) }
+
 
     // 소셜 유저 조회
     // 해당 유저와 전달받은 토큰값을 기반으로 토큰 엔티티 생성
     // 생성된 토큰 엔티티를 저장함
     // 토큰 정보를 반환함
-    @Transactional
-    fun createTokenForSocialUser(userId: String, accessToken: String, refreshToken: String): TokenResponse {
-        val foundSocialUserByProviderId = socialUserJpaRepository.findByProviderId(userId) // socialUserId != userId, userId == providerId
-            .orElseThrow { UserException.UserNotFoundException() }
-
-        val tokenEntity = UsersTokenEntity.newTokenEntity(
-            foundSocialUserByProviderId,
-            accessToken,
-            refreshToken
-        )
-        tokenJpaRepository.save(tokenEntity)
-
-        return TokenResponse(
-            accessToken,
-            refreshToken
-        )
-    }
-
-    @Transactional
-    fun createTokenForUser(email: String, accessToken: String, refreshToken: String): TokenResponse {
-        val foundUserByEmail = userJpaRepository.findByUserEmail(email)
-            .orElseThrow { UserException.UserNotFoundException() }
-
-        val tokenEntity = UsersTokenEntity.newTokenEntity(
-            foundUserByEmail,
-            accessToken,
-            refreshToken
-        )
-
-        tokenJpaRepository.save(tokenEntity)
-
-        return TokenResponse(
-            accessToken,
-            refreshToken
-        )
-    }
-
-    @Transactional
-    fun findTokenBySocialUserId(socialUserId: String): Optional<TokenResponse> {
-        return tokenJpaRepository.findBySocialUserId(socialUserId)
-            .map { TokenResponse(it.accessToken, it.refreshToken) }
-    }
-
-    @Transactional
-    fun findTokenByUserId(userId: String): Optional<TokenResponse> {
-        return tokenJpaRepository.findByUserId(userId)
-            .map { TokenResponse(it.accessToken, it.refreshToken) }
-    }
 
     @Transactional
     fun updateTokenForUser(email: String, accessToken: String, refreshToken: String) {

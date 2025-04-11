@@ -5,8 +5,7 @@ import SubscriptionCarousel from "../../components/SubscriptionCarousel";
 import React from "react";
 
 interface SubscriptionPageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-}
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void}
 
 export default function SubscriptionPage({
     handleLogout

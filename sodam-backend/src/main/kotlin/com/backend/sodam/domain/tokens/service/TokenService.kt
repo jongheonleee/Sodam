@@ -2,11 +2,15 @@ package com.backend.sodam.domain.tokens.service
 
 import com.backend.sodam.domain.tokens.controller.response.TokenResponse
 import com.backend.sodam.domain.tokens.exception.TokenException
-import com.backend.sodam.domain.tokens.repository.TokenRepository
+import com.backend.sodam.domain.tokens.repository.TokenRepositoryForNormalUser
+import com.backend.sodam.domain.tokens.service.port.CreateTokenPort
+import com.backend.sodam.domain.tokens.service.port.FetchTokenPort
 import com.backend.sodam.domain.users.controller.response.UserResponse
+import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.NormalUserRepository
 import com.backend.sodam.domain.users.service.UserService
+import com.backend.sodam.domain.users.service.port.FetchUserPort
 import com.backend.sodam.global.port.KakaoTokenPort
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
@@ -24,12 +28,17 @@ import javax.crypto.SecretKey
 @Service
 @RequiredArgsConstructor
 class TokenService(
-    private val tokenRepository: TokenRepository,
+    @Value("\${jwt.secret}")
+    val secretKey: String,
+    // 회원
+    private val fetchUserPorts: List<FetchUserPort>,
+
+    private val createTokenPorts: List<CreateTokenPort>,
+    private val fetchTokenPorts: List<FetchTokenPort>,
+    private val tokenRepositoryForNormalUser: TokenRepositoryForNormalUser,
     private val kakaoTokenPort: KakaoTokenPort,
     private val userService: UserService,
     private val normalUserRepository: NormalUserRepository,
-    @Value("\${jwt.secret}")
-    val secretKey: String
 ) {
 
     // accesstoken 기반으로 회원 정보를 조회함
@@ -37,9 +46,6 @@ class TokenService(
     fun findUserByAccessToken(token: String): UserResponse {
         val claims = parseClaims(token)
         val userId = claims["userId"] ?: throw TokenException.InvalidTokenException() // 여기서 사용하는 userId는 email을 의미함
-
-        println("userId : $userId")
-
         // 소셜 회원 먼저 조회, 없으면 일반 회원 조회. 그래도 없으면 예외 발생
         return userService.findByProviderId(userId.toString())
             ?: userService.findByEmail(userId.toString())
@@ -63,29 +69,27 @@ class TokenService(
     }
 
     // 새로운 토큰 생성
-    fun createNewTokenForUser(email: String): TokenResponse {
-        // 회원 아이디 기반으로 토큰 발급
+    fun createNewTokenForNormalUser(email: String): TokenResponse {
         val accessToken = getToken(email, Duration.ofHours(5))
         val refreshToken = getToken(email, Duration.ofHours(24))
-
-        // 발급된 토큰을 생성함
-        return tokenRepository.createTokenForUser(email, accessToken, refreshToken)
+        val createTokenPort = getCreateTokenPortByUserType(userType = UserType.NORMAL)
+        return createTokenPort.createToken(userId = email, accessToken = accessToken, refreshToken = refreshToken)
     }
 
     fun createNewTokenForSocialUser(userId: String): TokenResponse {
         // 회원 아이디 기반으로 토큰 발급
         val accessToken = getToken(userId, Duration.ofHours(5))
         val refreshToken = getToken(userId, Duration.ofHours(24))
-
-        // 발급된 토큰을 생성함
-        return tokenRepository.createTokenForSocialUser(userId, accessToken, refreshToken)
+        val createTokenPort = getCreateTokenPortByUserType(userType = UserType.SOCIAL)
+        return createTokenPort.createToken(userId = userId, accessToken = accessToken, refreshToken = refreshToken)
     }
 
     fun upsertTokenForSocialUser(providerId: String): TokenResponse {
-        val foundTokenBySocialUserId = tokenRepository.findTokenBySocialUserId(providerId)
-        return when {
-            foundTokenBySocialUserId.isPresent -> updateTokenForSocialUser(providerId)
-            else -> createNewTokenForSocialUser(providerId)
+        val fetchTokenPort = getFetchTokenPortByUserType(userType = UserType.SOCIAL)
+        val foundTokenPort = fetchTokenPort.findTokenByUserId(userId = providerId)
+        return when(foundTokenPort.isPresent) {
+            true -> updateTokenForSocialUser(providerId)
+            false -> createNewTokenForSocialUser(providerId)
         }
     }
 
@@ -93,7 +97,7 @@ class TokenService(
         // 토큰 생성
         val accessToken = getToken(providerId, Duration.ofHours(5))
         val refreshToken = getToken(providerId, Duration.ofHours(24))
-        tokenRepository.updateTokenForSocialUser(providerId, accessToken, refreshToken)
+        tokenRepositoryForNormalUser.updateTokenForSocialUser(providerId, accessToken, refreshToken)
         return TokenResponse(
             accessToken = accessToken,
             refreshToken = refreshToken
@@ -101,40 +105,41 @@ class TokenService(
     }
 
     fun upsertTokenForUser(email: String): TokenResponse {
-        val foundTokenByUserId = tokenRepository.findTokenByUserId(email)
-        return when {
-            foundTokenByUserId.isPresent -> updateTokenForUser(email)
-            else -> createNewTokenForUser(email)
+        val fetchTokenPort = getFetchTokenPortByUserType(userType = UserType.NORMAL)
+        val foundToken = fetchTokenPort.findTokenByUserId(email)
+        return when(foundToken.isPresent) {
+            true -> updateTokenForUser(email)
+            false -> createNewTokenForNormalUser(email)
         }
     }
 
     fun updateTokenForUser(email: String): TokenResponse {
         val accessToken = getToken(email, Duration.ofHours(5))
         val refreshToken = getToken(email, Duration.ofHours(24))
-        tokenRepository.updateTokenForUser(email, accessToken, refreshToken)
+        tokenRepositoryForNormalUser.updateTokenForUser(email, accessToken, refreshToken)
         return TokenResponse(
             accessToken = accessToken,
             refreshToken = refreshToken
         )
     }
 
-    // 토큰 재발행
+    // 토큰 재발행 - 이 부분 로직 꼬인듯, 일반회원은 email, 소셜회원은 socialUserId
     fun reissueToken(accessToken: String, refreshToken: String): TokenResponse {
         val claimsJws = Jwts.parser()
-            .setSigningKey(secretKey)
-            .build()
-            .parseClaimsJws(accessToken)
-
+                                           .setSigningKey(secretKey)
+                                           .build()
+                                           .parseClaimsJws(accessToken)
         val userId = claimsJws.payload["userId"] as String
         val sodamUserOptional = normalUserRepository.findByUserId(userId)
         if (sodamUserOptional.isEmpty) {
             throw TokenException.InvalidTokenException()
         }
 
+
         val sodamUser = sodamUserOptional.get()
         when (sodamUser.userType) {
             UserType.SOCIAL -> {
-                val foundTokenBySocialUserId = tokenRepository.findTokenBySocialUserId(
+                val foundTokenBySocialUserId = tokenRepositoryForNormalUser.findTokenBySocialUserId(
                     socialUserId = sodamUser.userId
                 )
 
@@ -146,7 +151,7 @@ class TokenService(
                 return updateTokenForSocialUser(userId)
             }
             else -> {
-                val foundTokenByUserId = tokenRepository.findTokenByUserId(
+                val foundTokenByUserId = tokenRepositoryForNormalUser.findTokenByUserId(
                     userId = sodamUser.userId
                 )
                 val sodamToken = foundTokenByUserId.get()
@@ -184,4 +189,16 @@ class TokenService(
     } catch (e: ExpiredJwtException) {
         e.claims
     }
+
+    private fun getCreateTokenPortByUserType(userType: UserType): CreateTokenPort =
+        createTokenPorts.stream()
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
+
+    private fun getFetchTokenPortByUserType(userType: UserType): FetchTokenPort =
+        fetchTokenPorts.stream()
+            .filter { it.isTarget(userType = userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 }

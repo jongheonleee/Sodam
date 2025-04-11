@@ -6,7 +6,7 @@ const user = {
 }
 
 interface HeaderProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void
 }
 
 
@@ -23,8 +23,7 @@ export default function Header({
                 <Link to="/articles">게시글</Link>
                 <Link to={`/profile/${user?.email}`}>프로필</Link>
                 <Link to="/secrets">구독자 전용</Link>
-
-                <button onClick={(e) => handleLogout(e)} >로그아웃</button>
+                <Link to="#" onClick={handleLogout}>로그아웃</Link>
             </div>
         </header>
     )

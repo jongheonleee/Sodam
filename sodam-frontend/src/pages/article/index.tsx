@@ -15,8 +15,7 @@ import ArticlePagination from "../../components/ArticlePagination";
 import {getCategories} from "../../api/category";
 
 interface ArticlesPageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-}
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void}
 
 export default function ArticlesPage({
     handleLogout,

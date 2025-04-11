@@ -7,8 +7,7 @@ import {getCategories} from "../../api/category";
 import {postArticle} from "../../api/article";
 
 interface ArticleNewPageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-}
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void}
 
 export default function ArticleNewPage({
     handleLogout,

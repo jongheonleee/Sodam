@@ -17,7 +17,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 2em;
+    margin-bottom: -2em;
 }
 
 .titlebar {
@@ -81,8 +81,8 @@
     border-radius: 26px;
     overflow: hidden;
     background-color: white;
-    box-shadow: 12px 12px 0px #444;
-    margin-top: 1em;
+    box-shadow: 12px 12px 0 #444;
+    margin-top: 3em;
     padding-top: 1em;
     padding-bottom: 1em; /* 'padding-botton' → 'padding-bottom' 수정 */
 }
@@ -142,5 +142,5 @@
 }
 
 .spacer {
-    height: 2rem;
+    height: 14rem;
 }

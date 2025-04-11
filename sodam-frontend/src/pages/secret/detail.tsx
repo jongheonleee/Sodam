@@ -7,8 +7,7 @@ import {SecretDetailType} from "../../types/secret";
 import {getDetailSecret} from "../../api/secret";
 
 interface SecretDetailPageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-}
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void}
 
 export default function SecretDetailPage({
     handleLogout,

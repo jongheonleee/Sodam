@@ -144,14 +144,14 @@ class TokenServiceUnitTest : BehaviorSpec({
                 refreshToken = "테스트 refresh token"
             )
 
-            every { sut.createNewTokenForUser(email) } returns expected
+            every { sut.createNewTokenForNormalUser(email) } returns expected
 
             then("생성된 토큰을 반환한다.") {
-                val actual = sut.createNewTokenForUser(email)
+                val actual = sut.createNewTokenForNormalUser(email)
 
                 actual shouldBe expected
 
-                verify { sut.createNewTokenForUser(email) }
+                verify { sut.createNewTokenForNormalUser(email) }
             }
         }
     }

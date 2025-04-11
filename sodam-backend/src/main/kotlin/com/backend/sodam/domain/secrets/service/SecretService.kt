@@ -51,7 +51,6 @@ class SecretService(
         rollbackFor = [Exception::class]
     )
     fun getSecretDetail(userId: String, secretId: Long, role: String): SecretDetailResponse {
-        println("role: $role")
         val totalViewCnt = secretViewRepository.countViewToday(userId = userId) // 보유 구독권 서비스에서 현재 회원의 당일 조회수 확인
         val isViewable = viewValidators.stream()
             .filter { it.isTarget(role) } // 현재 발급된 구독권
@@ -59,10 +58,9 @@ class SecretService(
             .orElseThrow()
             .isValidView(totalViewCnt) // 조회 가능 여부 확인
 
-        if (!isViewable) {
-            // 조회 가능 여부 확인
+        if ( ! isViewable )
             throw SecretException.InvalidSecretViewException()
-        }
+
 
         secretRepository.increaseViewCnt(secretId) // 조회수 증가
         secretViewRepository.create(userId = userId, secretId = secretId) // 시청 이력 생성

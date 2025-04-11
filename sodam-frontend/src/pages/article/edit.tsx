@@ -7,7 +7,7 @@ import {getCategories} from "../../api/category";
 import {getArticleSimple, updateArticle} from "../../api/article";
 
 interface ArticleEditPageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void
 }
 
 export default function ArticleEditPage({

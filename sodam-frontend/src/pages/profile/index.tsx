@@ -14,17 +14,18 @@ import {UserProfileInfoType} from "../../types/auth";
 import Categories, {defaultCategory} from "../../components/Categories";
 import {getCategories} from "../../api/category";
 import ArticlePagination from "../../components/ArticlePagination";
+import {useNavigate} from "react-router-dom";
 
 
 interface ProfilePageProps {
-    handleLogout : (e : React.MouseEvent<HTMLButtonElement>) => void,
-}
+    handleLogout : (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void}
 
 export default function ProfilePage({
     handleLogout,
 } : ProfilePageProps ) {
     // 회원 정보
     const [ userProfile, setUserProfile ] = useState<UserProfileInfoType | null>(null)
+    const navigate = useNavigate();
 
     // 게시글 및 페이징 정보
     const [articles, setArticles] = useState<ArticleSummaryType[]>([])
@@ -129,8 +130,9 @@ export default function ProfilePage({
                         setTotalPages(res.data.data.totalPages)
                     }
                 })
-            }
-            else {
+            } else if (selectedCategory.categoryName === '프로젝트 일정') {
+                navigate('/projects');
+            } else {
                 getArticlesByCategoryId(
                     selectedCategory.categoryId
                 ).then((res) => {
@@ -161,15 +163,6 @@ export default function ProfilePage({
                     }
                 })
             }
-            // getArticlesWithCategoryIdAndPageNumber(value, selectedCategory.categoryId).then((res) => {
-            //     if (res.status === 200) {
-            //         setArticles(res.data.data.content)
-            //         setPage(res.data.data.pageNumber)
-            //         setTotalPages(res.data.data.totalPages)
-            //         console.log(res.data.data)
-            //
-            //     }
-            // })
         }
     }
 
