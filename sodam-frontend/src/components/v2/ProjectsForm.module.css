@@ -1,0 +1,146 @@
+.container {
+    padding: 0;
+    margin: 0;
+    background: linear-gradient(to bottom right, #4caf50, #d4f8d4);
+}
+
+.calender-container {
+    width: 100%;
+    min-width: 400px;
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+/* 네비게이션 영역 */
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2em;
+}
+
+.titlebar {
+    color: white;
+    text-shadow: 1px 1px 5px #000;
+}
+
+.button-group {
+    display: flex;
+    gap: 1em;
+}
+
+.align-right {
+    justify-content: flex-end;
+}
+
+.button {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 5s;
+}
+
+.button:hover {
+    color: white;
+    background-color: #4caf50;
+}
+
+.button.small {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    box-shadow: 3px 3px 0 black;
+}
+
+.button.medium {
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    box-shadow: 6px 6px 0 black;
+}
+
+.button.small:active {
+    color: white;
+    background-color: #4caf50;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.0);
+    transform: translate(3px, 3px);
+}
+
+.button.medium:active {
+    color: white;
+    background-color: #4caf50;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.0);
+    transform: translate(6px, 6px);
+}
+
+/* 캘린더 영역 */
+.card-container {
+    border: 4px solid #444;
+    border-radius: 26px;
+    overflow: hidden;
+    background-color: white;
+    box-shadow: 12px 12px 0px #444;
+    margin-top: 1em;
+    padding-top: 1em;
+    padding-bottom: 1em; /* 'padding-botton' → 'padding-bottom' 수정 */
+}
+
+.day-group {
+    display: flex;
+    justify-content: space-around;
+}
+
+.day-cell {
+    flex: 1;
+    display: flex;
+    text-align: center;
+    align-items: center; /* 'align-itmes' → 'align-items' 수정 */
+    justify-content: center;
+    background-color: white;
+    padding: 10px;
+}
+
+.sunday {
+    color: red;
+}
+
+.circle-hover {
+    position: relative;
+    display: flex;
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.circle-hover:hover {
+    background-color: #f0f0f0;
+}
+
+.circle-hover:active {
+    color: white;
+    background-color: #303030;
+}
+
+.today {
+    border: 2px dashed #f906bd;
+}
+
+.dot {
+    position: absolute;
+    top: 8px;
+    right: 6px;
+    background-color: #016dfa;
+    color: white;
+    padding: 3px;
+    border-radius: 50%;
+}
+
+.spacer {
+    height: 2rem;
+}
