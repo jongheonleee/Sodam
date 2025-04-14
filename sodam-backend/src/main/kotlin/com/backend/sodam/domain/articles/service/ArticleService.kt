@@ -69,7 +69,7 @@ class ArticleService(
         checkExistsArticle(articleId = articleId)
         val articleFetchPort = getArticleFetchPort()
         val sodamArticle = articleFetchPort.findArticleByArticleId(articleId)
-        if (!sodamArticle.canAccess(userId))
+        if ( ! sodamArticle.canAccess(userId))
             throw ArticleException.ArticleAccessDeniedException()
         return sodamArticle.toArticleSimpleResponse()
     }
@@ -80,7 +80,7 @@ class ArticleService(
         val articleFetchPort = getArticleFetchPort()
         val articleUpdatePort = getArticleUpdatePort()
         val sodamArticle = articleFetchPort.findArticleByArticleId(articleId)
-        if (!sodamArticle.canAccess(articleUpdateCommand.userId))
+        if ( ! sodamArticle.canAccess(articleUpdateCommand.userId))
             throw ArticleException.ArticleAccessDeniedException()
         return articleUpdatePort.update(articleId, articleUpdateCommand)
                                 .toArticleUpdateResponse()
@@ -91,20 +91,20 @@ class ArticleService(
         val articleFetchPort = getArticleFetchPort()
         val articleDeletePort = getArticleDeletePort()
         val sodamArticle = articleFetchPort.findArticleByArticleId(articleId)
-        if (!sodamArticle.canAccess(userId))
+        if ( ! sodamArticle.canAccess(userId))
             throw ArticleException.ArticleAccessDeniedException()
         articleDeletePort.delete(articleId)
     }
 
     // 📌 비즈니스 로직 적용 전 작업 유효성 따지는 메서드
     private fun checkExistsArticle(articleId: Long) {
-        if (!isExistsArticle(articleId)) {
+        if ( ! isExistsArticle(articleId)) {
             throw ArticleException.ArticleNotFoundException()
         }
     }
 
     private fun checkExistsCategory(categoryId: String) {
-        if (!isExistsCategory(categoryId)) {
+        if ( ! isExistsCategory(categoryId)) {
             throw CategoryException.CategoryNotFoundException()
         }
     }

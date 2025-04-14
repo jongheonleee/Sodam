@@ -84,7 +84,7 @@
 
 
 
-## 📌 2차 개발 범위 및 목표 : 결제, 쿠폰, 채팅(프로젝트 스케줄) 및 여러 비즈니스 서비스
+## 📌 2차 개발 범위 및 목표 : 구독권 결제 기능 및 시크릿 부분 구현 
 
 
 <br>
@@ -100,6 +100,173 @@
 <br>
 
 ## 📌 결과 
+
+<br>
+
+## 📌 기술적 고민 
+> - ### 1. Code-Level에서의 확장성 용이한 구조 형성하기(새로운 요구 사항 발생시 확장성이 용이한가?)
+>   - ### (1) Template Method
+>   - ![템플릿메서드패턴](./docs/design/템플릿메서드패턴.png)
+>   - ### (2) Strategy 
+> - ### 2. 복잡한 비즈니스로직이라도 깔끔한 코드베이스 유지함 
+```Kotlin
+
+@Service
+@RequiredArgsConstructor
+class UserService(
+    // 1. 회원 관련 빈 DI
+    private val fetchSocialUserPort: FetchSocialUserPort,
+    private val fetchUserPorts: List<FetchUserPort>,
+    private val createNormalUserPort: CreateNormalUserPort,
+    private val createSocialUserPort: CreateSocialUserPort,
+    private val updateUserPorts: List<UpdateUserPort>,
+
+    // 2. 그외의 연관되어 있는 포트들 DI
+    // - 1. 포지션
+    private val fetchPositionPort: FetchPositionPort,
+    private val createUserPositionPorts: List<CreateUserPositionPort>,
+    private val updateUserPositionPorts: List<UpdateUserPositionPort>,
+
+    // - 2. 구독권
+    private val fetchSubscriptionPort: FetchSubscriptionPort,
+    private val createUserSubscriptionPorts: List<CreateUserSubscriptionPort>,
+
+    // - 3. 등급
+    private val fetchGradePort: FetchGradePort,
+    private val createUserGradePorts: List<CreateUserGradePort>,
+
+    // - 4. 그외 시스템 외부 포트
+    private val kakaoUserPort: KakaoUserPort
+) : FetchUserUseCase, RegisterUserUseCase, UpdateUserUseCase, DeleteUserUseCase {
+
+    // 📌 실제 핵심 비즈니스 로직
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor = [Exception::class]
+    )
+    override fun registerNormalUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
+        // 회원등록 작업 전 유효성 검증
+        checkDuplicatedEmail(userSignupCommand.email)
+        checkExistsPosition(userSignupCommand.positionId)
+        checkExistsSubscription(SubscriptionsType.FREE.name)
+        checkExistsGrade(GradesType.ENTRY.name)
+
+        // 회원유형에 맞는 포트 조회 - 일반회원
+        val userPositionCreatePort = getCreateUserPositionPortByUserType(UserType.NORMAL)
+        val userSubscriptionCreatePort = getCreateUserSubscriptionPort(UserType.NORMAL)
+        val userGraderCreatePort = getCreateUserGradePort(UserType.NORMAL)
+
+        // 회원등록 처리 비즈니스 로직
+        val sodamUser = createNormalUserPort.createUser(userSignupCommand)
+        userPositionCreatePort.createByPositionId(userId = sodamUser.userId, positionId = userSignupCommand.positionId)
+        userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId, subscriptionType = SubscriptionsType.FREE)
+        userGraderCreatePort.createGrade(userId = sodamUser.userId, gradeType = GradesType.ENTRY)
+        return sodamUser.toSignupResponse()
+    }
+
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor = [Exception::class]
+    )
+    override fun registerSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse {
+        // 회원등록 작업 전 유효성 검증
+        checkExistsPositionByName(PositionsType.TBD.fullName)
+        checkExistsSubscription(SubscriptionsType.FREE.name)
+        checkExistsGrade(GradesType.ENTRY.name)
+
+        // 회원유형에 맞는 포트 조회 - 소셜회원
+        val userPositionCreatePort = getCreateUserPositionPortByUserType(UserType.SOCIAL)
+        val userSubscriptionCreatePort = getCreateUserSubscriptionPort(UserType.SOCIAL)
+        val userGradeCreatePort = getCreateUserGradePort(UserType.SOCIAL)
+
+        // 소셜 회원 등록 비즈니스 로직
+        val sodamUser = createSocialUserPort.createSocialUser(socialUserSignupCommand)
+        userPositionCreatePort.createByPositionName(userId = sodamUser.userId, positionName = PositionsType.TBD.fullName)
+        userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId, subscriptionType = SubscriptionsType.FREE)
+        userGradeCreatePort.createGrade(userId = sodamUser.userId, gradeType = GradesType.ENTRY)
+        return sodamUser.toSignupResponse()
+    }
+
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor = [Exception::class],
+        isolation = Isolation.READ_COMMITTED
+    )
+    override fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): UserUpdateResponse {
+        // 업데이트 작업 전 유효성 검증
+        checkDuplicatedEmail(userUpdateCommand.email) // 이메일 중복 여부
+        checkExistsUser(userId) // 아이디 존재 여부
+        checkExistsPosition(userUpdateCommand.positionId) // 포지션 존재 여부
+
+        // 회원 유형에 맞는 포트 조회 -> 일반회원, 소셜회원
+        val userType = extractUserType(userId) // 회원의 유형 추출
+        val updateUserPort = getUpdatePortByUserType(userType) // 회원의 유형을 다룰 수 있는 포트 조회
+        val updatePositionPort = getUpdatePositionPortByUserType(userType)
+
+        // 업데이트 작업 비즈니스 로직
+        val updatedSodamUser = updateUserPort.updateUserInfo(userId = userId, userUpdateCommand = userUpdateCommand) // 회원 필드 업데이트(이때, 포지션 비움)
+        updatePositionPort.upsertUserPosition(userId = userId, positionId = userUpdateCommand.positionId)
+        return updatedSodamUser.toUpdateResponse()
+    }
+
+    override fun findByEmail(email: String): UserResponse {
+        val fetchPort = getFetchPortByEmail(email)
+        return UserResponse.toResponse(sodamUser = fetchPort.findByEmail(email))
+    }
+
+    override fun findByUserId(userId: String): UserResponse {
+        val fetchPort = getFetchPortByUserId(userId)
+        return UserResponse.toResponse(sodamUser = fetchPort.findByUserId(userId).get())
+    }
+
+    override fun findKakaoUser(accessToken: String): SocialUserResponse {
+        val foundUserFromKakao = kakaoUserPort.findUserFromKakao(accessToken)
+        return SocialUserResponse(name = foundUserFromKakao.username, provider = "kakao", providerId = foundUserFromKakao.providerId)
+    }
+
+    override fun findByProviderId(providerId: String): UserResponse? {
+        return fetchSocialUserPort.findByProviderId(providerId) // socialUser
+            .map { UserResponse.toResponse(it) }
+            .orElse(null)
+    }
+
+    @Transactional(
+        readOnly = true,
+        isolation = Isolation.READ_COMMITTED
+    )
+    override fun findUserProfileInfo(userId: String): UserProfileResponse {
+        val fetchPort = getFetchPortByUserId(userId)
+        val sodamUserDetail = fetchPort.findProfileInfo(userId).get()
+        return sodamUserDetail.toResponse()
+    }
+
+    @Transactional(
+        readOnly = true,
+        isolation = Isolation.READ_COMMITTED
+    )
+    override fun getOwnArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
+        val fetchPort = getFetchPortByUserId(userId)
+        return fetchPort.findOwnArticlesByPageBy(pageable = pageable, userId = userId)
+    }
+
+    @Transactional(
+        readOnly = true,
+        isolation = Isolation.READ_COMMITTED
+    )
+    override fun getOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
+        val fetchPort = getFetchPortByUserId(userId)
+        return fetchPort.findOwnLikeArticles(pageable = pageable, userId = userId)
+    }
+
+    // 보조 메서드 생략 ... 
+}
+
+```
+> - ### 3. Server-Level에서의 확장성
+> - ### 4. SpringWebFlux를 활용하여 Aync-Non Blocking 을 통한 최소한의 자원으로 효율적인 작업 처리(Kotlin Coroutine)
+> - ### 5. 프로젝트 배포 전략(Rolling-Deployments)
+> - ### 5. 프로젝트 운영 전략()
+> - ### 6. 성능 개선 과정(인덱싱 설정 및 Redis, Kafka 활용)
 
 
 
