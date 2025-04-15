@@ -65,6 +65,6 @@ class SecretService(
         secretRepository.increaseViewCnt(secretId) // 조회수 증가
         secretViewRepository.create(userId = userId, secretId = secretId) // 시청 이력 생성
         return secretRepository.findDetailBySecretId(secretId = secretId)
-            .toResponse()
+                               .toResponse()
     }
 }

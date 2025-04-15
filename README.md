@@ -26,11 +26,12 @@
 
 <br>
 
-> - ### 2. 백엔드 프로젝트 아키텍처 
+> - ### 2. 백엔드 프로젝트 아키텍처
 >   ![백엔드 프로젝트 구조1](./docs/design/sodam백엔드구조.drawio.png)
 >   - 해당 프로젝트 구조의 최종 목표는 **외부 환경 변동으로부터 비즈니스 로직을 안전하고 견고하게 구성시키는 것**
 >   - **OCP, ISP, DIP** 중시
 >   - 처음에는 개발 생산성을 위해 전통적인 **계층형 아키텍처**로 구상했으나, 리팩토링 시점에서는 **도메인 중심 아키텍처**과 유사한 형태로 변경(둘을 조합하여 구성함)
+>   - 아마... 헥사고날로 바꿀듯 ㅠㅡ(spring MVC, spring Webflux 사용이슈...)
 >   - ```
 >       domain: 특정 도메인
 >       ├── controller: 사용자 요청 흐름 관장
@@ -48,8 +49,9 @@
 <br>
 
 > - ### 3. 백엔드 & 인프라 아키텍처
+>   ![서비스 아키텍처 구조](./docs/design/sodam-서비스-아키텍처.png)
 >   - SPoF 제거, 기본적으로 <strong>Active-Standby 이중화 구성</strong>
->   - 추후에 서비스가 커진다고 가정했을 때 API 서버의 경우 증설이 상대적으로 용이하지만, 확장성이 떨어지는 DB의 경우 트래픽이 몰려서  부하가 발생할 수 있기 때문에 이 부분은 <strong>Range Partitined Table을 활용할 예정(테이블 수평 분할을 통한 분산 처리)</strong>
+>   - 추후에 서비스가 커진다고 가정했을 때 API 서버의 경우 증설이 상대적으로 용이하지만, 확장성이 떨어지는 DB의 경우 트래픽이 몰려서  부하가 발생할 수 있기 때문에 이 부분은 <strong>Range Partitioned Table을 활용할 예정(테이블 수평 분할을 통한 분산 처리)</strong>
 
 <br>
 
@@ -115,169 +117,73 @@
 <br>
 
 ## 📌 기술적 고민 
-> - ### 1. Code-Level에서의 확장성 용이한 구조 형성하기(새로운 요구 사항 발생시 확장성이 용이한가?)
+> - ### 1. Code-Level Scalability 고려 - 과연 내 코드는 새로운 요구 사항 발생시 확장성이 용이할까? 
 >   - ### (1) Template Method
 >   - ![템플릿메서드패턴](./docs/design/템플릿메서드패턴.png)
+>   - 비즈니스 상에서 새로운 유형의 회원이 등장할 경우를 고려함
+>   - <strong>Template Method 패턴을 통해 새로운 유형의 회원이 등장하더라도 확장성이 용이한 코드 구조 형성</strong>
 >   - ### (2) Strategy 
-> - ### 2. 복잡한 비즈니스로직이라도 깔끔한 코드베이스 유지
-```Kotlin
-
-@Service
-@RequiredArgsConstructor
-class UserService(
-    // 1. 회원 관련 빈 DI
-    private val fetchSocialUserPort: FetchSocialUserPort,
-    private val fetchUserPorts: List<FetchUserPort>,
-    private val createNormalUserPort: CreateNormalUserPort,
-    private val createSocialUserPort: CreateSocialUserPort,
-    private val updateUserPorts: List<UpdateUserPort>,
-
-    // 2. 그외의 연관되어 있는 포트들 DI
-    // - 1. 포지션
-    private val fetchPositionPort: FetchPositionPort,
-    private val createUserPositionPorts: List<CreateUserPositionPort>,
-    private val updateUserPositionPorts: List<UpdateUserPositionPort>,
-
-    // - 2. 구독권
-    private val fetchSubscriptionPort: FetchSubscriptionPort,
-    private val createUserSubscriptionPorts: List<CreateUserSubscriptionPort>,
-
-    // - 3. 등급
-    private val fetchGradePort: FetchGradePort,
-    private val createUserGradePorts: List<CreateUserGradePort>,
-
-    // - 4. 그외 시스템 외부 포트
-    private val kakaoUserPort: KakaoUserPort
-) : FetchUserUseCase, RegisterUserUseCase, UpdateUserUseCase, DeleteUserUseCase {
-
-    // 📌 실제 핵심 비즈니스 로직
-    @Transactional(
-        propagation = Propagation.REQUIRED,
-        rollbackFor = [Exception::class]
-    )
-    override fun registerNormalUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
-        // 회원등록 작업 전 유효성 검증
-        checkDuplicatedEmail(userSignupCommand.email)
-        checkExistsPosition(userSignupCommand.positionId)
-        checkExistsSubscription(SubscriptionsType.FREE.name)
-        checkExistsGrade(GradesType.ENTRY.name)
-
-        // 회원유형에 맞는 포트 조회 - 일반회원
-        val userPositionCreatePort = getCreateUserPositionPortByUserType(UserType.NORMAL)
-        val userSubscriptionCreatePort = getCreateUserSubscriptionPort(UserType.NORMAL)
-        val userGraderCreatePort = getCreateUserGradePort(UserType.NORMAL)
-
-        // 회원등록 처리 비즈니스 로직
-        val sodamUser = createNormalUserPort.createUser(userSignupCommand)
-        userPositionCreatePort.createByPositionId(userId = sodamUser.userId, positionId = userSignupCommand.positionId)
-        userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId, subscriptionType = SubscriptionsType.FREE)
-        userGraderCreatePort.createGrade(userId = sodamUser.userId, gradeType = GradesType.ENTRY)
-        return sodamUser.toSignupResponse()
-    }
-
-    @Transactional(
-        propagation = Propagation.REQUIRED,
-        rollbackFor = [Exception::class]
-    )
-    override fun registerSocialUser(socialUserSignupCommand: SocialUserSignupCommand): UserSignupResponse {
-        // 회원등록 작업 전 유효성 검증
-        checkExistsPositionByName(PositionsType.TBD.fullName)
-        checkExistsSubscription(SubscriptionsType.FREE.name)
-        checkExistsGrade(GradesType.ENTRY.name)
-
-        // 회원유형에 맞는 포트 조회 - 소셜회원
-        val userPositionCreatePort = getCreateUserPositionPortByUserType(UserType.SOCIAL)
-        val userSubscriptionCreatePort = getCreateUserSubscriptionPort(UserType.SOCIAL)
-        val userGradeCreatePort = getCreateUserGradePort(UserType.SOCIAL)
-
-        // 소셜 회원 등록 비즈니스 로직
-        val sodamUser = createSocialUserPort.createSocialUser(socialUserSignupCommand)
-        userPositionCreatePort.createByPositionName(userId = sodamUser.userId, positionName = PositionsType.TBD.fullName)
-        userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId, subscriptionType = SubscriptionsType.FREE)
-        userGradeCreatePort.createGrade(userId = sodamUser.userId, gradeType = GradesType.ENTRY)
-        return sodamUser.toSignupResponse()
-    }
-
-    @Transactional(
-        propagation = Propagation.REQUIRED,
-        rollbackFor = [Exception::class],
-        isolation = Isolation.READ_COMMITTED
-    )
-    override fun updateUserInfo(userId: String, userUpdateCommand: UserUpdateCommand): UserUpdateResponse {
-        // 업데이트 작업 전 유효성 검증
-        checkDuplicatedEmail(userUpdateCommand.email) // 이메일 중복 여부
-        checkExistsUser(userId) // 아이디 존재 여부
-        checkExistsPosition(userUpdateCommand.positionId) // 포지션 존재 여부
-
-        // 회원 유형에 맞는 포트 조회 -> 일반회원, 소셜회원
-        val userType = extractUserType(userId) // 회원의 유형 추출
-        val updateUserPort = getUpdatePortByUserType(userType) // 회원의 유형을 다룰 수 있는 포트 조회
-        val updatePositionPort = getUpdatePositionPortByUserType(userType)
-
-        // 업데이트 작업 비즈니스 로직
-        val updatedSodamUser = updateUserPort.updateUserInfo(userId = userId, userUpdateCommand = userUpdateCommand) // 회원 필드 업데이트(이때, 포지션 비움)
-        updatePositionPort.upsertUserPosition(userId = userId, positionId = userUpdateCommand.positionId)
-        return updatedSodamUser.toUpdateResponse()
-    }
-
-    override fun findByEmail(email: String): UserResponse {
-        val fetchPort = getFetchPortByEmail(email)
-        return UserResponse.toResponse(sodamUser = fetchPort.findByEmail(email))
-    }
-
-    override fun findByUserId(userId: String): UserResponse {
-        val fetchPort = getFetchPortByUserId(userId)
-        return UserResponse.toResponse(sodamUser = fetchPort.findByUserId(userId).get())
-    }
-
-    override fun findKakaoUser(accessToken: String): SocialUserResponse {
-        val foundUserFromKakao = kakaoUserPort.findUserFromKakao(accessToken)
-        return SocialUserResponse(name = foundUserFromKakao.username, provider = "kakao", providerId = foundUserFromKakao.providerId)
-    }
-
-    override fun findByProviderId(providerId: String): UserResponse? {
-        return fetchSocialUserPort.findByProviderId(providerId) // socialUser
-            .map { UserResponse.toResponse(it) }
-            .orElse(null)
-    }
-
-    @Transactional(
-        readOnly = true,
-        isolation = Isolation.READ_COMMITTED
-    )
-    override fun findUserProfileInfo(userId: String): UserProfileResponse {
-        val fetchPort = getFetchPortByUserId(userId)
-        val sodamUserDetail = fetchPort.findProfileInfo(userId).get()
-        return sodamUserDetail.toResponse()
-    }
-
-    @Transactional(
-        readOnly = true,
-        isolation = Isolation.READ_COMMITTED
-    )
-    override fun getOwnArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
-        val fetchPort = getFetchPortByUserId(userId)
-        return fetchPort.findOwnArticlesByPageBy(pageable = pageable, userId = userId)
-    }
-
-    @Transactional(
-        readOnly = true,
-        isolation = Isolation.READ_COMMITTED
-    )
-    override fun getOwnLikeArticles(pageable: Pageable, userId: String): Page<ArticleSummaryResponse> {
-        val fetchPort = getFetchPortByUserId(userId)
-        return fetchPort.findOwnLikeArticles(pageable = pageable, userId = userId)
-    }
-
-    // 보조 메서드 생략 ... 
-}
-
-```
+>   - ![전략패턴](./docs/design/sodam프로젝트-sodamuml2.drawio.png)
+>   - 비즈니스 상에서 새로운 형태의 구독권을 정의하고 사용할 경우를 고려함
+>   - <strong>Strategy 패턴을 통해 새로운 형태의 구독권이 등장하거나 기존의 구독권이 삭제되어도 확장성이 용이한 코드 구조 형성</strong>
+> - ### 2. 불필요한 주석 제거 밒 가독성 높고 깔끔한 코드 베이스 관리
+> ```Kotlin
+> // 1. 회원가입 로직 - [일반회원]
+>  @Transactional(
+>        propagation = Propagation.REQUIRED,
+>        rollbackFor = [Exception::class]
+>    )
+>    override fun registerNormalUser(userSignupCommand: UserSignupCommand): UserSignupResponse {
+>         // 회원등록 작업 전 유효성 검증
+>         checkDuplicatedEmail(userSignupCommand.email)
+>         checkExistsPosition(userSignupCommand.positionId)
+>         checkExistsSubscription(SubscriptionsType.FREE.name)
+>         checkExistsGrade(GradesType.ENTRY.name)
+> 
+>         // 회원유형에 맞는 포트 조회 - 일반회원
+>         val userPositionCreatePort = getCreateUserPositionPortByUserType(UserType.NORMAL)
+>         val userSubscriptionCreatePort = getCreateUserSubscriptionPort(UserType.NORMAL)
+>         val userGraderCreatePort = getCreateUserGradePort(UserType.NORMAL)
+> 
+>         // 회원등록 처리 비즈니스 로직
+>        val sodamUser = createNormalUserPort.createUser(userSignupCommand)
+>        userPositionCreatePort.createByPositionId(userId = sodamUser.userId, positionId = > userSignupCommand.positionId)
+>         userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId,  subscriptionType = SubscriptionsType.FREE)
+>         userGraderCreatePort.createGrade(userId = sodamUser.userId, gradeType = GradesType.ENTRY)
+>        return sodamUser.toSignupResponse()
+>    }
+>
+> // 2. 구독권 검증 처리 후 구독자 전용 게시글 상세 조회 처리 로직
+>
+>    @Transactional(
+>        propagation = Propagation.REQUIRED,
+>        rollbackFor = [Exception::class]
+>    )
+>    fun getSecretDetail(userId: String, secretId: Long, role: String): SecretDetailResponse {
+>        val totalViewCnt = secretViewRepository.countViewToday(userId = userId) // 보유 구독권 서비스에서 현재 회원의 당일 조회수 확인
+>        val isViewable = viewValidators.stream()
+>            .filter { it.isTarget(role) } // 현재 발급된 구독권
+>            .findFirst()
+>            .orElseThrow()
+>            .isValidView(totalViewCnt) // 조회 가능 여부 확인
+>
+>        if ( ! isViewable )
+>            throw SecretException.InvalidSecretViewException()
+>
+>
+>        secretRepository.increaseViewCnt(secretId) // 조회수 증가
+>        secretViewRepository.create(userId = userId, secretId = secretId) // 시청 이력 생성
+>        return secretRepository.findDetailBySecretId(secretId = secretId)
+>                               .toResponse()
+>    }
+>
+> ```
 > - ### 3. Server-Level에서의 확장성(SPoF 지점 제거)
 > - ### 4. 적은 자원(스레드)로 효율적인 작업 도모(Kotlin Coroutine, SpringWebFlux)
 > - ### 5. 프로젝트 배포 전략(Rolling-Deployments)
 > - ### 5. 프로젝트 운영 전략()
 > - ### 6. 성능 개선 과정(인덱싱 설정 및 Redis, Kafka 활용)
+> - ### 7. Spring MVC, Spring WebFlux 동시에 사용 -> 결국엔 모듈 단위로 분리해서 사용 
 
 
 
