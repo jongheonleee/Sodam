@@ -48,20 +48,22 @@
 
 <br>
 
-> - ### 3. 백엔드 & 인프라 아키텍처
+> - ### 3. 백엔드 & 인프라 아키텍처 접근 방안 
 >   ![서비스 아키텍처 구조](./docs/design/sodam-서비스-아키텍처.png)
 >   - SPoF 제거, 기본적으로 <strong>Active-Standby 이중화 구성</strong>
 >   - 추후에 서비스가 커진다고 가정했을 때 API 서버의 경우 증설이 상대적으로 용이하지만, 확장성이 떨어지는 DB의 경우 트래픽이 몰려서  부하가 발생할 수 있기 때문에 이 부분은 <strong>Range Partitioned Table을 활용할 예정(테이블 수평 분할을 통한 분산 처리)</strong>
 
 <br>
 
-> - ### 4. 서비스 운영 & 배포 전략
->   - Rolling Deployments 활용할 계획 
+> - ### 4. 서비스 운영 & 배포 전략 접근 방안 
+>   ![배포전략](./docs/design/sodam배포전략.png)
+>   - 전체 기능을 다 구현해서 배포하기엔 개발 속도가 지체된다고 판단
+>   - 운영하면서 업데이트나 추가 기능을 구현해야 겠다고 판단
+>   - 배포전략에는 여러 방식이 있지만, 비용 및 서비스 규모를 고려하여 Rolling Deployments 전략 선정 
 
 <br>
 
-> - ### 5. 프론트엔드
->   - 자주 사용되는 html 엘리먼트를 재사용성, 상태관리, 스타일링 및 확장성을 고려하여 컴포넌트 정의해서 재활용
+> - ### 5. 백엔드 & 인프라 아키텍처 실제 구성(AWS 아키텍처)
 
 
 ## 📌 1차 개발 범위 및 목표 : 단순한 형태의 커뮤니티 사이트 구축
@@ -147,7 +149,7 @@
 > 
 >         // 회원등록 처리 비즈니스 로직
 >        val sodamUser = createNormalUserPort.createUser(userSignupCommand)
->        userPositionCreatePort.createByPositionId(userId = sodamUser.userId, positionId = > userSignupCommand.positionId)
+>        userPositionCreatePort.createByPositionId(userId = sodamUser.userId, positionId =  userSignupCommand.positionId)
 >         userSubscriptionCreatePort.createSubscription(userId = sodamUser.userId,  subscriptionType = SubscriptionsType.FREE)
 >         userGraderCreatePort.createGrade(userId = sodamUser.userId, gradeType = GradesType.ENTRY)
 >        return sodamUser.toSignupResponse()
@@ -155,26 +157,31 @@
 >
 > // 2. 구독권 검증 처리 후 구독자 전용 게시글 상세 조회 처리 로직
 >
->    @Transactional(
+>       @Transactional(
 >        propagation = Propagation.REQUIRED,
 >        rollbackFor = [Exception::class]
 >    )
->    fun getSecretDetail(userId: String, secretId: Long, role: String): SecretDetailResponse {
->        val totalViewCnt = secretViewRepository.countViewToday(userId = userId) // 보유 구독권 서비스에서 현재 회원의 당일 조회수 확인
+>    override fun getSecretDetail(userId: String, secretId: Long, role: String): SecretDetailResponse {
+>        checkExistsSecret(secretId = secretId)
+>
+>        val userType = extractUserType(userId = userId)
+>        val createSecretViewPort = getCreateSecretViewPort(userType = userType)
+>        val fetchSecretViewPort = getFetchSecretViewPort()
+>        val todayTotalViewCount = fetchSecretViewPort.countViewToday(userId = userId) // 보유 구독권 서비스에서 현재 회원의 당일 조회수 확인
 >        val isViewable = viewValidators.stream()
->            .filter { it.isTarget(role) } // 현재 발급된 구독권
->            .findFirst()
->            .orElseThrow()
->            .isValidView(totalViewCnt) // 조회 가능 여부 확인
+>                                                 .filter { it.isTarget(role) } // 현재 발급된 구독권
+>                                                 .findFirst()
+>                                                 .orElseThrow()
+>                                                 .isValidView(todayTotalViewCount) // 조회 가능 여부 확인
 >
 >        if ( ! isViewable )
 >            throw SecretException.InvalidSecretViewException()
 >
 >
->        secretRepository.increaseViewCnt(secretId) // 조회수 증가
->        secretViewRepository.create(userId = userId, secretId = secretId) // 시청 이력 생성
->        return secretRepository.findDetailBySecretId(secretId = secretId)
->                               .toResponse()
+>        updateSecretPort.increaseViewCnt(secretId) // 조회수 증가
+>        createSecretViewPort.create(userId = userId, secretId = secretId) // 시청 이력 생성
+>        return fetchSecretPort.findDetailBySecretId(secretId = secretId)
+>                              .toResponse()
 >    }
 >
 > ```
