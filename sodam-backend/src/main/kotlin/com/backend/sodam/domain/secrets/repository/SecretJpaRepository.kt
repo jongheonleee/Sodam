@@ -6,4 +6,5 @@ import java.util.Optional
 
 interface SecretJpaRepository : JpaRepository<SecretsEntity, Long>, SecretCustomRepository {
     fun findBySecretId(secretId: Long): Optional<SecretsEntity>
+    fun existsBySecretId(secretId: Long): Boolean
 }

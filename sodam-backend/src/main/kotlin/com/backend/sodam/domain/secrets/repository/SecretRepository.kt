@@ -4,6 +4,10 @@ import com.backend.sodam.domain.secrets.exception.SecretException
 import com.backend.sodam.domain.secrets.model.SodamDetailSecret
 import com.backend.sodam.domain.secrets.model.SodamSecret
 import com.backend.sodam.domain.secrets.service.command.SecretSearchCommand
+import com.backend.sodam.domain.secrets.service.port.CreateSecretPort
+import com.backend.sodam.domain.secrets.service.port.DeleteSecretPort
+import com.backend.sodam.domain.secrets.service.port.FetchSecretPort
+import com.backend.sodam.domain.secrets.service.port.UpdateSecretPort
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -14,29 +18,29 @@ import org.springframework.transaction.annotation.Transactional
 @RequiredArgsConstructor
 class SecretRepository(
     private val secretJpaRepository: SecretJpaRepository
-) {
+): CreateSecretPort, FetchSecretPort, UpdateSecretPort, DeleteSecretPort {
 
     @Transactional(readOnly = true)
-    fun findByPageBy(pageable: Pageable, secretSearchCommand: SecretSearchCommand): Page<SodamSecret> {
+    override fun isExistsSecret(secretId: Long): Boolean =
+        secretJpaRepository.existsBySecretId(secretId)
+
+    @Transactional(readOnly = true)
+    override fun findByPageBy(pageable: Pageable, secretSearchCommand: SecretSearchCommand): Page<SodamSecret> {
         return secretJpaRepository.findByPageBy(
             pageable = pageable,
             secretSearchCommand = secretSearchCommand
         )
     }
 
-    @Transactional
-    fun increaseViewCnt(secretId: Long) {
-        val foundSecretEntityOptional = secretJpaRepository.findBySecretId(secretId)
-        if (foundSecretEntityOptional.isEmpty) {
-            throw SecretException.SecretNotFoundException()
-        }
-
-        val foundSecretEntity = foundSecretEntityOptional.get()
-        foundSecretEntity.increaseViewCnt()
-    }
-
     @Transactional(readOnly = true)
-    fun findDetailBySecretId(secretId: Long): SodamDetailSecret {
+    override fun findDetailBySecretId(secretId: Long): SodamDetailSecret {
         return secretJpaRepository.findDetailBySecretId(secretId)
     }
+
+    @Transactional
+    override fun increaseViewCnt(secretId: Long) {
+        val secretEntity = secretJpaRepository.findBySecretId(secretId).get()
+        secretEntity.increaseViewCnt()
+    }
+
 }
