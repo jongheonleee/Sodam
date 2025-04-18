@@ -185,7 +185,7 @@
 >    }
 >
 > ```
-> - ### 3. Server-Level에서의 확장성(SPoF 지점 제거)
+> - ### 3. Server-Level Scalability 고려 
 > - ### 4. 적은 자원(스레드)로 효율적인 작업 도모(Kotlin Coroutine, SpringWebFlux)
 > - ### 5. 프로젝트 배포 전략(Rolling-Deployments)
 > - ### 5. 프로젝트 운영 전략()

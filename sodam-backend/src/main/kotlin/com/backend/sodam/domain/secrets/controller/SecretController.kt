@@ -35,9 +35,7 @@ class SecretController(
 
     @GetMapping("/api/v1/secrets/{secretId}")
     @PreAuthorize("hasAnyRole('ROLE_BRONZE', 'ROLE_SILVER', 'ROLE_GOLD', 'ROLE_PLATINUM')")
-    fun getSecretDetail(
-        @PathVariable("secretId") secretId: Long
-    ): SodamApiResponse<SecretDetailResponse> {
+    fun getSecretDetail(@PathVariable("secretId") secretId: Long): SodamApiResponse<SecretDetailResponse> {
         val userId = tokenProvider.getUserId()
         val role = tokenProvider.getRole()
         return SodamApiResponse.ok(
