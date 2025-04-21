@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.positions.model
 
-import com.backend.sodam.domain.positions.controller.response.PositionResponse
+import com.backend.sodam.domain.positions.service.response.PositionResponse
 
 class SodamPosition(
     val positionId: String,

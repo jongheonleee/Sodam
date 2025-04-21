@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.users.service.port
 
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType

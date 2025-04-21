@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.categories.service.usecase
 
-import com.backend.sodam.domain.categories.controller.response.CategoriesResponse
+import com.backend.sodam.domain.categories.service.response.CategoriesResponse
 
 interface FetchCategoryUseCase {
     fun fetchFromClient(): CategoriesResponse

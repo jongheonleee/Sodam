@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.positions.controller
 
-import com.backend.sodam.domain.positions.controller.response.PositionsResponse
+import com.backend.sodam.domain.positions.service.response.PositionsResponse
 import com.backend.sodam.domain.positions.service.usecase.FetchPositionUseCase
 import com.backend.sodam.global.commons.SodamApiResponse
 import lombok.RequiredArgsConstructor

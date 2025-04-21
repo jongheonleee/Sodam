@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.tokens.repository
 
-import com.backend.sodam.domain.tokens.controller.response.TokenResponse
+import com.backend.sodam.domain.tokens.service.response.TokenResponse
 import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
 import com.backend.sodam.domain.tokens.exception.TokenException
 import com.backend.sodam.domain.tokens.service.port.CreateTokenPort

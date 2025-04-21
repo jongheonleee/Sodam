@@ -1,9 +1,9 @@
 package com.backend.sodam.domain.users.service.usescase
 
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
-import com.backend.sodam.domain.users.controller.response.SocialUserResponse
-import com.backend.sodam.domain.users.controller.response.UserProfileResponse
-import com.backend.sodam.domain.users.controller.response.UserResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.domain.users.service.response.SocialUserResponse
+import com.backend.sodam.domain.users.service.response.UserProfileResponse
+import com.backend.sodam.domain.users.service.response.UserResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 

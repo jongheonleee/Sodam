@@ -3,9 +3,9 @@ package com.backend.sodam.domain.comments.service
 import com.backend.sodam.domain.articles.exception.ArticleException
 import com.backend.sodam.domain.articles.repository.ArticleRepositoryForNormalUser
 import com.backend.sodam.domain.articles.service.port.FetchArticlePort
-import com.backend.sodam.domain.comments.controller.response.CommentCreateResponse
-import com.backend.sodam.domain.comments.controller.response.CommentSimpleResponse
-import com.backend.sodam.domain.comments.controller.response.CommentUpdateResponse
+import com.backend.sodam.domain.comments.service.response.CommentCreateResponse
+import com.backend.sodam.domain.comments.service.response.CommentSimpleResponse
+import com.backend.sodam.domain.comments.service.response.CommentUpdateResponse
 import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.comments.repository.CommentRepositoryForNormalUser
 import com.backend.sodam.domain.comments.service.command.CommentCreateCommand

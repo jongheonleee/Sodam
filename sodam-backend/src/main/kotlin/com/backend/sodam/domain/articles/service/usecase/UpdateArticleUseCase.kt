@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.articles.service.usecase
 
-import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
+import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
 import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
 
 interface UpdateArticleUseCase {

@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.categories.service
 
-import com.backend.sodam.domain.categories.controller.response.CategoriesResponse
+import com.backend.sodam.domain.categories.service.response.CategoriesResponse
 import com.backend.sodam.domain.categories.model.Category
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe

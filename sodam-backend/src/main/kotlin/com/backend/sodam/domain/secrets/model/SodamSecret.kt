@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.secrets.model
 
-import com.backend.sodam.domain.secrets.controller.response.SecretSummaryResponse
+import com.backend.sodam.domain.secrets.service.response.SecretSummaryResponse
 
 class SodamSecret(
     val secretId: Long,

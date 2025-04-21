@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.articles.repository.ArticleJpaRepository
 import com.backend.sodam.domain.categories.entity.CategoryEntity
@@ -26,10 +26,10 @@ import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
-import com.backend.sodam.domain.users.controller.response.UserProfileResponse
-import com.backend.sodam.domain.users.controller.response.UserResponse
-import com.backend.sodam.domain.users.controller.response.UserSignupResponse
-import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
+import com.backend.sodam.domain.users.service.response.UserProfileResponse
+import com.backend.sodam.domain.users.service.response.UserResponse
+import com.backend.sodam.domain.users.service.response.UserSignupResponse
+import com.backend.sodam.domain.users.service.response.UserUpdateResponse
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository

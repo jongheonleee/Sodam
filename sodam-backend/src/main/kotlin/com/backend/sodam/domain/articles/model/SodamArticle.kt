@@ -1,9 +1,9 @@
 package com.backend.sodam.domain.articles.model
 
-import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleSimpleResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
+import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSimpleResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
 
 class SodamArticle(
     val userId: String,

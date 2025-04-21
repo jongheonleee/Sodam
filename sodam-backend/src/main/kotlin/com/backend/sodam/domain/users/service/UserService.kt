@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.users.service
 
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.grades.exception.GradeException
 import com.backend.sodam.domain.grades.model.GradesType
 import com.backend.sodam.domain.grades.service.port.CreateUserGradePort
@@ -14,12 +14,11 @@ import com.backend.sodam.domain.subscriptions.exception.SubscriptionException
 import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
 import com.backend.sodam.domain.subscriptions.service.port.CreateUserSubscriptionPort
 import com.backend.sodam.domain.subscriptions.service.port.FetchSubscriptionPort
-import com.backend.sodam.domain.subscriptions.service.port.FetchUserSubscriptionPort
-import com.backend.sodam.domain.users.controller.response.SocialUserResponse
-import com.backend.sodam.domain.users.controller.response.UserProfileResponse
-import com.backend.sodam.domain.users.controller.response.UserResponse
-import com.backend.sodam.domain.users.controller.response.UserSignupResponse
-import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
+import com.backend.sodam.domain.users.service.response.SocialUserResponse
+import com.backend.sodam.domain.users.service.response.UserProfileResponse
+import com.backend.sodam.domain.users.service.response.UserResponse
+import com.backend.sodam.domain.users.service.response.UserSignupResponse
+import com.backend.sodam.domain.users.service.response.UserUpdateResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand

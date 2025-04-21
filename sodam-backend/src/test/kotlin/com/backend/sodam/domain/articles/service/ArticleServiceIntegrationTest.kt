@@ -1,8 +1,8 @@
 package com.backend.sodam.domain.articles.service
 
-import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
+import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
 import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.articles.repository.ArticleJpaRepository
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand

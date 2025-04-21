@@ -6,7 +6,7 @@ import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.articles.model.SodamDetailArticle
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.categories.entity.QCategoryEntity.categoryEntity
-import com.backend.sodam.domain.comments.controller.response.CommentResponse
+import com.backend.sodam.domain.comments.service.response.CommentResponse
 import com.backend.sodam.domain.comments.entity.QCommentEntity.commentEntity
 import com.backend.sodam.domain.tags.controller.response.TagResponse
 import com.backend.sodam.domain.tags.entity.QTagsEntity.tagsEntity

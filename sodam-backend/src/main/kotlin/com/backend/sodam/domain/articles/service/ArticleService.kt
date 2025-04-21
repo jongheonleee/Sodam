@@ -1,12 +1,11 @@
 package com.backend.sodam.domain.articles.service
 
-import com.backend.sodam.domain.articles.controller.response.ArticleCreateResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleDetailResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleSimpleResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleUpdateResponse
+import com.backend.sodam.domain.articles.service.response.ArticleCreateResponse
+import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSimpleResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
 import com.backend.sodam.domain.articles.exception.ArticleException
-import com.backend.sodam.domain.articles.repository.ArticleRepositoryForNormalUser
 import com.backend.sodam.domain.articles.service.command.ArticleCreateCommand
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import com.backend.sodam.domain.articles.service.command.ArticleUpdateCommand
@@ -19,7 +18,7 @@ import com.backend.sodam.domain.articles.service.usecase.DeleteArticleUseCase
 import com.backend.sodam.domain.articles.service.usecase.FetchArticleUseCase
 import com.backend.sodam.domain.articles.service.usecase.UpdateArticleUseCase
 import com.backend.sodam.domain.categories.exception.CategoryException
-import com.backend.sodam.domain.categories.repository.CategoryRepository
+import com.backend.sodam.domain.categories.service.port.FetchCategoryPort
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.service.port.FetchUserPort
@@ -31,15 +30,12 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class ArticleService(
-    // 회원
     private val fetchUserPorts: List<FetchUserPort>,
-    // 게시글
     private val fetchArticlePorts: List<FetchArticlePort>,
     private val createArticlePorts: List<CreateArticlePort>,
     private val updateArticlePorts: List<UpdateArticlePort>,
     private val deleteArticlePorts: List<DeleteArticlePort>,
-    // 카테고리 - 추후에 포트로 빼기
-    private val categoryRepository: CategoryRepository,
+    private val fetchCategoryPort: FetchCategoryPort,
 ): CreateArticleUseCase, FetchArticleUseCase, UpdateArticleUseCase, DeleteArticleUseCase {
 
     override fun create(userId: String, articleCreateCommand: ArticleCreateCommand): ArticleCreateResponse {
@@ -117,7 +113,7 @@ class ArticleService(
             .isExistsByArticleId(articleId)
 
     private fun isExistsCategory(categoryId: String): Boolean =
-        categoryRepository.isExistsByCategoryId(categoryId = categoryId)
+        fetchCategoryPort.isExistsByCategoryId(categoryId = categoryId)
 
     // 📌 특정 유저의 부가정보를 조회하는 추출 메서드
     private fun extractUserType(userId: String): UserType {

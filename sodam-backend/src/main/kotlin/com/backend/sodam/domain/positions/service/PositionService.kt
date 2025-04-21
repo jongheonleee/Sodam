@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.positions.service
 
-import com.backend.sodam.domain.positions.controller.response.PositionsResponse
+import com.backend.sodam.domain.positions.service.response.PositionsResponse
 import com.backend.sodam.domain.positions.service.port.FetchPositionPort
 import com.backend.sodam.domain.positions.service.usecase.DeletePositionUseCase
 import com.backend.sodam.domain.positions.service.usecase.FetchPositionUseCase

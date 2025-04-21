@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.users.repository
 
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.subscriptions.repository.NormalUserSubscriptionRepository
 import com.backend.sodam.domain.users.entity.SocialUsersEntity
 import com.backend.sodam.domain.users.model.SodamUser

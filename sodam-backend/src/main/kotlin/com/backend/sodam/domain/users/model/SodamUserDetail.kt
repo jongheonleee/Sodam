@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.users.model
 
 import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
-import com.backend.sodam.domain.users.controller.response.UserProfileResponse
+import com.backend.sodam.domain.users.service.response.UserProfileResponse
 
 class SodamUserDetail(
     val userId: String,

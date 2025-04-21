@@ -1,8 +1,8 @@
 package com.backend.sodam.domain.articles.service.usecase
 
-import com.backend.sodam.domain.articles.controller.response.ArticleDetailResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleSimpleResponse
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSimpleResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.articles.service.command.ArticleSearchCommand
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

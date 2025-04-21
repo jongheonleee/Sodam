@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.secrets.service.usecase
 
-import com.backend.sodam.domain.secrets.controller.response.SecretDetailResponse
-import com.backend.sodam.domain.secrets.controller.response.SecretSummaryResponse
+import com.backend.sodam.domain.secrets.service.response.SecretDetailResponse
+import com.backend.sodam.domain.secrets.service.response.SecretSummaryResponse
 import com.backend.sodam.domain.secrets.service.command.SecretSearchCommand
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

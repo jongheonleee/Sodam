@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.articles.model
 
-import com.backend.sodam.domain.articles.controller.response.ArticleDetailResponse
-import com.backend.sodam.domain.comments.controller.response.CommentResponse
+import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
+import com.backend.sodam.domain.comments.service.response.CommentResponse
 import com.backend.sodam.domain.tags.controller.response.TagResponse
 
 class SodamDetailArticle(

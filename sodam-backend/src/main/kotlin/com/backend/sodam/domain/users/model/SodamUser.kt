@@ -1,7 +1,7 @@
 package com.backend.sodam.domain.users.model
 
-import com.backend.sodam.domain.users.controller.response.UserSignupResponse
-import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
+import com.backend.sodam.domain.users.service.response.UserSignupResponse
+import com.backend.sodam.domain.users.service.response.UserUpdateResponse
 
 // oauth로 등록된 회원의 경우 username, provioderId만 필요하기 때문에
 // @JvmOverloads를 활용한 기본값 제공을 활용함

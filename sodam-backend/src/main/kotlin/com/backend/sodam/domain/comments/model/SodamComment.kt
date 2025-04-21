@@ -1,8 +1,8 @@
 package com.backend.sodam.domain.comments.model
 
-import com.backend.sodam.domain.comments.controller.response.CommentCreateResponse
-import com.backend.sodam.domain.comments.controller.response.CommentSimpleResponse
-import com.backend.sodam.domain.comments.controller.response.CommentUpdateResponse
+import com.backend.sodam.domain.comments.service.response.CommentCreateResponse
+import com.backend.sodam.domain.comments.service.response.CommentSimpleResponse
+import com.backend.sodam.domain.comments.service.response.CommentUpdateResponse
 
 class SodamComment(
     val commentId: Long,

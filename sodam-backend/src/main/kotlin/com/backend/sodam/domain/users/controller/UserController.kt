@@ -1,9 +1,9 @@
 package com.backend.sodam.domain.users.controller
 
-import com.backend.sodam.domain.articles.controller.response.ArticleSummaryResponse
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.users.controller.request.UserUpdateRequest
-import com.backend.sodam.domain.users.controller.response.UserProfileResponse
-import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
+import com.backend.sodam.domain.users.service.response.UserProfileResponse
+import com.backend.sodam.domain.users.service.response.UserUpdateResponse
 import com.backend.sodam.domain.users.service.usescase.FetchUserUseCase
 import com.backend.sodam.domain.users.service.usescase.UpdateUserUseCase
 import com.backend.sodam.global.commons.SodamApiResponse

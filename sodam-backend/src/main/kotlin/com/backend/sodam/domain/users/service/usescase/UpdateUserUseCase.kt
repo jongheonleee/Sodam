@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.users.service.usescase
 
-import com.backend.sodam.domain.users.controller.response.UserUpdateResponse
+import com.backend.sodam.domain.users.service.response.UserUpdateResponse
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
 
 interface UpdateUserUseCase {
