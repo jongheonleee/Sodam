@@ -1,19 +1,7 @@
-import java.time.LocalDateTime
-import java.util.*
-
-import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.extensions.spring.SpringExtension
-import io.kotest.matchers.shouldBe
-
-import org.junit.jupiter.api.assertThrows
-
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
-
-import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
+import com.backend.sodam.SodamApplication
 import com.backend.sodam.domain.articles.entity.ArticleEntity
 import com.backend.sodam.domain.articles.repository.ArticleJpaRepository
+import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.categories.entity.CategoryEntity
 import com.backend.sodam.domain.categories.repository.CategoryJpaRepository
 import com.backend.sodam.domain.grades.entity.GradesEntity
@@ -26,10 +14,7 @@ import com.backend.sodam.domain.positions.repository.UsersPositionJpaRepository
 import com.backend.sodam.domain.subscriptions.entity.SubscriptionsEntity
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
-import com.backend.sodam.domain.users.service.response.UserProfileResponse
-import com.backend.sodam.domain.users.service.response.UserResponse
-import com.backend.sodam.domain.users.service.response.UserSignupResponse
-import com.backend.sodam.domain.users.service.response.UserUpdateResponse
+import com.backend.sodam.domain.tokens.repository.TokenJpaRepository
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
@@ -38,8 +23,19 @@ import com.backend.sodam.domain.users.service.UserService
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserSignupCommand
 import com.backend.sodam.domain.users.service.command.UserUpdateCommand
-
-
+import com.backend.sodam.domain.users.service.response.UserProfileResponse
+import com.backend.sodam.domain.users.service.response.UserResponse
+import com.backend.sodam.domain.users.service.response.UserSignupResponse
+import com.backend.sodam.domain.users.service.response.UserUpdateResponse
+import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.extensions.spring.SpringExtension
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.assertThrows
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import java.time.LocalDateTime
+import java.util.*
 
 /**
  * 통합 테스트를 작성한 이유
@@ -48,7 +44,7 @@ import com.backend.sodam.domain.users.service.command.UserUpdateCommand
  * - 그래서 비즈니스 로직이 변경될 때 마다 테스트 코드에도 영향이 미침
  * - 따라서, 개발 초기에는 비즈니스 로직의 변동이 자주 일어나기 때문에 내부 비즈니스 로직을 노출시키지 않는 통합 테스트로 테스트 코드 작성
  */
-@SpringBootTest
+@SpringBootTest(classes = [SodamApplication::class])
 class UserServiceIntegrationTest(
     // 테스트 대상
     private val sut: UserService,
@@ -63,6 +59,7 @@ class UserServiceIntegrationTest(
     private val userGradeJpaRepository: UserGradeJpaRepository,
     private val userPositionsJpaRepository: UsersPositionJpaRepository,
     private val userSubscriptionJpaRepository: UserSubscriptionJpaRepository,
+    private val tokenJpaRepository: TokenJpaRepository,
 
     // - 3. 회원 테이블
     private val normalUserJpaRepository: NormalUserJpaRepository,
@@ -70,7 +67,7 @@ class UserServiceIntegrationTest(
 
     // - 4. 그외 오브젝트
     private val articleJpaRepository: ArticleJpaRepository,
-    private val categoryJpaRepository: CategoryJpaRepository,
+    private val categoryJpaRepository: CategoryJpaRepository
 ) : BehaviorSpec({
 
     // 테스트 과정에서 사용할 목 데이터
@@ -123,6 +120,7 @@ class UserServiceIntegrationTest(
         userPositionsJpaRepository.deleteAll()
         userGradeJpaRepository.deleteAll()
         userSubscriptionJpaRepository.deleteAll()
+        tokenJpaRepository.deleteAll()
 
         // 회원 테이블 - 1. 일반 회원, 2. 소셜 회원
         normalUserJpaRepository.deleteAll()
@@ -149,6 +147,8 @@ class UserServiceIntegrationTest(
         userPositionsJpaRepository.deleteAll()
         userGradeJpaRepository.deleteAll()
         userSubscriptionJpaRepository.deleteAll()
+        tokenJpaRepository.deleteAll()
+
 
         // 회원과 연관되는 테이블 비우기
         positionsJpaRepository.deleteAll()
@@ -280,7 +280,6 @@ class UserServiceIntegrationTest(
     }
 
     given("회원정보를 업데이트할 때") {
-
 
         // 1. 일반 회원
         `when`("사용자가 유효한 데이터를 전달하면", {
@@ -414,7 +413,6 @@ class UserServiceIntegrationTest(
             assertThrows<PositionException.PositionNotFoundException> {
                 sut.updateUserInfo(userId = target.userId, userUpdateCommand = updateCommandWithNotExistsPositionId)
             }
-
         })
 
         // 2. 소셜 회원
@@ -442,7 +440,7 @@ class UserServiceIntegrationTest(
             val expected = UserUpdateResponse(
                 username = updateCommand.name,
                 email = updateCommand.email,
-                introduce = updateCommand.introduce,
+                introduce = updateCommand.introduce
             )
 
             then("성공적으로 회원정보를 업데이트하고 변경된 회원 정보의 일부를 반환한다.") {
@@ -471,7 +469,6 @@ class UserServiceIntegrationTest(
                 positionId = mockPosition.positionId,
                 introduce = "업데이트용 테스트 유저"
             )
-
 
             then("UserAlreadyException 예외가 발생한다.") {
                 assertThrows<UserException.UserAlreadyExistsException> {
@@ -569,7 +566,6 @@ class UserServiceIntegrationTest(
                 actual.profileImage shouldBe expected.profileImage
                 actual.introduce shouldBe expected.introduce
                 actual.role shouldBe expected.role
-
             }
         })
 
@@ -663,7 +659,6 @@ class UserServiceIntegrationTest(
             val notExistsProviderId = "dwadwadwa"
             val actual = sut.findByProviderId(providerId = notExistsProviderId)
 
-
             then("Null이 반환된다.") {
                 actual shouldBe null
             }
@@ -697,7 +692,7 @@ class UserServiceIntegrationTest(
                 articleTotalCnt = 0,
                 grade = "ENTRY",
                 ranking = 5000,
-                positions = listOf("미정"),
+                positions = listOf("미정")
             )
 
             then("해당 유저의 상세 정보(프로필)을 반환한다.") {
@@ -709,7 +704,6 @@ class UserServiceIntegrationTest(
                 actual.articleTotalCnt shouldBe expected.articleTotalCnt
                 actual.ranking shouldBe expected.ranking
                 actual.positions[0] shouldBe expected.positions[0]
-
             }
         })
 
@@ -726,7 +720,6 @@ class UserServiceIntegrationTest(
             val result = sut.registerNormalUser(userSignupCommand = command)
             val notExistsUserId = "dwadwadw"
 
-
             then("UserNotFoundException 예외가 발생한다.") {
                 assertThrows<UserException.UserNotFoundException> {
                     sut.findUserProfileInfo(userId = notExistsUserId)
@@ -734,7 +727,6 @@ class UserServiceIntegrationTest(
             }
         })
     }
-
 
     given("회원이 작성한 게시글 조회할 때") {
         // 1. 일반회원
@@ -753,7 +745,7 @@ class UserServiceIntegrationTest(
                     articleViewCnt = 0,
                     articleLikeCnt = 0,
                     articleDislikeCnt = 0,
-                    category = mockCategory,
+                    category = mockCategory
                 )
                 articleJpaRepository.save(mockArticle)
             }
@@ -763,25 +755,50 @@ class UserServiceIntegrationTest(
             val actual = sut.getOwnArticles(pageable = pageable, userId = mockNormalUser.userId)
             val expected = PageImpl(
                 listOf(
-                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                    ArticleSummaryResponse(
+                        articleId = 0,
+                        username = mockNormalUser.userName,
                         profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                        title = "테스트 제목1", summary = "테스트 서머리1", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                        title = "테스트 제목1",
+                        summary = "테스트 서머리1",
+                        createdAt = LocalDateTime.now().toString(),
+                        tags = listOf()
                     ),
-                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                    ArticleSummaryResponse(
+                        articleId = 0,
+                        username = mockNormalUser.userName,
                         profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                        title = "테스트 제목2", summary = "테스트 서머리2", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                        title = "테스트 제목2",
+                        summary = "테스트 서머리2",
+                        createdAt = LocalDateTime.now().toString(),
+                        tags = listOf()
                     ),
-                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                    ArticleSummaryResponse(
+                        articleId = 0,
+                        username = mockNormalUser.userName,
                         profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                        title = "테스트 제목3", summary = "테스트 서머리3", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                        title = "테스트 제목3",
+                        summary = "테스트 서머리3",
+                        createdAt = LocalDateTime.now().toString(),
+                        tags = listOf()
                     ),
-                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                    ArticleSummaryResponse(
+                        articleId = 0,
+                        username = mockNormalUser.userName,
                         profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                        title = "테스트 제목4", summary = "테스트 서머리4", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                        title = "테스트 제목4",
+                        summary = "테스트 서머리4",
+                        createdAt = LocalDateTime.now().toString(),
+                        tags = listOf()
                     ),
-                    ArticleSummaryResponse(articleId = 0, username = mockNormalUser.userName,
+                    ArticleSummaryResponse(
+                        articleId = 0,
+                        username = mockNormalUser.userName,
                         profileImageUrl = "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                        title = "테스트 제목5", summary = "테스트 서머리5", createdAt = LocalDateTime.now().toString(), tags = listOf()
+                        title = "테스트 제목5",
+                        summary = "테스트 서머리5",
+                        createdAt = LocalDateTime.now().toString(),
+                        tags = listOf()
                     )
                 ),
                 pageable,
@@ -817,7 +834,7 @@ class UserServiceIntegrationTest(
                     articleViewCnt = 0,
                     articleLikeCnt = 0,
                     articleDislikeCnt = 0,
-                    category = mockCategory,
+                    category = mockCategory
                 )
                 articleJpaRepository.save(mockArticle)
             }

@@ -6,7 +6,7 @@ import com.backend.sodam.domain.articles.model.SodamArticle
 import com.backend.sodam.domain.categories.entity.QCategoryEntity.categoryEntity
 import com.backend.sodam.domain.subscriptions.entity.QUsersSubscriptionsEntity.usersSubscriptionsEntity
 import com.backend.sodam.domain.tags.entity.QTagsEntity.tagsEntity
-import com.backend.sodam.domain.users.entity.QSocialUsersEntity.*
+import com.backend.sodam.domain.users.entity.QSocialUsersEntity.socialUsersEntity
 import com.backend.sodam.domain.users.entity.QUsersGradeEntity.usersGradeEntity
 import com.backend.sodam.domain.users.entity.QUsersPositionsEntity.usersPositionsEntity
 import com.backend.sodam.domain.users.model.SodamUser

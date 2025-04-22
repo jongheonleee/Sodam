@@ -1,6 +1,5 @@
 package com.backend.sodam.domain.secrets.repository
 
-import com.backend.sodam.domain.secrets.exception.SecretException
 import com.backend.sodam.domain.secrets.model.SodamDetailSecret
 import com.backend.sodam.domain.secrets.model.SodamSecret
 import com.backend.sodam.domain.secrets.service.command.SecretSearchCommand
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 @RequiredArgsConstructor
 class SecretRepository(
     private val secretJpaRepository: SecretJpaRepository
-): CreateSecretPort, FetchSecretPort, UpdateSecretPort, DeleteSecretPort {
+) : CreateSecretPort, FetchSecretPort, UpdateSecretPort, DeleteSecretPort {
 
     @Transactional(readOnly = true)
     override fun isExistsSecret(secretId: Long): Boolean =
@@ -42,5 +41,4 @@ class SecretRepository(
         val secretEntity = secretJpaRepository.findBySecretId(secretId).get()
         secretEntity.increaseViewCnt()
     }
-
 }

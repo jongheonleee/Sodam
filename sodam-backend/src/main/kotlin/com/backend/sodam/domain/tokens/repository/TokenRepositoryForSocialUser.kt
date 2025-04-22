@@ -1,13 +1,12 @@
 package com.backend.sodam.domain.tokens.repository
 
-import com.backend.sodam.domain.tokens.service.response.TokenResponse
 import com.backend.sodam.domain.tokens.entity.UsersTokenEntity
 import com.backend.sodam.domain.tokens.exception.TokenException
 import com.backend.sodam.domain.tokens.service.port.CreateTokenPort
 import com.backend.sodam.domain.tokens.service.port.FetchTokenPort
+import com.backend.sodam.domain.tokens.service.response.TokenResponse
 import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
@@ -19,7 +18,7 @@ import java.util.*
 class TokenRepositoryForSocialUser(
     private val tokenJpaRepository: TokenJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository
-): CreateTokenPort, FetchTokenPort {
+) : CreateTokenPort, FetchTokenPort {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.SOCIAL == userType
@@ -42,8 +41,7 @@ class TokenRepositoryForSocialUser(
     @Transactional(readOnly = true)
     override fun findTokenByUserId(userId: String): Optional<TokenResponse> =
         tokenJpaRepository.findBySocialUserId(socialUserId = userId)
-                          .map { TokenResponse(it.accessToken, it.refreshToken) }
-
+            .map { TokenResponse(it.accessToken, it.refreshToken) }
 
     // 소셜 유저 조회
     // 해당 유저와 전달받은 토큰값을 기반으로 토큰 엔티티 생성

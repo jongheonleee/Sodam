@@ -21,7 +21,7 @@ class CommentRepositoryForNormalUser(
     private val commentLikeJpaRepository: UsersCommentLikeJpaRepository,
     private val commentDislikeJpaRepository: UsersCommentDislikeJpaRepository,
     private val formatter: Formatter
-): AbstractCommentRepository(articleJpaRepository, socialUserJpaRepository, userJpaRepository, commentJpaRepository, commentLikeJpaRepository, commentDislikeJpaRepository, formatter) {
+) : AbstractCommentRepository(articleJpaRepository, socialUserJpaRepository, userJpaRepository, commentJpaRepository, commentLikeJpaRepository, commentDislikeJpaRepository, formatter) {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.NORMAL == userType
@@ -35,7 +35,6 @@ class CommentRepositoryForNormalUser(
             userEntity = userEntity
         )
         return commentJpaRepository.save(commentCreateEntity)
-                                   .toDomain()
+            .toDomain()
     }
-
 }

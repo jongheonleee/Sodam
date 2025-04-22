@@ -1,7 +1,6 @@
 package com.backend.sodam.domain.tokens.service.port
 
 import com.backend.sodam.domain.tokens.service.response.TokenResponse
-import com.backend.sodam.domain.users.service.response.UserResponse
 import com.backend.sodam.domain.users.model.UserType
 
 interface CreateTokenPort {

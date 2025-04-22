@@ -1,6 +1,5 @@
 package com.backend.sodam.domain.articles.controller
 
-import com.backend.sodam.domain.articles.service.ArticleLikeService
 import com.backend.sodam.domain.articles.service.usecase.HandleArticleLikeUseCase
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider

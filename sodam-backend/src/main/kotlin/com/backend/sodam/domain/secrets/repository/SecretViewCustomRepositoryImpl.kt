@@ -1,6 +1,6 @@
 package com.backend.sodam.domain.secrets.repository
 
-import com.backend.sodam.domain.secrets.entity.QViewSecretsEntity.*
+import com.backend.sodam.domain.secrets.entity.QViewSecretsEntity.viewSecretsEntity
 import com.querydsl.jpa.impl.JPAQueryFactory
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository

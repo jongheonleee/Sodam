@@ -61,7 +61,7 @@ class SodamArticle(
             articleId = this.articleId,
             title = this.title,
             summary = this.summary,
-            content = this.content,
+            content = this.content
         )
     }
 }

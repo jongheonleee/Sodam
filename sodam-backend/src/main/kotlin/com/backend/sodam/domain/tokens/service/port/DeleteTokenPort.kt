@@ -1,4 +1,3 @@
 package com.backend.sodam.domain.tokens.service.port
 
-interface DeleteTokenPort {
-}
+interface DeleteTokenPort

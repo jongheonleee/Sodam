@@ -1,15 +1,11 @@
 package com.backend.sodam.domain.comments.repository
 
-import com.backend.sodam.domain.comments.entity.CommentEntity
 import com.backend.sodam.domain.comments.entity.UsersLikeCommentEntity
-import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.comments.service.port.CreateUserCommentLikePort
 import com.backend.sodam.domain.comments.service.port.DeleteUserCommentLikePort
 import com.backend.sodam.domain.comments.service.port.FetchUserCommentLikePort
 import com.backend.sodam.domain.comments.service.port.UpdateUserCommentLikePort
-import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
@@ -21,7 +17,7 @@ class SocialUsersCommentLikeRepository(
     private val commentJpaRepository: CommentJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val usersCommentLikeJpaRepository: UsersCommentLikeJpaRepository
-): CreateUserCommentLikePort, FetchUserCommentLikePort, UpdateUserCommentLikePort, DeleteUserCommentLikePort {
+) : CreateUserCommentLikePort, FetchUserCommentLikePort, UpdateUserCommentLikePort, DeleteUserCommentLikePort {
 
     // 같은 로직이 계속 추가된다는 것은 안좋은 현상의 첫 신호
     // 밑에 코드를 일일이 기본 단위로 쪼개서 처리하기 때문이지 아닐까?
@@ -31,8 +27,8 @@ class SocialUsersCommentLikeRepository(
     // 존재하는지 여부를 따지는 로직이 중복됨
     // 이 부분을 repository에서 처리하는 것이 아니라
     // service에서 처리하게 맞기고 여기에서는 존재한다는 전재하에 작업 진행하게 만들기
-    override fun isTarget(userType: UserType): Boolean
-        = UserType.SOCIAL == userType
+    override fun isTarget(userType: UserType): Boolean =
+        UserType.SOCIAL == userType
 
     @Transactional
     override fun createLike(commentId: Long, userId: String) {
@@ -40,7 +36,7 @@ class SocialUsersCommentLikeRepository(
         val commentEntity = commentJpaRepository.findById(commentId).get()
         val commentLikeEntity = UsersLikeCommentEntity(
             socialUser = socialUserEntity,
-            comment = commentEntity,
+            comment = commentEntity
         )
         usersCommentLikeJpaRepository.save(commentLikeEntity)
     }
@@ -51,7 +47,7 @@ class SocialUsersCommentLikeRepository(
         val commentEntity = commentJpaRepository.findById(commentId).get()
         return usersCommentLikeJpaRepository.existsByCommentAndSocialUser(
             socialUser = socialUserEntity,
-            comment = commentEntity,
+            comment = commentEntity
         )
     }
 
@@ -65,5 +61,4 @@ class SocialUsersCommentLikeRepository(
         ).get()
         usersCommentLikeJpaRepository.delete(commentLikeEntity)
     }
-
 }

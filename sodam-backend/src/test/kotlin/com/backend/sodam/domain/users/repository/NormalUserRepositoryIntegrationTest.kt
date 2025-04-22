@@ -14,6 +14,7 @@ import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
 import com.backend.sodam.domain.subscriptions.repository.NormalUserSubscriptionRepository
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
+import com.backend.sodam.domain.tokens.repository.TokenJpaRepository
 import com.backend.sodam.domain.users.entity.UsersEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
@@ -49,6 +50,7 @@ class NormalUserRepositoryIntegrationTest(
     private val gradesJpaRepository: GradesJpaRepository,
     private val positionsJpaRepository: PositionJpaRepository,
     private val subscriptionJpaRepository: SubscriptionJpaRepository,
+    private val tokenJpaRepository: TokenJpaRepository,
 
     // - 2. 회원과 연관된 교차 테이블
     private val userGradeJpaRepository: UserGradeJpaRepository,
@@ -82,7 +84,6 @@ class NormalUserRepositoryIntegrationTest(
         validYN = 0
     )
 
-
     // 테스트 환경 세팅
     beforeTest {
         // 회원 가입 등 회원 처리 로직에 필요한 기본 데이터 세팅
@@ -90,6 +91,7 @@ class NormalUserRepositoryIntegrationTest(
         userPositionsJpaRepository.deleteAll()
         userGradeJpaRepository.deleteAll()
         userSubscriptionJpaRepository.deleteAll()
+        tokenJpaRepository.deleteAll()
 
         // 일반회원 테이블 비우기
         userJpaRepository.deleteAll()
@@ -109,6 +111,7 @@ class NormalUserRepositoryIntegrationTest(
         userPositionsJpaRepository.deleteAll()
         userGradeJpaRepository.deleteAll()
         userSubscriptionJpaRepository.deleteAll()
+        tokenJpaRepository.deleteAll()
 
         // 회원과 연관되는 테이블 비우기
         positionsJpaRepository.deleteAll()

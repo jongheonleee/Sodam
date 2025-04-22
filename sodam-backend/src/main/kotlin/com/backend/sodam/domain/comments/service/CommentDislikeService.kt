@@ -1,10 +1,7 @@
 package com.backend.sodam.domain.comments.service
 
 import com.backend.sodam.domain.comments.exception.CommentException
-import com.backend.sodam.domain.comments.repository.CommentRepositoryForNormalUser
-import com.backend.sodam.domain.comments.repository.NormalUsersCommentDislikeRepository
 import com.backend.sodam.domain.comments.service.port.CreateUserCommentDislikePort
-import com.backend.sodam.domain.comments.service.port.DeleteCommentPort
 import com.backend.sodam.domain.comments.service.port.DeleteUserCommentDislikePort
 import com.backend.sodam.domain.comments.service.port.FetchCommentPort
 import com.backend.sodam.domain.comments.service.port.FetchUserCommentDislikePort
@@ -25,8 +22,8 @@ class CommentDislikeService(
     private val updateCommentPorts: List<UpdateCommentPort>,
     private val fetchCommentDislikePorts: List<FetchUserCommentDislikePort>,
     private val deleteCommentDislikePorts: List<DeleteUserCommentDislikePort>,
-    private val createUserCommentDislikePorts: List<CreateUserCommentDislikePort>,
-): HandleCommentDislikeUseCase {
+    private val createUserCommentDislikePorts: List<CreateUserCommentDislikePort>
+) : HandleCommentDislikeUseCase {
 
     @Transactional
     override fun handleDislike(commentId: Long, userId: String) {
@@ -35,7 +32,7 @@ class CommentDislikeService(
         val fetchCommentDislikePort = getFetchCommentDislikePort(userType = userType)
         val updateCommentPort = getUpdateCommentPort()
         val isExists = fetchCommentDislikePort.existsCommentDislike(commentId = commentId, userId = userId)
-        when(isExists) {
+        when (isExists) {
             true -> {
                 val deleteCommentDislikePort = getDeleteCommentDislikePort(userType = userType)
                 deleteCommentDislikePort.deleteDislike(commentId = commentId, userId = userId)
@@ -47,14 +44,13 @@ class CommentDislikeService(
                 updateCommentPort.increaseDislikeCnt(commentId = commentId)
             }
         }
-
     }
 
     // 📌 작업 유효성을 검증하는 메서드
     private fun checkCommentExists(commentId: Long) {
-        if ( ! isExistsComment(commentId) )
+        if (!isExistsComment(commentId)) {
             throw CommentException.CommentNotFoundException()
-
+        }
     }
 
     private fun isExistsComment(commentId: Long): Boolean = getFetchCommentPort().isExistsComment(commentId = commentId)
@@ -100,6 +96,4 @@ class CommentDislikeService(
             .filter { it.isTarget(userType = userType) }
             .findFirst()
             .orElseThrow { IllegalArgumentException() }
-
-
 }

@@ -10,7 +10,6 @@ import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
-
 @Repository
 class ArticleRepositoryForSocialUser(
     private val articleJpaRepository: ArticleJpaRepository,
@@ -19,7 +18,7 @@ class ArticleRepositoryForSocialUser(
     private val commentRepositoryForNormalUser: CommentRepositoryForNormalUser,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
     private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository
-): AbstractArticleRepository(commentRepositoryForNormalUser, articleJpaRepository, categoryJpaRepository, articleLikeJpaRepository, articleDislikeJpaRepository) {
+) : AbstractArticleRepository(commentRepositoryForNormalUser, articleJpaRepository, categoryJpaRepository, articleLikeJpaRepository, articleDislikeJpaRepository) {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.SOCIAL == userType
@@ -36,6 +35,6 @@ class ArticleRepositoryForSocialUser(
         }
 
         return articleJpaRepository.save(articleCreateRequestEntity)
-                                  .toDomain()
+            .toDomain()
     }
 }

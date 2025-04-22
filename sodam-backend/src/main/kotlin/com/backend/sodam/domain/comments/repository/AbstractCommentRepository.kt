@@ -15,7 +15,6 @@ import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import com.backend.sodam.global.utils.Formatter
 import org.springframework.transaction.annotation.Transactional
 
-
 abstract class AbstractCommentRepository(
     private val articleJpaRepository: ArticleJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
@@ -24,11 +23,10 @@ abstract class AbstractCommentRepository(
     private val commentLikeJpaRepository: UsersCommentLikeJpaRepository,
     private val commentDislikeJpaRepository: UsersCommentDislikeJpaRepository,
     private val formatter: Formatter
-): CreateCommentPort, FetchCommentPort, UpdateCommentPort, DeleteCommentPort {
+) : CreateCommentPort, FetchCommentPort, UpdateCommentPort, DeleteCommentPort {
 
     abstract override fun isTarget(userType: UserType): Boolean
     abstract override fun createComment(articleId: Long, commentCreateCommand: CommentCreateCommand): SodamComment
-
 
     @Transactional(readOnly = true)
     override fun findByCommentId(commentId: Long): SodamComment {
@@ -44,7 +42,7 @@ abstract class AbstractCommentRepository(
         val commentEntity = commentJpaRepository.findByCommentId(commentId).get()
         commentEntity.update(commentUpdateCommand = commentUpdateCommand)
         return commentJpaRepository.save(commentEntity)
-                                   .toDomain()
+            .toDomain()
     }
 
     @Transactional

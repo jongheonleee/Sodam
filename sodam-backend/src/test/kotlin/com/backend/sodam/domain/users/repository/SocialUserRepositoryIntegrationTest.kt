@@ -15,6 +15,8 @@ import com.backend.sodam.domain.subscriptions.model.SubscriptionsType
 import com.backend.sodam.domain.subscriptions.repository.SocialUserSubscriptionRepository
 import com.backend.sodam.domain.subscriptions.repository.SubscriptionJpaRepository
 import com.backend.sodam.domain.subscriptions.repository.UserSubscriptionJpaRepository
+import com.backend.sodam.domain.tokens.repository.TokenJpaRepository
+import com.backend.sodam.domain.tokens.repository.TokenRepositoryForSocialUser
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.service.command.SocialUserSignupCommand
@@ -33,7 +35,7 @@ class SocialUserRepositoryIntegrationTest(
     // - 의존하고 있는 오브젝트
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val socialUserPositionRepository: SocialUserPositionRepository,
-    private val socialUserGradeRepositiory: SocialUserGradeRepository,
+    private val socialUserGradeRepository: SocialUserGradeRepository,
     private val socialUserSubscriptionRepository: SocialUserSubscriptionRepository,
 
     // 테스트 환경 구축에 필요한 오브젝트
@@ -41,6 +43,7 @@ class SocialUserRepositoryIntegrationTest(
     private val gradesJpaRepository: GradesJpaRepository,
     private val positionsJpaRepository: PositionJpaRepository,
     private val subscriptionJpaRepository: SubscriptionJpaRepository,
+    private val tokenJpaRepository: TokenJpaRepository,
 
     // - 2. 회원과 연관된 교차 테이블
     private val userGradeJpaRepository: UserGradeJpaRepository,
@@ -81,6 +84,7 @@ class SocialUserRepositoryIntegrationTest(
         userPositionsJpaRepository.deleteAll()
         userGradeJpaRepository.deleteAll()
         userSubscriptionJpaRepository.deleteAll()
+        tokenJpaRepository.deleteAll()
 
         // 일반회원 및 소셜회원 테이블 비우기
         socialUserJpaRepository.deleteAll()
@@ -97,6 +101,16 @@ class SocialUserRepositoryIntegrationTest(
     // 테스트 환경 정리
     afterTest {
         // 테스트 DB 정리하기
+        userPositionsJpaRepository.deleteAll()
+        userGradeJpaRepository.deleteAll()
+        userSubscriptionJpaRepository.deleteAll()
+        tokenJpaRepository.deleteAll()
+
+        // 일반회원 및 소셜회원 테이블 비우기
+        socialUserJpaRepository.deleteAll()
+
+        // 테이블 초기화 되었는지 확인
+        socialUserJpaRepository.count().shouldBe(0)
     }
 
     context("소셜회원 providerId로 조회할 때") {
@@ -203,7 +217,7 @@ class SocialUserRepositoryIntegrationTest(
         it("소셜회원이 정상적으로 등록되었다면, 회원 정보, 포지션, 등급, 구독권을 정상적으로 조회해야한다.") {
             val target = sut.createSocialUser(command)
             socialUserPositionRepository.createByPositionName(target.userId, PositionsType.TBD.fullName)
-            socialUserGradeRepositiory.createGrade(target.userId, GradesType.ENTRY)
+            socialUserGradeRepository.createGrade(target.userId, GradesType.ENTRY)
             socialUserSubscriptionRepository.createSubscription(target.userId, SubscriptionsType.FREE)
 
             val optional = sut.findProfileInfo(target.userId)

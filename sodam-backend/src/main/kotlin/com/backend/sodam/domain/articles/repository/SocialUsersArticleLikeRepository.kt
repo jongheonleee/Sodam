@@ -1,15 +1,11 @@
 package com.backend.sodam.domain.articles.repository
 
 import com.backend.sodam.domain.articles.entity.UsersLikeArticleEntity
-import com.backend.sodam.domain.articles.exception.ArticleException
-import com.backend.sodam.domain.articles.exception.UsersArticleLikeException
 import com.backend.sodam.domain.articles.service.port.CreateUserArticleLikePort
 import com.backend.sodam.domain.articles.service.port.DeleteUserArticleLikePort
 import com.backend.sodam.domain.articles.service.port.FetchUserArticleLikePort
 import com.backend.sodam.domain.articles.service.port.UpdateUserArticleLikePort
-import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
@@ -21,7 +17,7 @@ class SocialUsersArticleLikeRepository(
     private val articleJpaRepository: ArticleJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val usersArticleLikeJpaRepository: UsersArticleLikeJpaRepository
-): CreateUserArticleLikePort, FetchUserArticleLikePort, UpdateUserArticleLikePort, DeleteUserArticleLikePort {
+) : CreateUserArticleLikePort, FetchUserArticleLikePort, UpdateUserArticleLikePort, DeleteUserArticleLikePort {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.SOCIAL == userType
@@ -30,7 +26,7 @@ class SocialUsersArticleLikeRepository(
     override fun existsArticleLike(articleId: Long, userId: String): Boolean {
         val socialUserEntity = socialUserJpaRepository.findBySocialUserId(userId).get()
         val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
-        return usersArticleLikeJpaRepository.existsByArticleAndSocialUser(socialUser = socialUserEntity, article = articleEntity,)
+        return usersArticleLikeJpaRepository.existsByArticleAndSocialUser(socialUser = socialUserEntity, article = articleEntity)
     }
 
     @Transactional

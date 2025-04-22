@@ -1,15 +1,12 @@
 package com.backend.sodam.domain.comments.repository
 
 import com.backend.sodam.domain.comments.entity.UsersDislikeCommentEntity
-import com.backend.sodam.domain.comments.exception.CommentException
 import com.backend.sodam.domain.comments.service.port.CreateUserCommentDislikePort
 import com.backend.sodam.domain.comments.service.port.DeleteUserCommentDislikePort
 import com.backend.sodam.domain.comments.service.port.FetchUserCommentDislikePort
 import com.backend.sodam.domain.comments.service.port.UpdateUserCommentDislikePort
-import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
 import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
-import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -20,7 +17,7 @@ class NormalUsersCommentDislikeRepository(
     private val commentJpaRepository: CommentJpaRepository,
     private val normalUserJpaRepository: NormalUserJpaRepository,
     private val usersCommentDislikeJpaRepository: UsersCommentDislikeJpaRepository
-): CreateUserCommentDislikePort, FetchUserCommentDislikePort, UpdateUserCommentDislikePort, DeleteUserCommentDislikePort {
+) : CreateUserCommentDislikePort, FetchUserCommentDislikePort, UpdateUserCommentDislikePort, DeleteUserCommentDislikePort {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.NORMAL == userType
@@ -31,7 +28,7 @@ class NormalUsersCommentDislikeRepository(
         val commentEntity = commentJpaRepository.findByCommentId(commentId).get()
         val userCommentDislikeEntity = UsersDislikeCommentEntity(
             user = userEntity,
-            comment = commentEntity,
+            comment = commentEntity
         )
         usersCommentDislikeJpaRepository.save(userCommentDislikeEntity)
     }
@@ -42,7 +39,7 @@ class NormalUsersCommentDislikeRepository(
         val commentEntity = commentJpaRepository.findByCommentId(commentId).get()
         return usersCommentDislikeJpaRepository.existsByCommentAndUser(
             user = userEntity,
-            comment = commentEntity,
+            comment = commentEntity
         )
     }
 
@@ -52,7 +49,7 @@ class NormalUsersCommentDislikeRepository(
         val commentEntity = commentJpaRepository.findByCommentId(commentId = commentId).get()
         val commentDislikeEntity = usersCommentDislikeJpaRepository.findByCommentAndUser(
             user = userEntity,
-            comment = commentEntity,
+            comment = commentEntity
         ).get()
         usersCommentDislikeJpaRepository.delete(commentDislikeEntity)
     }

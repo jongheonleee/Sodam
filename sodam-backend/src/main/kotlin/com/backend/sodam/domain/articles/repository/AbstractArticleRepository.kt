@@ -26,7 +26,7 @@ abstract class AbstractArticleRepository(
     private val categoryJpaRepository: CategoryJpaRepository,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
     private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository
-): CreateArticlePort, FetchArticlePort, UpdateArticlePort, DeleteArticlePort {
+) : CreateArticlePort, FetchArticlePort, UpdateArticlePort, DeleteArticlePort {
 
     abstract override fun isTarget(userType: UserType): Boolean
     abstract override fun createArticle(userId: String, articleCreateCommand: ArticleCreateCommand): SodamArticle
@@ -73,7 +73,7 @@ abstract class AbstractArticleRepository(
         )
 
         return articleJpaRepository.save(articleEntity)
-                                   .toDomain()
+            .toDomain()
     }
 
     @Transactional

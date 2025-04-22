@@ -1,15 +1,11 @@
 package com.backend.sodam.domain.articles.repository
 
 import com.backend.sodam.domain.articles.entity.UsersDislikeArticleEntity
-import com.backend.sodam.domain.articles.exception.ArticleException
-import com.backend.sodam.domain.articles.exception.UsersArticleDislikeException
 import com.backend.sodam.domain.articles.service.port.CreateUserArticleDislikePort
 import com.backend.sodam.domain.articles.service.port.DeleteUserArticleDislikePort
 import com.backend.sodam.domain.articles.service.port.FetchUserArticleDislikePort
 import com.backend.sodam.domain.articles.service.port.UpdateUserArticleDislikePort
-import com.backend.sodam.domain.users.exception.UserException
 import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.repository.NormalUserJpaRepository
 import com.backend.sodam.domain.users.repository.SocialUserJpaRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Repository
@@ -21,11 +17,10 @@ class SocialUsersArticleDislikeRepository(
     private val articleJpaRepository: ArticleJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val usersArticleDislikeJpaRepository: UsersArticleDislikeJpaRepository
-): CreateUserArticleDislikePort, FetchUserArticleDislikePort, UpdateUserArticleDislikePort, DeleteUserArticleDislikePort {
+) : CreateUserArticleDislikePort, FetchUserArticleDislikePort, UpdateUserArticleDislikePort, DeleteUserArticleDislikePort {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.SOCIAL == userType
-
 
     @Transactional(readOnly = true)
     override fun existsArticleDislike(articleId: Long, userId: String): Boolean {
@@ -33,7 +28,6 @@ class SocialUsersArticleDislikeRepository(
         val articleEntity = articleJpaRepository.findByArticleId(articleId).get()
         return usersArticleDislikeJpaRepository.existsByArticleAndSocialUser(article = articleEntity, socialUser = socialUserEntity)
     }
-
 
     @Transactional
     override fun deleteDislike(articleId: Long, userId: String) {

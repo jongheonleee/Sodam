@@ -5,7 +5,6 @@ import com.backend.sodam.domain.comments.controller.request.CommentUpdateRequest
 import com.backend.sodam.domain.comments.service.response.CommentCreateResponse
 import com.backend.sodam.domain.comments.service.response.CommentSimpleResponse
 import com.backend.sodam.domain.comments.service.response.CommentUpdateResponse
-import com.backend.sodam.domain.comments.service.CommentService
 import com.backend.sodam.domain.comments.service.usecase.CreateCommentUseCase
 import com.backend.sodam.domain.comments.service.usecase.DeleteCommentUseCase
 import com.backend.sodam.domain.comments.service.usecase.FetchCommentUseCase
@@ -29,7 +28,7 @@ class CommentController(
     private val createCommentUseCase: CreateCommentUseCase,
     private val fetchCommentUseCase: FetchCommentUseCase,
     private val updateCommentUseCase: UpdateCommentUseCase,
-    private val deleteCommentUseCase: DeleteCommentUseCase,
+    private val deleteCommentUseCase: DeleteCommentUseCase
 ) {
     // 댓글 작성
     @PostMapping("/api/v1/articles/{articleId}/comments")

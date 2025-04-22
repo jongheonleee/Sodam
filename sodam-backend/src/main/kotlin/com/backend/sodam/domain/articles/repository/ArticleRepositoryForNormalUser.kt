@@ -18,7 +18,7 @@ class ArticleRepositoryForNormalUser(
     private val commentRepositoryForNormalUser: CommentRepositoryForNormalUser,
     private val articleLikeJpaRepository: UsersArticleLikeJpaRepository,
     private val articleDislikeJpaRepository: UsersArticleDislikeJpaRepository
-): AbstractArticleRepository(commentRepositoryForNormalUser,articleJpaRepository, categoryJpaRepository, articleLikeJpaRepository, articleDislikeJpaRepository) {
+) : AbstractArticleRepository(commentRepositoryForNormalUser, articleJpaRepository, categoryJpaRepository, articleLikeJpaRepository, articleDislikeJpaRepository) {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.NORMAL == userType
@@ -26,7 +26,7 @@ class ArticleRepositoryForNormalUser(
     @Transactional
     override fun createArticle(userId: String, articleCreateCommand: ArticleCreateCommand): SodamArticle {
         val normalUserEntity = normalUserJpaRepository.findByUserId(userId).get()
-        val categoryEntity =  categoryJpaRepository.findByCategoryId(articleCreateCommand.categoryId).get()
+        val categoryEntity = categoryJpaRepository.findByCategoryId(articleCreateCommand.categoryId).get()
         val articleCreateRequestEntity = articleCreateCommand.toEntity(userEntity = normalUserEntity, categoryEntity = categoryEntity)
 
         articleCreateCommand.tags.map {
@@ -36,7 +36,6 @@ class ArticleRepositoryForNormalUser(
         }
 
         return articleJpaRepository.save(articleCreateRequestEntity)
-                                   .toDomain()
+            .toDomain()
     }
-
 }

@@ -8,8 +8,8 @@ import com.backend.sodam.domain.subscriptions.entity.QUsersSubscriptionsEntity.u
 import com.backend.sodam.domain.tags.entity.QTagsEntity.tagsEntity
 import com.backend.sodam.domain.users.entity.QSocialUsersEntity.socialUsersEntity
 import com.backend.sodam.domain.users.entity.QUsersEntity.usersEntity
-import com.backend.sodam.domain.users.entity.QUsersGradeEntity.*
-import com.backend.sodam.domain.users.entity.QUsersPositionsEntity.*
+import com.backend.sodam.domain.users.entity.QUsersGradeEntity.usersGradeEntity
+import com.backend.sodam.domain.users.entity.QUsersPositionsEntity.usersPositionsEntity
 import com.backend.sodam.domain.users.model.SodamUser
 import com.backend.sodam.domain.users.model.SodamUserDetail
 import com.backend.sodam.domain.users.model.UserType

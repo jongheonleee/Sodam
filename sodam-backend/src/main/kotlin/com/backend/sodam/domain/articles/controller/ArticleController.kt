@@ -8,7 +8,6 @@ import com.backend.sodam.domain.articles.service.response.ArticleDetailResponse
 import com.backend.sodam.domain.articles.service.response.ArticleSimpleResponse
 import com.backend.sodam.domain.articles.service.response.ArticleSummaryResponse
 import com.backend.sodam.domain.articles.service.response.ArticleUpdateResponse
-import com.backend.sodam.domain.articles.service.ArticleService
 import com.backend.sodam.domain.articles.service.usecase.CreateArticleUseCase
 import com.backend.sodam.domain.articles.service.usecase.DeleteArticleUseCase
 import com.backend.sodam.domain.articles.service.usecase.FetchArticleUseCase

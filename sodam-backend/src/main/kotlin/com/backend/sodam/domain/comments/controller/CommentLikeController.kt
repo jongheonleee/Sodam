@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequiredArgsConstructor
 class CommentLikeController(
     private val tokenProvider: JwtTokenProvider,
-    private val commentLikeUseCase: HandleCommentLikeUseCase,
+    private val commentLikeUseCase: HandleCommentLikeUseCase
 ) {
 
     @GetMapping("/api/v1/comments/{commentId}/like")

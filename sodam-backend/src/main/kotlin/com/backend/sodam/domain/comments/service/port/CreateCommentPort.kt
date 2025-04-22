@@ -1,6 +1,5 @@
 package com.backend.sodam.domain.comments.service.port
 
-import com.backend.sodam.domain.comments.service.response.CommentCreateResponse
 import com.backend.sodam.domain.comments.model.SodamComment
 import com.backend.sodam.domain.comments.service.command.CommentCreateCommand
 import com.backend.sodam.domain.users.model.UserType

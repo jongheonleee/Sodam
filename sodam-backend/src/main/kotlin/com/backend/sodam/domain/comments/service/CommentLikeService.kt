@@ -22,8 +22,8 @@ class CommentLikeService(
     private val fetchCommentLikePorts: List<FetchUserCommentLikePort>,
     private val deleteCommentLikePorts: List<DeleteUserCommentLikePort>,
     private val updateCommentPorts: List<UpdateCommentPort>,
-    private val fetchCommentPorts: List<FetchCommentPort>,
-): HandleCommentLikeUseCase {
+    private val fetchCommentPorts: List<FetchCommentPort>
+) : HandleCommentLikeUseCase {
 
     @Transactional
     override fun handleLike(commentId: Long, userId: String) {
@@ -32,7 +32,7 @@ class CommentLikeService(
         val fetchCommentLikePort = getFetchCommentLikePort(userType)
         val updateCommentPort = getUpdateCommentPort()
         val isExists = fetchCommentLikePort.existsCommentLike(commentId = commentId, userId = userId)
-        when(isExists) {
+        when (isExists) {
             true -> {
                 val deleteCommentLikePort = getDeleteCommentLikePort(userType)
                 deleteCommentLikePort.deleteLike(commentId = commentId, userId = userId)
@@ -48,9 +48,9 @@ class CommentLikeService(
 
     // 📌 작업 유효성을 검증하는 메서드
     private fun checkCommentExists(commentId: Long) {
-        if ( ! isExistsComment(commentId) )
+        if (!isExistsComment(commentId)) {
             throw CommentException.CommentNotFoundException()
-
+        }
     }
 
     private fun isExistsComment(commentId: Long): Boolean = getFetchCommentPort().isExistsComment(commentId = commentId)
@@ -71,7 +71,7 @@ class CommentLikeService(
 
     private fun getCreateCommentLikePort(userType: UserType): CreateUserCommentLikePort =
         createCommentLikePorts.stream()
-            .filter{ it.isTarget(userType) }
+            .filter { it.isTarget(userType) }
             .findFirst()
             .orElseThrow { IllegalArgumentException() }
 

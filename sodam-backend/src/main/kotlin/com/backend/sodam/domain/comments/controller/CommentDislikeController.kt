@@ -1,10 +1,6 @@
 package com.backend.sodam.domain.comments.controller
 
-import com.backend.sodam.domain.comments.service.CommentDislikeService
 import com.backend.sodam.domain.comments.service.usecase.HandleCommentDislikeUseCase
-import com.backend.sodam.domain.users.exception.UserException
-import com.backend.sodam.domain.users.model.UserType
-import com.backend.sodam.domain.users.service.port.FetchUserPort
 import com.backend.sodam.global.commons.SodamApiResponse
 import com.backend.sodam.global.filter.JwtTokenProvider
 import lombok.RequiredArgsConstructor
@@ -16,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequiredArgsConstructor
 class CommentDislikeController(
     private val tokenProvider: JwtTokenProvider,
-    private val commentDislikeUseCase: HandleCommentDislikeUseCase,
+    private val commentDislikeUseCase: HandleCommentDislikeUseCase
 ) {
 
     @GetMapping("/api/v1/comments/{commentId}/dislike")

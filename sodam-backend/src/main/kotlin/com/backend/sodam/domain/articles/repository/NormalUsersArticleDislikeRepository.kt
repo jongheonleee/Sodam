@@ -19,7 +19,7 @@ class NormalUsersArticleDislikeRepository(
     private val normalUserJpaRepository: NormalUserJpaRepository,
     private val socialUserJpaRepository: SocialUserJpaRepository,
     private val usersArticleDislikeJpaRepository: UsersArticleDislikeJpaRepository
-): CreateUserArticleDislikePort, FetchUserArticleDislikePort, UpdateUserArticleDislikePort, DeleteUserArticleDislikePort {
+) : CreateUserArticleDislikePort, FetchUserArticleDislikePort, UpdateUserArticleDislikePort, DeleteUserArticleDislikePort {
 
     override fun isTarget(userType: UserType): Boolean =
         UserType.NORMAL == userType
@@ -46,5 +46,4 @@ class NormalUsersArticleDislikeRepository(
         val userArticleDislikeEntity = UsersDislikeArticleEntity(article = articleEntity, user = normalUserEntity)
         usersArticleDislikeJpaRepository.save(userArticleDislikeEntity)
     }
-
 }

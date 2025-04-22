@@ -22,8 +22,8 @@ class ArticleLikeService(
     private val deleteUserArticleLikePorts: List<DeleteUserArticleLikePort>,
     private val createUserArticleLikePorts: List<CreateUserArticleLikePort>,
     private val updateUserArticleLikePorts: List<UpdateArticlePort>,
-    private val fetchArticlePorts: List<FetchArticlePort>,
-): HandleArticleLikeUseCase {
+    private val fetchArticlePorts: List<FetchArticlePort>
+) : HandleArticleLikeUseCase {
 
     // 📌 실제 비즈니스 로직
     @Transactional
@@ -36,7 +36,7 @@ class ArticleLikeService(
         val updateArticlePort = getUpdateUserArticleLikePort()
 
         val isExists = fetchUserArticleLikePort.existsArticleLike(articleId = articleId, userId = userId)
-        when(isExists) {
+        when (isExists) {
             true -> {
                 val deleteUserArticleLikePort = getDeleteUserArticleLikePort(userType)
                 deleteUserArticleLikePort.deleteLike(articleId = articleId, userId = userId)
@@ -53,8 +53,9 @@ class ArticleLikeService(
 
     // 📌 작업 유효성을 검증하는 메서드
     private fun checkExistsArticle(articleId: Long) {
-        if ( ! isExistsArticle(articleId) )
+        if (!isExistsArticle(articleId)) {
             throw ArticleException.ArticleNotFoundException()
+        }
     }
 
     private fun isExistsArticle(articleId: Long): Boolean =
@@ -70,35 +71,32 @@ class ArticleLikeService(
     // 📌 특정 조건에 부합한 포트 조회용 메서드 - 런타임 시점에 특정 비즈니스 로직을 처리할 수 있는 빈을 선택하는 메서드
     private fun getFetchUserPortByUserId(userId: String): FetchUserPort =
         fetchUserPorts.stream()
-                      .filter { it.isExistsByUserId(userId) }
-                      .findFirst()
-                      .orElseThrow { UserException.UserNotFoundException() }
+            .filter { it.isExistsByUserId(userId) }
+            .findFirst()
+            .orElseThrow { UserException.UserNotFoundException() }
 
     private fun getFetchUserArticleLikePort(userType: UserType): FetchUserArticleLikePort =
         fetchUserArticleLikePorts.stream()
-                                 .filter { it.isTarget(userType) }
-                                 .findFirst()
-                                 .orElseThrow { IllegalArgumentException() }
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
     private fun getDeleteUserArticleLikePort(userType: UserType): DeleteUserArticleLikePort =
         deleteUserArticleLikePorts.stream()
-                                  .filter { it.isTarget(userType) }
-                                  .findFirst()
-                                  .orElseThrow { IllegalArgumentException() }
-
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
     private fun getCreateUserArticleLikePort(userType: UserType): CreateUserArticleLikePort =
         createUserArticleLikePorts.stream()
-                                  .filter{ it.isTarget(userType) }
-                                  .findFirst()
-                                  .orElseThrow { IllegalArgumentException() }
-
+            .filter { it.isTarget(userType) }
+            .findFirst()
+            .orElseThrow { IllegalArgumentException() }
 
     private fun getUpdateUserArticleLikePort(): UpdateArticlePort =
         updateUserArticleLikePorts.stream()
             .findFirst()
             .orElseThrow { IllegalArgumentException() }
-
 
     private fun getFetchArticlePort(): FetchArticlePort =
         fetchArticlePorts.stream()

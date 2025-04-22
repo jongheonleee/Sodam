@@ -1,15 +1,13 @@
 package com.backend.sodam.domain.secrets.service
 
-import com.backend.sodam.domain.secrets.service.response.SecretCreateResponse
-import com.backend.sodam.domain.secrets.service.response.SecretDetailResponse
-import com.backend.sodam.domain.secrets.service.response.SecretSummaryResponse
 import com.backend.sodam.domain.secrets.exception.SecretException
-import com.backend.sodam.domain.secrets.service.command.SecretCreateCommand
 import com.backend.sodam.domain.secrets.service.command.SecretSearchCommand
 import com.backend.sodam.domain.secrets.service.port.CreateSecretViewPort
 import com.backend.sodam.domain.secrets.service.port.FetchSecretPort
 import com.backend.sodam.domain.secrets.service.port.FetchSecretViewPort
 import com.backend.sodam.domain.secrets.service.port.UpdateSecretPort
+import com.backend.sodam.domain.secrets.service.response.SecretDetailResponse
+import com.backend.sodam.domain.secrets.service.response.SecretSummaryResponse
 import com.backend.sodam.domain.secrets.service.usecase.CreateSecretUseCase
 import com.backend.sodam.domain.secrets.service.usecase.DeleteSecretUseCase
 import com.backend.sodam.domain.secrets.service.usecase.FetchSecretUseCase
@@ -33,11 +31,11 @@ class SecretService(
     private val fetchSecretViewPorts: List<FetchSecretViewPort>,
     private val createSecretViewPorts: List<CreateSecretViewPort>,
     private val viewValidators: List<SecretViewValidator>
-): CreateSecretUseCase, FetchSecretUseCase, UpdateSecretUseCase, DeleteSecretUseCase {
+) : CreateSecretUseCase, FetchSecretUseCase, UpdateSecretUseCase, DeleteSecretUseCase {
 
     override fun fetchFromClient(pageable: Pageable, secretSearchCommand: SecretSearchCommand): Page<SecretSummaryResponse> {
         return fetchSecretPort.findByPageBy(pageable = pageable, secretSearchCommand = secretSearchCommand)
-                              .map {it.toSummaryResponse()}
+            .map { it.toSummaryResponse() }
     }
 
     @Transactional(
@@ -52,24 +50,25 @@ class SecretService(
         val fetchSecretViewPort = getFetchSecretViewPort()
         val todayTotalViewCount = fetchSecretViewPort.countViewToday(userId = userId) // 보유 구독권 서비스에서 현재 회원의 당일 조회수 확인
         val isViewable = viewValidators.stream()
-                                                 .filter { it.isTarget(role) } // 현재 발급된 구독권
-                                                 .findFirst()
-                                                 .orElseThrow()
-                                                 .isValidView(todayTotalViewCount) // 조회 가능 여부 확인
+            .filter { it.isTarget(role) } // 현재 발급된 구독권
+            .findFirst()
+            .orElseThrow()
+            .isValidView(todayTotalViewCount) // 조회 가능 여부 확인
 
-        if ( ! isViewable )
+        if (!isViewable) {
             throw SecretException.InvalidSecretViewException()
-
+        }
 
         updateSecretPort.increaseViewCnt(secretId) // 조회수 증가
         createSecretViewPort.create(userId = userId, secretId = secretId) // 시청 이력 생성
         return fetchSecretPort.findDetailBySecretId(secretId = secretId)
-                              .toResponse()
+            .toResponse()
     }
 
     private fun checkExistsSecret(secretId: Long) {
-        if ( ! isExistsSecret(secretId = secretId) )
+        if (!isExistsSecret(secretId = secretId)) {
             throw SecretException.SecretNotFoundException()
+        }
     }
 
     private fun isExistsSecret(secretId: Long): Boolean =
