@@ -36,11 +36,14 @@
 >       domain: 특정 도메인
 >       ├── controller: 사용자 요청 흐름 관장
 >       │   ├── request: 요청 dto
->       │   ├── response: 응답 dto
 >       ├── service: 비즈니스 로직, 업무 프로세스 처리
 >       │   ├── usecase: 클라이언트(Controller, ...)가 호출할 수 있는 인터페이스 모음
 >       │   ├── port: 외부(RDB, ...)와의 통신을 위한 인터페이스 모음
 >       │   ├── command: 작업 처리용 dto
+>       |   ├── response: 응답 dto
+>       |   ├── checker: 비즈니스 작업 전 유효성 검증(전처 작업)
+>       |   ├── provider: 비즈니스 작업 처리에 필요한 포트 제공자 
+>       |   ├── service: 비즈니스 업무 처리 
 >       ├── model: 도메인 오브젝트
 >       ├── exception: 도메인에서 발생할 수 있는 예외 모음
 >       ├── repository: DB 접근 및 작업 처리
