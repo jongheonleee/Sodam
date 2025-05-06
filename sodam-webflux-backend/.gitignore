@@ -38,3 +38,7 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### infra
+/sodam-webflux-backend/infra/data/ib_logfile0
+

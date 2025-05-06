@@ -42,6 +42,7 @@ class ArticleController(
         @RequestBody @Valid
         request: ArticleCreateRequest
     ): SodamApiResponse<ArticleCreateResponse> {
+        println("u got in!!")
         val userId = tokenProvider.getUserId()
         val command = request.toCommand()
         return SodamApiResponse.ok(createArticleUseCase.create(userId, command))
