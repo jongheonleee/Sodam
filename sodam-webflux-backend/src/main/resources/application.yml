@@ -1,0 +1,10 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+  application:
+    name: sodam-webflux-backend
+  r2dbc:
+    url: r2dbc:pool:mariadb://localhost:3308/sample
+    username: user
+    password: 1234
