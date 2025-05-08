@@ -1,4 +1,8 @@
 spring:
+  profiles:
+    active: local
+---
+spring:
   output:
     ansi:
       enabled: always
@@ -8,3 +12,40 @@ spring:
     url: r2dbc:pool:mariadb://localhost:3308/sample
     username: user
     password: 1234
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db-init/schema.sql
+
+logging:
+  level:
+    sodam.backend2: debug
+    org.springframework.r2dbc.core: debug
+    org.springframework.r2dbc.connection.init: debug
+  pattern:
+    console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n" # 시간 - 로그레벨 - MDC에서 세팅한 UUID 형식으로 출력됨
+api:
+  externalUrl: http://localhost:8081
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  r2dbc:
+    url: r2dbc:pool:h2:file:///./sample
+  sql:
+    init:
+      mode: always
+---
+spring:
+  config:
+    activate:
+      on-profile: stress
+  sql:
+    init:
+      mode: never
+logging:
+  level:
+    sodam.backend2: debug
+    org.springframework.r2dbc.core: off
+    org.springframework.r2dbc.connection.init: off
