@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-validation") // Webflux는 validation 임포트해야함
 	implementation("io.micrometer:context-propagation:1.0.5")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")

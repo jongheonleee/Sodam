@@ -1,27 +1,36 @@
 package sodam.backend2.sodam_webflux_backend.domain.test.controller
 
+import jakarta.validation.Constraint
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
+import jakarta.validation.Payload
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Positive
+import jakarta.validation.constraints.Size
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.slf4j.MDCContext
-import kotlinx.coroutines.withContext
 import mu.KotlinLogging
-import org.aspectj.lang.ProceedingJoinPoint
-import org.aspectj.lang.annotation.Around
-import org.aspectj.lang.annotation.Aspect
-import org.aspectj.lang.reflect.MethodSignature
-import org.springframework.core.KotlinDetector
 import org.springframework.http.HttpStatus
-import org.springframework.stereotype.Component
-
+import org.springframework.validation.BindException
+import org.springframework.validation.BindingResult
+import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import sodam.backend2.sodam_webflux_backend.domain.test.controller.request.CreateTestArticleRequest
 import sodam.backend2.sodam_webflux_backend.domain.test.model.TestArticle
 import sodam.backend2.sodam_webflux_backend.domain.test.service.TestService
-import kotlin.coroutines.Continuation
+import sodam.backend2.sodam_webflux_backend.golbal.annotation.DateString
+import sodam.backend2.sodam_webflux_backend.golbal.exception.InvalidParameter
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 
 private val logger = KotlinLogging.logger {}
 
@@ -49,5 +58,35 @@ class TestController(
     suspend fun createTestArticle(@RequestBody request: CreateTestArticleRequest): TestArticle {
         return service.create(request)
     }
+
+    // WebFlux에서는 BindingResult 지원하지 않음 -> 구현해서 사용
+    @PutMapping("/test/error")
+    suspend fun error(@RequestBody @Valid request: ReqErrorTest) {
+        logger.debug { "request: ${request}" }
+
+        if (request.message == "error")  // 이런 에러 메시지를 내포한 경우, 파라미터 에러로 처리해야함
+            throw InvalidParameter(request, request::message, code = "custom code", message = "custom message")
+
+//        throw RuntimeException("error!!")
+    }
 }
 
+
+
+
+
+data class ReqErrorTest(
+    @field:NotEmpty
+    @field:Size(min=3, max=10)
+    val id: String?,
+
+    @field:NotNull
+    @field:Positive(message = "양수만 입력 가능합니다.")
+    @field:Max(150)
+    val age: Int?,
+
+    @field:DateString
+    val birthday: String?,
+
+    val message: String? = null
+)
