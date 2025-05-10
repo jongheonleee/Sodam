@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.server.ServerRequest
 import sodam.backend2.sodam_webflux_backend.golbal.extension.txid
+import sodam.backend2.sodam_webflux_backend.golbal.filter.KEY_TXID
 
 private val logger = KotlinLogging.logger {}
 

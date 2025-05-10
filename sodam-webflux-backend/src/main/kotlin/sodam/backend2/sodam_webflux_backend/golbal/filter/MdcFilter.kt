@@ -1,4 +1,4 @@
-package sodam.backend2.sodam_webflux_backend.golbal.config
+package sodam.backend2.sodam_webflux_backend.golbal.filter
 
 import io.micrometer.context.ContextRegistry
 import mu.KotlinLogging

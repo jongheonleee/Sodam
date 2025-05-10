@@ -1,11 +1,6 @@
 package sodam.backend2.sodam_webflux_backend.domain.test.controller
 
 import jakarta.validation.Valid
-import jakarta.validation.constraints.Max
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Positive
-import jakarta.validation.constraints.Size
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
@@ -52,12 +47,8 @@ class TestController(
     // WebFlux에서는 BindingResult 지원하지 않음 -> 구현해서 사용
     @PutMapping("/test/error")
     suspend fun error(@RequestBody @Valid request: ErrorTestRequest) {
-        logger.debug { "request: ${request}" }
-
         if (request.message == "error")  // 이런 에러 메시지를 내포한 경우, 파라미터 에러로 처리해야함
             throw InvalidParameter(request, request::message, code = "custom code", message = "custom message")
-
-//        throw RuntimeException("error!!")
     }
 }
 
