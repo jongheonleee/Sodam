@@ -19,6 +19,10 @@ repositories {
 }
 
 dependencies {
+	// Circuit Breaker
+	implementation("io.github.resilience4j:resilience4j-kotlin:2.1.0")
+	implementation("io.github.resilience4j:resilience4j-all:2.1.0")
+
 	implementation("org.springframework.boot:spring-boot-starter-validation") // Webflux는 validation 임포트해야함
 	implementation("io.micrometer:context-propagation:1.0.5")
 	implementation("org.springframework.boot:spring-boot-starter-aop")

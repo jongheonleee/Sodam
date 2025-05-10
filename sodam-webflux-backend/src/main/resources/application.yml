@@ -29,7 +29,7 @@ logging:
     # console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%logger|%blue(\\(%F:%L\\))|%msg%n" 로깅 형식. 너무길면, logger 제거해서 사용하기
     console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n" # 시간 - 로그레벨 - MDC에서 세팅한 UUID 형식으로 출력됨
 api:
-  externalUrl: http://localhost:8081
+  externalUrl: http://localhost:8081 # 외부 API 지정
 ---
 spring:
   config:

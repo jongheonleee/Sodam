@@ -5,6 +5,7 @@ import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -14,7 +15,7 @@ import sodam.backend2.sodam_webflux_backend.domain.test.controller.request.Creat
 import sodam.backend2.sodam_webflux_backend.domain.test.controller.request.ErrorTestRequest
 import sodam.backend2.sodam_webflux_backend.domain.test.model.TestArticle
 import sodam.backend2.sodam_webflux_backend.domain.test.service.TestService
-import sodam.backend2.sodam_webflux_backend.golbal.annotation.DateString
+import sodam.backend2.sodam_webflux_backend.golbal.exception.ExternalApi
 import sodam.backend2.sodam_webflux_backend.golbal.exception.InvalidParameter
 
 private val logger = KotlinLogging.logger {}
@@ -23,6 +24,7 @@ private val logger = KotlinLogging.logger {}
 @RestController
 class TestController(
     private val service: TestService,
+    private val externalApi: ExternalApi,
 ) {
 
     @GetMapping("/test/mdc")
@@ -49,6 +51,17 @@ class TestController(
     suspend fun error(@RequestBody @Valid request: ErrorTestRequest) {
         if (request.message == "error")  // 이런 에러 메시지를 내포한 경우, 파라미터 에러로 처리해야함
             throw InvalidParameter(request, request::message, code = "custom code", message = "custom message")
+    }
+
+    // CircuitBreaker
+    @GetMapping("/external/delay")
+    suspend fun delay() {
+        externalApi.delay()
+    }
+
+    @GetMapping("/external/circuit/{flag}", "/external/circuit", "/external/circuit/")
+    suspend fun testCircuitBreaker(@PathVariable flag: String): String {
+        return externalApi.testCircuitBreaker(flag)
     }
 }
 
