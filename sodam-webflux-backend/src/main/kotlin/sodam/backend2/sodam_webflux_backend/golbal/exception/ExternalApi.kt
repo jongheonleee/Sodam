@@ -12,9 +12,7 @@ import io.github.resilience4j.ratelimiter.RateLimiter
 import io.github.resilience4j.ratelimiter.RequestNotPermitted
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.*
-import org.springframework.http.MediaType
 import org.springframework.http.MediaType.*
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -71,7 +69,7 @@ class ExternalApi(
         permittedNumberOfCallsInHalfOpenState(3)
     })
 
-    // 너무 과한 호출은 RateLimiter에 의해 차단됨
+    // 너무 과한 호출은 RateLimiter 에 의해 차단됨
     val rateLimiter = RateLimiter.of("rps-limiter", RateLimiterConfig {
         limitForPeriod(2)
         timeoutDuration(5.seconds.toJavaDuration())

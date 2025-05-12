@@ -15,9 +15,8 @@ class DateValidator: ConstraintValidator<DateString, String> {
     override fun isValid(value: String?, context: ConstraintValidatorContext?): Boolean {
         val text = value?.filter { it.isDigit() } ?: return true
         val format = "yyyMMdd"
-
         return runCatching {
-            text.toLocalDate(format).let {
+            text.toLocalDate().let {
                 if (text != it.toString(format)) null else true // 20000231 -> 포맷팅  -> 200000229로 나오는 경우가 있음. 이런 경우도 잘못된 데이터 들어온 경우임
             }
         }.getOrNull() != null

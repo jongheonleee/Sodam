@@ -2,6 +2,7 @@ package sodam.backend2.sodam_webflux_backend.domain.test.controller
 
 import jakarta.validation.Valid
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import sodam.backend2.sodam_webflux_backend.domain.test.controller.request.CreateTestArticleRequest
 import sodam.backend2.sodam_webflux_backend.domain.test.controller.request.ErrorTestRequest
 import sodam.backend2.sodam_webflux_backend.domain.test.model.TestArticle
+import sodam.backend2.sodam_webflux_backend.domain.test.service.QueryArticleTest
 import sodam.backend2.sodam_webflux_backend.domain.test.service.TestService
 import sodam.backend2.sodam_webflux_backend.golbal.exception.ExternalApi
 import sodam.backend2.sodam_webflux_backend.golbal.exception.InvalidParameter
@@ -53,7 +55,12 @@ class TestController(
             throw InvalidParameter(request, request::message, code = "custom code", message = "custom message")
     }
 
-    // CircuitBreaker
+    @GetMapping("/all")
+    suspend fun getAll(request: QueryArticleTest): Flow<TestArticle> {
+        return service.getAll(request)
+    }
+
+    // CircuitBreakern
     @GetMapping("/external/delay")
     suspend fun delay() {
         externalApi.delay()
