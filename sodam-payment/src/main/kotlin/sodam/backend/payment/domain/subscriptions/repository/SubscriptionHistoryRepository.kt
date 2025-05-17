@@ -1,0 +1,9 @@
+package sodam.backend.payment.domain.subscriptions.repository
+
+import org.springframework.data.repository.kotlin.CoroutineCrudRepository
+import org.springframework.stereotype.Repository
+import sodam.backend.payment.domain.subscriptions.entity.SubscriptionHistoryEntity
+
+@Repository
+interface SubscriptionHistoryRepository: CoroutineCrudRepository<SubscriptionHistoryEntity, Long> {
+}

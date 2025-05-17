@@ -19,6 +19,10 @@ repositories {
 }
 
 dependencies {
+	// flyway
+	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-mysql")
+
 	// 로깅 처리를 위한 라이브러리
 	implementation("io.micrometer:context-propagation:1.0.5")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
