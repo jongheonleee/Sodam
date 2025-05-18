@@ -10,8 +10,7 @@ import java.util.*
 @Table("payments")
 class PaymentsEntity(
     @Id
-    var paymentId: String = UUID.randomUUID().toString(),
-    // var userId: String
+    var paymentId: String? = null,
     var userId: String? = null,
     var socialUserId: String? = null,
     var orderId: String? = null,

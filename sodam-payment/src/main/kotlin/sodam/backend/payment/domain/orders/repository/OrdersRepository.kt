@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository
 import sodam.backend.payment.domain.orders.entity.OrdersEntity
 
 @Repository
-interface OrderRepository: CoroutineCrudRepository<OrdersEntity, String> {
+interface OrdersRepository: CoroutineCrudRepository<OrdersEntity, String>, OrdersCustomRepository {
 }

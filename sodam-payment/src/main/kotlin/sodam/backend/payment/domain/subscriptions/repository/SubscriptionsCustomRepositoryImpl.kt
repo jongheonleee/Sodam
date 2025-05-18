@@ -8,24 +8,34 @@ import java.time.LocalDateTime
 
 @Repository
 class SubscriptionsCustomRepositoryImpl(
-    private val client: DatabaseClient
+    private val client: DatabaseClient,
 ): SubscriptionsCustomRepository {
 
     override suspend fun insertOnly(entity: SubscriptionsEntity): SubscriptionsEntity {
         client.sql(
             """
-        INSERT INTO subscriptions (
-            SUBSCRIPTION_ID,
-            SUBSCRIPTION_NAME,
-            subscription_content,
-            VIEW_CNT,
-            DOWN_CNT,
-            created_at,
-            created_by,
-            modified_at,
-            modified_by
-        ) VALUES (:subscriptionId, :subscriptionName, :subscriptionContent, :viewCnt, :downCnt, :createdAt, :createdBy, :modifiedAt, :modifiedBy)
-        """
+                INSERT INTO subscriptions (
+                    SUBSCRIPTION_ID,
+                    SUBSCRIPTION_NAME,
+                    subscription_content,
+                    VIEW_CNT,
+                    DOWN_CNT,
+                    created_at,
+                    created_by,
+                    modified_at,
+                    modified_by
+                ) VALUES (
+                    :subscriptionId, 
+                    :subscriptionName, 
+                    :subscriptionContent, 
+                    :viewCnt, 
+                    :downCnt, 
+                    :createdAt, 
+                    :createdBy,
+                    :modifiedAt, 
+                    :modifiedBy
+                )
+            """
         )
             .bind("subscriptionId", entity.subscriptionId!!)
             .bind("subscriptionName", entity.subscriptionName!!)
@@ -38,8 +48,6 @@ class SubscriptionsCustomRepositoryImpl(
             .bind("modifiedBy", entity.modifiedBy)
             .then()
             .awaitFirstOrNull()
-
-        // 객체 그대로 반환
         return entity
     }
 }

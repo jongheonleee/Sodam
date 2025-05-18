@@ -575,7 +575,7 @@ DROP TABLE IF EXISTS `subscription_status`;
 CREATE TABLE `subscription_status` (
                                        `STATUS_ID`         BIGINT AUTO_INCREMENT  NOT NULL COMMENT '자동증분',
                                        `SUBSCRIPTION_ID`   VARCHAR(255)           NOT NULL COMMENT '구독 ID (FK)',
-                                       `SUBSCRIPTION_STATUS` INT                 NOT NULL COMMENT '구독 상태 코드',
+                                       `SUBSCRIPTION_STATUS` VARCHAR(255)                 NOT NULL COMMENT '구독 상태 코드',
                                        `START_AT`          DATETIME               NOT NULL COMMENT '시작일',
                                        `END_AT`            DATETIME               NOT NULL COMMENT '종료일',
                                        `VALID_YN`          TINYINT                NOT NULL COMMENT '사용 가능 여부',
@@ -753,27 +753,35 @@ CREATE TABLE `best_secrets` (
 -- 주문
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
-                          `ORDER_ID`                   VARCHAR(255)          NOT NULL                                COMMENT '주문 아이디(UUID)(PK)',
-                          `USER_ID`                    VARCHAR(255)          NOT NULL                                COMMENT '회원 아이디(UUID)(FK)',
-                          `SOCIAL_USER_ID`             VARCHAR(255)          NOT NULL                                COMMENT '소셜 회원 아이디(UUID)(FK)',
-                          `SUBSCRIPTION_ID`            VARCHAR(255)          NOT NULL                                COMMENT '구독 아이디(UUID)(FK)',
-                          `ORDER_TOT_AMOUNT`           INT                   NOT NULL         DEFAULT 0              COMMENT '총 주문 금액',
-                          `DISC_TOT_AMOUNT`            INT                   NOT NULL         DEFAULT 0              COMMENT '총 할인 금액',
-                          `PAID_TOT_AMOUNT`            INT                   NOT NULL         DEFAULT 0              COMMENT '총 결제 금액',
-                          `ORDERED_AT`                 DATETIME              NOT NULL                                COMMENT '주문일자',
+    `ORDER_ID`             VARCHAR(255)       NOT NULL                                COMMENT '주문 아이디(UUID)(PK)',
+    `USER_ID`              VARCHAR(255)                                               COMMENT '회원 아이디(UUID)(FK)',
+    `SOCIAL_USER_ID`       VARCHAR(255)                                               COMMENT '소셜 회원 아이디(UUID)(FK)',
+    `SUBSCRIPTION_ID`      VARCHAR(255)       NOT NULL                                COMMENT '구독 아이디(UUID)(FK)',
+
+    `ORDER_TOT_AMOUNT`     BIGINT             NOT NULL        DEFAULT 0               COMMENT '총 주문 금액',
+    `DISC_TOT_AMOUNT`      BIGINT             NOT NULL        DEFAULT 0               COMMENT '총 할인 금액',
+    `PAID_TOT_AMOUNT`      BIGINT             NOT NULL        DEFAULT 0               COMMENT '총 결제 금액',
+
+    `DESCRIPTION`          TEXT                                                      COMMENT '결제 설명',
+    `AMOUNT`               BIGINT             NOT NULL        DEFAULT 0               COMMENT '결제 단건 금액',
+    `PG_ORDER_ID`          VARCHAR(255)                                              COMMENT 'PG사 주문 ID',
+    `PG_KEY`               VARCHAR(255)                                              COMMENT 'PG 결제 키',
+    `PG_STATUS`            VARCHAR(50)         NOT NULL        DEFAULT 'CREATE'       COMMENT 'PG 상태',
+    `PG_RETRY_COUNT`       INT                NOT NULL        DEFAULT 0               COMMENT 'PG 재시도',
+    `ORDERED_AT`           DATETIME           NOT NULL                                COMMENT '주문일자',
 
     -- 시스템 칼럼
-                          `CREATED_AT`                 DATETIME              NOT NULL                                COMMENT '생성일자',
-                          `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
-                          `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
-                          `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
+    `CREATED_AT`           DATETIME           NOT NULL                                COMMENT '생성일자',
+    `CREATED_BY`           VARCHAR(50)        NOT NULL                                COMMENT '생성자',
+    `MODIFIED_AT`          DATETIME           NOT NULL                                COMMENT '수정일자',
+    `MODIFIED_BY`          VARCHAR(50)        NOT NULL                                COMMENT '수정자',
 
-    -- FK 참조 : 사용자, 구독
-                          CONSTRAINT FK_ORDERS_USER_ID FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
-                          CONSTRAINT FK_ORDERS_SOCIAL_USER_ID FOREIGN KEY (`SOCIAL_USER_ID`) REFERENCES `social_users`(`SOCIAL_USER_ID`) ON DELETE CASCADE,
-                          CONSTRAINT FK_ORDERS_SUBSCRIPTION_ID FOREIGN KEY (`SUBSCRIPTION_ID`) REFERENCES `subscriptions`(`SUBSCRIPTION_ID`) ON DELETE CASCADE,
+    -- FK 제약조건
+#     CONSTRAINT FK_ORDERS_USER_ID            FOREIGN KEY (`USER_ID`) REFERENCES `users`(`USER_ID`) ON DELETE CASCADE,
+#     CONSTRAINT FK_ORDERS_SOCIAL_USER_ID     FOREIGN KEY (`SOCIAL_USER_ID`) REFERENCES `social_users`(`SOCIAL_USER_ID`) ON DELETE CASCADE,
+    CONSTRAINT FK_ORDERS_SUBSCRIPTION_ID    FOREIGN KEY (`SUBSCRIPTION_ID`) REFERENCES `subscriptions`(`SUBSCRIPTION_ID`) ON DELETE CASCADE,
 
-                          PRIMARY KEY (ORDER_ID)
+    PRIMARY KEY (`ORDER_ID`)
 );
 
 -- 주문 상태
@@ -857,29 +865,29 @@ CREATE TABLE `payments` (
 -- 결제 이력
 DROP TABLE IF EXISTS `payments_history`;
 CREATE TABLE `payments_history` (
-                                    `PAYMENT_HISTORY_ID`         VARCHAR(255)          NOT NULL                                COMMENT '결제 이력 아이디(UUID)(PK)',
-                                    `PAYMENT_ID`                 VARCHAR(255)          NOT NULL                                COMMENT '결제 아이디(UUID)(FK)',
-                                    `PAYMENT_STAT`               VARCHAR(255)          NOT NULL                                COMMENT '결제 상태',
-                                    `PAYMENT_AMOUNT`             INT                   NOT NULL         DEFAULT 0              COMMENT '결제 금액',
-                                    `PAYMENT_CODE`               VARCHAR(255)          NOT NULL                                COMMENT '결제 코드',
-                                    `CARD_APPR_CODE`             VARCHAR(255)          NOT NULL                                COMMENT '카드 결제 승인 코드',
-                                    `CARD_CANC_CODE`             VARCHAR(255)          NOT NULL                                COMMENT '카드 결제 취소 코드',
-                                    `PAID_AT`                    VARCHAR(255)          NOT NULL                                COMMENT '결제일자',
+    `PAYMENT_HISTORY_ID`         VARCHAR(255)          NOT NULL                                COMMENT '결제 이력 아이디(UUID)(PK)',
+    `PAYMENT_ID`                 VARCHAR(255)          NOT NULL                                COMMENT '결제 아이디(UUID)(FK)',
+    `PAYMENT_STAT`               VARCHAR(255)          NOT NULL                                COMMENT '결제 상태',
+    `PAYMENT_AMOUNT`             INT                   NOT NULL         DEFAULT 0              COMMENT '결제 금액',
+    `PAYMENT_CODE`               VARCHAR(255)          NOT NULL                                COMMENT '결제 코드',
+    `CARD_APPR_CODE`             VARCHAR(255)          NOT NULL                                COMMENT '카드 결제 승인 코드',
+    `CARD_CANC_CODE`             VARCHAR(255)          NOT NULL                                COMMENT '카드 결제 취소 코드',
+    `PAID_AT`                    VARCHAR(255)          NOT NULL                                COMMENT '결제일자',
 
     -- 시스템 칼럼
-                                    `CREATED_AT`                 DATETIME              NOT NULL                                COMMENT '생성일자',
-                                    `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
-                                    `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
-                                    `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
+    `CREATED_AT`                 DATETIME              NOT NULL                                COMMENT '생성일자',
+    `CREATED_BY`                 VARCHAR(50)           NOT NULL                                COMMENT '생성자',
+    `MODIFIED_AT`                DATETIME              NOT NULL                                COMMENT '수정일자',
+    `MODIFIED_BY`                VARCHAR(50)           NOT NULL                                COMMENT '수정자',
 
     -- FK 참조 : 결제
-                                    CONSTRAINT FK_PAYMENTS_HISTORY_PAYMENT_ID FOREIGN KEY (`PAYMENT_ID`) REFERENCES `payments`(`PAYMENT_ID`) ON DELETE CASCADE,
+    CONSTRAINT FK_PAYMENTS_HISTORY_PAYMENT_ID FOREIGN KEY (`PAYMENT_ID`) REFERENCES `payments`(`PAYMENT_ID`) ON DELETE CASCADE,
 
-                                    PRIMARY KEY (PAYMENT_HISTORY_ID)
+    PRIMARY KEY (PAYMENT_HISTORY_ID)
 );
 
-DROP TABLE IF EXISTS 'orders_subscription';
-CREATE TABLE 'orders_subscription'(
+DROP TABLE IF EXISTS `orders_subscription`;
+CREATE TABLE `orders_subscription`(
     `SEQ` BIGINT AUTO_INCREMENT PRIMARY KEY, -- R2DBC용 더미 PK
     `ORDER_ID` VARCHAR(255) NOT NULL,
     `SUBSCRIPTION_ID` VARCHAR(255) NOT NULL,

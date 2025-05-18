@@ -12,7 +12,7 @@ class SubscriptionPriceEntity(
     var priceId: Long = 0,
     var subscriptionId: String? = null,
     var price: Long = 0, // 가격 부분 BigDecimal 사용 고려
-    var discRate: Float = 0f,
+    var discRate: Float = 0F,
     var discPrice: Long = 0,
     var salePrice: Long = 0,
     var validYN: Boolean = false,

@@ -1,0 +1,122 @@
+INSERT INTO `categories` (`CATEGORY_ID`, `TOP_CATEGORY_ID`, `CATEGORY_NAME`, `CATEGORY_ORD`, `VALID_YN`, `CREATED_AT`, `CREATED_BY`, `MODIFIED_AT`, `MODIFIED_BY`)
+VALUES
+    -- 중분류 카테고리
+    ('CT0001', '-', '게시글', 1, 0, NOW(), 'system', NOW(), 'system'),
+    ('CT0002', '-', '프로필', 2, 0, NOW(), 'system', NOW(), 'system'),
+    ('CT0003', '-', '시크릿', 3, 0, NOW(), 'system', NOW(), 'system'),
+
+    -- 게시글 소분류
+    (UUID(), 'CT0001', '전체', 1, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0001', '일상', 2, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0001', '꿀팁', 3, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0001', '커리어', 4, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0001', '학습법', 5, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0001', '프로젝트 모집', 6, 0, NOW(), 'system', NOW(), 'system'),
+
+    -- 프로필 소분류
+    (UUID(), 'CT0002', '작성한 글', 1, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0002', '좋아요', 2, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0002', '프로젝트 일정', 3, 0, NOW(), 'system', NOW(), 'system'),
+
+    -- 시크릿 소분류
+    (UUID(), 'CT0003', '프론트엔드', 1, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0003', '백엔드', 2, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0003', 'DevOps', 3, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0003', '인프라', 4, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0003', 'ML/DL', 5, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'CT0003', 'AWS', 6, 0, NOW(), 'system', NOW(), 'system');
+
+
+INSERT INTO `subscriptions`(`subscription_id`, `subscription_name`, `subscription_content`, `view_cnt`, `down_cnt`, `created_at`, `created_by`, `modified_at`, `modified_by`)
+VALUES (UUID(), 'FREE', '모든 회원에게 제공되는 무료 구독권, 구독 서비스 이용 혜택 없음',
+        0, 0, NOW(), 'system', NOW(), 'system'),
+       (UUID(), 'BRONZE', '브론즈 등급 회원을 위한 구독권, 기본적인 혜택 제공',
+        15, 15, NOW(), 'system', NOW(), 'system'),
+       (UUID(), 'SILVER', '실버 등급 회원을 위한 구독권, 추가적인 혜택 제공',
+        30, 30, NOW(), 'system', NOW(), 'system'),
+       (UUID(), 'GOLD', '골드 등급 회원을 위한 구독권, 다양한 혜택 제공',
+        50, 50, NOW(), 'system', NOW(), 'system'),
+       (UUID(), 'PLATINUM', '플래티넘 등급 회원을 위한 구독권, 최상의 혜택 제공',
+        100, 100, NOW(), 'system', NOW(), 'system');
+
+
+INSERT INTO `secretes` (
+    `SECRETE_TITLE`, `SECRETE_CONTENT`, `SECRETE_AUTHOR`, `SECRETE_THUMBNAIL_URL`,
+    `SECRETE_VIEW_CNT`, `SECRETE_LIKE_CNT`, `SECRETE_DISLIKE_CNT`,
+    `CREATED_AT`, `CREATED_BY`, `MODIFIED_AT`, `MODIFIED_BY`
+) VALUES
+      ('AI와 머신러닝의 미래', '인공지능과 머신러닝이 앞으로 10년 동안 어떻게 발전할 것인지 살펴봅니다.', 'tech_writer_1', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('클라우드 컴퓨팅의 현재와 미래', '클라우드 기술이 IT 인프라를 어떻게 변화시키고 있는지 알아봅니다.', 'tech_writer_2', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('Spring Boot로 REST API 만들기', 'Spring Boot를 활용한 RESTful API 구축 방법을 설명합니다.', 'tech_writer_3', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('React와 Next.js 비교', 'React와 Next.js의 차이점과 어떤 상황에서 사용해야 하는지 분석합니다.', 'tech_writer_4', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('MySQL vs PostgreSQL 성능 비교', '두 데이터베이스 시스템의 성능과 장단점을 비교합니다.', 'tech_writer_5', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('Docker란 무엇인가?', 'Docker의 개념과 실제 적용 사례를 알아봅니다.', 'tech_writer_6', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('자바스크립트의 비동기 처리', '자바스크립트에서 비동기 처리를 다루는 다양한 방법을 알아봅니다.', 'tech_writer_7', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('웹 개발에서의 보안 고려사항', '웹 애플리케이션을 개발할 때 고려해야 할 보안 측면을 다룹니다.', 'tech_writer_8', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('Vue.js와 React의 차이점', 'Vue.js와 React의 주요 차이점과 선택 시 고려사항을 설명합니다.', 'tech_writer_9', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('머신러닝을 위한 데이터 전처리', '효과적인 머신러닝 모델을 만들기 위한 데이터 전처리 방법을 설명합니다.', 'tech_writer_10', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('서버리스 아키텍처의 장점', '서버리스 아키텍처가 IT 시스템에 미치는 영향을 다룹니다.', 'tech_writer_11', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('CI/CD 파이프라인 구축하기', '지속적인 통합 및 배포(CI/CD) 파이프라인 구축을 위한 가이드를 제공합니다.', 'tech_writer_12', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('Python을 활용한 데이터 분석', 'Python을 이용한 데이터 분석의 기본 개념과 실습을 다룹니다.', 'tech_writer_13', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('블록체인의 기본 원리', '블록체인 기술의 기본적인 원리와 그것이 어떻게 작동하는지 설명합니다.', 'tech_writer_14', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin'),
+      ('데브옵스란 무엇인가?', '데브옵스의 개념과 그것이 어떻게 소프트웨어 개발과 운영에 영향을 미치는지 알아봅니다.', 'tech_writer_15', 'https://images.unsplash.com/photo-1520085601670-ee14aa5fa3e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0, 0, 0, NOW(), 'admin', NOW(), 'admin');
+
+-- 시크릿 태그 더미 데이터 삽입
+INSERT INTO `secret_tags` (`SECRETE_ID`, `TAG_NAME`, `CREATED_AT`, `CREATED_BY`, `MODIFIED_AT`, `MODIFIED_BY`)
+VALUES
+    (1, 'IT', NOW(), 'admin', NOW(), 'admin'),
+    (1, 'Java', NOW(), 'admin', NOW(), 'admin'),
+    (1, 'Web', NOW(), 'admin', NOW(), 'admin'),
+    (2, 'React', NOW(), 'admin', NOW(), 'admin'),
+    (2, 'Tech', NOW(), 'admin', NOW(), 'admin'),
+    (3, 'Python', NOW(), 'admin', NOW(), 'admin'),
+    (3, 'AI', NOW(), 'admin', NOW(), 'admin'),
+    (4, 'JS', NOW(), 'admin', NOW(), 'admin'),
+    (4, 'Cloud', NOW(), 'admin', NOW(), 'admin'),
+    (5, 'Web', NOW(), 'admin', NOW(), 'admin'),
+    (5, 'AI', NOW(), 'admin', NOW(), 'admin'),
+    (6, 'Data', NOW(), 'admin', NOW(), 'admin'),
+    (6, 'Cloud', NOW(), 'admin', NOW(), 'admin'),
+    (7, 'Tech', NOW(), 'admin', NOW(), 'admin'),
+    (8, 'Programming', NOW(), 'admin', NOW(), 'admin'),
+    (8, 'Tech', NOW(), 'admin', NOW(), 'admin'),
+    (9, 'Software', NOW(), 'admin', NOW(), 'admin'),
+    (9, 'Security', NOW(), 'admin', NOW(), 'admin'),
+    (10, 'Tech', NOW(), 'admin', NOW(), 'admin'),
+    (10, 'Data', NOW(), 'admin', NOW(), 'admin'),
+    (10, 'Cloud', NOW(), 'admin', NOW(), 'admin'),
+    (11, 'DevOps', NOW(), 'admin', NOW(), 'admin'),
+    (11, 'AI', NOW(), 'admin', NOW(), 'admin'),
+    (12, 'Java', NOW(), 'admin', NOW(), 'admin'),
+    (12, 'Software', NOW(), 'admin', NOW(), 'admin'),
+    (13, 'Web', NOW(), 'admin', NOW(), 'admin'),
+    (13, 'Frontend', NOW(), 'admin', NOW(), 'admin'),
+    (14, 'Backend', NOW(), 'admin', NOW(), 'admin'),
+    (14, 'Tech', NOW(), 'admin', NOW(), 'admin'),
+    (15, 'Innovation', NOW(), 'admin', NOW(), 'admin');
+
+
+INSERT INTO positions
+(POSITION_ID, POSITION_NAME, ORD, VALID_YN, CREATED_AT, CREATED_BY, MODIFIED_AT, MODIFIED_BY)
+VALUES
+    (UUID(), '프론트엔드 개발자', 1, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '백엔드 개발자', 2, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '풀스택 개발자', 3, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'AI/ML 개발자', 4, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '디자이너', 5, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '기획자', 6, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '아키텍처', 7, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '소프트웨어 엔지니어', 8, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '학생', 9, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '취업준비생', 10, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'QA', 11, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '테스터', 12, 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), '미정', 13, 0, NOW(), 'system', NOW(), 'system');  -- 미정 추가
+
+INSERT INTO `grades` (`GRADE_ID`, `GRADE_NAME`, `GRADE_ORD`, `GRADE_SUMMARY`, `GRADE_DESCRIBE`, `VALID_YN`, `CREATED_AT`, `CREATED_BY`, `MODIFIED_AT`, `MODIFIED_BY`)
+VALUES
+    (UUID(), 'ENTRY', 1, '입문자 등급', '기본적인 지식과 기술을 가진 등급', 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'JUNIOR', 2, '기초 지식 보유 등급', '기초적인 업무를 수행할 수 있는 등급', 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'INTERMEDIATE', 3, '경험이 있는 등급', '상위 업무를 담당할 수 있는 등급', 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'ADVANCED', 4, '전문가 등급', '고급 업무를 수행할 수 있는 등급', 0, NOW(), 'system', NOW(), 'system'),
+    (UUID(), 'MASTER', 5, '최고 등급', '모든 업무를 완벽하게 수행할 수 있는 등급', 0, NOW(), 'system', NOW(), 'system');

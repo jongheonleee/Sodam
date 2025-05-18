@@ -5,6 +5,7 @@ import org.springframework.data.relational.core.mapping.Table
 import sodam.backend.payment.domain.orders.model.PgStatus
 import sodam.backend.payment.golbal.common.model.BaseEntity
 import sodam.backend.payment.domain.subscriptions.entity.SubscriptionsEntity
+import java.time.LocalDateTime
 
 @Table("orders")
 class OrdersEntity(
@@ -15,7 +16,7 @@ class OrdersEntity(
     var socialUserId: String? = null,
     var subscriptionId: String? = null,
     var orderTotAmount: Long = 0,
-    var distTotAmount: Long = 0,
+    var discTotAmount: Long = 0,
     var paidTotAmount: Long = 0,
     var description: String? = null, // 이거 필요함
     var amount: Long = 0,
@@ -23,6 +24,7 @@ class OrdersEntity(
     var pgKey: String? = null, // 이거 필요함
     var pgStatus: PgStatus = PgStatus.CREATE, // 이거 필요함
     var pgRetryCount: Int = 0,
+    var orderedAt: LocalDateTime? = null,
 ): BaseEntity() {
 
 }
