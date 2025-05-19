@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Table
-import sodam.backend.payment.golbal.common.model.BaseEntity
+import sodam.backend.payment.domain.model.BaseEntity
 
 @Table("subscriptions")
 class SubscriptionsEntity(
@@ -16,6 +16,7 @@ class SubscriptionsEntity(
     var subscriptionContent: String? = null,
     var viewCnt: Long = 0,
     var downCnt: Long = 0,
+    var price: Long = 0,
 ): BaseEntity() {
 
     override fun equals(other: Any?): Boolean {

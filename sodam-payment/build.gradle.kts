@@ -50,6 +50,9 @@ dependencies {
 	// .env 관련 의존성 추가
 	implementation("io.github.cdimascio:dotenv-kotlin:6.4.2")
 
+	// Thymeleaf - 현재 리액트 부분 SSL 인증서 잃어버림. 일단, 임시적으로 Thymeleaf 사용해서 처리하게 만듦
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")

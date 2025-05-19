@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  </head>
+  <body>
+    <p th:text="'hello world!!'">hello word!!</p>
+    <p th:text="${name}"></p>
+    <p> Hello Thymeleaf [[${name}]]</p>
+    <p>[[${order.userId}]]</p>
+    <p>[[${order.orderId}]]</p>
+  </body>
+</html>

@@ -2,7 +2,7 @@ package sodam.backend.payment.domain.subscriptions.entity
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
-import sodam.backend.payment.golbal.common.model.BaseEntity
+import sodam.backend.payment.domain.model.BaseEntity
 import java.time.LocalDateTime
 
 

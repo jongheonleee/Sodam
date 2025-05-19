@@ -30,7 +30,7 @@ class CacheManager(
         if (ttl == null) {
             ops.set(key, value)
         } else {
-            ops.set(key, ttl)
+            ops.set(key, value, ttl)
         }.awaitSingle()
     }
 

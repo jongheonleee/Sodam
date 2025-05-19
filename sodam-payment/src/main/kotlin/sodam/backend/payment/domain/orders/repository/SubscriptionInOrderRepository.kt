@@ -6,4 +6,6 @@ import sodam.backend.payment.domain.orders.entity.SubscriptionInOrderEntity
 
 @Repository
 interface SubscriptionInOrderRepository: CoroutineCrudRepository<SubscriptionInOrderEntity, Long> {
+    suspend fun countByOrderId(orderId: String): Long
+    suspend fun findAllByOrderId(orderId: String): List<SubscriptionInOrderEntity>
 }

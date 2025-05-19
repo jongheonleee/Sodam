@@ -1,0 +1,56 @@
+package sodam.backend.payment.domain.common.controller
+
+import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
+import sodam.backend.payment.domain.orders.controller.toResponse
+import sodam.backend.payment.domain.orders.service.OrderService
+
+@Controller
+class ViewController(
+    private val orderService: OrderService,
+) {
+
+    @GetMapping("/hello/{name}")
+    suspend fun hello(@PathVariable name: String, model: Model): String {
+        model.addAttribute("name", name)
+        model.addAttribute("order", orderService.get("5a56980a-7b9c-442d-ad21-681da4a5308d").toResponse())
+        return "hello-world.html"
+    }
+
+    @GetMapping("/pay/{orderId}")
+    suspend fun pay(@PathVariable("orderId") orderId: String, model: Model): String {
+        val order = orderService.get(orderId).toResponse()
+        model.addAttribute("order", order)
+        return "pay.html"
+    }
+
+    @GetMapping("/pay/success")
+    suspend fun paySucceed(request: PaySucceedRequest): String {
+        if (!orderService.authSucceed(request))
+            return "pay-fail.html"
+
+        orderService.capture(request)
+        return "pay-success.html"
+    }
+
+    @GetMapping("/pay/fail")
+    suspend fun payFailed(): String {
+        return "pay-fail.html"
+    }
+}
+
+// {paymentType=[NORMAL], orderId=[c6730559bbde41d2960b0de741325005], paymentKey=[tgen_20250519181255VOgz7], amount=[50000]}
+data class PaySucceedRequest(
+    val paymentType: TossPaymentType,
+    val orderId: String,
+    val paymentKey: String,
+    val amount: Long,
+) {
+}
+
+enum class TossPaymentType {
+    NORMAL, BRANDPAY, KEYIN
+}

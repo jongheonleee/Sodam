@@ -24,6 +24,14 @@ spring:
     baseline-on-migrate: true
     baseline-version: 1
     enabled: true
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    cache: false
+    encoding: UTF-8
+    check-template-location: true
 #  sql:
 #    init:
 #      mode: always
@@ -51,6 +59,7 @@ logging:
     console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n" # ?? - ???? - MDC?? ??? UUID
 payment:
   toss: # toss 결제 api
+    domain: https://api.tosspayments.com
     key:
       client: ${TOSS_CLIENT_ID}
       secret: ${TOSS_CLIENT_SECRET}
