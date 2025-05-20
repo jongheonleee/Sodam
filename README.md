@@ -2,7 +2,8 @@
 
 
 ## 💡 주요 문제 상세한 해결 과정 
-- ### [1. 비즈니스 로직에 산재되어 있는 암호화 처리 로직을 AOP와 애너테이션을 활용하여 적절히 분리](https://www.notion.so/AOP-1f83fdd0e2e7808abc9bf8ce6c86b745)
+- ### [1. 비즈니스 로직에 산재되어 있는 암호화 처리 로직을 AOP와 애너테이션을 활용하여 분리](https://www.notion.so/AOP-1f83fdd0e2e7808abc9bf8ce6c86b745)
+- ### [2. Spring MVC의 성능 한계 및 Spring WebFlux를 활용한 성능 개선](https://www.notion.so/2-Spring-MVC-Spring-WebFlux-1f93fdd0e2e78083a81cf2e3eb9e7ea8)
 
 <br>
 <br>
