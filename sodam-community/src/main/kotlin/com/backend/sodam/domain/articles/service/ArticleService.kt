@@ -35,7 +35,7 @@ class ArticleService(
     private val createArticlePorts: List<CreateArticlePort>,
     private val updateArticlePorts: List<UpdateArticlePort>,
     private val deleteArticlePorts: List<DeleteArticlePort>,
-    private val fetchCategoryPort: FetchCategoryPort
+    private val fetchCategoryPort: FetchCategoryPort,
 ) : CreateArticleUseCase, FetchArticleUseCase, UpdateArticleUseCase, DeleteArticleUseCase {
 
     override fun create(userId: String, articleCreateCommand: ArticleCreateCommand): ArticleCreateResponse {
