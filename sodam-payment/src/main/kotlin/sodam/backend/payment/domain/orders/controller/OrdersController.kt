@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import sodam.backend.payment.domain.common.Beans.Companion.beanSubscriptionInOrderRepository
 import sodam.backend.payment.domain.common.Beans.Companion.beanSubscriptionService
+import sodam.backend.payment.domain.orders.controller.request.OrderRequest
 import sodam.backend.payment.domain.orders.entity.OrdersEntity
-import sodam.backend.payment.domain.orders.model.PgStatus
-import sodam.backend.payment.domain.orders.service.OrderRequest
 import sodam.backend.payment.domain.orders.service.OrderService
-import java.time.LocalDateTime
+import sodam.backend.payment.domain.orders.service.command.OrderQueryHistory
+import sodam.backend.payment.domain.orders.service.response.OrderResponse
+import sodam.backend.payment.domain.orders.service.response.SubscriptionQuantityResponse
+
 
 private val logger = KotlinLogging.logger {}
 
@@ -48,6 +50,11 @@ class OrdersController(
     @DeleteMapping("/{orderId}")
     suspend fun delete(@PathVariable("orderId") orderId: String) {
         orderService.delete(orderId)
+    }
+
+    @GetMapping("/history")
+    suspend fun getHistories(request: OrderQueryHistory): List<OrdersEntity> {
+        return orderService.getHistories(request)
     }
 }
 
@@ -81,33 +88,7 @@ suspend fun OrdersEntity.toResponse(): OrderResponse {
                     quantity = subscriptionInOrder.orderAmount!!,
                 )
             },
-        )}
+        )
+    }
 }
 
-
-data class OrderResponse(
-    val orderId: String,
-    val userId: String? = null,
-    val socialUserId: String? = null,
-    val subscriptionId: String,
-    val orderTotAmount: Long = 0,
-    val discTotAmount: Long = 0,
-    val paidTotAmount: Long = 0,
-    val description: String, // 이거 필요함
-    val amount: Long = 0,
-    val pgOrderId: String,
-    val pgKey: String? = null, // 이거 필요함
-    val pgStatus: PgStatus, // 이거 필요함
-    val pgRetryCount: Int = 0,
-    val orderedAt: LocalDateTime? = null,
-    val createdAt: LocalDateTime? = null,
-    val modifiedAt: LocalDateTime? = null,
-    val subscriptions: List<SubscriptionQuantityResponse>,
-)
-
-data class SubscriptionQuantityResponse(
-    val subscriptionId: String,
-    val subscriptionName: String,
-    val price: Long,
-    val quantity: Long,
-)

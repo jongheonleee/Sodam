@@ -46,7 +46,7 @@ class TossPayApi(
                         .build()
     }
 
-    suspend fun confirm(request: Any): ConnectionProvider {
+    suspend fun confirm(request: Any): ConfirmResponse {
         logger.debug { ">> confirm secret: $secret" }
         return client.post()
                      .uri("/v1/payments/confirm")

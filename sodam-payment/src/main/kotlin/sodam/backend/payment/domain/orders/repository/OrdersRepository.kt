@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 import sodam.backend.payment.domain.orders.entity.OrdersEntity
 
 @Repository
-interface OrdersRepository: CoroutineCrudRepository<OrdersEntity, String>, OrdersCustomRepository {
+interface OrdersRepository: CoroutineCrudRepository<OrdersEntity, String>, OrdersCustomRepository, OrderHistoryCustomRepository {
     suspend fun findAllByUserIdOrderByCreatedAtDesc(userId: String): List<OrdersEntity>
     suspend fun findByPgOrderId(pgOrderId: String): OrdersEntity?
 }

@@ -7,7 +7,9 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import sodam.backend.payment.domain.common.Beans.Companion.beanOrderService
+import sodam.backend.payment.domain.common.controller.PayFailedRequest
 import sodam.backend.payment.domain.common.controller.PaySucceedRequest
+import sodam.backend.payment.domain.orders.controller.request.OrderRequest
 import sodam.backend.payment.domain.orders.entity.OrdersEntity
 import sodam.backend.payment.domain.orders.entity.SubscriptionInOrderEntity
 import sodam.backend.payment.domain.orders.exception.OrderNotFoundExceptions
@@ -15,6 +17,7 @@ import sodam.backend.payment.domain.subscriptions.exception.SubscriptionNotFound
 import sodam.backend.payment.domain.orders.model.PgStatus
 import sodam.backend.payment.domain.orders.repository.OrdersRepository
 import sodam.backend.payment.domain.orders.repository.SubscriptionInOrderRepository
+import sodam.backend.payment.domain.orders.service.command.OrderQueryHistory
 import sodam.backend.payment.domain.payments.service.TossPayApi
 import sodam.backend.payment.domain.subscriptions.exception.SubscriptionUnavailableException
 import sodam.backend.payment.domain.subscriptions.repository.SubscriptionRepository
@@ -135,7 +138,6 @@ class OrderService(
             order.pgStatus = PgStatus.CAPTURE_SUCCESS
             true
         } catch (e: Exception) {
-            logger.error(e.message, e)
             order.pgStatus = when {
                 e is WebClientRequestException -> PgStatus.CAPTURE_RETRY
                 e is WebClientResponseException -> PgStatus.CAPTURE_FAILED
@@ -145,7 +147,6 @@ class OrderService(
         } finally {
             ordersRepository.save(order)
         }
-//        ordersRepository.save(order)
     }
 
     @Transactional
@@ -170,6 +171,7 @@ class OrderService(
 
     }
 
+
     suspend fun getOrderByPgOrderId(pgOrderId: String): OrdersEntity {
         return ordersRepository.findByPgOrderId(pgOrderId) ?:
             throw OrderNotFoundExceptions("pgOrderId: $pgOrderId")
@@ -187,14 +189,24 @@ class OrderService(
     suspend fun delete(orderId: String) {
         ordersRepository.deleteById(orderId)
     }
+
+    suspend fun authFailed(request: PayFailedRequest) {
+        val order = getOrderByPgOrderId(request.orderId)
+
+        if (order.pgStatus == PgStatus.CREATE) {
+            order.pgStatus = PgStatus.AUTH_FAILED
+            ordersRepository.save(order)
+        }
+
+        logger.error { """
+            >> Fail on error
+                - request: $request, 
+                - order: $order
+        """.trimMargin() }
+    }
+
+    @Transactional(readOnly = true)
+    suspend fun getHistories(request: OrderQueryHistory): List<OrdersEntity> {
+        return ordersRepository.getHistories(request)
+    }
 }
-
-data class OrderRequest(
-    val userId: String,
-    var subscriptions: List<SubscriptionsQuantityRequest>,
-)
-
-data class SubscriptionsQuantityRequest(
-    val subscriptionsId: String,
-    val quantity: Long,
-)

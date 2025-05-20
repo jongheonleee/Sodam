@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Table
-import sodam.backend.payment.domain.model.BaseEntity
+import sodam.backend.payment.domain.common.model.BaseEntity
 
 @Table("subscriptions")
 class SubscriptionsEntity(

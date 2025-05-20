@@ -2,7 +2,7 @@ package sodam.backend.payment.domain.orders.entity
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
-import sodam.backend.payment.domain.model.BaseEntity
+import sodam.backend.payment.domain.common.model.BaseEntity
 
 
 // R2DBC 복합키 지원 안함

@@ -37,20 +37,25 @@ class ViewController(
     }
 
     @GetMapping("/pay/fail")
-    suspend fun payFailed(): String {
+    suspend fun payFailed(request: PayFailedRequest): String {
+        orderService.authFailed(request)
         return "pay-fail.html"
     }
 }
 
+data class PayFailedRequest(
+    val code: String,
+    val message: String,
+    val orderId: String,
+)
+
 // {paymentType=[NORMAL], orderId=[c6730559bbde41d2960b0de741325005], paymentKey=[tgen_20250519181255VOgz7], amount=[50000]}
 data class PaySucceedRequest(
-    val paymentType: TossPaymentType,
-    val orderId: String,
     val paymentKey: String,
+    val orderId: String,
     val amount: Long,
-) {
-}
-
+    val paymentType: TossPaymentType,
+)
 enum class TossPaymentType {
     NORMAL, BRANDPAY, KEYIN
 }
