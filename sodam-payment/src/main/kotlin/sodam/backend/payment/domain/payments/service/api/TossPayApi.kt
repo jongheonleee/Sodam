@@ -1,4 +1,4 @@
-package sodam.backend.payment.domain.payments.service
+package sodam.backend.payment.domain.payments.service.api
 
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory

@@ -1,11 +1,13 @@
 package sodam.backend.payment.domain.orders.controller
 
+import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -18,6 +20,7 @@ import sodam.backend.payment.domain.orders.service.OrderService
 import sodam.backend.payment.domain.orders.service.command.OrderQueryHistory
 import sodam.backend.payment.domain.orders.service.response.OrderResponse
 import sodam.backend.payment.domain.orders.service.response.SubscriptionQuantityResponse
+import sodam.backend.payment.domain.payments.service.PaymentService
 
 
 private val logger = KotlinLogging.logger {}
@@ -26,6 +29,7 @@ private val logger = KotlinLogging.logger {}
 @RequestMapping("/orders")
 class OrdersController(
     private val orderService: OrderService,
+    private val paymentService: PaymentService,
 ) {
 
     @PostMapping("/create")
@@ -55,6 +59,15 @@ class OrdersController(
     @GetMapping("/history")
     suspend fun getHistories(request: OrderQueryHistory): List<OrdersEntity> {
         return orderService.getHistories(request)
+    }
+
+    @PutMapping("/recapture/{orderId}")
+    suspend fun recapture(@PathVariable orderId: String) {
+        orderService.get(orderId).let {
+            logger.debug { ">> recapture : $it" }
+            delay(1_000)
+            paymentService.capture(it)
+        }
     }
 }
 

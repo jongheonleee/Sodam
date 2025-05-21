@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import sodam.backend.payment.domain.orders.controller.toResponse
 import sodam.backend.payment.domain.orders.service.OrderService
+import sodam.backend.payment.domain.payments.service.PaymentService
 
 @Controller
 class ViewController(
     private val orderService: OrderService,
+    private val paymentService: PaymentService,
 ) {
 
     @GetMapping("/hello/{name}")
@@ -29,16 +31,16 @@ class ViewController(
 
     @GetMapping("/pay/success")
     suspend fun paySucceed(request: PaySucceedRequest): String {
-        if (!orderService.authSucceed(request))
+        if ( ! paymentService.authSucceed(request) )
             return "pay-fail.html"
 
-        orderService.capture(request)
+        paymentService.capture(request)
         return "pay-success.html"
     }
 
     @GetMapping("/pay/fail")
     suspend fun payFailed(request: PayFailedRequest): String {
-        orderService.authFailed(request)
+        paymentService.authFailed(request)
         return "pay-fail.html"
     }
 }
@@ -56,6 +58,7 @@ data class PaySucceedRequest(
     val amount: Long,
     val paymentType: TossPaymentType,
 )
+
 enum class TossPaymentType {
     NORMAL, BRANDPAY, KEYIN
 }

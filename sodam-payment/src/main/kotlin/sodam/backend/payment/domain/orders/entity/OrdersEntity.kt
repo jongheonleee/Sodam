@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import sodam.backend.payment.domain.orders.model.PgStatus
 import sodam.backend.payment.domain.common.model.BaseEntity
-import sodam.backend.payment.domain.subscriptions.entity.SubscriptionsEntity
 import java.time.LocalDateTime
 
 @Table("orders")
@@ -45,4 +44,9 @@ class OrdersEntity(
     }
 
 
+    fun increaseRetryCount() {
+        if (pgStatus == PgStatus.CAPTURE_RETRY) {
+            pgRetryCount ++
+        }
+    }
 }

@@ -47,7 +47,23 @@ class SodamPaymentApplicationInitTests(
 
 	val subscriptionId = "3c90e7a4-33f4-11f0-afa4-daa4a654b17b"
 	val normalUserId = "123e4567-e89b-12d3-a456-426614174000"
-	val orderId = "f1a9c62b-12a3-4a97-b923-b7a1d0a1f111"
+	val orderId = "e6c8b18e-3a70-4a74-8fcd-1d53e077dd6a"
+
+	beforeTest {
+		subscriptionInOrderRepository.deleteAll()
+		paymentsRepository.deleteAll()
+
+		subscriptionInOrderRepository.count() shouldBe 0
+		paymentsRepository.count() shouldBe 0
+	}
+
+	afterTest {
+		subscriptionInOrderRepository.deleteAll()
+		paymentsRepository.deleteAll()
+
+		subscriptionInOrderRepository.count() shouldBe 0
+		paymentsRepository.count() shouldBe 0
+	}
 
 	// 간단하게 CRUD 기능 테스트
 	// - 하나 생성, 카운팅 비교, 삭제 처리

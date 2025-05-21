@@ -30,6 +30,7 @@ class PaymentApplicationTests(
 	@Autowired private val subscriptionStatusRepository: SubscriptionStatusRepository,
 ): StringSpec ({
 
+	val subscriptionId = "eedc7403-8ea3-4f59-a50e-40134670a5a7"
 
 	// 간단하게 CRUD 기능 테스트
 	// - 하나 생성, 카운팅 비교, 삭제 처리
@@ -53,7 +54,7 @@ class PaymentApplicationTests(
 	}
 
 	"subscriptions price" {
-		val subscription = subscriptionRepository.findById("13701474-0d68-11f0-a0ed-9ea66403e160") // 현재 등록되어 있는 실버 구독권 id
+		val subscription = subscriptionRepository.findById(subscriptionId) // 현재 등록되어 있는 실버 구독권 id
 		var prevCnt = subscriptionPriceRepository.count()
 		val subscriptionPrice = SubscriptionPriceEntity(
 			subscriptionId = subscription!!.subscriptionId,
@@ -74,7 +75,7 @@ class PaymentApplicationTests(
 	}
 
 	"subscriptions history" {
-		val subscription = subscriptionRepository.findById("13701474-0d68-11f0-a0ed-9ea66403e160") // 현재 등록되어 있는 실버 구독권 id
+		val subscription = subscriptionRepository.findById(subscriptionId) // 현재 등록되어 있는 실버 구독권 id
 		var prevCnt = subscriptionHistoryRepository.count()
 		val subscriptionsHistory = SubscriptionHistoryEntity(
 			subscriptionId = subscription!!.subscriptionId,
@@ -94,7 +95,7 @@ class PaymentApplicationTests(
 	}
 
 	"subscriptions status" {
-		val subscription = subscriptionRepository.findById("13701474-0d68-11f0-a0ed-9ea66403e160") // 현재 등록되어 있는 실버 구독권 id
+		val subscription = subscriptionRepository.findById(subscriptionId) // 현재 등록되어 있는 실버 구독권 id
 		var prevCnt = subscriptionStatusRepository.count()
 		val subscriptionStatus = SubscriptionStatusEntity(
 			subscriptionId = subscription!!.subscriptionId,

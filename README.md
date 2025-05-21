@@ -2,9 +2,11 @@
 
 
 ## 💡 주요 문제 해결 과정 
-- ### [1. 비즈니스 로직에 산재되어 있는 암호화 처리 로직을 AOP와 애너테이션을 활용하여 분리](https://www.notion.so/AOP-1f83fdd0e2e7808abc9bf8ce6c86b745)
-- ### [2. Spring MVC의 성능 한계 및 Spring WebFlux를 활용한 성능 개선](https://www.notion.so/2-Spring-MVC-Spring-WebFlux-1f93fdd0e2e78083a81cf2e3eb9e7ea8)
-- ### [3. 여러 유형의 회원 테이블 정의에 따른 복잡한 코드와 확장하기 어려운 구조를 Template Method 패턴과 추상 계층을 활용하여 개선](https://www.notion.so/2-Sodam-Template-Method-1f93fdd0e2e780eb89dceac897ddf465)
+- ### [0. 비즈니스 로직에 산재되어 있는 암호화 처리 로직을 AOP와 애너테이션을 활용하여 분리](https://www.notion.so/AOP-1f83fdd0e2e7808abc9bf8ce6c86b745)
+- ### [1. Spring MVC의 성능 한계 및 Spring WebFlux를 활용한 성능 개선](https://www.notion.so/2-Spring-MVC-Spring-WebFlux-1f93fdd0e2e78083a81cf2e3eb9e7ea8)
+- ### [2. 여러 유형의 회원 테이블 정의에 따른 복잡한 코드와 확장하기 어려운 구조를 Template Method 패턴과 추상 계층을 활용하여 개선](https://www.notion.so/2-Sodam-Template-Method-1f93fdd0e2e780eb89dceac897ddf465)
+- ### [3. 비즈니스적 요구사항이 자주 변동되는 구독권 서비스를 Strategy 패턴을 활용하여 유연하게 대처](https://www.notion.so/3-Sodam-Strategy-1fa3fdd0e2e78004ba37f3ecf526a053)
+- ### [4. 무거운 쿼리(조인 2개 이상 및 Computed Column 도출을 위한 RDBMS CPU를 사용) 캐시를 활용하여 성능 개선](https://www.notion.so/4-Sodam-2-Computed-Column-RDBMS-CPU-Redis-1fa3fdd0e2e78030a149c8aa548fa54b)
 
 <br>
 <br>

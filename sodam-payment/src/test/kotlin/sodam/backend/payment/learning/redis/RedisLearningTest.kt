@@ -14,25 +14,20 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
 import mu.KotlinLogging
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.Range
 import org.springframework.data.geo.Circle
 import org.springframework.data.geo.Distance
 import org.springframework.data.geo.Metrics
 import org.springframework.data.geo.Point
 import org.springframework.data.redis.connection.DataType
 import org.springframework.data.redis.connection.RedisGeoCommands.GeoLocation
-import org.springframework.data.redis.core.ReactiveListOperations
 import org.springframework.data.redis.core.ReactiveRedisTemplate
-import org.springframework.data.redis.core.ReactiveZSetOperations
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
 import java.util.*
 import kotlin.NoSuchElementException
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
-import org.testcontainers.containers.GenericContainer
-import org.testcontainers.utility.DockerImageName
+import sodam.backend.payment.test.config.WithRedisContainer
+import sodam.backend.payment.test.config.all
 
 
 /**
@@ -219,29 +214,3 @@ class RedisLearningTest(
     }
 })
 
-interface WithRedisContainer {
-    companion object {
-        private val container = GenericContainer(DockerImageName.parse("redis:alpine")).apply {
-            addExposedPorts(6379)
-            start()
-        }
-
-        @JvmStatic
-        @DynamicPropertySource
-        fun setProperty(registry: DynamicPropertyRegistry) {
-            logger.debug { "redis mapped port: ${container.getMappedPort(6379)}" }
-            registry.add("spring.data.redis.port") {
-                "${container.getMappedPort(6379)}"
-            }
-        }
-    }
-}
-
-// 확장함수 정의
-suspend fun ReactiveListOperations<Any, Any>.all(key: Any): List<Any> {
-    return this.range(key, 0, -1).asFlow().toList()
-}
-
-suspend fun ReactiveZSetOperations<Any, Any>.all(key: Any): List<Any> {
-    return this.range(key, Range.closed(0, -1)).asFlow().toList()
-}

@@ -17,11 +17,11 @@ import sodam.backend.payment.domain.orders.controller.request.SubscriptionsQuant
 import sodam.backend.payment.domain.orders.model.PgStatus
 import sodam.backend.payment.domain.orders.repository.SubscriptionInOrderRepository
 import sodam.backend.payment.domain.orders.service.OrderService
-import sodam.backend.payment.domain.payments.service.ConfirmResponse
-import sodam.backend.payment.domain.payments.service.TossPayApi
+import sodam.backend.payment.domain.payments.service.api.ConfirmResponse
+import sodam.backend.payment.domain.payments.service.api.TossPayApi
 import sodam.backend.payment.domain.subscriptions.exception.SubscriptionNotFoundException
-import sodam.backend.payment.domain.subscriptions.repository.SubscriptionRepository
 import mu.KotlinLogging
+import sodam.backend.payment.domain.payments.service.PaymentService
 
 private val logger = KotlinLogging.logger {}
 
@@ -36,11 +36,12 @@ private val logger = KotlinLogging.logger {}
 @ActiveProfiles("toss-pay-test")
 class OrdersServiceTest(
     @Autowired private val sut: OrderService,
-    @Autowired private val subscriptionsRepository: SubscriptionRepository,
     @Autowired private val subscriptionInOrderRepository: SubscriptionInOrderRepository,
     @Autowired private val tossPayApi: TossPayApi,
+    @Autowired private val paymentService: PaymentService,
 ): StringSpec({
 
+    // 추후에 테스트 환경 구동시킬때 더미 데이터 세팅하게 만들기
     // 테스트 데이터 아이디
     val testNormalUserId = "123e4567-e89b-12d3-a456-426614174000"
     val subscriptionId1 = "21094738-94af-4739-abe1-6cf9f9773e38" // 해당 아이디에 1년치 가격 데이터도 담겨 있음
@@ -108,7 +109,7 @@ class OrdersServiceTest(
         val token =
             PaySucceedRequest("test idempotency key", order.pgOrderId!!, order.paidTotAmount, TossPaymentType.NORMAL)
 
-        sut.authSucceed(token)
+        paymentService.authSucceed(token)
         val orderAuthed = sut.get(order.orderId!!).also { it.pgStatus shouldBe PgStatus.AUTH_SUCCESS }
 
         Mockito.`when`(tossPayApi.confirm(token)).thenReturn(
@@ -121,7 +122,7 @@ class OrdersServiceTest(
             )
         )
 
-        sut.capture(token)
+        paymentService.capture(token)
         sut.get(order.orderId!!).also { it.pgStatus shouldBe PgStatus.CAPTURE_SUCCESS }
     }
 
@@ -141,14 +142,14 @@ class OrdersServiceTest(
         val token =
             PaySucceedRequest("test idempotency key", order.pgOrderId!!, order.paidTotAmount, TossPaymentType.NORMAL)
 
-        sut.authSucceed(token)
+        paymentService.authSucceed(token)
         val orderAuthed = sut.get(order.orderId!!).also { it.pgStatus shouldBe PgStatus.AUTH_SUCCESS }
 
         Mockito.`when`(tossPayApi.confirm(token)).thenThrow(
             WebClientRequestException::class.java
         )
 
-        sut.capture(token)
+        paymentService.capture(token)
         sut.get(order.orderId!!).also { it.pgStatus shouldBe PgStatus.CAPTURE_RETRY }
     }
 
@@ -169,14 +170,14 @@ class OrdersServiceTest(
         val token =
             PaySucceedRequest("test idempotency key", order.pgOrderId!!, order.paidTotAmount, TossPaymentType.NORMAL)
 
-        sut.authSucceed(token)
+        paymentService.authSucceed(token)
         val orderAuthed = sut.get(order.orderId!!).also { it.pgStatus shouldBe PgStatus.AUTH_SUCCESS }
 
         Mockito.`when`(tossPayApi.confirm(token)).thenThrow(
             WebClientResponseException::class.java
         )
 
-        sut.capture(token)
+        paymentService.capture(token)
         sut.get(order.orderId!!).also { it.pgStatus shouldBe PgStatus.CAPTURE_FAILED }
     }
 })

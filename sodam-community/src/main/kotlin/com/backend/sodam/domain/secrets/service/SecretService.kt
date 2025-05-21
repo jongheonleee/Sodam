@@ -50,10 +50,10 @@ class SecretService(
         val fetchSecretViewPort = getFetchSecretViewPort()
         val todayTotalViewCount = fetchSecretViewPort.countViewToday(userId = userId) // 보유 구독권 서비스에서 현재 회원의 당일 조회수 확인
         val isViewable = viewValidators.stream()
-            .filter { it.isTarget(role) } // 현재 발급된 구독권
-            .findFirst()
-            .orElseThrow()
-            .isValidView(todayTotalViewCount) // 조회 가능 여부 확인
+                                        .filter { it.isTarget(role) } // 현재 발급된 구독권
+                                        .findFirst()
+                                        .orElseThrow()
+                                        .isValidView(todayTotalViewCount) // 조회 가능 여부 확인
 
         if (!isViewable) {
             throw SecretException.InvalidSecretViewException()

@@ -58,13 +58,15 @@ logging:
     # console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%logger|%blue(\\(%F:%L\\))|%msg%n" ?? ??. ????, logger ???? ????
     console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n" # ?? - ???? - MDC?? ??? UUID
 payment:
+  self:
+    domain: http://localhost:8080
   toss: # toss 결제 api
     domain: https://api.tosspayments.com
     key:
       client: ${TOSS_CLIENT_ID}
       secret: ${TOSS_CLIENT_SECRET}
 ---
-spring:
+spring: # 내가 생성한 테이블을 h2에 어떻게 생성할까?
   config:
     activate:
       on-profile: test

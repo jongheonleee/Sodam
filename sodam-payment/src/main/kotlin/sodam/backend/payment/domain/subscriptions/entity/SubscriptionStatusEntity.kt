@@ -11,7 +11,7 @@ class SubscriptionStatusEntity(
     @Id
     var statusId: Long? = null,
     var subscriptionId: String? = null,
-    var subscriptionStatus: SubscriptionStatus = SubscriptionStatus.ACTIVE,
+    var subscriptionStatus: Long? = 1,
     var startAt: LocalDateTime? = null,
     var endAt: LocalDateTime? = null,
     var validYN: Boolean = true,

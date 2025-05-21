@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
-import sodam.backend.payment.domain.payments.service.TossPayApi
+import sodam.backend.payment.domain.payments.service.api.TossPayApi
 
 
 // 테스트 환경에서 목객체 활용하기

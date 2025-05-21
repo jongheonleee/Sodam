@@ -4,11 +4,6 @@ import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.reactive.function.client.WebClientRequestException
-import org.springframework.web.reactive.function.client.WebClientResponseException
-import sodam.backend.payment.domain.common.Beans.Companion.beanOrderService
-import sodam.backend.payment.domain.common.controller.PayFailedRequest
-import sodam.backend.payment.domain.common.controller.PaySucceedRequest
 import sodam.backend.payment.domain.orders.controller.request.OrderRequest
 import sodam.backend.payment.domain.orders.entity.OrdersEntity
 import sodam.backend.payment.domain.orders.entity.SubscriptionInOrderEntity
@@ -18,7 +13,7 @@ import sodam.backend.payment.domain.orders.model.PgStatus
 import sodam.backend.payment.domain.orders.repository.OrdersRepository
 import sodam.backend.payment.domain.orders.repository.SubscriptionInOrderRepository
 import sodam.backend.payment.domain.orders.service.command.OrderQueryHistory
-import sodam.backend.payment.domain.payments.service.TossPayApi
+import sodam.backend.payment.domain.payments.service.api.TossPayApi
 import sodam.backend.payment.domain.subscriptions.exception.SubscriptionUnavailableException
 import sodam.backend.payment.domain.subscriptions.repository.SubscriptionRepository
 import sodam.backend.payment.domain.subscriptions.service.SubscriptionService
@@ -32,7 +27,6 @@ class OrderService(
     private val subscriptionService: SubscriptionService, // 이 부분 나중에 repository 쓰게끔 만들어야함
     private val subscriptionRepository: SubscriptionRepository,
     private val subscriptionInOrderRepository: SubscriptionInOrderRepository,
-    private val tossPayApi: TossPayApi,
 ) {
 
     @Transactional
@@ -125,51 +119,12 @@ class OrderService(
         ordersRepository.save(order)
     }
 
-    @Transactional
-    suspend fun capture(request: PaySucceedRequest): Boolean {
-        val order = getOrderByPgOrderId(request.orderId).apply {
-            pgStatus = PgStatus.CAPTURE_REQUEST
-            beanOrderService.save(this) // Propagation.REQUIRES_NEW 적용하게 만든 트릭 - 결국에는 스프링 컨텍스트를 한번 조회하게 만듦
-        }
-        logger.debug { ">> order: $order" }
-
-        return try {
-            tossPayApi.confirm(request).also { logger.debug { ">> response: $it" } }
-            order.pgStatus = PgStatus.CAPTURE_SUCCESS
-            true
-        } catch (e: Exception) {
-            order.pgStatus = when {
-                e is WebClientRequestException -> PgStatus.CAPTURE_RETRY
-                e is WebClientResponseException -> PgStatus.CAPTURE_FAILED
-                else -> PgStatus.CAPTURE_FAILED
-            }
-            false
-        } finally {
-            ordersRepository.save(order)
-        }
-    }
-
-    @Transactional
-    suspend fun authSucceed(request: PaySucceedRequest): Boolean {
-        val order = getOrderByPgOrderId(request.orderId).apply {
-            pgKey = request.paymentKey
-            pgStatus = PgStatus.AUTH_SUCCESS
-        }
-
-        try {
-            // 사용자가 악의적으로 수량을 변경하는 경우
-            return if (order.paidTotAmount != request.amount) {
-                order.pgStatus = PgStatus.AUTH_INVALID
-                logger.error { "Invalid auth because of amount (order: ${order.amount}, pay: ${request.amount}))" }
-                false
-            } else {
-                true
-            }
-        } finally {
-            ordersRepository.save(order) // update 처리
-        }
+    // 결제 재시도 처리 - 캡처 재시도
+    suspend fun recapture(ordersEntity: OrdersEntity) {
 
     }
+
+
 
 
     suspend fun getOrderByPgOrderId(pgOrderId: String): OrdersEntity {
@@ -188,21 +143,6 @@ class OrderService(
 
     suspend fun delete(orderId: String) {
         ordersRepository.deleteById(orderId)
-    }
-
-    suspend fun authFailed(request: PayFailedRequest) {
-        val order = getOrderByPgOrderId(request.orderId)
-
-        if (order.pgStatus == PgStatus.CREATE) {
-            order.pgStatus = PgStatus.AUTH_FAILED
-            ordersRepository.save(order)
-        }
-
-        logger.error { """
-            >> Fail on error
-                - request: $request, 
-                - order: $order
-        """.trimMargin() }
     }
 
     @Transactional(readOnly = true)
