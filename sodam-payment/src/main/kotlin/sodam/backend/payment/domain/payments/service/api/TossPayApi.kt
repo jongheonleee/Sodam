@@ -1,5 +1,6 @@
 package sodam.backend.payment.domain.payments.service.api
 
+import io.netty.channel.ChannelOption
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory
 import mu.KotlinLogging
@@ -35,9 +36,10 @@ class TossPayApi(
             .pendingAcquireTimeout(Duration.ofSeconds(10))
             .build()
 
-        val connector = ReactorClientHttpConnector(HttpClient.create(provider).secure {
-            it.sslContext(insecureSslContext)
-        })
+        val connector = ReactorClientHttpConnector(HttpClient.create(provider)
+                                                             .secure { it.sslContext(insecureSslContext) }
+                                                             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1_000)
+        )
 
         return WebClient.builder()
                         .baseUrl(domain)

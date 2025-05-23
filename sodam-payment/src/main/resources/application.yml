@@ -1,4 +1,4 @@
-spring:
+ spring:
   config:
     import: optional:file:.env[.properties] # .env 활용
   output:
@@ -61,7 +61,8 @@ payment:
   self:
     domain: http://localhost:8080
   toss: # toss 결제 api
-    domain: https://api.tosspayments.com
+    domain: https://api.test.com
+#    domain: https://api.tosspayments.com
     key:
       client: ${TOSS_CLIENT_ID}
       secret: ${TOSS_CLIENT_SECRET}

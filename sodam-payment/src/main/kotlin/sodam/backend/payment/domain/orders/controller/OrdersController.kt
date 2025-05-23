@@ -20,7 +20,11 @@ import sodam.backend.payment.domain.orders.service.OrderService
 import sodam.backend.payment.domain.orders.service.command.OrderQueryHistory
 import sodam.backend.payment.domain.orders.service.response.OrderResponse
 import sodam.backend.payment.domain.orders.service.response.SubscriptionQuantityResponse
+import sodam.backend.payment.domain.payments.service.CaptureMarker
 import sodam.backend.payment.domain.payments.service.PaymentService
+import kotlin.time.Duration
+import kotlin.math.pow
+import kotlin.time.Duration.Companion.milliseconds
 
 
 private val logger = KotlinLogging.logger {}
@@ -30,6 +34,7 @@ private val logger = KotlinLogging.logger {}
 class OrdersController(
     private val orderService: OrderService,
     private val paymentService: PaymentService,
+    private val captureMarker: CaptureMarker,
 ) {
 
     @PostMapping("/create")
@@ -61,13 +66,30 @@ class OrdersController(
         return orderService.getHistories(request)
     }
 
+    // 이 부분 추후에 AOP를 사용하든, 데코레이터 패턴을 활용하든 분리하자
+    // 컨트롤러나 서비스에서 담기 애매한 코드임
     @PutMapping("/recapture/{orderId}")
     suspend fun recapture(@PathVariable orderId: String) {
         orderService.get(orderId).let {
             logger.debug { ">> recapture : $it" }
-            delay(1_000)
+            val time = getBackoffDelay(it)
+            delay(1_000).also { logger.debug { ">> delay: $it ms" } }
             paymentService.capture(it)
         }
+    }
+
+    // backoff 전략
+    // - temp = 2 ^ retry count
+    // - delay = (temp / 2) + (0 .. (temp/2)).random
+    private fun getBackoffDelay(order: OrdersEntity): Duration {
+        val temp = (2.0).pow(order.pgRetryCount).toInt() * 1_000
+        val delay = temp + (0 .. temp).random()
+        return delay.milliseconds
+    }
+
+    @GetMapping("/capturing")
+    suspend fun getCapturingOrder(): List<OrdersEntity> {
+        return captureMarker.getAll()
     }
 }
 
