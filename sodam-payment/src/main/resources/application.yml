@@ -19,6 +19,10 @@
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
   flyway: # flyway 로 RDB 형상관리
     locations: classpath:flyway
     baseline-on-migrate: true

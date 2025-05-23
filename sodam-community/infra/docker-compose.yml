@@ -1,18 +1,20 @@
+version: '3.8'
+
 services:
-    mysql :
+    mysql:
         image: mysql:8.0.41
         container_name: sodam-mysql
         restart: always
         ports:
             - '3306:3306'
         environment:
-            MYSQL_ROOT_PASSWORD : 12341234
-            TZ : Asia/Seoul
+            MYSQL_ROOT_PASSWORD: "12341234"
+            TZ: "Asia/Seoul"
         volumes:
             - ./db/mysql/data:/var/lib/mysql
             - ./db/mysql/init:/docker-entrypoint-initdb.d
         platform: linux/x86_64
-    # 추후에 레디스 적용시 아래에 레디스 설정 정보 작성하기
+
     redis:
         image: redis:alpine
         container_name: sodam-redis
@@ -20,5 +22,28 @@ services:
         command: redis-server
         hostname: redis
         ports:
-            - 6379:6379
+            - "6379:6379"
 
+    zookeeper:
+        image: confluentinc/cp-zookeeper:7.3.0
+        container_name: sodam_zookeeper
+        environment:
+            ZOOKEEPER_CLIENT_PORT: 2181
+            ZOOKEEPER_TICK_TIME: 2000
+            KAFKA_JVM_PERFORMANCE_OPTS: "-Djdk.internal.platform.disableContainerSupport=true"
+
+    kafka:
+        image: confluentinc/cp-kafka:7.3.0
+        container_name: sodam_kafka
+        ports:
+            - "9092:9092"
+        depends_on:
+            - zookeeper
+        environment:
+            KAFKA_BROKER_ID: 1
+            KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+            KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+            KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1

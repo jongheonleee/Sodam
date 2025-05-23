@@ -19,6 +19,9 @@ repositories {
 }
 
 dependencies {
+	// kafka
+	implementation("org.springframework.kafka:spring-kafka")
+
 	// flyway
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-mysql")
