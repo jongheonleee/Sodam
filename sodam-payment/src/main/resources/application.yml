@@ -1,4 +1,4 @@
- spring:
+spring:
   config:
     import: optional:file:.env[.properties] # .env 활용
   output:
@@ -14,7 +14,7 @@
     redis:
       host: localhost
       port: 6379
-  datasource: # flyway 를 위해서 JDBC로 연결설정, R2DBC에서는 flyway 연결못함
+  datasource: # flyway를 위해 JDBC 연결 설정
     url: jdbc:mysql://localhost:3306/sodam?useSSL=false&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -23,7 +23,8 @@
     bootstrap-servers: localhost:9092
     consumer:
       auto-offset-reset: earliest
-  flyway: # flyway 로 RDB 형상관리
+      group-id: sample
+  flyway: # RDB 형상관리 도구
     locations: classpath:flyway
     baseline-on-migrate: true
     baseline-version: 1
@@ -36,42 +37,40 @@
     cache: false
     encoding: UTF-8
     check-template-location: true
-#  sql:
-#    init:
-#      mode: always
-#      schema-locations: classpath:db-init/schema.sql # 테이블 생성
-#      data-locations: classpath:db-init/test-data.sql # 더미 데이터 세팅
+
 server:
-  shutdown: graceful # ??? ??? ??? graceful? ???, ??? ???? ? ???? ???? ???? ??? ???? ?? ??? ??? ???
-  port: 8080 # 현재 Spring MVC 서버 포트 8080
+  shutdown: graceful
+  port: 8080
   error:
     include-message: always
     include-exception: true
     include-stacktrace: always
+
 api:
-  externalUrl: http://localhost:8081 # ?? API ??(?? ??) -> ? ??? ?? ?? ???? ???? ????? ????. ?? url ??? ? ?? ??????...
+  externalUrl: http://localhost:8081
+
 logging:
   level:
     sodam.backend: debug
     org.springframework.r2dbc.core: debug
     org.springframework.r2dbc.connection.init: debug
-    # ??? ??? ????? ??? ???? ? ?? ??? ???? ??? ??. ???, ?? ?? ??? ??? ?????? ???
     org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler: off
     org.springframework.web.HttpLogging: off
   pattern:
-    # console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%logger|%blue(\\(%F:%L\\))|%msg%n" ?? ??. ????, logger ???? ????
-    console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n" # ?? - ???? - MDC?? ??? UUID
+    console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"
+
 payment:
   self:
     domain: http://localhost:8080
-  toss: # toss 결제 api
+  toss:
     domain: https://api.test.com
-#    domain: https://api.tosspayments.com
     key:
       client: ${TOSS_CLIENT_ID}
       secret: ${TOSS_CLIENT_SECRET}
+
 ---
-spring: # 내가 생성한 테이블을 h2에 어떻게 생성할까?
+
+spring:
   config:
     activate:
       on-profile: test
@@ -80,4 +79,4 @@ spring: # 내가 생성한 테이블을 h2에 어떻게 생성할까?
   sql:
     init:
       mode: always
-      data-locations: "" # 테스트 환경에서는 더미 데이터 생성 x(h2 문제)
+      data-locations: "" # 테스트 환경에서는 더미 데이터 생성 생략

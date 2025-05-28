@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
 	// kafka
+	implementation("io.projectreactor.kafka:reactor-kafka:1.3.21")
 	implementation("org.springframework.kafka:spring-kafka")
 
 	// flyway

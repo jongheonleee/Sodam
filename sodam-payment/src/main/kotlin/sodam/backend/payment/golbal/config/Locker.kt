@@ -25,7 +25,7 @@ class Locker(
     private val ops = template.opsForValue()
 
     suspend fun <T> lock(key: SimpleKey, work: suspend () -> T): T {
-        if ( ! tryLock(key))
+        if ( ! tryLock(key) )
             throw TimeoutException("fail to obtain lock")
 
         try {

@@ -1,31 +1,34 @@
-package sodam.backend.payment
+package sodam.payment_streamer.payment_streamer
 
-import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
 import org.springframework.kafka.annotation.EnableKafka
-import sodam.backend.payment.domain.payments.service.PaymentService
+import sodam.payment_streamer.payment_streamer.config.Consumer
 
 private val logger = KotlinLogging.logger {}
 
-@EnableKafka
-@EnableR2dbcAuditing
+
 @SpringBootApplication
-class PaymentApplication(
-	private val paymentService: PaymentService,
+@EnableKafka
+class PaymentStreamerApplication(
+	private val consumer: Consumer,
 ): ApplicationRunner {
 
 	override fun run(args: ApplicationArguments?) {
-		runBlocking {
-			paymentService.recaptureOnBoot()
+		consumer.consume("test", "A") {
+			logger.debug { ">> [A] got message: $it!!" }
 		}
+
+		consumer.consume("test", "B") {
+			logger.debug { ">> [B] got message: $it!!" }
+		}
+		logger.debug { ">> ready consumer!!" }
 	}
 }
 
 fun main(args: Array<String>) {
-	runApplication<PaymentApplication>(*args)
+	runApplication<PaymentStreamerApplication>(*args)
 }

@@ -1,0 +1,19 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+  application:
+    name: kafka-consumer
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+  data:
+    redis:
+      host: localhost
+      port: 6379
+logging:
+  level:
+    sodam.payment_streamer: debug
+  pattern:
+    console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"

@@ -1,4 +1,6 @@
 package sodam.backend.payment.domain.common
 
-class TestConsumer {
-}
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
+
