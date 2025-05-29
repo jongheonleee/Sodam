@@ -35,6 +35,8 @@ out/
 !**/src/test/**/out/
 
 
+
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -63,3 +65,7 @@ dev.key
 
 # 환경변수
 .env
+
+# 인프라
+.infra/db
+.infra/data
