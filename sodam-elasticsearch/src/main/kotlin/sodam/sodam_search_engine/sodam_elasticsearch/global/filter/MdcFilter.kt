@@ -1,4 +1,5 @@
-package sodam.backend.payment.golbal.filter
+package sodam.sodam_search_engine.sodam_elasticsearch.global.filter
+
 import io.micrometer.context.ContextRegistry
 import mu.KotlinLogging
 import org.slf4j.MDC
@@ -10,18 +11,16 @@ import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Hooks
 import reactor.core.publisher.Mono
 import reactor.util.context.Context
-import sodam.backend.payment.golbal.extension.txid
+import sodam.sodam_search_engine.sodam_elasticsearch.global.extension.txid
 import java.util.UUID
-
-
-const val KEY_TXID = "txid"
 
 private val logger = KotlinLogging.logger {}
 
+const val KEY_TXID = "txid"
 
-// 모든 요청 처리하는 필터
+
 @Component
-@Order(1) // 우선순위 1
+@Order(1)
 class MdcFilter: WebFilter {
 
     init {

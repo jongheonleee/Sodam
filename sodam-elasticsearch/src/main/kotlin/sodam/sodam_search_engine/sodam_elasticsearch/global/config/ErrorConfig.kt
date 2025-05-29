@@ -1,5 +1,4 @@
-package sodam.backend.payment.golbal.config
-
+package sodam.sodam_search_engine.sodam_elasticsearch.global.config
 
 import mu.KotlinLogging
 import org.slf4j.MDC
@@ -8,8 +7,8 @@ import org.springframework.boot.web.reactive.error.DefaultErrorAttributes
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.server.ServerRequest
-import sodam.backend.payment.golbal.extension.txid
-import sodam.backend.payment.golbal.filter.KEY_TXID
+import sodam.sodam_search_engine.sodam_elasticsearch.global.extension.txid
+import sodam.sodam_search_engine.sodam_elasticsearch.global.filter.KEY_TXID
 
 private val logger = KotlinLogging.logger {}
 
@@ -27,7 +26,6 @@ class ErrorConfig {
                 try {
                     logger.debug { "request id: ${serverRequest.exchange().request.id}" }
 
-                    // 예외 발생시 해당 부분에서 로그 찍기(webflux에서 찍히는 클래스 부분들 모두 꺼버림)
                     super.getError(serverRequest).let { e ->
                         logger.error(e.message ?: "Internal Server Error", e)
                     }

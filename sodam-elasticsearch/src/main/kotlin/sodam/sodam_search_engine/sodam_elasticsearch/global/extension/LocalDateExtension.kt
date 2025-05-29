@@ -1,4 +1,4 @@
-package sodam.backend.payment.golbal.extension
+package sodam.sodam_search_engine.sodam_elasticsearch.global.extension
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
