@@ -67,5 +67,5 @@ dev.key
 .env
 
 # 인프라
-.infra/db
-.infra/data
+infra/db
+infra/data/
