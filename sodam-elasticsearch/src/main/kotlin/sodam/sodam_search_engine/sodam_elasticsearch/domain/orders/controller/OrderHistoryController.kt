@@ -1,6 +1,7 @@
 package sodam.sodam_search_engine.sodam_elasticsearch.domain.orders.controller
 
 import kotlinx.coroutines.flow.Flow
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,6 +15,8 @@ import sodam.sodam_search_engine.sodam_elasticsearch.domain.orders.entity.Orders
 import sodam.sodam_search_engine.sodam_elasticsearch.domain.orders.repository.OrdersHistoryNativeRepository
 import sodam.sodam_search_engine.sodam_elasticsearch.domain.orders.repository.OrdersHistoryRepository
 import sodam.sodam_search_engine.sodam_elasticsearch.domain.orders.repository.reponse.SearchResponse
+
+private val logger = KotlinLogging.logger { }
 
 @RestController
 @RequestMapping("/order-history")
@@ -34,6 +37,7 @@ class OrderHistoryController(
 
     @PostMapping
     suspend fun save(@RequestBody request: OrdersHistoryRequest): OrdersHistoryEntity {
+        logger.debug { ">> got request ${request.toString()}" }
         val document = repository.findById(request.orderId)?.let { orderHistory ->
             request.userId?.let { orderHistory.userId = it }
             request.socialUserId?.let { orderHistory.socialUserId = it }
@@ -57,7 +61,7 @@ class OrderHistoryController(
         return repository.deleteById(orderId)
     }
 
-    @DeleteMapping
+    @DeleteMapping("/all")
     suspend fun deleteAll() {
         return repository.deleteAll()
     }

@@ -8,7 +8,7 @@ spring:
     uris: localhost:9200
 server:
   shutdown: graceful
-  port: 8080
+  port: 8081
   error:
     include-message: always
     include-exception: true
@@ -20,6 +20,6 @@ logging:
     org.springframework.r2dbc.connection.init: debug
     org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler: off
     org.springframework.web.HttpLogging: off
-    tracer: trace
+#    tracer: trace
   pattern:
     console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"

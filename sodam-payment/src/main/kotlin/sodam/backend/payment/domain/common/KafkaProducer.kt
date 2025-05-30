@@ -1,5 +1,6 @@
-package sodam.backend.payment.golbal.config
+package sodam.backend.payment.domain.common
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.reactor.awaitSingle
 import mu.KotlinLogging
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -9,17 +10,28 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate
 import org.springframework.stereotype.Component
 import reactor.kafka.sender.SenderOptions
+import sodam.backend.payment.domain.orders.entity.OrdersEntity
 
 private val logger = KotlinLogging.logger {}
 
 @Component
-class TestProducer(
+class KafkaProducer(
     private val template: ReactiveKafkaProducerTemplate<String, String>,
+    private val mapper: ObjectMapper,
 ) {
 
     suspend fun send(topic: String, message: String) {
-        logger.debug { ">> send to [$topic]: $message" }
-        template.send(topic, message).awaitSingle()
+        logger.debug { "topic: $topic, message: $message" }
+        val result = template.send(topic, message)
+                                                  .awaitSingle()
+        logger.debug { "send result: $result" }
+    }
+
+    suspend fun sendPayment(order: OrdersEntity) {
+        mapper.writeValueAsString(order).let { json ->
+            logger.debug { "json: $json" }
+            send("payment", json)
+        }
     }
 }
 
@@ -31,7 +43,7 @@ class ReactiveKafkaInitializer {
         return properties.buildProducerProperties()
             .let { prop ->
                 prop[ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG] = true
-                SenderOptions.create<String, String>()
+                SenderOptions.create<String, String>(prop)
             }
             .let { option -> ReactiveKafkaProducerTemplate(option) }
     }

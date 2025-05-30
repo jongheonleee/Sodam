@@ -21,9 +21,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   kafka:
     bootstrap-servers: localhost:9092
-    consumer:
-      auto-offset-reset: earliest
-      group-id: sample
   flyway: # RDB 형상관리 도구
     locations: classpath:flyway
     baseline-on-migrate: true
@@ -63,7 +60,7 @@ payment:
   self:
     domain: http://localhost:8080
   toss:
-    domain: https://api.test.com
+    domain: https://api.tosspayments.com
     key:
       client: ${TOSS_CLIENT_ID}
       secret: ${TOSS_CLIENT_SECRET}

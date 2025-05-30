@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.config.TopicBuilder
 import org.springframework.kafka.core.KafkaAdmin
 
+const val TOPIC_PAYMENT = "payment"
+
 @Configuration
 class TopicConfig(
     private val admin: KafkaAdmin,
@@ -12,7 +14,7 @@ class TopicConfig(
 
     override fun afterPropertiesSet() {
         admin.createOrModifyTopics(
-            TopicBuilder.name("test")
+            TopicBuilder.name(TOPIC_PAYMENT)
                         .partitions(1)
                         .replicas(1)
                         .build(),

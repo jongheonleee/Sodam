@@ -24,7 +24,7 @@ class Consumer(
 
     private val ops = redisTemplate.opsForValue()
 
-    fun consume(topic: String, groupId: String, runner: (record: ConsumerRecord<String, String>) -> Unit) {
+    fun consume(topic: String, groupId: String, runner: suspend (record: ConsumerRecord<String, String>) -> Unit) {
         properties.buildConsumerProperties().let { prop ->
             prop[ConsumerConfig.GROUP_ID_CONFIG] = groupId
             ReceiverOptions.create<String, String>(prop)

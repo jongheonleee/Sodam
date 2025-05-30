@@ -25,6 +25,4 @@ data class OrdersHistoryEntity(
     var createdAt: LocalDateTime = LocalDateTime.now(),
     @Field(type = FieldType.Date, format = [DateFormat.date_hour_minute_second])
     var modifiedAt: LocalDateTime = LocalDateTime.now(),
-) {
-
-}
+)

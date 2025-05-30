@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import sodam.backend.payment.domain.common.Beans.Companion.beanOrderService
+import sodam.backend.payment.domain.common.KafkaProducer
 import sodam.backend.payment.domain.common.controller.PayFailedRequest
 import sodam.backend.payment.domain.common.controller.PaySucceedRequest
 import sodam.backend.payment.domain.common.controller.TossPaymentType
@@ -28,6 +29,7 @@ class PaymentService(
     private val objectMapper: ObjectMapper,
     private val paymentApi: PaymentApi,
     private val captureMarker: CaptureMarker,
+    private val kafkaProducer: KafkaProducer,
 ) {
 
     @Transactional
@@ -112,6 +114,8 @@ class PaymentService(
             if (order.pgStatus == CAPTURE_RETRY) {
                 paymentApi.recapture(order.orderId!!)
             }
+            logger.debug { ">> call kafka" }
+            kafkaProducer.sendPayment(order)
         }
     }
 

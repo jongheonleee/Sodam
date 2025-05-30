@@ -1,1 +1,1 @@
-rootProject.name = "payment-streamer"
+rootProject.name = "sodam-kafka-consumer"

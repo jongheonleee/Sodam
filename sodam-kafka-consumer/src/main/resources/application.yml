@@ -4,6 +4,8 @@ spring:
       enabled: always
   application:
     name: kafka-consumer
+  main:
+    web-application-type: none # 이거 있어야 8080 포트 충돌 발생안함
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -17,3 +19,6 @@ logging:
     sodam.payment_streamer: debug
   pattern:
     console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"
+api:
+  history:
+    domain: http://localhost:8081
